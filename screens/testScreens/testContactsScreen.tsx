@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+/* import React, { useEffect, useState } from "react";
 import * as Contacts from "expo-contacts";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 
-export default function App() {
+export default function TestContactsScreen() {
   const [contacts, setContacts] = useState([]);
   useEffect(() => {
     (async () => {
@@ -43,3 +43,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+ */

@@ -1,4 +1,4 @@
-import * as React from 'react';
+/* import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
@@ -30,3 +30,4 @@ const styles = StyleSheet.create({
     width: '80%',
   },
 });
+ */

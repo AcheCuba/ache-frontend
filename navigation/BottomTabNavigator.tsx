@@ -1,35 +1,70 @@
-import { Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import * as React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import * as React from "react";
 
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
-import { BottomTabParamList, TabOneParamList, TabTwoParamList } from '../types';
+import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
 
-const BottomTab = createBottomTabNavigator<BottomTabParamList>();
+// screens
+//import TabOneScreen from "../screens/TabOneScreen";
+//import TabTwoScreen from "../screens/TabTwoScreen";
+//import TestContactsScreen from "../screens/testContactsScreen";
+import GameScreen from "../screens/Game/GameScreen";
+import CobrarPremioScreen from "../screens/Game/CobrarPremioScreen";
+import NuevaRecargaScreen from "../screens/NuevaRecarga/NuevaRecargaScreen";
+import PagoScreen from "../screens/NuevaRecarga/PagoScreen";
+import MoreScreen from "../screens/MoreScreen";
+import LanguageScreen from "../screens/LanguageScreen";
+
+import { BottomTabParamList, TabOneParamList, TabTwoParamList } from "../types";
+
+//const BottomTab = createBottomTabNavigator<BottomTabParamList>();
+
+const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
   const colorScheme = useColorScheme();
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
-      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}>
+      initialRouteName="Juego"
+      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
+    >
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneNavigator}
+        name="Juego"
+        component={GameNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoNavigator}
+        name="Nueva Recarga"
+        component={NuevaRecargaNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Más"
+        component={MoreNavigator}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Lenguaje"
+        component={LanguageNavigator}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
     </BottomTab.Navigator>
@@ -38,36 +73,84 @@ export default function BottomTabNavigator() {
 
 // You can explore the built-in icon families and icons on the web at:
 // https://icons.expo.fyi/
-function TabBarIcon(props: { name: React.ComponentProps<typeof Ionicons>['name']; color: string }) {
+function TabBarIcon(props: {
+  name: React.ComponentProps<typeof Ionicons>["name"];
+  color: string;
+}) {
   return <Ionicons size={30} style={{ marginBottom: -3 }} {...props} />;
 }
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const TabOneStack = createStackNavigator<TabOneParamList>();
+//const TabOneStack = createStackNavigator<TabOneParamList>();
 
-function TabOneNavigator() {
+const GameStack = createStackNavigator();
+
+function GameNavigator() {
   return (
-    <TabOneStack.Navigator>
-      <TabOneStack.Screen
-        name="TabOneScreen"
-        component={TabOneScreen}
-        options={{ headerTitle: 'Tab One Title' }}
+    <GameStack.Navigator>
+      <GameStack.Screen
+        name="GameScreen"
+        component={GameScreen}
+        options={{ headerTitle: "Aché" }}
       />
-    </TabOneStack.Navigator>
+      <GameStack.Screen
+        name="NuevaRecargaScreen"
+        component={NuevaRecargaScreen}
+        options={{ headerTitle: "Nueva Recarga" }}
+      />
+      <GameStack.Screen
+        name="CobrarPremioScreen"
+        component={CobrarPremioScreen}
+        options={{ headerTitle: "Cobrar Premio" }}
+      />
+    </GameStack.Navigator>
   );
 }
 
-const TabTwoStack = createStackNavigator<TabTwoParamList>();
+const NuevaRecargaStack = createStackNavigator();
 
-function TabTwoNavigator() {
+function NuevaRecargaNavigator() {
   return (
-    <TabTwoStack.Navigator>
-      <TabTwoStack.Screen
-        name="TabTwoScreen"
-        component={TabTwoScreen}
-        options={{ headerTitle: 'Tab Two Title' }}
+    <NuevaRecargaStack.Navigator>
+      <NuevaRecargaStack.Screen
+        name="NuevaRecargaScreen"
+        component={NuevaRecargaScreen}
+        options={{ headerTitle: "Nueva Recarga" }}
       />
-    </TabTwoStack.Navigator>
+      <NuevaRecargaStack.Screen
+        name="PagoScreen"
+        component={PagoScreen}
+        options={{ headerTitle: "Pago Online" }}
+      />
+    </NuevaRecargaStack.Navigator>
+  );
+}
+
+const MoreStack = createStackNavigator();
+
+function MoreNavigator() {
+  return (
+    <MoreStack.Navigator>
+      <MoreStack.Screen
+        name="MoreScreen"
+        component={MoreScreen}
+        options={{ headerTitle: "Más" }}
+      />
+    </MoreStack.Navigator>
+  );
+}
+
+const LanguageStack = createStackNavigator();
+
+function LanguageNavigator() {
+  return (
+    <LanguageStack.Navigator>
+      <LanguageStack.Screen
+        name="LanguageScreen"
+        component={LanguageScreen}
+        options={{ headerTitle: "Lenguaje" }}
+      />
+    </LanguageStack.Navigator>
   );
 }
