@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 
-const LoginScreen = ({ navigation }: any) => {
+const LoginScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/*  <Text style={styles.title}>Login Screen</Text> */}
