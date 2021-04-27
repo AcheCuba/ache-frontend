@@ -8,12 +8,13 @@ import * as React from "react";
 import { ColorSchemeName } from "react-native";
 
 import NotFoundScreen from "../screens/NotFoundScreen";
-import LoginScreen from "../screens/LoginScreen";
 import OnBoardingScreen from "../screens/OnBoardingScreen";
+import SignupScreen from "../screens/SignupScreen";
 
 import { RootStackParamList } from "../types";
 import BottomTabNavigator from "./BottomTabNavigator";
 import LinkingConfiguration from "./LinkingConfiguration";
+import { GlobalContext, useStore } from "../context/GlobalProvider";
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
@@ -33,17 +34,45 @@ export default function Navigation({ colorScheme }) {
 // const Stack = createStackNavigator<RootStackParamList>();
 const Stack = createStackNavigator();
 
+//const onBoardingConsumed = true;
+
 function RootNavigator() {
+  const { authState } = React.useContext(GlobalContext);
+  const { registered } = authState;
+
+  console.log("authState", authState);
+  console.log("registered", registered);
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Onboarding" component={OnBoardingScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
+      {!registered ? (
+        <>
+          <Stack.Screen name="Onboarding" component={OnBoardingScreen} />
+          <Stack.Screen name="Signup" component={SignupScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Root" component={BottomTabNavigator} />
+          <Stack.Screen
+            name="NotFound"
+            component={NotFoundScreen}
+            options={{ title: "Oops!" }}
+          />
+        </>
+      )}
+    </Stack.Navigator>
+  );
+}
+
+/*   <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {!onBoardingConsumed && (
+        <Stack.Screen name="Onboarding" component={OnBoardingScreen} />
+      )}
+      {!isLogged && <Stack.Screen name="Login" component={LoginScreen} />}
       <Stack.Screen name="Root" component={BottomTabNavigator} />
       <Stack.Screen
         name="NotFound"
         component={NotFoundScreen}
         options={{ title: "Oops!" }}
       />
-    </Stack.Navigator>
-  );
-}
+    </Stack.Navigator> */

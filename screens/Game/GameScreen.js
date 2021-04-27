@@ -14,7 +14,11 @@ const GameScreen = ({ navigation }) => {
       <View style={styles.button}>
         <Button
           title="Nueva Recarga"
-          onPress={() => navigation.navigate("NuevaRecargaScreen")}
+          onPress={() =>
+            navigation.navigate("NuevaRecargaNavigator", {
+              screen: "NuevaRecargaScreen",
+            })
+          }
         />
       </View>
     </View>

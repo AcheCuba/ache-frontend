@@ -4,8 +4,8 @@ import { Image } from "react-native";
 
 const OnBoardingScreen = ({ navigation }) => (
   <Onboarding
-    onDone={() => navigation.navigate("Login")}
-    onSkip={() => navigation.navigate("Login")}
+    onDone={() => navigation.navigate("Signup")}
+    onSkip={() => navigation.navigate("Signup")}
     pages={[
       {
         backgroundColor: "#fff",

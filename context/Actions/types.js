@@ -1,3 +1,3 @@
 export const actionTypes = {
-  LOGIN: "login - user",
+  SIGNUP: "signup - user",
 };

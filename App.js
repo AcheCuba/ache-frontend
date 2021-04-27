@@ -2,8 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import StoreProvider from "./context/StoreProvider";
-import rootReducer from "./context/Reducers/rootReducer";
+import GlobalProvider from "./context/GlobalProvider";
+// import rootReducer from "./context/Reducers/rootReducer";
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
@@ -17,12 +17,13 @@ export default function App() {
     return null;
   } else {
     return (
-      <SafeAreaProvider>
-        <StoreProvider rootReducer={rootReducer}>
-          <Navigation colorScheme={colorScheme} />
+      <GlobalProvider>
+        <SafeAreaProvider>
+          {/*  <Navigation colorScheme={colorScheme} /> */}
+          <Navigation />
           <StatusBar backgroundColor="#ddd" style="light" />
-        </StoreProvider>
-      </SafeAreaProvider>
+        </SafeAreaProvider>
+      </GlobalProvider>
     );
   }
 }

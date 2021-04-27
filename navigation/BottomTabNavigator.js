@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as React from "react";
+import { useState } from "react";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
@@ -12,24 +13,40 @@ import useColorScheme from "../hooks/useColorScheme";
 //import TestContactsScreen from "../screens/testContactsScreen";
 import GameScreen from "../screens/Game/GameScreen";
 import CobrarPremioScreen from "../screens/Game/CobrarPremioScreen";
+
 import NuevaRecargaScreen from "../screens/NuevaRecarga/NuevaRecargaScreen";
+import RecargasDisponiblesScreen from "../screens/NuevaRecarga/RecargasDisponibesScreen";
 import PagoScreen from "../screens/NuevaRecarga/PagoScreen";
-import MoreScreen from "../screens/MoreScreen";
+
+import MoreScreen from "../screens/More/MoreScreen";
+import AboutUsScreen from "../screens/More/AboutUsScreen";
+import ModoUsoScreen from "../screens/More/ModoUsoScreen";
+import PremioScreen from "../screens/More/PremioScreen";
+import PrivacidadScreen from "../screens/More/PrivacidadScreen";
+import TermUsoScreen from "../screens/More/TermUsoScreen";
+
 import LanguageScreen from "../screens/LanguageScreen";
 
 import { BottomTabParamList, TabOneParamList, TabTwoParamList } from "../types";
+import MultiplesContactosScreen from "../screens/NuevaRecarga/MultiplesContactosScreen";
+import { forHorizontal } from "./forHorizontal";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
+  //const colorScheme = useColorScheme();
+  const [spa, setSpanish] = useState(true);
+  //Ej: activeTintColor: Colors[colorScheme].tint => dice a la app qué esquema de coloresusar según la conf del usuario
 
   return (
     <BottomTab.Navigator
       initialRouteName="Juego"
-      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
+      tabBarOptions={{
+        activeTintColor: Colors.light.tint,
+        keyboardHidesTabBar: true,
+      }}
     >
       <BottomTab.Screen
         name="Juego"
@@ -59,11 +76,21 @@ export default function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Lenguaje"
+        name={spa ? "Inglés" : "Spanish"}
         component={LanguageNavigator}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            // Prevent default action
+            e.preventDefault();
+            setSpanish(!spa);
+
+            // Do something with the `navigation` object
+            //navigation.goBack();
+          },
+        })}
         options={{
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="ios-code" color={color} />
+            <TabBarIcon name="ios-code" color={spa ? "#005005" : "#8e0000"} />
           ),
         }}
       />
@@ -97,17 +124,30 @@ function GameNavigator() {
       <GameStack.Screen
         name="GameScreen"
         component={GameScreen}
-        options={{ headerTitle: "Aché" }}
-      />
-      <GameStack.Screen
-        name="NuevaRecargaScreen"
-        component={NuevaRecargaScreen}
-        options={{ headerTitle: "Nueva Recarga" }}
+        options={{
+          headerTitle: "Aché",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
       />
       <GameStack.Screen
         name="CobrarPremioScreen"
         component={CobrarPremioScreen}
-        options={{ headerTitle: "Cobrar Premio" }}
+        options={{
+          headerTitle: "Cobrar Premio",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <GameStack.Screen
+        name="NuevaRecargaNavigator"
+        component={NuevaRecargaNavigator}
+        // for nesting
+        options={{
+          headerShown: false,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
       />
     </GameStack.Navigator>
   );
@@ -121,12 +161,38 @@ function NuevaRecargaNavigator() {
       <NuevaRecargaStack.Screen
         name="NuevaRecargaScreen"
         component={NuevaRecargaScreen}
-        options={{ headerTitle: "Nueva Recarga" }}
+        options={{
+          headerTitle: "Nueva Recarga",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <NuevaRecargaStack.Screen
+        name="RecargasDisponiblesScreen"
+        component={RecargasDisponiblesScreen}
+        options={{
+          headerTitle: "Recargas disponibles",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
       />
       <NuevaRecargaStack.Screen
         name="PagoScreen"
         component={PagoScreen}
-        options={{ headerTitle: "Pago Online" }}
+        options={{
+          headerTitle: "Pago Online",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <NuevaRecargaStack.Screen
+        name="MultiplesContactosScreen"
+        component={MultiplesContactosScreen}
+        options={{
+          headerTitle: "Contactos",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
       />
     </NuevaRecargaStack.Navigator>
   );
@@ -140,7 +206,56 @@ function MoreNavigator() {
       <MoreStack.Screen
         name="MoreScreen"
         component={MoreScreen}
-        options={{ headerTitle: "Más" }}
+        options={{
+          headerTitle: "Más",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <MoreStack.Screen
+        name="AboutUsScreen"
+        component={AboutUsScreen}
+        options={{
+          headerTitle: "Sobre Nosotros",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <MoreStack.Screen
+        name="ModoUsoScreen"
+        component={ModoUsoScreen}
+        options={{
+          headerTitle: "Modo de Uso",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <MoreStack.Screen
+        name="PrivacidadScreen"
+        component={PrivacidadScreen}
+        options={{
+          headerTitle: "Política de Privacidad",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <MoreStack.Screen
+        name="TermUsoScreen"
+        component={TermUsoScreen}
+        options={{
+          headerTitle: "Términos de Uso",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <MoreStack.Screen
+        name="PremioScreen"
+        component={PremioScreen}
+        options={{
+          headerTitle: "Premios del Mes",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
       />
     </MoreStack.Navigator>
   );
