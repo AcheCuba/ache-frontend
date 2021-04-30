@@ -3,9 +3,11 @@ import { createContext, useReducer, useContext } from "react";
 
 // initial states
 import authInitialState from "./initialStates/authInitialState";
+import nuevaRecargaInitialState from "./initialStates/nuevaRecargaInitialState";
 
 // reducers
 import AuthReducer from "./Reducers/AuthReducer";
+import NuevaRecargaReducer from "./Reducers/NuevaRecargaReducer";
 
 const GlobalContext = createContext();
 
@@ -21,6 +23,7 @@ const GlobalProvider = ({ children }) => {
   } */
 
   const [authState, authDispatch] = useReducer(AuthReducer, authInitialState);
+  const [nuevaRecargaState, nuevaRecargaDispatch] = useReducer(NuevaRecargaReducer, nuevaRecargaInitialState)
 
   const value = {
     authState, 
@@ -30,18 +33,21 @@ const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider value={{
       authState, 
-      authDispatch
+      authDispatch,
+      nuevaRecargaState,
+      nuevaRecargaDispatch
     }}>
       {children}
     </GlobalContext.Provider>
   );
 };
 
-const useStore = () => useContext(StoreContext)[0];
-const useDispatch = () => useContext(StoreContext)[1];
+//const useStore = () => useContext(StoreContext)[0];
+//const useDispatch = () => useContext(StoreContext)[1];
 
 
-export { GlobalContext, useStore, useDispatch };
+//export { GlobalContext, useStore, useDispatch };
+export {GlobalContext}
 export default GlobalProvider;
 
 // crear contexto: createContext

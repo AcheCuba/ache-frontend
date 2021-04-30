@@ -1,3 +1,5 @@
 export const actionTypes = {
   SIGNUP: "signup - user",
+  TOOGLE_ADD_CONTACT_AVAIABLE: "TOOGLE_ADD_CONTACT_AVAIABLE",
+  SELECT_CONTACT: "SELECT_CONTACT",
 };

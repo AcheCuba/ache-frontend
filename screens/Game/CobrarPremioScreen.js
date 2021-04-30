@@ -23,8 +23,8 @@ const CobrarPremioScreen = ({ navigation }) => {
   };
 
   const copyToClipboard = () => {
-    Clipboard.setString("codigo de premio");
-    setCopiedText("codigo de premio");
+    Clipboard.setString("aj3d44Pk5Md*kd213");
+    setCopiedText("aj3d44Pk5Md*kd213");
     this.toast?.show("Código del premio copiado al portapapeles", 1000);
   };
 
@@ -38,7 +38,7 @@ const CobrarPremioScreen = ({ navigation }) => {
       >
         <View style={styles.codeModalContent}>
           <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-            aj3d94jk5jdjkdl213
+            aj3d44Pk5Md*kd213
           </Text>
           <View>
             <CustomButton
@@ -60,7 +60,7 @@ const CobrarPremioScreen = ({ navigation }) => {
               customStyle={customStyle}
               onPress={() =>
                 navigation.navigate("NuevaRecargaNavigator", {
-                  screen: "NuevaRecargaScreen",
+                  screen: "Nueva Recarga",
                 })
               }
             />

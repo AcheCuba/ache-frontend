@@ -1,5 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import * as React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import {
   ScrollView,
@@ -9,6 +8,9 @@ import {
 import CustomButton from "../../components/CustomButton";
 import { useForm, Controller } from "react-hook-form";
 import NuevoContactoInput from "./components/NuevoContactoInput";
+import { GlobalContext } from "../../context/GlobalProvider";
+import { toogleAddContactAvaiable } from "../../context/Actions/actions";
+import CodigoRecargaModal from "./components/CodigoRecargaModal";
 
 function makeid(length) {
   let result = "";
@@ -22,14 +24,26 @@ function makeid(length) {
 }
 
 const NuevaRecargaScreen = ({ navigation }) => {
+  const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
+  const { addContactAvaiable, contactSelected } = nuevaRecargaState;
+
   const [text, setText] = React.useState("");
   const [contacts, setContact] = React.useState([]);
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm();
+  //const [hasCode, setHasCode] = React.useState(false);
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+
+  const onPressBarcode = () => {
+    setModalVisible(true);
+  };
+
+  const onPressOkModal = () => {
+    setModalVisible(false);
+    //setHasCode(true);
+  };
+
+  //console.log("add_contact_avaiable", addContactAvaiable);
+  //console.log(contactSelected);
 
   const customStyle = {
     //paddingVertical: 10,
@@ -44,49 +58,38 @@ const NuevaRecargaScreen = ({ navigation }) => {
     borderRadius: 20,
   };
 
+  const onPressAddContact = () => {
+    nuevaRecargaDispatch(toogleAddContactAvaiable(false));
+    setContact([...contacts, { id: makeid(7), contact: "newContact" }]);
+  };
+
   return (
     <ScrollView>
+      <CodigoRecargaModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        onPressOkModal={onPressOkModal}
+      />
       <View style={styles.container}>
-        <View
-          style={{ flex: 1, width: "100%", marginTop: 40, marginVertical: 20 }}
-        >
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-around" }}
-          >
-            <TextInput
-              style={styles.input}
-              placeholder="+535 222-22-22"
-              onChangeText={(value) => setText(value)}
-              value={text}
-              placeholderTextColor="rgba(0,0,0,0.3)"
-              color="rgba(0,0,0,1)"
-              keyboardType="phone-pad"
-            />
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-around" }}
-            >
-              <TouchableOpacity
-                style={{ marginRight: 10 }}
-                onPress={() => {
-                  navigation.navigate("MultiplesContactosScreen");
-                }}
-              >
-                <Ionicons
-                  name="person-add"
-                  color="rgba(112, 28, 87, 1)"
-                  size={30}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Ionicons name="trophy" size={30} />
-              </TouchableOpacity>
-            </View>
-          </View>
+        <View style={{ flex: 1, width: "100%", marginVertical: 20 }}>
+          <NuevoContactoInput
+            contactId={makeid(7)}
+            navigation={navigation}
+            iconNameLeft="person-add"
+            iconNameRight="trophy"
+            contactSelected={contactSelected}
+          />
+
           {contacts.map((contact) => (
             <View key={contact.id}>
               <NuevoContactoInput
-                contactId={contact.id}
+                contactInputId={contact.id}
                 navigation={navigation}
+                iconNameLeft="person-add"
+                iconNameRight="barcode"
+                contactSelected={contactSelected}
+                onPressBarcode={onPressBarcode}
+                //hasCode={hasCode}
               />
             </View>
           ))}
@@ -102,13 +105,9 @@ const NuevaRecargaScreen = ({ navigation }) => {
             <View style={[styles.buttons, { width: "80%" }]}>
               <CustomButton
                 title="Añadir Contacto"
-                onPress={() =>
-                  setContact([
-                    ...contacts,
-                    { id: makeid(7), contact: "newContact" },
-                  ])
-                }
+                onPress={() => onPressAddContact()}
                 customStyle={customStyle}
+                disabled={!addContactAvaiable}
               />
             </View>
             <View style={[styles.buttons, { width: "50%" }]}>

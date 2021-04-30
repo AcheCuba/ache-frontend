@@ -1,4 +1,4 @@
-/* import React from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -7,12 +7,12 @@ import {
   Animated,
 } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
-import Svg, { Path, G, Text, TSpan } from "react-native-svg";
+import Svg from "react-native-svg";
 import * as d3Shape from "d3-shape";
 import color from "randomcolor";
 import { snap } from "@popmotion/popcorn";
 //const { PanGestureHandler, State } = GestureHandler;
-//const { Path, G, Text, TSpan } = Svg;
+const { Path, G, Text, TSpan } = Svg;
 const { width } = Dimensions.get("screen");
 
 const numberOfSegments = 12;
@@ -47,7 +47,7 @@ const makeWheel = () => {
   });
 };
 
-export default class GameScreen extends React.Component {
+class Ruleta extends React.Component {
   _wheelPaths = makeWheel();
   _angle = new Animated.Value(0);
   angle = 0;
@@ -110,6 +110,19 @@ export default class GameScreen extends React.Component {
       });
     }
   };
+  render() {
+    return (
+      <PanGestureHandler
+        onHandlerStateChange={this._onPan}
+        enabled={this.state.enabled}
+      >
+        <View style={styles.container}>
+          {this._renderSvgWheel()}
+          {this.state.finished && this.state.enabled && this._renderWinner()}
+        </View>
+      </PanGestureHandler>
+    );
+  }
 
   _renderKnob = () => {
     const knobSize = 30;
@@ -232,20 +245,9 @@ export default class GameScreen extends React.Component {
       </View>
     );
   };
-  render() {
-    return (
-      <PanGestureHandler
-        onHandlerStateChange={this._onPan}
-        enabled={this.state.enabled}
-      >
-        <View style={styles.container}>
-          {this._renderSvgWheel()}
-          {this.state.finished && this.state.enabled && this._renderWinner()}
-        </View>
-      </PanGestureHandler>
-    );
-  }
 }
+
+export default Ruleta;
 
 const styles = StyleSheet.create({
   container: {
@@ -259,148 +261,5 @@ const styles = StyleSheet.create({
     fontFamily: "Menlo",
     position: "absolute",
     bottom: 10,
-  },
-});
- */
-import * as React from "react";
-import {
-  Button,
-  StyleSheet,
-  Text as RNText,
-  View,
-  Dimensions,
-} from "react-native";
-import { PanGestureHandler, State } from "react-native-gesture-handler";
-import * as d3Shape from "d3-shape";
-import color from "randomcolor";
-import { snap } from "@popmotion/popcorn";
-import Svg, { Path, G, Text, TSpan } from "react-native-svg";
-
-import CustomButtom from "../../components/CustomButton";
-import { Ionicons } from "@expo/vector-icons";
-
-const { width } = Dimensions.get("screen");
-
-const numberOfSegments = 8;
-const wheelSize = width * 1.2;
-
-const makeWheel = () => {
-  const data = Array.from({ length: numberOfSegments }).fill(1);
-  const arcs = d3Shape.pie()(data);
-  const colors = color({
-    luminosity: "datk",
-    count: numberOfSegments,
-  });
-
-  return arcs.map((arc, index) => {
-    const instance = d3Shape
-      .arc()
-      .padAngle(0.01)
-      .outerRadius(width / 2)
-      .innerRadius(20);
-
-    return {
-      path: instance(arc),
-      color: colors[index],
-      value: Math.round(Math.random() * 10 + 1) * 200, //[200, 2200]
-      centroid: instance.centroid(arc),
-    };
-  });
-};
-
-const _renderSvgWheel = () => {
-  return (
-    <View>
-      <Svg
-        width={wheelSize}
-        height={wheelSize}
-        viewBox={`0 0 ${width} ${width}`}
-      >
-        <G y={width / 2}>
-          {_wheelPaths.map((arc, i) => {
-            return (
-              <G key={i}>
-                <Path d={arc.path} fill={arc.color} />
-              </G>
-            );
-          })}
-        </G>
-      </Svg>
-    </View>
-  );
-};
-
-const _wheelPaths = makeWheel();
-
-const GameScreen = ({ navigation }) => {
-  const customStyleRedButton = {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    backgroundColor: "#8e0000",
-  };
-
-  const customStyleBlackButton = {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    backgroundColor: "black",
-  };
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.buttonContainer} key={1}>
-        <CustomButtom
-          //title="C"
-          onPress={() => navigation.navigate("CobrarPremioScreen")}
-          customStyle={customStyleRedButton}
-        />
-      </View>
-      <View
-        key={2}
-        style={{
-          width: "100%",
-          height: "60%",
-
-          justifyContent: "center",
-        }}
-      >
-        {_renderSvgWheel()}
-      </View>
-      <View key={3} style={styles.buttonContainer}>
-        <CustomButtom
-          //title="N"
-          customStyle={customStyleBlackButton}
-          onPress={() =>
-            navigation.navigate("NuevaRecargaNavigator", {
-              screen: "Nueva Recarga",
-            })
-          }
-        />
-      </View>
-    </View>
-  );
-};
-
-export default GameScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    width: "80%",
   },
 });

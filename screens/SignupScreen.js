@@ -110,7 +110,11 @@ const SignupScreen = () => {
       {errors.phone && <Text>{errors.phone.message}</Text>}
 
       <View style={styles.submitButton}>
-        <CustomButton title="Enviar" onPress={handleSubmit(onSubmit)} />
+        <CustomButton
+          title="Enviar"
+          customStyle={{ borderRadius: 20 }}
+          onPress={handleSubmit(onSubmit)}
+        />
       </View>
 
       {/*  <View style={{ marginBottom: 10 }}>
@@ -149,6 +153,6 @@ const styles = StyleSheet.create({
   submitButton: {
     width: "90%",
     height: 50,
-    marginTop: 20,
+    marginTop: 30,
   },
 });

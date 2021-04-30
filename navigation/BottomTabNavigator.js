@@ -31,39 +31,67 @@ import { BottomTabParamList, TabOneParamList, TabTwoParamList } from "../types";
 import MultiplesContactosScreen from "../screens/NuevaRecarga/MultiplesContactosScreen";
 import { forHorizontal } from "./forHorizontal";
 
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 const BottomTab = createBottomTabNavigator();
 
-export default function BottomTabNavigator() {
+const isTabBarVisible = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+  if (routeName === "Juego") {
+    return false;
+  }
+
+  return true;
+};
+
+export default function BottomTabNavigator({ navigation, route }) {
   //const colorScheme = useColorScheme();
   const [spa, setSpanish] = useState(true);
   //Ej: activeTintColor: Colors[colorScheme].tint => dice a la app qué esquema de coloresusar según la conf del usuario
-
+  /*   React.useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route);
+    if (routeName === "Juego") {
+      navigation.setOptions({ tabBarVisible: false });
+    } else {
+      // navigation.setOptions({ tabBarVisible: true });
+    }
+  }, [navigation, route]); */
   return (
     <BottomTab.Navigator
       initialRouteName="Juego"
       tabBarOptions={{
         activeTintColor: Colors.light.tint,
         keyboardHidesTabBar: true,
+        labelStyle: { fontSize: 13, marginBottom: -5 },
+        tabStyle: { height: 40, paddingTop: 3 },
       }}
+      // screenOptions={({ route }) => ({ tabBarVisible: isTabBarVisible(route) })}
     >
       <BottomTab.Screen
         name="Juego"
         component={GameNavigator}
         options={{
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="ios-code" color={color} />
+            <TabBarIcon name="game-controller" color={color} />
           ),
+          tabBarVisible: ((route) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? "Juego"; // trampilla
+            console.log("route name", routeName);
+            if (routeName === "Juego") {
+              return false;
+            }
+
+            return true;
+          })(route),
         }}
       />
       <BottomTab.Screen
         name="Nueva Recarga"
         component={NuevaRecargaNavigator}
         options={{
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="ios-code" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="card" color={color} />,
         }}
       />
       <BottomTab.Screen
@@ -71,7 +99,7 @@ export default function BottomTabNavigator() {
         component={MoreNavigator}
         options={{
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="ios-code" color={color} />
+            <TabBarIcon name="information-circle" color={color} />
           ),
         }}
       />
@@ -90,7 +118,7 @@ export default function BottomTabNavigator() {
         })}
         options={{
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="ios-code" color={spa ? "#005005" : "#8e0000"} />
+            <TabBarIcon name="flag" color={spa ? "#005005" : "#8e0000"} />
           ),
         }}
       />
@@ -118,11 +146,32 @@ function TabBarIcon(props) {
 
 const GameStack = createStackNavigator();
 
-function GameNavigator() {
+GameStack.navigationOptions = ({ navigation }) => {
+  /*  let tabBarVisible = true;
+  for (let i = 0; i < navigation.state.routes.length; i++) {
+    if (navigation.state.routes[i].routeName == "Juego") {
+      tabBarVisible = false;
+    }
+  }
+  return {
+    tabBarVisible,
+  }; */
+};
+
+function GameNavigator({ navigation, route }) {
+  /*   React.useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route);
+    if (routeName == "Juego") {
+      console.log(routeName);
+      navigation.setOptions({ tabBarVisible: false });
+    } else {
+      navigation.setOptions({ tabBarVisible: true });
+    }
+  }, [navigation, route]); */
   return (
     <GameStack.Navigator>
       <GameStack.Screen
-        name="GameScreen"
+        name="Juego"
         component={GameScreen}
         options={{
           headerTitle: "Aché",
@@ -155,11 +204,11 @@ function GameNavigator() {
 
 const NuevaRecargaStack = createStackNavigator();
 
-function NuevaRecargaNavigator() {
+function NuevaRecargaNavigator({ navigation, route }) {
   return (
     <NuevaRecargaStack.Navigator>
       <NuevaRecargaStack.Screen
-        name="NuevaRecargaScreen"
+        name="Nueva Recarga"
         component={NuevaRecargaScreen}
         options={{
           headerTitle: "Nueva Recarga",
@@ -200,7 +249,7 @@ function NuevaRecargaNavigator() {
 
 const MoreStack = createStackNavigator();
 
-function MoreNavigator() {
+function MoreNavigator({ navigation, route }) {
   return (
     <MoreStack.Navigator>
       <MoreStack.Screen

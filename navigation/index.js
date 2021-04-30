@@ -2,6 +2,7 @@ import {
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
+  getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as React from "react";
@@ -36,12 +37,12 @@ const Stack = createStackNavigator();
 
 //const onBoardingConsumed = true;
 
-function RootNavigator() {
+function RootNavigator({ navigation, route }) {
   const { authState } = React.useContext(GlobalContext);
   const { registered } = authState;
 
-  console.log("authState", authState);
-  console.log("registered", registered);
+  /* console.log("authState", authState);
+  console.log("registered", registered); */
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

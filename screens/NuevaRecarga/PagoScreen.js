@@ -5,7 +5,7 @@ const PagoScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Paypal | Stripe</Text>
-      <Button title="Pagar" onPress={() => navigation.navigate("GameScreen")} />
+      <Button title="Pagar" onPress={() => navigation.navigate("Juego")} />
     </View>
   );
 };

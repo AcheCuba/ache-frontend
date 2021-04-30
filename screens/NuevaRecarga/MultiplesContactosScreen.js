@@ -1,23 +1,55 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import * as Contacts from "expo-contacts";
 import { StyleSheet, View, Text, FlatList, Image } from "react-native";
 import Contact from "./components/Contact";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TextInput } from "react-native-gesture-handler";
+import { GlobalContext } from "../../context/GlobalProvider";
+import { selectContact } from "../../context/Actions/actions";
 
-const MultiplesContactosScreen = () => {
+const MultiplesContactosScreen = ({ navigation, route }) => {
+  const { contactInputId } = route.params;
+
   const [contacts, setContacts] = useState([]);
+  const [contactsFiltered, setContactsFiltered] = useState([]);
   const [text, setText] = useState("");
+
+  const { nuevaRecargaDispatch } = useContext(GlobalContext);
+
+  const onPressContact = (id, contactName, contactNumber) => {
+    nuevaRecargaDispatch(
+      selectContact({ id, contactName, contactNumber, contactInputId })
+    );
+    navigation.navigate("Nueva Recarga");
+  };
+
+  const onChangeText = (value) => {
+    setText(value);
+    const _contactsFiltered = contacts.filter((contact) => {
+      return (
+        contact.firstName.toLowerCase().includes(value.toLowerCase()) ||
+        contact.phoneNumber.toLowerCase().includes(value.toLowerCase())
+      );
+    });
+
+    setContactsFiltered(_contactsFiltered);
+  };
 
   const renderItemContact = useCallback((item) => {
     if (item !== undefined) {
       return (
-        <Contact contactName={item.firstName} contactNumber={item.phonNumber} />
+        <Contact
+          contactName={item.firstName}
+          contactNumber={item.phoneNumber}
+          id={item.id}
+          navigation={navigation}
+          onPressContact={onPressContact}
+        />
       );
     }
   }, []);
 
-  const getItemLayout = useCallback(
+  /* const getItemLayout = useCallback(
     (data, index) => ({
       length: 100,
       offset: 100 * index,
@@ -26,7 +58,7 @@ const MultiplesContactosScreen = () => {
 
     []
   );
-
+ */
   useEffect(() => {
     (async () => {
       const { status } = await Contacts.requestPermissionsAsync();
@@ -36,18 +68,20 @@ const MultiplesContactosScreen = () => {
         });
 
         if (data.length > 0) {
-          const _data = data.map((contact) => {
-            if (contact.firstName && contact.phoneNumbers) {
-              return {
-                id: contact.id,
-                firstName: contact.firstName,
-                phonNumber: contact.phoneNumbers[0].number,
-              };
-            }
+          let _data = data.filter((cont) => {
+            return cont.firstName.length > 0 && cont.phoneNumbers?.length > 0;
+          });
+
+          _data = _data.map((contact) => {
+            return {
+              id: contact.id,
+              firstName: contact.firstName,
+              phoneNumber: contact.phoneNumbers[0].number,
+            };
           });
 
           setContacts(_data);
-          console.log(_data);
+          // console.log(_data);
         }
       }
     })();
@@ -57,8 +91,8 @@ const MultiplesContactosScreen = () => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Buscar por nombre"
-        onChangeText={(value) => setText(value)}
+        placeholder="Buscar por nombre o número de teléfono"
+        onChangeText={(value) => onChangeText(value)}
         value={text}
         placeholderTextColor="rgba(0,0,0,0.3)"
         color="rgba(0,0,0,1)"
@@ -66,7 +100,7 @@ const MultiplesContactosScreen = () => {
       />
       <FlatList
         keyExtractor={(item) => item?.id}
-        data={contacts}
+        data={contactsFiltered.length === 0 ? contacts : contactsFiltered}
         renderItem={({ item }) => renderItemContact(item)}
         // getItemLayout={getItemLayout}
       />

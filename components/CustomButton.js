@@ -1,14 +1,18 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
-const CustomButton = ({ onPress, title, customStyle }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={[styles.CustomButtonContainer, customStyle]}
-  >
-    <Text style={styles.CustomButtonText}>{title}</Text>
-  </TouchableOpacity>
-);
+const CustomButton = ({ onPress, title, customStyle, disabled }) => {
+  // console.log("disabled", disabled);
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      style={[styles.CustomButtonContainer, customStyle]}
+    >
+      <Text style={styles.CustomButtonText}>{title}</Text>
+    </TouchableOpacity>
+  );
+};
 
 export default CustomButton;
 
