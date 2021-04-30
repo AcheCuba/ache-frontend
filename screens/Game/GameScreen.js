@@ -356,7 +356,11 @@ const GameScreen = ({ navigation }) => {
       <View style={styles.buttonContainer} key={1}>
         <CustomButtom
           //title="C"
-          onPress={() => navigation.navigate("CobrarPremioScreen")}
+          onPress={() =>
+            navigation.jumpTo("Nueva Recarga", {
+              screen: "CobrarPremioScreen",
+            })
+          }
           customStyle={customStyleRedButton}
         />
       </View>
@@ -375,11 +379,14 @@ const GameScreen = ({ navigation }) => {
         <CustomButtom
           //title="N"
           customStyle={customStyleBlackButton}
-          onPress={() =>
+          /* onPress={() =>
             navigation.navigate("NuevaRecargaNavigator", {
               screen: "Nueva Recarga",
             })
-          }
+          } */
+          onPress={() => {
+            navigation.jumpTo("Nueva Recarga", { screen: "Nueva Recarga" });
+          }}
         />
       </View>
     </View>

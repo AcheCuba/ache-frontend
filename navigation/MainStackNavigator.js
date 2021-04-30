@@ -35,32 +35,40 @@ import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
-const BottomTab = createBottomTabNavigator();
+const MainStack = createStackNavigator();
+export default function MainStackNavigator() {
+  return (
+    <MainStack.Navigator>
+      <MainStack.Screen
+        name="Juego"
+        component={GameNavigator}
+        options={{
+          headerTitle: "Aché",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+          headerShown: false,
+        }}
+      />
+      <MainStack.Screen
+        name="Nueva Recarga"
+        component={BottomTabNavigator}
+        options={{
+          // headerTitle: "Cobrar Premio",
+          gestureDirection: "horizontal",
+          headerShown: false,
+          // cardStyleInterpolator: forHorizontal,
+        }}
+      />
+    </MainStack.Navigator>
+  );
+}
 
-const isTabBarVisible = (route) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-  if (routeName === "Juego") {
-    return false;
-  }
-
-  return true;
-};
-
-export default function BottomTabNavigator({ navigation, route }) {
-  //const colorScheme = useColorScheme();
+function BottomTabNavigator({ navigation, route }) {
   const [spa, setSpanish] = useState(true);
-  //Ej: activeTintColor: Colors[colorScheme].tint => dice a la app qué esquema de coloresusar según la conf del usuario
-  /*   React.useLayoutEffect(() => {
-    const routeName = getFocusedRouteNameFromRoute(route);
-    if (routeName === "Juego") {
-      navigation.setOptions({ tabBarVisible: false });
-    } else {
-      // navigation.setOptions({ tabBarVisible: true });
-    }
-  }, [navigation, route]); */
+
   return (
     <BottomTab.Navigator
-      initialRouteName="Juego"
+      initialRouteName="Nueva Recarga"
       tabBarOptions={{
         activeTintColor: Colors.light.tint,
         keyboardHidesTabBar: true,
@@ -78,7 +86,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           ),
           tabBarVisible: ((route) => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? "Juego"; // trampilla
-            //console.log("route name", routeName);
+            console.log("route name", routeName);
             if (routeName === "Juego") {
               return false;
             }
@@ -179,7 +187,15 @@ function GameNavigator({ navigation, route }) {
           cardStyleInterpolator: forHorizontal,
         }}
       />
-
+      <GameStack.Screen
+        name="CobrarPremioScreen"
+        component={CobrarPremioScreen}
+        options={{
+          headerTitle: "Cobrar Premio",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
       <GameStack.Screen
         name="NuevaRecargaNavigator"
         component={NuevaRecargaNavigator}
@@ -204,15 +220,6 @@ function NuevaRecargaNavigator({ navigation, route }) {
         component={NuevaRecargaScreen}
         options={{
           headerTitle: "Nueva Recarga",
-          gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal,
-        }}
-      />
-      <NuevaRecargaStack.Screen
-        name="CobrarPremioScreen"
-        component={CobrarPremioScreen}
-        options={{
-          headerTitle: "Cobrar Premio",
           gestureDirection: "horizontal",
           cardStyleInterpolator: forHorizontal,
         }}

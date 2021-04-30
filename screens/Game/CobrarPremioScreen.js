@@ -59,7 +59,7 @@ const CobrarPremioScreen = ({ navigation }) => {
               title="Ir a Cobrar premio"
               customStyle={customStyle}
               onPress={() =>
-                navigation.navigate("NuevaRecargaNavigator", {
+                navigation.jumpTo("Nueva Recarga", {
                   screen: "Nueva Recarga",
                 })
               }
