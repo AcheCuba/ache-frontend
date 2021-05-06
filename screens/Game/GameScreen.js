@@ -278,6 +278,7 @@ import Svg, { Path, G, Text, TSpan } from "react-native-svg";
 
 import CustomButtom from "../../components/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
+import CobrarPremioModal from "./components/CobrarPremioModal";
 
 const { width } = Dimensions.get("screen");
 
@@ -333,6 +334,8 @@ const _renderSvgWheel = () => {
 const _wheelPaths = makeWheel();
 
 const GameScreen = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = React.useState(false);
+
   const customStyleRedButton = {
     width: 70,
     height: 70,
@@ -352,51 +355,69 @@ const GameScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.buttonContainer} key={1}>
-        <CustomButtom
-          //title="C"
-          onPress={() =>
+    <>
+      {modalVisible ? (
+        <View style={styles.containerCobrar}>
+          <CobrarPremioModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            navigation={navigation}
+          />
+        </View>
+      ) : (
+        <View style={styles.containerGame}>
+          <View style={styles.buttonContainer} key={1}>
+            <CustomButtom
+              //title="C"
+              /*  onPress={() =>
             navigation.jumpTo("Nueva Recarga", {
               screen: "CobrarPremioScreen",
             })
-          }
-          customStyle={customStyleRedButton}
-        />
-      </View>
-      <View
-        key={2}
-        style={{
-          width: "100%",
-          height: "60%",
+          } */
+              customStyle={customStyleRedButton}
+              onPress={() => setModalVisible(true)}
+            />
+          </View>
+          <View
+            key={2}
+            style={{
+              width: "100%",
+              height: "60%",
 
-          justifyContent: "center",
-        }}
-      >
-        {_renderSvgWheel()}
-      </View>
-      <View key={3} style={styles.buttonContainer}>
-        <CustomButtom
-          //title="N"
-          customStyle={customStyleBlackButton}
-          /* onPress={() =>
+              justifyContent: "center",
+            }}
+          >
+            {_renderSvgWheel()}
+          </View>
+          <View key={3} style={styles.buttonContainer}>
+            <CustomButtom
+              //title="N"
+              customStyle={customStyleBlackButton}
+              /* onPress={() =>
             navigation.navigate("NuevaRecargaNavigator", {
               screen: "Nueva Recarga",
             })
           } */
-          onPress={() => {
-            navigation.jumpTo("Nueva Recarga", { screen: "Nueva Recarga" });
-          }}
-        />
-      </View>
-    </View>
+              onPress={() => {
+                navigation.jumpTo("Nueva Recarga", { screen: "Nueva Recarga" });
+              }}
+            />
+          </View>
+        </View>
+      )}
+    </>
   );
 };
 
 export default GameScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  containerGame: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  containerCobrar: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",

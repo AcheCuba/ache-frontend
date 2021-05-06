@@ -2,9 +2,9 @@ import React, { PureComponent } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { PaymentsStripe as Stripe } from "expo-payments-stripe";
 import axios from "axios";
-import CardButton from "./components/CardButton";
+import CardButton from "./CardButton";
 
-export default class PagoScreen extends PureComponent {
+export default class CardFormScreen extends PureComponent {
   static title = "Card Form";
 
   state = {
@@ -22,7 +22,7 @@ export default class PagoScreen extends PureComponent {
   }
 
   handleCardPayPress = async () => {
-    console.log("handleCardPayPress function");
+    console.log("button pressed");
     try {
       this.setState({ loading: true, token: null });
       const options = {
@@ -49,22 +49,10 @@ export default class PagoScreen extends PureComponent {
 
   makePayment = async () => {
     this.setState({ loading: true });
-
-    fetch(
-      `http://192.168.137.1:4000/api/payments/mobile/create?total=AMOUNT_TO_PAY&token=${this.state.token.tokenId}`,
-      { method: "POST" }
-    )
-      .then((response) => {
-        console.log("done");
-      })
-      .then((err) => {
-        console.log("err", err);
-      });
-
-    /*   axios({
+    console.log("algo");
+    axios({
       method: "POST",
-      url: `http://192.168.137.1:4000/api/payments/mobile/create?total=AMOUNT_TO_PAY&token=${this.state.token.tokenId}}`,
-      //url: `http://localhost:4000/api/payments/mobile/create?total=AMOUNT_TO_PAY&token=${this.state.token.tokenId}}`,
+      url: `http://192.168.43.44:4000/api/payments/mobile/create?total=AMOUNT_TO_PAY&token=${this.state.token.tokenId}}`,
     })
       .then((response) => {
         const { onSuccess } = this.props;
@@ -76,11 +64,12 @@ export default class PagoScreen extends PureComponent {
       .catch((error) => {
         this.setState({ loading: false, token: null });
         console.log(error);
-      });*/
+      });
   };
 
   render() {
     const { loading, token } = this.state;
+    console.log("asdasd");
     return (
       <View style={styles.container}>
         <CardButton
