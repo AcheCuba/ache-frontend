@@ -102,7 +102,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         keyExtractor={(item) => item?.id}
         data={contactsFiltered.length === 0 ? contacts : contactsFiltered}
         renderItem={({ item }) => renderItemContact(item)}
-        // getItemLayout={getItemLayout}
+        //getItemLayout={getItemLayout}
       />
     </View>
   );

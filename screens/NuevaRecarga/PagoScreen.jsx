@@ -6,6 +6,7 @@ import CardButton from "./components/CardButton";
 
 export default class PagoScreen extends PureComponent {
   static title = "Card Form";
+  //navigation = this.props.navigation
 
   state = {
     loading: false,
@@ -51,11 +52,14 @@ export default class PagoScreen extends PureComponent {
     this.setState({ loading: true });
 
     fetch(
-      `http://192.168.137.1:4000/api/payments/mobile/create?total=AMOUNT_TO_PAY&token=${this.state.token.tokenId}`,
+      `http://10.163.106.164:4000/api/payments/mobile/create?total=${999}&token=${
+        this.state.token.tokenId
+      }`,
       { method: "POST" }
     )
       .then((response) => {
         console.log("done");
+        this.props.navigation.navigate("Juego");
       })
       .then((err) => {
         console.log("err", err);
@@ -80,6 +84,7 @@ export default class PagoScreen extends PureComponent {
   };
 
   render() {
+    console.log("pago");
     const { loading, token } = this.state;
     return (
       <View style={styles.container}>
@@ -87,7 +92,7 @@ export default class PagoScreen extends PureComponent {
           text="Enter you card and pay"
           loading={loading}
           onPress={this.handleCardPayPress}
-          //   {...testID('cardFormButton')}
+          //{...testID("cardFormButton")}
         />
         <View style={styles.token}>
           {token && (

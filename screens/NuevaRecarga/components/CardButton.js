@@ -40,7 +40,7 @@ export default class CardButton extends PureComponent {
       style,
       ...rest
     } = this.props;
-
+    console.log("loading", loading);
     return (
       <TouchableHighlight
         {...rest}

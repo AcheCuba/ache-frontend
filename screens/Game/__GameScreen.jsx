@@ -368,12 +368,6 @@ const GameScreen = ({ navigation }) => {
         <View style={styles.containerGame}>
           <View style={styles.buttonContainer} key={1}>
             <CustomButtom
-              //title="C"
-              /*  onPress={() =>
-            navigation.jumpTo("Nueva Recarga", {
-              screen: "CobrarPremioScreen",
-            })
-          } */
               customStyle={customStyleRedButton}
               onPress={() => setModalVisible(true)}
             />
@@ -391,18 +385,18 @@ const GameScreen = ({ navigation }) => {
           </View>
           <View key={3} style={styles.buttonContainer}>
             <CustomButtom
-              //title="N"
               customStyle={customStyleBlackButton}
-              /* onPress={() =>
-            navigation.navigate("NuevaRecargaNavigator", {
-              screen: "Nueva Recarga",
-            })
-          } */
               onPress={() => {
                 navigation.jumpTo("Nueva Recarga", { screen: "Nueva Recarga" });
               }}
             />
           </View>
+          {/*  <CustomButtom
+            customStyle={customStyleBlackButton}
+            onPress={() => {
+              navigation.navigate("TestHome");
+            }}
+          />*/}
         </View>
       )}
     </>
