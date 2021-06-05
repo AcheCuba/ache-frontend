@@ -1,15 +1,36 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import * as Contacts from "expo-contacts";
-import { StyleSheet, View, Text, FlatList, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  Image,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import Contact from "./components/Contact";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TextInput } from "react-native-gesture-handler";
+
 import { GlobalContext } from "../../context/GlobalProvider";
-import { selectContact } from "../../context/Actions/actions";
+import {
+  selectContact,
+  deleteContact,
+  toogleAddContactAvaiable,
+} from "../../context/Actions/actions";
+
+import { Ionicons } from "@expo/vector-icons";
+import { NeuButton, NeuInput, NeuSpinner } from "react-native-neu-element";
+import { ToastAndroid } from "react-native";
+
+const { width, height } = Dimensions.get("screen");
+const marginGlobal = width / 10;
 
 const MultiplesContactosScreen = ({ navigation, route }) => {
-  const { contactInputId } = route.params;
+  const { fieldInputId } = route.params;
+  // console.log(fieldInputId);
 
+  const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [contactsFiltered, setContactsFiltered] = useState([]);
   const [text, setText] = useState("");
@@ -17,10 +38,35 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
   const { nuevaRecargaDispatch } = useContext(GlobalContext);
 
   const onPressContact = (id, contactName, contactNumber) => {
+    nuevaRecargaDispatch(deleteContact(fieldInputId));
+
     nuevaRecargaDispatch(
-      selectContact({ id, contactName, contactNumber, contactInputId })
+      selectContact({ id, contactName, contactNumber, fieldInputId })
     );
+    nuevaRecargaDispatch(toogleAddContactAvaiable(true));
     navigation.navigate("Nueva Recarga");
+  };
+
+  const onPressCheckmark = () => {
+    const regexp =
+      /\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/;
+    if (regexp.test(text)) {
+      nuevaRecargaDispatch(
+        selectContact({
+          id: undefined,
+          contactName: undefined,
+          contactNumber: text,
+          fieldInputId: fieldInputId,
+        })
+      );
+      nuevaRecargaDispatch(toogleAddContactAvaiable(true));
+      navigation.navigate("Nueva Recarga");
+    } else {
+      ToastAndroid.show(
+        "Introduzca un número de teléfono válidado (+535)",
+        ToastAndroid.SHORT
+      );
+    }
   };
 
   const onChangeText = (value) => {
@@ -35,21 +81,27 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     setContactsFiltered(_contactsFiltered);
   };
 
-  const renderItemContact = useCallback((item) => {
-    if (item !== undefined) {
-      return (
-        <Contact
-          contactName={item.firstName}
-          contactNumber={item.phoneNumber}
-          id={item.id}
-          navigation={navigation}
-          onPressContact={onPressContact}
-        />
-      );
-    }
-  }, []);
+  const renderItemContact = ({ item }) => (
+    <Contact
+      contactName={item.firstName}
+      contactNumber={item.phoneNumber}
+      id={item.id}
+      navigation={navigation}
+      onPressContact={onPressContact}
+    />
+  );
 
-  /* const getItemLayout = useCallback(
+  const renderEmptyList = () => {
+    return (
+      <View style={{ flex: 1, alignItems: "center", marginTop: 30 }}>
+        <Text style={{ color: "gray", fontSize: 20, fontWeight: "bold" }}>
+          No se encontraron coincidencias{" "}
+        </Text>
+      </View>
+    );
+  };
+
+  const getItemLayout = useCallback(
     (data, index) => ({
       length: 100,
       offset: 100 * index,
@@ -58,9 +110,10 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 
     []
   );
- */
+
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
         const { data } = await Contacts.getContactsAsync({
@@ -81,7 +134,10 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           });
 
           setContacts(_data);
-          // console.log(_data);
+
+          setLoading(false);
+          //console.log(contacts[10]);
+          // console.log(contacts.length);
         }
       }
     })();
@@ -89,21 +145,86 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Buscar por nombre o número de teléfono"
-        onChangeText={(value) => onChangeText(value)}
-        value={text}
-        placeholderTextColor="rgba(0,0,0,0.3)"
-        color="rgba(0,0,0,1)"
-        //keyboardType="phone-pad"
-      />
-      <FlatList
-        keyExtractor={(item) => item?.id}
-        data={contactsFiltered.length === 0 ? contacts : contactsFiltered}
-        renderItem={({ item }) => renderItemContact(item)}
-        //getItemLayout={getItemLayout}
-      />
+      <View
+        style={{
+          paddingTop: 50,
+          width: width,
+          height: height / 6,
+          backgroundColor: "rgba(112, 28, 87, 1)",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <NeuButton
+          color="#701c57"
+          width={width / 7}
+          height={width / 7}
+          borderRadius={width / 14}
+          onPress={() => {
+            navigation.goBack();
+          }}
+          style={{ marginLeft: marginGlobal, marginTop: 10 }}
+        >
+          <Ionicons name="chevron-back" size={30} color="#01f9d2" />
+        </NeuButton>
+        <NeuButton
+          color="#701c57"
+          width={width / 7}
+          height={width / 7}
+          borderRadius={width / 14}
+          onPress={() => {
+            onPressCheckmark();
+          }}
+          style={{ marginRight: marginGlobal, marginTop: 10 }}
+        >
+          <Ionicons name="checkmark" size={30} color="#01f9d2" />
+        </NeuButton>
+      </View>
+      <View style={{ alignItems: "center", marginTop: 10, marginBottom: 10 }}>
+        <NeuInput
+          textStyle={{ color: "#fff" }}
+          placeholder="Buscar por nombre o  teléfono"
+          onChangeText={(value) => onChangeText(value)}
+          value={text}
+          placeholderTextColor="gray"
+          color="#701c57"
+          width={width / 1.3}
+          height={40}
+          borderRadius={20}
+          //keyboardType="phone-pad"
+        />
+      </View>
+      {loading ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <NeuSpinner
+            color="#701c57"
+            indicatorColor="#701c57"
+            width={50}
+            height={50}
+            size={50}
+          />
+        </View>
+      ) : (
+        <FlatList
+          keyExtractor={(item, index) => item.id}
+          data={
+            contactsFiltered.length === 0 && text === ""
+              ? contacts
+              : contactsFiltered
+          }
+          renderItem={renderItemContact}
+          ListEmptyComponent={renderEmptyList}
+          getItemLayout={getItemLayout}
+          //performance
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={8}
+          initialNumToRender={8}
+          updateCellsBatchingPeriod={1}
+          windowSize={10}
+        />
+      )}
     </View>
   );
 };
@@ -111,7 +232,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#701c57",
     //alignItems: "center",
     //justifyContent: "center",
   },

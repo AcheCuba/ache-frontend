@@ -21,3 +21,11 @@ export const selectContact = (contact) => {
     payload: contact,
   };
 };
+
+export const deleteContact = (contactId) => {
+  //console.log(contact);
+  return {
+    type: "DELETE_CONTACT",
+    payload: contactId,
+  };
+};

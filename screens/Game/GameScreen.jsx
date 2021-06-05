@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import CustomButtom from "../../components/CustomButton";
 import CobrarPremioModal from "./components/CobrarPremioModal";
+import { NeuButton, NeuView } from "react-native-neu-element";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -21,7 +22,7 @@ const GameScreen = ({ navigation }) => {
 	const [stopAnimation, setStopAnumation] = React.useState(false);
 
 	const wheelValue = new Animated.Value(0);
-	const centerValue = new Animated.Value(0);
+	//const centerValue = new Animated.Value(0);
 
 	const customStyleRedButton = {
 		width: width / 3.5,
@@ -41,7 +42,7 @@ const GameScreen = ({ navigation }) => {
 		borderRadius: width / 7,
 		paddingVertical: 0,
 		paddingHorizontal: 0,
-		//backgroundColor: "black",
+		backgroundColor: "#311338",
 		marginTop: "50%",
 	};
 
@@ -94,13 +95,23 @@ const GameScreen = ({ navigation }) => {
 						height: "100%",
 						flex: 1,
 					}}
+					transition={false}
 				>
 					<View style={styles.containerGame}>
 						<View style={styles.buttonContainer} key={1}>
-							<CustomButtom
-								customStyle={customStyleRedButton}
+							<NeuButton
+								color="#fe8457"
+								width={width / 3.5}
+								height={width / 3.5}
+								borderRadius={width / 7}
+								style={{ marginBottom: "90%" }}
 								onPress={() => setModalVisible(true)}
 							/>
+
+							{/*<CustomButtom
+								customStyle={customStyleRedButton}
+								onPress={() => setModalVisible(true)}
+							/>*/}
 						</View>
 						<View
 							key={2}
@@ -118,11 +129,12 @@ const GameScreen = ({ navigation }) => {
 									justifyContent: "center",
 									alignItems: "center",
 								}}
+								transition={false}
 							>
 								<View
 									style={{
 										position: "absolute",
-										right: 0,
+										right: -6,
 										elevation: 2,
 									}}
 								>
@@ -140,6 +152,7 @@ const GameScreen = ({ navigation }) => {
 										justifyContent: "center",
 										alignItems: "center",
 									}}
+									transition={false}
 								>
 									<TouchableWithoutFeedback
 										onPress={() => onPressWheel()}
@@ -157,6 +170,7 @@ const GameScreen = ({ navigation }) => {
 													justifyContent: "center",
 													alignItems: "center",
 												}}
+												transition={false}
 											>
 												<View
 													style={{
@@ -170,6 +184,7 @@ const GameScreen = ({ navigation }) => {
 															width: width / 5,
 															height: width / 5,
 														}}
+														transition={false}
 													/>
 												</View>
 											</ImageBackground>
@@ -187,8 +202,20 @@ const GameScreen = ({ navigation }) => {
 							</ImageBackground>
 						</View>
 						<View key={3} style={styles.buttonContainer}>
-							<CustomButtom
+							{/*<CustomButtom
 								customStyle={customStyleBlackButton}
+								onPress={() => {
+									navigation.jumpTo("Nueva Recarga", {
+										screen: "Nueva Recarga",
+									});
+								}}
+							/>*/}
+							<NeuButton
+								color="#311338"
+								width={width / 3.5}
+								height={width / 3.5}
+								borderRadius={width / 7}
+								style={{ marginTop: "90%" }}
 								onPress={() => {
 									navigation.jumpTo("Nueva Recarga", {
 										screen: "Nueva Recarga",
