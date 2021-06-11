@@ -1,62 +1,63 @@
 import * as React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
-import CustomButton from "../../components/CustomButton";
+import { Image } from "react-native";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
+import CommonNeuButton from "../../components/CommonNeuButton";
+
+const { width, height } = Dimensions.get("screen");
+//const marginGlobal = width / 10;
 
 const MoreScreen = ({ navigation }) => {
-  const customStyle = {
-    paddingVertical: 15,
-    borderRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 12.35,
-    elevation: 19,
-  };
-
   return (
     <View style={styles.container}>
+      <View
+        style={{
+          paddingTop: 50,
+          width: width,
+          height: height / 6,
+          backgroundColor: "rgba(112, 28, 87, 1)",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Image
+          source={require("../../assets/images/more/asset3.png")}
+          resizeMode="center"
+        />
+      </View>
       <View style={styles.containerButtons}>
         <View style={styles.buttons}>
-          <CustomButton
-            customStyle={customStyle}
-            title="Sobre Nosotros"
+          <CommonNeuButton
+            text="Sobre Nosotros"
+            screenWidth={width}
             onPress={() => navigation.navigate("AboutUsScreen")}
-            //color="purple"
           />
         </View>
         <View style={styles.buttons}>
-          <CustomButton
-            customStyle={customStyle}
-            title="Premios del mes"
+          <CommonNeuButton
+            text="Premios del mes"
+            screenWidth={width}
             onPress={() => navigation.navigate("PremioScreen")}
-            //color="purple"
           />
         </View>
         <View style={styles.buttons}>
-          <CustomButton
-            customStyle={customStyle}
-            title="Política de privacidad"
+          <CommonNeuButton
+            text="Política de privacidad"
+            screenWidth={width}
             onPress={() => navigation.navigate("PrivacidadScreen")}
-            //color="purple"
           />
         </View>
         <View style={styles.buttons}>
-          <CustomButton
-            customStyle={customStyle}
-            title="Términos de uso"
+          <CommonNeuButton
+            text="Términos de uso"
+            screenWidth={width}
             onPress={() => navigation.navigate("TermUsoScreen")}
-            //color="purple"
           />
         </View>
         <View style={styles.buttons}>
-          <CustomButton
-            customStyle={customStyle}
-            title="Modo de uso"
+          <CommonNeuButton
+            text="Modo de uso"
+            screenWidth={width}
             onPress={() => navigation.navigate("ModoUsoScreen")}
-            //color="purple"
           />
         </View>
       </View>
@@ -69,7 +70,7 @@ export default MoreScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //alignItems: "center",
+    backgroundColor: "rgba(112, 28, 87, 1)",
     justifyContent: "center",
   },
   containerButtons: {
@@ -78,8 +79,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttons: {
-    width: "85%",
-    marginTop: 10,
+    marginTop: 30,
   },
   title: {
     fontSize: 20,

@@ -1,42 +1,48 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, View } from "react-native";
+import { Modal, StyleSheet, View, Dimensions, StatusBar } from "react-native";
 import CobrarPremioContent from "./CobrarPremioContent";
+import CommonHeader from "../../../components/CommonHeader";
+
+const { width, height } = Dimensions.get("screen");
 
 const CobrarPremioModal = ({ modalVisible, setModalVisible, navigation }) => {
   return (
-    <Modal
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => setModalVisible(false)}
-      style={styles.container}
-    >
-      <View style={styles.ModalOuterContent}>
-        <View style={styles.ModalContent}>
+    <>
+      <StatusBar backgroundColor="rgb(112, 28, 87)" style="light" />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <CommonHeader
+          width={width}
+          height={height}
+          _onPress={() => setModalVisible(false)}
+        />
+        <View style={styles.ModalOuterContent}>
+          {/*  <View style={styles.ModalContent}> */}
           <CobrarPremioContent
             navigation={navigation}
             setModalVisible={setModalVisible}
           />
+          {/*  </View> */}
         </View>
-      </View>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 
 export default CobrarPremioModal;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   ModalOuterContent: {
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
-    width: "100%",
+    flex: 1,
+    //justifyContent: "center",
+    //alignItems: "center",
+    backgroundColor: "rgba(112, 28, 87, 1)",
   },
-  ModalContent: {
+  /*  ModalContent: {
     backgroundColor: "rgba(112, 28, 87, 1)",
     width: "90%",
     height: "40%",
@@ -50,5 +56,5 @@ const styles = StyleSheet.create({
     elevation: 10,
     borderRadius: 20,
     marginTop: 40,
-  },
+  }, */
 });

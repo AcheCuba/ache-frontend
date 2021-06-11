@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { WebView } from "react-native-webview";
 import Constants from "expo-constants";
+import { GlobalContext } from "../../context/GlobalProvider";
 
 //import Amplify, { API, graphqlOperation, Analytics } from "aws-amplify";
 //import * as mutations from "./src/graphql/mutations";
@@ -26,8 +27,12 @@ const { manifest } = Constants;
 const server_url = "http://48e33416ac70.ngrok.io";
 
 class _PagoScreen extends React.Component {
+  /* nuevaRecargaState = useContext(GlobalContext);
+  contactosSeleccionados = nuevaRecargaState.contactosSeleccionados;
+  quantity = contactosSeleccionados.length; */
+
   state = {
-    amount: 15,
+    amount: 20,
     quantity: "0",
     screen: "product",
     initUrl: base_url,
