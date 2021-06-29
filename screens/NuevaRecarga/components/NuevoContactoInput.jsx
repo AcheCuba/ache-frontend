@@ -6,7 +6,7 @@ import {
   View,
   Dimensions,
   TouchableWithoutFeedback,
-  Image,
+  Image
 } from "react-native";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import { toogleAddContactAvaiable } from "../../../context/Actions/actions";
@@ -24,16 +24,11 @@ const NuevoContactoInput = ({
   contactSelected,
   onPressBarcode,
   codigo,
-  tienePremio,
+  isFirstInput
 }) => {
   const [text, setText] = useState("");
-  const [textFromContactScreen, setTextFromContactScreen] = useState("");
-  const [contactInputIdFromContacts, setContactInputIdFromContacts] =
-    useState("");
   const { nuevaRecargaDispatch } = useContext(GlobalContext);
-
-  //console.log("contactSelected", contactSelected);
-  //console.log(text);
+  const { userState } = React.useContext(GlobalContext);
 
   useEffect(() => {
     //console.log("contactSelected", contactSelected);
@@ -41,14 +36,6 @@ const NuevoContactoInput = ({
 
   const onChangeText = (value) => {
     setText(value);
-    //match phone number
-    /*   const regexp =
-      /\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/;
-    if (regexp.test(value)) {
-      nuevaRecargaDispatch(toogleAddContactAvaiable(true));
-    } else {
-      nuevaRecargaDispatch(toogleAddContactAvaiable(false));
-    } */
   };
 
   const handlePressBarcode = () => {
@@ -60,7 +47,8 @@ const NuevoContactoInput = ({
   };
 
   const Figure = () => {
-    if (tienePremio) {
+    // esta porción de código solo se utiliza para el primer input, en caso de que tenga premio
+    if (isFirstInput) {
       return (
         <Image
           source={require("../../../assets/images/nueva_recarga/jackpot.png")}
@@ -94,13 +82,13 @@ const NuevoContactoInput = ({
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
-        marginTop: 20,
+        marginTop: 20
       }}
     >
       <TouchableWithoutFeedback
         onPress={() =>
           navigation.navigate("MultiplesContactosScreen", {
-            fieldInputId: fieldInputId,
+            fieldInputId: fieldInputId
           })
         }
       >
@@ -159,8 +147,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(112, 28, 87, 1)",
     marginBottom: 10,
     paddingLeft: 10,
-    marginHorizontal: 10,
-  },
+    marginHorizontal: 10
+  }
 });
 /*             value={contactSelected ? contactSelected.contactName : ""}
  */

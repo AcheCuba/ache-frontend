@@ -1,41 +1,109 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Modal,
-  Dimensions,
-  Image,
-} from "react-native";
-import CustomButton from "../../../components/CustomButton";
-//import Clipboard from "@react-native-community/clipboard";
+import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
+
 import Clipboard from "expo-clipboard";
-import Toast, { DURATION } from "react-native-easy-toast";
 import CommonNeuButton from "../../../components/CommonNeuButton";
 import { NeuButton, NeuView } from "react-native-neu-element";
-import { ToastAndroid } from "react-native";
+import { GlobalContext } from "../../../context/GlobalProvider";
+import axios from "axios";
+import { BASE_URL } from "../../../constants/domain";
+import { set_prize } from "../../../context/Actions/actions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ActivityIndicator } from "react-native";
+import Toast from "react-native-simple-toast";
 
 const { width, height } = Dimensions.get("screen");
 
 const CobrarPremioContent = ({ navigation, setModalVisible }) => {
+  const { userState, userDispatch } = React.useContext(GlobalContext);
+
+  const currentPrize = userState.prize;
+
   const [codigoGenerado, setCodigoGenerado] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [codigo, setCodigo] = useState("");
+  const [prizeType, setPrizeType] = useState("");
+
+  React.useEffect(() => {
+    setPrizeType(currentPrize?.type);
+    //console.log(currentPrize?.type);
+  }, []);
 
   const copyToClipboard = (code) => {
     Clipboard.setString(code);
   };
 
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("user", jsonValue);
+    } catch (e) {
+      // saving error
+      console.log(e);
+    }
+  };
+
+  const EncriptarCodigo = (codigo) => {
+    const codigoEncriptado =
+      codigo.slice(0, 13) +
+      "***" +
+      codigo.slice(codigo.length - 3, codigo.length);
+
+    return codigoEncriptado;
+  };
+
   const onPressGenerarCodigo = () => {
-    // pedir codigo a la API
+    // setear codigo a la API
     // setear código resultante
-    setCodigo("aj3d44Pk5Md***kd213");
-    setCodigoGenerado(true);
+    if (currentPrize !== null) {
+      setLoading(true);
+
+      const user_token = userState.token;
+      const prize_id = currentPrize.uuid;
+      const url = `${BASE_URL}/prize/exchange/${prize_id}`;
+      //console.log(userState);
+      //console.log(url);
+
+      let config = {
+        method: "post",
+        url: url,
+        headers: {
+          "Authorization": `Bearer ${user_token}`
+        }
+      };
+      axios(config)
+        .then((response) => {
+          if (response.status === 201) {
+            const prizeResultUpdated = response.data; // exchanged true
+            const prizeCode = currentPrize.uuid;
+
+            storeData({ ...userState, prize: prizeResultUpdated });
+            userDispatch(set_prize(null));
+            storeData({ ...userState, prize: null });
+            setCodigo(prizeCode);
+            setCodigoGenerado(true);
+            setLoading(false);
+          } else {
+            // do something
+            console.log(response.status);
+            setLoading(false);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
+    } else {
+      setCodigo("aj3d44Pk5Md***kd213");
+      setCodigoGenerado(true);
+    }
   };
 
   const onPressCopiar = () => {
     copyToClipboard(codigo);
-    ToastAndroid.show("Código copiado al portapapeles", ToastAndroid.SHORT);
+    Toast.show("Código copiado al portapapeles", Toast.SHORT, [
+      "RCTModalHostViewController"
+    ]);
     //setCodigoGenerado(false);
   };
 
@@ -59,12 +127,29 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
             position: "absolute",
             borderBottomWidth: 0,
             borderBottomColor: "#701c57",
+            justifyContent: "center",
+            alignItems: "center"
           }}
         >
-          <Image
-            source={require("../../../assets/images/home/premios/diamanteCopia.png")}
-            resizeMode="center"
-          />
+          {prizeType === "Jackpot" ? (
+            <Image
+              source={require("../../../assets/images/home/premios/diamanteCopia.png")}
+              resizeMode="center"
+              style={{
+                width: width / 5,
+                height: width / 5
+              }}
+            />
+          ) : (
+            <Image
+              source={require("../../../assets/images/home/premios/capa102Copia.png")}
+              resizeMode="center"
+              style={{
+                width: width / 5,
+                height: width / 5
+              }}
+            />
+          )}
         </View>
         <NeuView
           style={{}}
@@ -80,14 +165,14 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
               height: height / 7,
               position: "absolute",
               bottom: 0,
-              paddingHorizontal: width / 1.2 / 6,
+              paddingHorizontal: width / 1.2 / 6
             }}
           >
             <Text
               style={{
                 color: "#01f9d2",
                 fontWeight: "bold",
-                fontSize: 20,
+                fontSize: 20
               }}
             >
               NOMBRE PREMIO
@@ -97,7 +182,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
                 color: "gray",
                 fontStyle: "italic",
                 fontSize: 20,
-                marginBottom: 20,
+                marginBottom: 20
               }}
             >
               Texto explicativo con los detalles del premio
@@ -123,10 +208,10 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
                   style={{
                     color: "gray",
                     fontStyle: "italic",
-                    fontSize: 16,
+                    fontSize: 16
                   }}
                 >
-                  {codigo}
+                  {EncriptarCodigo(codigo)}
                 </Text>
               </NeuView>
               <NeuButton
@@ -140,7 +225,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
                   style={{
                     color: "#01f9d2",
                     fontWeight: "bold",
-                    fontSize: 18,
+                    fontSize: 18
                   }}
                 >
                   {" "}
@@ -155,20 +240,35 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
               onPress={() => {
                 setModalVisible(false);
                 navigation.jumpTo("Nueva Recarga", {
-                  screen: "Nueva Recarga",
+                  screen: "Nueva Recarga"
                 });
               }}
             />
           )}
         </View>
         <View style={styles.button}>
-          <CommonNeuButton
-            screenWidth={width}
-            text={codigoGenerado ? "TERMINAR" : "GENERAR CÓDIGO"}
-            onPress={() => {
-              codigoGenerado ? setModalVisible(false) : onPressGenerarCodigo();
-            }}
-          />
+          {!loading ? (
+            <CommonNeuButton
+              screenWidth={width}
+              text={codigoGenerado ? "TERMINAR" : "GENERAR CÓDIGO"}
+              onPress={() => {
+                codigoGenerado
+                  ? setModalVisible(false)
+                  : onPressGenerarCodigo();
+              }}
+            />
+          ) : (
+            <NeuButton
+              color="#701c57"
+              width={(4 / 5) * width}
+              height={width / 7.5}
+              borderRadius={width / 7.5}
+              onPress={() => {}}
+              inset
+            >
+              <ActivityIndicator size="large" color="#01f9d2" />
+            </NeuButton>
+          )}
         </View>
       </View>
     </View>
@@ -182,20 +282,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: "rgba(112, 28, 87, .6)",
+    backgroundColor: "rgba(112, 28, 87, .6)"
   },
 
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   button: {
-    marginTop: 20,
+    marginTop: 20
   },
   codeModalContainer: {
     flex: 1,
     //justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
 
   codeModalContent: {
@@ -206,6 +306,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 17,
     marginHorizontal: 10,
-    marginTop: 80,
-  },
+    marginTop: 80
+  }
 });

@@ -7,22 +7,12 @@ const LanguageScren = ({ navigation }) => {
   //const navigation = useNavigation();
   const jumpToAction = TabActions.jumpTo("Juego");
 
-  /* useEffect(() => {
-    const unsubscribe = navigation.addListener("tabPress", (e) => {
-      // Prevent default behavior
-      e.preventDefault();
-      console.log("dentro de use Effect");
-      navigation.goBack();
-    });
-
-    //return unsubscribe;
-  }, [navigation]) */ useFocusEffect(
+  /*  useFocusEffect(
     useCallback(() => {
       navigation.goBack();
       // navigation.dispatch(jumpToAction);
-      // console.log("asdadasd");
     }, [])
-  );
+  ); */
 
   return (
     <View style={styles.container}>
@@ -37,10 +27,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-  },
+    fontWeight: "bold"
+  }
 });

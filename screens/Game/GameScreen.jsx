@@ -18,8 +18,9 @@ import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { set_prize } from "../../context/Actions/actions";
-import { ToastAndroid } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-simple-toast";
+import moment from "moment";
 
 //const user_token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QxIiwic3ViIjoxMTQsImlhdCI6MTYyMzIwMDQ1OX0.Nmm96Cam4SmoSGxmyxphAfbxqN70PP9fGSe2dRTInx4`;
 //const base_url = "https://ache-backend.herokuapp.com";
@@ -29,13 +30,19 @@ const GameScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [prizeLocal, setPrizeLocal] = React.useState(null);
   const [casillaFinal, setCasillaFinal] = React.useState("1800deg");
+  //const [thereIsPrizeResult, setThereIsPrizeResult] = React.useState(false);
 
-  const [stopAnimation, setStopAnumation] = React.useState(false);
+  const thereIsPrizeResult = React.useRef(false);
+
+  const [stopAnimation, setStopAnimation] = React.useState(false);
   const { userState, userDispatch } = React.useContext(GlobalContext);
 
-  const wheelValue = new Animated.Value(0);
+  //let wheelValue = new Animated.Value(0);
+  //const wheelValue = React.useRef(new Animated.Value(0)).current;
+  const wheelValue = React.useRef(new Animated.Value(0));
+  const enMovimiento = React.useRef(false);
 
-  //const centerValue = new Animated.Value(0);
+  //console.log(userState);
 
   const storeData = async (value) => {
     try {
@@ -47,78 +54,237 @@ const GameScreen = ({ navigation }) => {
     }
   };
 
+  const ImageConditional = ({ typeOfPrize }) => {
+    switch (typeOfPrize) {
+      case "Jackpot":
+        return (
+          <Image
+            source={require("../../assets/images/home/premios/diamanteCopia.png")}
+            resizeMode="center"
+            style={{
+              width: width / 5,
+              height: width / 5
+            }}
+          />
+        );
+      case "TopUpBonus":
+        return (
+          <Image
+            source={require("../../assets/images/home/premios/capa102Copia.png")}
+            resizeMode="center"
+            style={{
+              width: width / 5,
+              height: width / 5
+            }}
+          />
+        );
+      case "Nada":
+        return (
+          <Image
+            source={require("../../assets/images/home/premios/Nada2.png")}
+            resizeMode="center"
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   const setCasilla = (prize) => {
     console.log("prize", prize);
-    if (prize === undefined) {
-      setCasillaFinal("1778deg");
+    switch (prize.type) {
+      case "Nada":
+        setCasillaFinal("1733deg");
+        break;
+      case "Jackpot":
+        setCasillaFinal("1868deg");
+        break;
+      case "TopUpBonus":
+        if (prize.amount === 10 || prize.amount === 250) {
+          setCasillaFinal("1823deg");
+        }
+        if (prize.amount === 20 || prize.amount === 500) {
+          setCasillaFinal("1778deg");
+        }
+        break;
+      default:
+        setCasillaFinal("1800deg");
+    }
+  };
+
+  const onPressWheel = async () => {
+    if (enMovimiento.current) {
+      Toast.show("Ruleta en movimiento, espere", Toast.SHORT);
     } else {
-      switch (prize.type) {
-        case "Jackpot":
-          setCasillaFinal("1643deg"); // 1443 + 180
-          break;
-        case "TopUpBonus":
-          if (prize.amount === 20) {
-            setCasillaFinal("1688deg");
-          }
-          if (prize.amount === 40) {
-            setCasillaFinal("1733deg");
-          }
+      wheelRotateInit();
+
+      const current_prize = userState.prize;
+
+      const user_token = userState.token;
+      const url = `${BASE_URL}/prize/play`;
+
+      let config = {
+        method: "post",
+        url: url,
+        headers: {
+          "Authorization": `Bearer ${user_token}`
+        }
+      };
+
+      if (current_prize === null) {
+        axios(config)
+          .then((response) => {
+            //console.log("data", response.data);
+            //console.log(response.status, typeof response.status);
+            const prize_result = response.data;
+            thereIsPrizeResult.current = true;
+            //console.log("prize", prize_result);
+            //console.log(prize === ""); // true
+            //console.log(JSON.stringify(response.data)); // ""
+
+            if (prize_result === "" || prize_result === undefined) {
+              setCasilla({ type: "Nada" });
+              // time
+              const prizeStartTime = moment();
+              const prizeEndTime = moment().add(3, "days");
+              const minutos_restantes = prizeEndTime.diff(
+                prizeStartTime,
+                "minutes"
+              );
+
+              console.log(minutos_restantes);
+
+              setTimeout(() => {
+                //storeData({ ...userState, prize: null });
+                //userDispatch(set_prize(null));
+                storeData({
+                  ...userState,
+                  prize: {
+                    type: "Nada",
+                    exchanged: false, // no se puede cambiar
+                    prizeStartTime,
+                    prizeEndTime,
+                    minutos_restantes
+                  }
+                });
+                userDispatch(
+                  set_prize({
+                    type: "Nada",
+                    exchanged: false, // no se puede cambiar
+                    prizeStartTime,
+                    prizeEndTime,
+                    minutos_restantes
+                  })
+                );
+              }, 7000);
+            } else {
+              setCasilla(prize_result);
+
+              // time
+              const prizeStartTime = moment();
+              const prizeEndTime = moment().add(3, "days");
+              const minutos_restantes = prizeEndTime.diff(
+                prizeStartTime,
+                "minutes"
+              );
+
+              console.log(minutos_restantes);
+
+              setTimeout(() => {
+                storeData({
+                  ...userState,
+                  prize: {
+                    ...prize_result,
+                    prizeStartTime,
+                    prizeEndTime,
+                    minutos_restantes
+                  }
+                });
+                userDispatch(
+                  set_prize({
+                    ...prize_result,
+                    prizeStartTime,
+                    prizeEndTime,
+                    minutos_restantes
+                  })
+                );
+              }, 7000);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            Toast.show(error.message, Toast.SHORT);
+          });
+      } else {
+        setTimeout(() => {
+          thereIsPrizeResult.current = true;
+          Toast.show("Segundo Premio Ganado", Toast.SHORT);
+        }, 7500);
       }
     }
   };
 
-  const onPressWheel = () => {
-    const current_prize = userState.prize;
-
-    const user_token = userState.token;
-    const url = `${BASE_URL}/prize/play/`;
-
-    if (current_prize === null) {
-      fetch(url, {
-        method: "post",
-        headers: new Headers({
-          "Authorization": `Bearer ${user_token}`,
-          "Content-Type": "application/json"
-        })
-      })
-        .then((response) => {
-          console.log("nada por acqui");
-          return response.json();
-        })
-        .then((result) => {
-          console.log("result", result);
-          const _prize = result.json();
-          //console.log(_prize);
-          storeData({ ...userState, prize: _prize });
-          userDispatch(set_prize(_prize));
-          // setPrizeLocal(_prize);
-
-          setCasilla(_prize);
-        })
-
-        .catch((err) => {
-          console.log("error request", err);
-        });
-    } else {
-      setTimeout(() => {
-        ToastAndroid.show("Segundo Premio Ganado", ToastAndroid.SHORT);
-      }, 6000);
-    }
-
-    wheelValue.setValue(0);
-    //centerValue.setValue(0);
-
-    Animated.timing(wheelValue, {
+  const wheelRotateInit = () => {
+    enMovimiento.current = true;
+    wheelValue.current.setValue(0);
+    console.log("init");
+    Animated.timing(wheelValue.current, {
       toValue: 1,
-      duration: 6000,
-      easing: Easing.inOut(Easing.ease),
+      duration: 3000,
+      easing: Easing.ease,
       useNativeDriver: true
-    }).start();
+    }).start((complete) => {
+      if (complete.finished) {
+        wheelRotateLoop();
+      }
+    });
   };
 
-  const wheel = wheelValue.interpolate({
-    // Next, interpolate beginning and end values (in this case 0 and 1)
+  const wheelRotateLoop = () => {
+    wheelValue.current.setValue(0);
 
+    console.log("loop", thereIsPrizeResult.current);
+    Animated.timing(wheelValue.current, {
+      toValue: 1,
+      duration: 1800,
+      easing: Easing.linear,
+      useNativeDriver: true
+    }).start((complete) => {
+      if (complete.finished) {
+        if (!thereIsPrizeResult.current) {
+          wheelRotateLoop();
+        } else {
+          wheelRotateFinal();
+        }
+      }
+    });
+  };
+
+  const wheelRotateFinal = () => {
+    wheelValue.current.setValue(0);
+
+    //centerValue.setValue(0);
+    console.log("final");
+    Animated.timing(wheelValue.current, {
+      toValue: 1,
+      duration: 3000,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true
+    }).start((complete) => {
+      if (complete.finished) {
+        thereIsPrizeResult.current = false;
+        enMovimiento.current = false;
+      }
+    });
+  };
+
+  const wheelLoop = wheelValue.current.interpolate({
+    inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
+    outputRange: ["0deg", "360deg", "720deg", "1080deg", "1440deg", "1800deg"]
+  });
+
+  const wheel = wheelValue.current.interpolate({
+    // Next, interpolate beginning and end values (in this case 0 and 1)
     inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
     outputRange: [
       "0deg",
@@ -126,7 +292,8 @@ const GameScreen = ({ navigation }) => {
       "720deg",
       "1080deg",
       "1440deg",
-      casillaFinal //1800 complete
+      casillaFinal
+      //1800 complete
     ]
   });
 
@@ -163,13 +330,25 @@ const GameScreen = ({ navigation }) => {
                 height={width / 3.5}
                 borderRadius={width / 7}
                 style={{ marginBottom: "90%" }}
-                onPress={() => setModalVisible(true)}
-              />
-
-              {/*<CustomButtom
-								customStyle={customStyleRedButton}
-								onPress={() => setModalVisible(true)}
-							/>*/}
+                onPress={() => {
+                  if (userState.prize !== null) {
+                    if (userState.prize.type === "Nada") {
+                      Toast.show("No ganaste nada, de momento", Toast.SHORT);
+                    } else {
+                      setModalVisible(true);
+                    }
+                  } else {
+                    Toast.show(
+                      "No tiene premio para cobrar, pruebe suerte!",
+                      Toast.SHORT
+                    );
+                  }
+                }}
+              >
+                {userState.prize !== null ? (
+                  <ImageConditional typeOfPrize={userState.prize.type} />
+                ) : null}
+              </NeuButton>
             </View>
             <View
               key={2}
@@ -215,7 +394,9 @@ const GameScreen = ({ navigation }) => {
                   <TouchableWithoutFeedback onPress={() => onPressWheel()}>
                     <Animated.View
                       style={{
-                        transform: [{ rotate: wheel }]
+                        transform: [
+                          { rotate: !thereIsPrizeResult ? wheelLoop : wheel }
+                        ]
                       }}
                     >
                       <ImageBackground
@@ -258,14 +439,6 @@ const GameScreen = ({ navigation }) => {
               </ImageBackground>
             </View>
             <View key={3} style={styles.buttonContainer}>
-              {/*<CustomButtom
-								customStyle={customStyleBlackButton}
-								onPress={() => {
-									navigation.jumpTo("Nueva Recarga", {
-										screen: "Nueva Recarga",
-									});
-								}}
-							/>*/}
               <NeuButton
                 color="#311338"
                 width={width / 3.5}

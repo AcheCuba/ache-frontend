@@ -7,7 +7,7 @@ import {
   Dimensions,
   ScrollView,
   TextInput,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 
 import CustomButton from "../../components/CustomButton";
@@ -18,7 +18,7 @@ import { toogleAddContactAvaiable } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import { NeuButton, NeuView } from "react-native-neu-element";
 import { Ionicons } from "@expo/vector-icons";
-import { ToastAndroid } from "react-native";
+import Toast from "react-native-simple-toast";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -51,8 +51,17 @@ const NuevaRecargaScreen = ({ navigation }) => {
   React.useEffect(() => {
     // en lugar de esto, añadir a la lista y tener una sola lógica
     // eliminar firstFieldId y firstInput
-    setFirstFieldId(makeid(10));
+    if (contactosSeleccionados.length === 0) {
+      setFirstFieldId(makeid(10));
+      //console.log("contactos === 0");
+    }
+    //console.log("useEffect nueva recarga");
   }, []);
+
+  React.useEffect(() => {
+    //console.log(contactosSeleccionados);
+    //console.log(contactosSeleccionados);
+  }, [contactosSeleccionados]);
 
   const onPressBarcode = (fieldId) => {
     setActualBarcodeId(fieldId);
@@ -68,8 +77,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
     setCodigos(codigosNoRepetidos.concat({ fieldId, codigo }));
   };
 
-  console.log(codigos);
-
+  //console.log(codigos);
   //console.log("add_contact_avaiable", addContactAvaiable);
   //console.log(contactSelected);
 
@@ -78,12 +86,12 @@ const NuevaRecargaScreen = ({ navigation }) => {
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 9,
+      height: 9
     },
     shadowOpacity: 0.5,
     shadowRadius: 12.35,
     elevation: 19,
-    borderRadius: 20,
+    borderRadius: 20
   };
 
   const onPressAddContact = () => {
@@ -92,10 +100,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
       //al final -> deshabilitar botón
       nuevaRecargaDispatch(toogleAddContactAvaiable(false));
     } else {
-      ToastAndroid.show(
-        "Añade un contacto antes de añadir otro campo",
-        ToastAndroid.SHORT
-      );
+      Toast.show("Añade un contacto antes de añadir otro campo", Toast.SHORT);
     }
   };
 
@@ -132,10 +137,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
     if (addContactAvaiable) {
       navigation.navigate("RecargasDisponiblesScreen");
     } else {
-      ToastAndroid.show(
-        "Deben completarse todos los campos",
-        ToastAndroid.SHORT
-      );
+      Toast.show("Deben completarse todos los campos", Toast.SHORT);
     }
   };
 
@@ -143,7 +145,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
     <View
       style={{
         flex: 1,
-        backgroundColor: "rgba(112, 28, 87, 1)",
+        backgroundColor: "rgba(112, 28, 87, 1)"
       }}
     >
       <View
@@ -153,7 +155,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
           height: height / 6,
           backgroundColor: "rgba(112, 28, 87, 1)",
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: "space-between"
         }}
       >
         <NeuButton
@@ -202,7 +204,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
               navigation={navigation}
               iconName="trophy"
               contactSelected={filterContactsByFieldId(firstFieldId)}
-              tienePremio={true}
+              isFirstInput={true}
               onPressBarcode={onPressBarcode}
             />
 
@@ -215,6 +217,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
                   codigo={filterCodes(field.id)}
                   contactSelected={filterContactsByFieldId(field.id)}
                   onPressBarcode={onPressBarcode}
+                  isFirstInput={false}
                 />
               </View>
             ))}
@@ -224,7 +227,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
                 marginTop: 20,
                 flex: 1,
                 width: "100%",
-                alignItems: "center",
+                alignItems: "center"
               }}
             ></View>
           </View>
@@ -243,7 +246,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
             style={{
               color: "#01f9d2",
               fontWeight: "bold",
-              fontSize: 20,
+              fontSize: 20
             }}
           >
             CONTINUAR
@@ -264,20 +267,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     //height: height,
-    marginHorizontal: marginGlobal,
+    marginHorizontal: marginGlobal
 
     //justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   button_add_contacto: {
     marginTop: 30,
-    marginBottom: 20,
+    marginBottom: 20
   },
   button_continuar: {
-    marginBottom: 25,
+    marginBottom: 25
   },
 
   input: {
@@ -289,6 +292,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(112, 28, 87, 1)",
     marginBottom: 10,
     paddingLeft: 10,
-    marginHorizontal: 10,
-  },
+    marginHorizontal: 10
+  }
 });

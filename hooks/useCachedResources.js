@@ -5,7 +5,8 @@ import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
 import { GlobalContext } from "../context/GlobalProvider";
-import { restore_user } from "../context/Actions/actions";
+import { restore_user, set_prize } from "../context/Actions/actions";
+import moment from "moment";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -21,16 +22,65 @@ export default function useCachedResources() {
     }
   };
 
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("user", jsonValue);
+    } catch (e) {
+      // saving error
+      console.log(e);
+    }
+  };
+
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
         SplashScreen.preventAutoHideAsync();
 
+        let token;
+        let user;
+
         token = await SecureStore.getItemAsync("token");
         user = await getData("user");
+        //console.log(user);
         if (token != null && user.id != undefined) {
-          userDispatch(restore_user({ ...user, token: token }));
+          if (user.prize !== null && user.prize.exchanged === false) {
+            const currentPrizeState = user.prize;
+
+            const currentTime = moment();
+            const prizeEndTime = moment(currentPrizeState.prizeEndTime);
+            const minutos_restantes = prizeEndTime.diff(currentTime, "minutes");
+            console.log(minutos_restantes);
+            if (minutos_restantes < 0) {
+              // premio expirado
+              storeData({
+                ...user,
+                prize: null
+              });
+              userDispatch(restore_user({ ...user, prize: null, token }));
+            } else {
+              storeData({
+                ...user,
+                prize: {
+                  ...currentPrizeState,
+                  minutos_restantes
+                }
+              });
+              userDispatch(
+                restore_user({
+                  ...user,
+                  prize: {
+                    ...currentPrizeState,
+                    minutos_restantes
+                  },
+                  token
+                })
+              );
+            }
+          } else {
+            userDispatch(restore_user({ ...user, token }));
+          }
         }
 
         // Load fonts

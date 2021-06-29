@@ -2,28 +2,30 @@ import {
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
-  getFocusedRouteNameFromRoute,
+  getFocusedRouteNameFromRoute
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as React from "react";
-import { ColorSchemeName } from "react-native";
 
 import NotFoundScreen from "../screens/NotFoundScreen";
 import OnBoardingScreen from "../screens/OnBoardingScreen";
-import SignupScreen from "../screens/SignupScreen";
+import SignupScreenUptd from "../screens/SignupScreenUptd";
 
-import { RootStackParamList } from "../types";
 import BottomTabNavigator from "./BottomTabNavigator";
-import LinkingConfiguration from "./LinkingConfiguration";
-import { GlobalContext, useStore } from "../context/GlobalProvider";
-// import MainStackNavigator from "./MainStackNavigator";
+import { GlobalContext } from "../context/GlobalProvider";
+
+//import { RootStackParamList } from "../types";
+//import LinkingConfiguration from "./LinkingConfiguration";
+//import { restore_user } from "../context/Actions/actions";
+//import AsyncStorage from "@react-native-async-storage/async-storage";
+//import { ColorSchemeName } from "react-native";
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
 export default function Navigation({ colorScheme }) {
   return (
     <NavigationContainer
-      linking={LinkingConfiguration}
+      //linking={LinkingConfiguration}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
       <RootNavigator />
@@ -39,18 +41,16 @@ const Stack = createStackNavigator();
 //const onBoardingConsumed = true;
 
 function RootNavigator({ navigation, route }) {
-  const { authState } = React.useContext(GlobalContext);
-  const { registered } = authState;
-
-  /* console.log("authState", authState);
-  console.log("registered", registered); */
+  const { userState, userDispacth } = React.useContext(GlobalContext);
+  //console.log("userState index.js", userState);
+  //console.log("token", userState.token);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!registered ? (
+      {userState.token === undefined ? (
         <>
           <Stack.Screen name="Onboarding" component={OnBoardingScreen} />
-          <Stack.Screen name="Signup" component={SignupScreen} />
+          <Stack.Screen name="Signup" component={SignupScreenUptd} />
         </>
       ) : (
         <>

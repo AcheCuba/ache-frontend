@@ -7,7 +7,7 @@ import {
   FlatList,
   Image,
   Dimensions,
-  ScrollView,
+  ScrollView
 } from "react-native";
 import Contact from "./components/Contact";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,12 +16,12 @@ import { GlobalContext } from "../../context/GlobalProvider";
 import {
   selectContact,
   deleteContact,
-  toogleAddContactAvaiable,
+  toogleAddContactAvaiable
 } from "../../context/Actions/actions";
 
 import { Ionicons } from "@expo/vector-icons";
 import { NeuButton, NeuInput, NeuSpinner } from "react-native-neu-element";
-import { ToastAndroid } from "react-native";
+import Toast from "react-native-simple-toast";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -47,24 +47,85 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     navigation.navigate("Nueva Recarga");
   };
 
+  const filterNumbers = (contacts) => {
+    let multiplesContactosFiltered = [];
+
+    for (let i = 0; i < contacts.length; i++) {
+      const length = contacts[i].phoneNumbers.length;
+      for (let j = 0; j < length; j++) {
+        multiplesContactosFiltered.push({
+          id: contacts[i].phoneNumbers[j].id,
+          firstName: contacts[i].firstName,
+          phoneNumber: contacts[i].phoneNumbers[j].number
+        });
+      }
+    }
+
+    const filtered = multiplesContactosFiltered.filter((contact) => {
+      const number = contact.phoneNumber;
+
+      const CubanOfficialNumberRegex =
+        /^\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
+      const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
+
+      const matchOfficialNumber = number.match(CubanOfficialNumberRegex);
+      const matchNumber = number.match(CubanNumberRegex);
+
+      const cleanNumber = number
+        .replace(/ /g, "")
+        .replace(/\-/g, "")
+        .replace(/\(/g, "")
+        .replace(/\)/g, "");
+
+      const isOfficialNumberMatched =
+        matchOfficialNumber !== null && cleanNumber.length === 11;
+      const isNumberMatched = matchNumber !== null && cleanNumber.length === 8;
+
+      return isOfficialNumberMatched || isNumberMatched;
+    });
+
+    return filtered;
+  };
+
   const onPressCheckmark = () => {
-    const regexp =
-      /\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/;
-    if (regexp.test(text)) {
+    //const CubanNumberOfficial = /\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
+    //const CubanNumber = /5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
+
+    const CubanOfficialNumberRegex =
+      /^\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
+    const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
+
+    const matchOfficialNumber = text.match(CubanOfficialNumberRegex);
+    const matchNumber = text.match(CubanNumberRegex);
+
+    const cleanText = text
+      .replace(/ /g, "")
+      .replace(/\-/g, "")
+      .replace(/\(/g, "")
+      .replace(/\)/g, "");
+
+    const isOfficialNumberMatched =
+      matchOfficialNumber !== null && cleanText.length === 11;
+    const isNumberMatched = matchNumber !== null && cleanText.length === 8;
+
+    /* const regexp =
+      /\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/; */
+    if (isOfficialNumberMatched || isNumberMatched) {
+      nuevaRecargaDispatch(deleteContact(fieldInputId));
       nuevaRecargaDispatch(
         selectContact({
           id: undefined,
           contactName: undefined,
           contactNumber: text,
-          fieldInputId: fieldInputId,
+          fieldInputId: fieldInputId
         })
       );
       nuevaRecargaDispatch(toogleAddContactAvaiable(true));
       navigation.navigate("Nueva Recarga");
     } else {
-      ToastAndroid.show(
-        "Introduzca un número de teléfono válidado (+535)",
-        ToastAndroid.SHORT
+      Toast.show(
+        "Introduzca un número de teléfono válidado en Cuba",
+        Toast.SHORT
       );
     }
   };
@@ -81,15 +142,24 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     setContactsFiltered(_contactsFiltered);
   };
 
-  const renderItemContact = ({ item }) => (
-    <Contact
-      contactName={item.firstName}
-      contactNumber={item.phoneNumber}
-      id={item.id}
-      navigation={navigation}
-      onPressContact={onPressContact}
-    />
-  );
+  const renderItemContact = ({ item }) => {
+    if (item.firstName === "AAA") {
+      //console.log("another");
+      //console.log(item.firstName, item.id);
+      // console.log(item.phoneNumbers);
+    }
+    //console.log(item.firstName, item.phoneNumbers);
+
+    return (
+      <Contact
+        contactName={item.firstName}
+        contactNumber={item.phoneNumber}
+        id={item.id}
+        navigation={navigation}
+        onPressContact={onPressContact}
+      />
+    );
+  };
 
   const renderEmptyList = () => {
     return (
@@ -105,7 +175,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     (data, index) => ({
       length: 100,
       offset: 100 * index,
-      index,
+      index
     }),
 
     []
@@ -117,7 +187,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
         const { data } = await Contacts.getContactsAsync({
-          fields: [Contacts.Fields.PhoneNumbers],
+          fields: [Contacts.Fields.PhoneNumbers]
         });
 
         if (data.length > 0) {
@@ -126,12 +196,21 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           });
 
           _data = _data.map((contact) => {
+            //console.log(contact.id);
+            /*  for (let i = 0; i < contact.phoneNumbers?.length; i++) {
+              console.log(contact.phoneNumbers[i]);
+            } */
+
             return {
               id: contact.id,
               firstName: contact.firstName,
-              phoneNumber: contact.phoneNumbers[0].number,
+              //phoneNumber: contact.phoneNumbers[0].number,
+              phoneNumbers: contact.phoneNumbers
             };
           });
+
+          _data = filterNumbers(_data);
+          console.log(_data);
 
           setContacts(_data);
 
@@ -152,7 +231,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           height: height / 6,
           backgroundColor: "rgba(112, 28, 87, 1)",
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: "space-between"
         }}
       >
         <NeuButton
@@ -232,7 +311,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#701c57",
+    backgroundColor: "#701c57"
     //alignItems: "center",
     //justifyContent: "center",
   },
@@ -244,8 +323,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "gray",
     paddingLeft: 20,
     marginHorizontal: 20,
-    marginBottom: 10,
-  },
+    marginBottom: 10
+  }
 });
 
 export default MultiplesContactosScreen;
