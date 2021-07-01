@@ -48,17 +48,43 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
   };
 
   const filterNumbers = (contacts) => {
+    let actualArray = [];
     let multiplesContactosFiltered = [];
 
     for (let i = 0; i < contacts.length; i++) {
       const length = contacts[i].phoneNumbers.length;
-      for (let j = 0; j < length; j++) {
-        multiplesContactosFiltered.push({
-          id: contacts[i].phoneNumbers[j].id,
+      actualArray = contacts[i].phoneNumbers;
+
+      const cleanActualArray = actualArray.map((c) => {
+        return {
+          id: c.id,
           firstName: contacts[i].firstName,
-          phoneNumber: contacts[i].phoneNumbers[j].number
-        });
-      }
+          phoneNumber: c.number
+        };
+      });
+
+      // sin repeticiones
+      const _cleanActualArray = cleanActualArray.filter(
+        (actualContact, actualIndex, array) => {
+          const actualPhone = actualContact.phoneNumber
+            .replace(/ /g, "")
+            .replace(/\-/g, "")
+            .replace(/\(/g, "")
+            .replace(/\)/g, "");
+          let anteriorPhone = "123";
+          if (actualIndex > 0) {
+            anteriorPhone = array[actualIndex - 1].phoneNumber
+              .replace(/ /g, "")
+              .replace(/\-/g, "")
+              .replace(/\(/g, "")
+              .replace(/\)/g, "");
+          }
+          return actualPhone !== anteriorPhone;
+        }
+      );
+
+      multiplesContactosFiltered =
+        multiplesContactosFiltered.concat(_cleanActualArray);
     }
 
     const filtered = multiplesContactosFiltered.filter((contact) => {
@@ -196,11 +222,6 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           });
 
           _data = _data.map((contact) => {
-            //console.log(contact.id);
-            /*  for (let i = 0; i < contact.phoneNumbers?.length; i++) {
-              console.log(contact.phoneNumbers[i]);
-            } */
-
             return {
               id: contact.id,
               firstName: contact.firstName,
@@ -210,7 +231,6 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           });
 
           _data = filterNumbers(_data);
-          console.log(_data);
 
           setContacts(_data);
 

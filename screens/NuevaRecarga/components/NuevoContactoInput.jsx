@@ -39,7 +39,7 @@ const NuevoContactoInput = ({
   };
 
   const handlePressBarcode = () => {
-    if (tienePremio) {
+    if (isFirstInput && userState.prize !== null) {
       return;
     } else {
       onPressBarcode(fieldInputId);
@@ -49,12 +49,36 @@ const NuevoContactoInput = ({
   const Figure = () => {
     // esta porción de código solo se utiliza para el primer input, en caso de que tenga premio
     if (isFirstInput) {
-      return (
-        <Image
-          source={require("../../../assets/images/nueva_recarga/jackpot.png")}
-          style={{ height: 20, width: 20 }}
-        />
-      );
+      if (userState.prize !== null) {
+        switch (userState.prize.type) {
+          case "Jackpot":
+            return (
+              <Image
+                source={require("../../../assets/images/nueva_recarga/jackpot.png")}
+                style={{ height: 20, width: 20 }}
+              />
+            );
+
+          case "TopUpBonus":
+            return (
+              <Image
+                source={require("../../../assets/images/nueva_recarga/diez.png")}
+                style={{ height: 20, width: 20 }}
+              />
+            );
+
+          case "Nada":
+            return (
+              <Image
+                source={require("../../../assets/images/nueva_recarga/Nada2.png")}
+                style={{ height: 200, width: 200 }}
+                resizeMode="center"
+              />
+            );
+        }
+      } else {
+        return <Ionicons name={iconName} color="gray" size={20} />;
+      }
     }
 
     switch (codigo) {
