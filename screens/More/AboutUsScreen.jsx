@@ -2,7 +2,16 @@ import React from "react";
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-const AboutUsScreen = () => {
+const AboutUsScreen = ({ navigation }) => {
+  /* React.useEffect(() => {
+    const unsubs = navigation.addListener("beforeRemove", (e) => {
+      console.log("yep");
+      //console.log(navigation);
+      e.preventDefault();
+    });
+    return unsubs;
+  }, [navigation]); */
+
   return (
     <View style={styles.container}>
       <View style={{ flex: 1, marginVertical: 10, marginHorizontal: 20 }}>
@@ -27,7 +36,7 @@ const AboutUsScreen = () => {
                 color: "#5870cb",
                 fontSize: 30,
                 fontWeight: "bold",
-                marginTop: 10,
+                marginTop: 10
               }}
               onPress={() => Linking.openURL("http://google.com")}
             >
@@ -47,12 +56,12 @@ const styles = StyleSheet.create({
     flex: 1,
     //justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(112, 28, 87, 1)",
+    backgroundColor: "rgba(112, 28, 87, 1)"
   },
   title: {
     fontSize: 30,
     //fontWeight: "bold",
     fontStyle: "italic",
-    color: "#eee",
-  },
+    color: "#eee"
+  }
 });

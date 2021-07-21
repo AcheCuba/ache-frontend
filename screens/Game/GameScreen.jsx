@@ -17,10 +17,11 @@ import { NeuButton, NeuView } from "react-native-neu-element";
 import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
-import { set_prize } from "../../context/Actions/actions";
+import { setPrizeForUser } from "../../context/Actions/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-simple-toast";
 import moment from "moment";
+import { StackActions, useNavigationState } from "@react-navigation/native";
 
 //const user_token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QxIiwic3ViIjoxMTQsImlhdCI6MTYyMzIwMDQ1OX0.Nmm96Cam4SmoSGxmyxphAfbxqN70PP9fGSe2dRTInx4`;
 //const base_url = "https://ache-backend.herokuapp.com";
@@ -42,8 +43,6 @@ const GameScreen = ({ navigation }) => {
   const wheelValue = React.useRef(new Animated.Value(0));
   const enMovimiento = React.useRef(false);
 
-  //console.log(userState);
-
   const storeData = async (value) => {
     try {
       const jsonValue = JSON.stringify(value);
@@ -53,6 +52,10 @@ const GameScreen = ({ navigation }) => {
       console.log(e);
     }
   };
+
+  /*  React.useEffect(() => {
+    console.log("userStatae", userState);
+  }, [userState]); */
 
   const ImageConditional = ({ typeOfPrize }) => {
     switch (typeOfPrize) {
@@ -109,6 +112,7 @@ const GameScreen = ({ navigation }) => {
         break;
       default:
         setCasillaFinal("1800deg");
+        break;
     }
   };
 
@@ -123,7 +127,7 @@ const GameScreen = ({ navigation }) => {
       const user_token = userState.token;
       const url = `${BASE_URL}/prize/play`;
 
-      let config = {
+      const config = {
         method: "post",
         url: url,
         headers: {
@@ -168,7 +172,7 @@ const GameScreen = ({ navigation }) => {
                   }
                 });
                 userDispatch(
-                  set_prize({
+                  setPrizeForUser({
                     type: "Nada",
                     exchanged: false, // no se puede cambiar
                     prizeStartTime,
@@ -201,7 +205,7 @@ const GameScreen = ({ navigation }) => {
                   }
                 });
                 userDispatch(
-                  set_prize({
+                  setPrizeForUser({
                     ...prize_result,
                     prizeStartTime,
                     prizeEndTime,
@@ -213,11 +217,13 @@ const GameScreen = ({ navigation }) => {
           })
           .catch((error) => {
             console.log(error);
+            thereIsPrizeResult.current = true;
             Toast.show(error.message, Toast.SHORT);
           });
       } else {
         setTimeout(() => {
           thereIsPrizeResult.current = true;
+          setCasilla({ type: "default" });
           Toast.show("Segundo Premio Ganado", Toast.SHORT);
         }, 7500);
       }
@@ -445,9 +451,16 @@ const GameScreen = ({ navigation }) => {
                 height={width / 3.5}
                 borderRadius={width / 7}
                 style={{ marginTop: "90%" }}
-                onPress={() => {
+                /*  onPress={() => {
                   navigation.jumpTo("Nueva Recarga", {
                     screen: "Nueva Recarga"
+                  });
+                }} */
+                onPress={() => {
+                  //const pushAction = StackActions.push("Nueva Recarga");
+                  //navigation.dispatch(pushAction);
+                  navigation.jumpTo("Nueva Recarga", {
+                    screen: "NuevaRecargaScreen"
                   });
                 }}
               />

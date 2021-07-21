@@ -11,6 +11,8 @@ import {
 import { GlobalContext } from "../../../context/GlobalProvider";
 import { toogleAddContactAvaiable } from "../../../context/Actions/actions";
 import { NeuInput, NeuButton, NeuView } from "react-native-neu-element";
+import { ActivityIndicator } from "react-native";
+import Toast from "react-native-simple-toast";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -23,34 +25,94 @@ const NuevoContactoInput = ({
   iconName,
   contactSelected,
   onPressBarcode,
-  codigo,
+  prizeByFieldId,
   isFirstInput
 }) => {
   const [text, setText] = useState("");
-  const { nuevaRecargaDispatch } = useContext(GlobalContext);
+  const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
+  const { contactosSeleccionados } = nuevaRecargaState;
   const { userState } = React.useContext(GlobalContext);
 
-  useEffect(() => {
-    //console.log("contactSelected", contactSelected);
-  }, [contactSelected]);
+  //console.log("prize by field id:", prizeByFieldId);
 
   const onChangeText = (value) => {
     setText(value);
   };
 
+  const openPopUp = () => {
+    const contactoExistente = contactosSeleccionados.find(
+      (contacto) => contacto.fieldInputId === fieldInputId
+    );
+
+    if (contactoExistente !== undefined) {
+      onPressBarcode(fieldInputId);
+    } else {
+      Toast.show("Añade un contacto primero", Toast.SHORT);
+    }
+  };
+
   const handlePressBarcode = () => {
     if (isFirstInput && userState.prize !== null) {
-      return;
+      if (userState.prize.type === "Nada") {
+        // hay premio pero es la nada
+        openPopUp();
+      } else {
+        return;
+      }
     } else {
-      onPressBarcode(fieldInputId);
+      // no hay premio
+      openPopUp();
     }
   };
 
   const Figure = () => {
     // esta porción de código solo se utiliza para el primer input, en caso de que tenga premio
-    if (isFirstInput) {
-      if (userState.prize !== null) {
-        switch (userState.prize.type) {
+    if (
+      isFirstInput &&
+      userState.prize !== null &&
+      userState.prize.type !== "Nada"
+    ) {
+      switch (userState.prize.type) {
+        case "Jackpot":
+          return (
+            <Image
+              source={require("../../../assets/images/nueva_recarga/jackpot.png")}
+              style={{ height: 20, width: 20 }}
+            />
+          );
+
+        case "TopUpBonus":
+          return (
+            <Image
+              source={require("../../../assets/images/nueva_recarga/diez.png")}
+              style={{ height: 20, width: 20 }}
+            />
+          );
+
+        // por qué no poner el ícono de nada? para no obligar a
+        // poner más de un contacto para recarga con código
+        /*   case "Nada":
+          return (
+            <Image
+              source={require("../../../assets/images/nueva_recarga/Nada2.png")}
+              style={{ height: 200, width: 200 }}
+              resizeMode="center"
+            />
+          ); */
+      }
+    } else {
+      // return <Ionicons name={iconName} color="gray" size={20} />;
+      if (prizeByFieldId?.loading) {
+        return <ActivityIndicator size="small" color="#01f9d2" />;
+      } else {
+        switch (prizeByFieldId?.type) {
+          case "TopUpBonus":
+            return (
+              <Image
+                source={require("../../../assets/images/nueva_recarga/diez.png")}
+                style={{ height: 25, width: 23 }}
+              />
+            );
           case "Jackpot":
             return (
               <Image
@@ -58,46 +120,10 @@ const NuevoContactoInput = ({
                 style={{ height: 20, width: 20 }}
               />
             );
-
-          case "TopUpBonus":
-            return (
-              <Image
-                source={require("../../../assets/images/nueva_recarga/diez.png")}
-                style={{ height: 20, width: 20 }}
-              />
-            );
-
-          case "Nada":
-            return (
-              <Image
-                source={require("../../../assets/images/nueva_recarga/Nada2.png")}
-                style={{ height: 200, width: 200 }}
-                resizeMode="center"
-              />
-            );
+          default:
+            return <Ionicons name={iconName} color="gray" size={20} />;
         }
-      } else {
-        return <Ionicons name={iconName} color="gray" size={20} />;
       }
-    }
-
-    switch (codigo) {
-      case "diez":
-        return (
-          <Image
-            source={require("../../../assets/images/nueva_recarga/diez.png")}
-            style={{ height: 25, width: 23 }}
-          />
-        );
-      case "jackpot":
-        return (
-          <Image
-            source={require("../../../assets/images/nueva_recarga/jackpot.png")}
-            style={{ height: 20, width: 20 }}
-          />
-        );
-      default:
-        return <Ionicons name={iconName} color="gray" size={20} />;
     }
   };
 

@@ -1,10 +1,10 @@
 import React from "react";
-import { Text, View, Button, Dimensions } from "react-native";
+import { Text, View, Dimensions } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 
 const { width } = Dimensions.get("screen");
 
-const PagoCompletadoScreen = ({ navigation }) => {
+const PagoErrorScreen = ({ navigation }) => {
   return (
     <View
       style={{
@@ -14,9 +14,19 @@ const PagoCompletadoScreen = ({ navigation }) => {
         backgroundColor: "#701c57"
       }}
     >
-      <Text style={{ fontSize: 20, fontWeight: "bold", color: "#01f9d2" }}>
-        Se ha realizado el pago exitosamente
-      </Text>
+      <View style={{ paddingHorizontal: 30 }}>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            color: "#01f9d2",
+            textAlign: "center"
+          }}
+        >
+          No se pudo completar el pago, su dinero será reembolsado
+        </Text>
+      </View>
+
       <View style={{ marginTop: 25 }}>
         <CommonNeuButton
           text="Ir a Inicio"
@@ -30,4 +40,4 @@ const PagoCompletadoScreen = ({ navigation }) => {
   );
 };
 
-export default PagoCompletadoScreen;
+export default PagoErrorScreen;

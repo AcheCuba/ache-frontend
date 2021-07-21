@@ -18,6 +18,7 @@ import RecargasDisponiblesScreen from "../screens/NuevaRecarga/RecargasDisponibe
 import PagoScreen from "../screens/NuevaRecarga/PagoScreen";
 import PrePagoScreen from "../screens/NuevaRecarga/PrePagoScreen";
 import PagoCompletadoScreen from "../screens/NuevaRecarga/PagoCompletadoScreen";
+import PagoErrorScreen from "../screens/NuevaRecarga/PagoErrorScreen";
 
 import MoreScreen from "../screens/More/MoreScreen";
 import AboutUsScreen from "../screens/More/AboutUsScreen";
@@ -111,12 +112,16 @@ export default function BottomTabNavigator({ navigation, route }) {
             if (myRoutes) {
               routeName = myRoutes[myRoutes.length - 1]?.name;
             }
-
-            if (routeName === "MultiplesContactosScreen") {
-              return false;
+            switch (routeName) {
+              case "MultiplesContactosScreen":
+                return false;
+              case "RecargasDisponiblesScreen":
+                return false;
+              case "PrePagoScreen":
+                return false;
+              default:
+                return true;
             }
-
-            return true;
           })(route)
         }}
       />
@@ -212,17 +217,6 @@ function GameNavigator({ navigation, route }) {
           cardStyleInterpolator: forHorizontal
         }}
       />
-
-      <GameStack.Screen
-        name="NuevaRecargaNavigator"
-        component={NuevaRecargaNavigator}
-        // for nesting
-        options={{
-          headerShown: false,
-          gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
-        }}
-      />
     </GameStack.Navigator>
   );
 }
@@ -233,7 +227,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
   return (
     <NuevaRecargaStack.Navigator>
       <NuevaRecargaStack.Screen
-        name="Nueva Recarga"
+        name="NuevaRecargaScreen"
         component={NuevaRecargaScreen}
         options={{
           //headerTitle: "Nueva Recarga",
@@ -242,15 +236,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
           cardStyleInterpolator: forHorizontal
         }}
       />
-      {/*   <NuevaRecargaStack.Screen
-        name="CobrarPremioScreen"
-        component={CobrarPremioScreen}
-        options={{
-          headerTitle: "Cobrar Premio",
-          gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal,
-        }}
-      /> */}
+
       <NuevaRecargaStack.Screen
         name="RecargasDisponiblesScreen"
         component={RecargasDisponiblesScreen}
@@ -282,6 +268,15 @@ function NuevaRecargaNavigator({ navigation, route }) {
       <NuevaRecargaStack.Screen
         name="PagoCompletadoScreen"
         component={PagoCompletadoScreen}
+        options={{
+          headerShown: false,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal
+        }}
+      />
+      <NuevaRecargaStack.Screen
+        name="PagoErrorScreen"
+        component={PagoErrorScreen}
         options={{
           headerShown: false,
           gestureDirection: "horizontal",

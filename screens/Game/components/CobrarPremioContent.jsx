@@ -7,7 +7,7 @@ import { NeuButton, NeuView } from "react-native-neu-element";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import axios from "axios";
 import { BASE_URL } from "../../../constants/domain";
-import { set_prize } from "../../../context/Actions/actions";
+import { setPrizeForUser } from "../../../context/Actions/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-simple-toast";
@@ -78,7 +78,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
             const prizeCode = currentPrize.uuid;
 
             storeData({ ...userState, prize: prizeResultUpdated });
-            userDispatch(set_prize(null));
+            userDispatch(setPrizeForUser(null));
             storeData({ ...userState, prize: null });
             setCodigo(prizeCode);
             setCodigoGenerado(true);

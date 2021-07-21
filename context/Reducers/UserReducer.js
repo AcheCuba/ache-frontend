@@ -3,7 +3,7 @@ import userInitialState from "../initialStates/userInitialState";
 
 const SIGNUP = actionTypes.SIGNUP;
 const RESTORE_USER = actionTypes.RESTORE_USER;
-const SET_PRIZE = actionTypes.SET_PRIZE;
+const SET_PRIZE_FOR_USER = actionTypes.SET_PRIZE_FOR_USER;
 
 const UserReducer = (state = userInitialState, action) => {
   switch (action.type) {
@@ -12,13 +12,12 @@ const UserReducer = (state = userInitialState, action) => {
       //console.log("signup or restore case (in user reducer):", state);
       //console.log("action user", action.user);
       return { ...state, ...action.user };
-      break;
-    case SET_PRIZE:
+    case SET_PRIZE_FOR_USER:
+      // console.log("========================== reducer", action.prize);
       return {
         ...state,
         prize: action.prize
       };
-      break;
     default:
       //console.log("Default case (in user reducer):", state);
       return state;

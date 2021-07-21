@@ -35,16 +35,41 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
   const [contactsFiltered, setContactsFiltered] = useState([]);
   const [text, setText] = useState("");
 
-  const { nuevaRecargaDispatch } = useContext(GlobalContext);
+  const [prizeForCurrentField, setPrizeForCurrentField] = useState(null);
+
+  const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
+  const { contactosSeleccionados } = nuevaRecargaState;
+
+  // verificar si el contacto actual existe
+  // si tiene premio
+  // almacenar el premio del contacto actual y ponerselo al contacto seleccionado, en lugar de null
+  useEffect(() => {
+    const existente = contactosSeleccionados.find((contacto) => {
+      return contacto.fieldInputId === fieldInputId;
+    });
+
+    //console.log(existente);
+    if (existente != undefined) {
+      setPrizeForCurrentField(existente.prize);
+    } else {
+      setPrizeForCurrentField(null);
+    }
+  });
 
   const onPressContact = (id, contactName, contactNumber) => {
     nuevaRecargaDispatch(deleteContact(fieldInputId));
 
     nuevaRecargaDispatch(
-      selectContact({ id, contactName, contactNumber, fieldInputId })
+      selectContact({
+        id,
+        contactName,
+        contactNumber,
+        fieldInputId,
+        prize: prizeForCurrentField
+      })
     );
     nuevaRecargaDispatch(toogleAddContactAvaiable(true));
-    navigation.navigate("Nueva Recarga");
+    navigation.navigate("NuevaRecargaScreen");
   };
 
   const filterNumbers = (contacts) => {
@@ -143,11 +168,12 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           id: undefined,
           contactName: undefined,
           contactNumber: text,
-          fieldInputId: fieldInputId
+          fieldInputId: fieldInputId,
+          prize: prizeForCurrentField
         })
       );
       nuevaRecargaDispatch(toogleAddContactAvaiable(true));
-      navigation.navigate("Nueva Recarga");
+      navigation.navigate("NuevaRecargaScreen");
     } else {
       Toast.show(
         "Introduzca un número de teléfono válidado en Cuba",

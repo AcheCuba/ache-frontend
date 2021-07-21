@@ -10,7 +10,7 @@ const CodigoRecargaModal = ({
   transparent,
   width,
   height,
-  actualBarcodeId,
+  fieldIdMatched
 }) => {
   const [text, setText] = useState("");
 
@@ -30,7 +30,7 @@ const CodigoRecargaModal = ({
           flex: 1,
           backgroundColor: "rgba(112, 28, 87, .8)",
           justifyContent: "center",
-          alignItems: "center",
+          alignItems: "center"
         }}
       >
         <NeuView
@@ -57,7 +57,7 @@ const CodigoRecargaModal = ({
               flexDirection: "row",
               justifyContent: "space-between",
               marginTop: 30,
-              width: width / 1.4,
+              width: width / 1.4
             }}
           >
             <NeuButton
@@ -71,7 +71,7 @@ const CodigoRecargaModal = ({
                 style={{
                   color: "#01f9d2",
                   fontWeight: "bold",
-                  fontSize: 16,
+                  fontSize: 16
                 }}
               >
                 CANCELAR
@@ -83,14 +83,14 @@ const CodigoRecargaModal = ({
               height={40}
               borderRadius={20}
               onPress={() => {
-                onPressOkModal(actualBarcodeId, text);
+                onPressOkModal(fieldIdMatched, text);
               }}
             >
               <Text
                 style={{
                   color: "#01f9d2",
                   fontWeight: "bold",
-                  fontSize: 16,
+                  fontSize: 16
                 }}
               >
                 OK
@@ -108,14 +108,14 @@ export default CodigoRecargaModal;
 const styles = StyleSheet.create({
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
 
   modalContainer: {
     //justifyContent: "center",
     // backgroundColor: "pink",
     alignItems: "center",
-    backgroundColor: "gray",
+    backgroundColor: "gray"
   },
 
   modalContent: {
@@ -134,6 +134,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
     marginBottom: 10,
     paddingLeft: 10,
-    marginHorizontal: 10,
-  },
+    marginHorizontal: 10
+  }
 });
