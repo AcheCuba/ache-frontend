@@ -1,7 +1,7 @@
+import React, { useState, useEffect, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Platform } from "react-native";
 
