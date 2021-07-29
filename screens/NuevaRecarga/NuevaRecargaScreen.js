@@ -133,8 +133,10 @@ const NuevaRecargaScreen = ({ navigation }) => {
     };
   }, []); */
 
-  /*   React.useEffect(() => {
+  /* React.useEffect(() => {
     //console.log("validated_prizes nueva recarga screen", validated_prizes);
+    console.log("fields", fields);
+    console.log("contactos seleccionados", contactosSeleccionados);
     console.log("validated_prizes", validated_prizes);
   }, [validated_prizes]); */
 

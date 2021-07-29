@@ -14,6 +14,7 @@ const TOGGLE_VALIDATE_IN_PROCESS = actionTypes.TOGGLE_VALIDATE_IN_PROCESS;
 const RESET_NUEVA_RECARGA_STATE = actionTypes.RESET_NUEVA_RECARGA_STATE;
 const RESTORE_NUEVA_RECARGA_INITIAL_STATE =
   actionTypes.RESTORE_NUEVA_RECARGA_INITIAL_STATE;
+const DELETE_FIELD = actionTypes.DELETE_FIELD;
 
 const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
   switch (action.type) {
@@ -73,6 +74,18 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         contactosSeleccionados: state.contactosSeleccionados.filter(
           (contact) => action.payload !== contact.fieldInputId
         )
+      };
+
+    case DELETE_FIELD:
+      return {
+        ...state,
+        contactosSeleccionados: state.contactosSeleccionados.filter(
+          (contact) => contact.fieldInputId !== action.payload
+        ),
+        validated_prizes: state.validated_prizes.filter(
+          (prize) => prize.fieldId !== action.payload
+        ),
+        fields: state.fields.filter((field) => field.fieldId !== action.payload)
       };
 
     // prizes

@@ -8,10 +8,27 @@ import { GlobalContext } from "../context/GlobalProvider";
 import { restore_user } from "../context/Actions/actions";
 import moment from "moment";
 import { getData, storeData } from "../libs/asyncStorage.lib";
+import { useAssets } from "expo-asset";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const { userState, userDispatch } = React.useContext(GlobalContext);
+  const [assets] = useAssets([
+    require("../assets/images/home/fondoOscuro.png"),
+    require("../assets/images/home/bisel.png"),
+    require("../assets/images/home/casillas2.png"),
+    require("../assets/images/home/fondo.png"),
+    require("../assets/images/home/premios/capa102Copia.png"),
+    require("../assets/images/home/premios/diamanteCopia.png"),
+    require("../assets/images/home/premios/Nada2.png"),
+    require("../assets/images/more/asset3.png"),
+    require("../assets/images/nueva_recarga/diez.png"),
+    require("../assets/images/nueva_recarga/jackpot.png"),
+    require("../assets/images/nueva_recarga/Nada2.png"),
+    require("../assets/images/onboarding_test/circle.png"),
+    require("../assets/images/onboarding_test/square.png"),
+    require("../assets/images/onboarding_test/triangle.png")
+  ]);
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
@@ -108,5 +125,8 @@ export default function useCachedResources() {
     loadResourcesAndDataAsync();
   }, []);
 
+  if (!assets) {
+    return false;
+  }
   return isLoadingComplete;
 }

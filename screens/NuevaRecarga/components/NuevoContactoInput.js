@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { useForm, Controller } from "react-hook-form";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   StyleSheet,
   View,
@@ -9,14 +8,18 @@ import {
   Image
 } from "react-native";
 import { GlobalContext } from "../../../context/GlobalProvider";
-import { toogleAddContactAvaiable } from "../../../context/Actions/actions";
+import {
+  deleteField,
+  toogleAddContactAvaiable
+} from "../../../context/Actions/actions";
 import { NeuInput, NeuButton, NeuView } from "react-native-neu-element";
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-simple-toast";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("screen");
 
-const inputWidth = width / 1.6;
+const inputWidth = width / 2;
 //const inputHeight = height / 12;
 
 const NuevoContactoInput = ({
@@ -127,6 +130,13 @@ const NuevoContactoInput = ({
     }
   };
 
+  const onPressDeleteContact = () => {
+    nuevaRecargaDispatch(deleteField(fieldInputId));
+    if (contactosSeleccionados.length > 0) {
+      nuevaRecargaDispatch(toogleAddContactAvaiable(true));
+    }
+  };
+
   return (
     <View
       style={{
@@ -135,6 +145,25 @@ const NuevoContactoInput = ({
         marginTop: 20
       }}
     >
+      <TouchableOpacity
+        onPress={() => onPressDeleteContact()}
+        style={{
+          //width: width / 8,
+          //heigth: width / 8,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "yelow",
+          marginTop: 3
+        }}
+      >
+        <MaterialCommunityIcons
+          name="trash-can"
+          color="rgba(248,85,34, 0.5)"
+          //  color="rgba(148,13,10, 0.5)"
+          size={28}
+        />
+      </TouchableOpacity>
+
       <TouchableWithoutFeedback
         onPress={() =>
           navigation.navigate("MultiplesContactosScreen", {
@@ -190,9 +219,6 @@ export default NuevoContactoInput;
 const styles = StyleSheet.create({
   input: {
     width: "50%",
-    //height: 50,
-    //backgroundColor: "rgba(112, 28, 87, 0.1)",
-    //borderRadius: 10,
     borderBottomWidth: 2,
     borderBottomColor: "rgba(112, 28, 87, 1)",
     marginBottom: 10,
@@ -200,5 +226,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   }
 });
-/*             value={contactSelected ? contactSelected.contactName : ""}
- */

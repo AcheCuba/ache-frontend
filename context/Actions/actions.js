@@ -74,6 +74,14 @@ export const deleteContact = (contactId) => {
   };
 };
 
+// delete contact and prize
+export const deleteField = (fieldId) => {
+  return {
+    type: actionTypes.DELETE_FIELD,
+    payload: fieldId
+  };
+};
+
 // prizes
 export const setPrize = (prize) => {
   return {
