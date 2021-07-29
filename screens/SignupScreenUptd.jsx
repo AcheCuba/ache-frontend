@@ -3,7 +3,7 @@ import axios from "axios";
 import React, { useContext, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { KeyboardAvoidingView } from "react-native";
-import { ToastAndroid } from "react-native";
+import Toast from "react-native-simple-toast";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 import { NeuButton, NeuInput } from "react-native-neu-element";
 import { BASE_URL } from "../constants/domain";
@@ -118,7 +118,7 @@ const SignupScreenUptd = ({ navigation }) => {
       })
       .catch((error) => {
         console.log("error", error);
-        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+        Toast.show(error.message, Toast.SHORT);
         setLoading(false);
       });
   };

@@ -14,12 +14,13 @@ import {
 import Toast from "react-native-simple-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
+import { cancelNotification } from "../../libs/expoPushNotification.lib";
 
 const { width, height } = Dimensions.get("screen");
 
 const PrePagoScreen = ({ navigation, route }) => {
-  const { price_usd, transaction_id } = route.params;
+  const { price_usd, transaction_id_array } = route.params;
 
   const { userState, userDispatch } = React.useContext(GlobalContext);
   const { nuevaRecargaState, nuevaRecargaDispatch } = useContext(GlobalContext);
@@ -46,17 +47,6 @@ const PrePagoScreen = ({ navigation, route }) => {
 
   const onPressBackButton = () => {
     popUpAlert();
-  };
-
-  const storeData = async (value) => {
-    console.log("store data");
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("user", jsonValue);
-    } catch (e) {
-      // saving error
-      console.log(e);
-    }
   };
 
   const prize_finish_checkout = (uuid) => {
@@ -124,26 +114,26 @@ const PrePagoScreen = ({ navigation, route }) => {
     );
   };
 
-  const confirmTransactionRequest = () => {
+  const confirmTransactionRequest = (transaction_id) => {
     const user_token = userState.token;
-    console.log("tranasction_id", transaction_id);
     const url = `${BASE_URL}/topup/confirm-transaction/${transaction_id}`;
     const config = {
       method: "post",
-      url: url,
+      url,
       headers: {
         "Authorization": `Bearer ${user_token}`
       }
     };
+    //console.log(config);
     return axios(config);
   };
 
-  const cancelTransactionRequest = () => {
+  const cancelTransactionRequest = (transaction_id) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/cancel-transaction/${transaction_id}`;
     const config = {
       method: "post",
-      url: url,
+      url,
       headers: {
         "Authorization": `Bearer ${user_token}`
       }
@@ -152,41 +142,54 @@ const PrePagoScreen = ({ navigation, route }) => {
   };
 
   const onPressCancelarPorError = () => {
-    cancelTransactionRequest()
-      .then(() => {
-        //finish_checkout_all_prizes(); es necesario?
-      })
-      .catch((err) => console.log(err.message));
-    nuevaRecargaDispatch(resetNuevaRecargaState());
-    /*  storeData({
-      id: userState.id,
-      name: userState.name,
-      email: userState.email,
-      phone: userState.phone,
-      prize: null
+    let cancelTransactionPromisesArray = [];
+
+    transaction_id_array.forEach((transaction_id) => {
+      cancelTransactionPromisesArray.push(
+        cancelTransactionRequest(transaction_id)
+      );
     });
-    userDispatch(setPrizeForUser(null)); */
+
+    Promise.all(cancelTransactionPromisesArray)
+      .then(() => console.log("ok"))
+      .catch((err) => console.log(err.message));
+
+    nuevaRecargaDispatch(resetNuevaRecargaState());
     navigation.navigate("PagoErrorScreen");
   };
 
-  const onPressConfirmarPago = () => {
-    confirmTransactionRequest()
-      .then(() => {
-        //finish_checkout_all_prizes(); es necesario?
-        console.log("ok");
-      })
+  const onPressConfirmarPago = async () => {
+    let confirmTransactionPromisesArray = [];
+
+    console.log(transaction_id_array);
+
+    transaction_id_array.forEach((transaction_id) => {
+      confirmTransactionPromisesArray.push(
+        confirmTransactionRequest(transaction_id)
+      );
+    });
+
+    Promise.all(confirmTransactionPromisesArray)
+      .then(() => console.log("ok"))
       .catch((err) => console.log(err.message));
 
     nuevaRecargaDispatch(resetNuevaRecargaState());
-    storeData({
+    // setear premio a null
+
+    storeData("user", {
       id: userState.id,
       name: userState.name,
       email: userState.email,
       phone: userState.phone,
       prize: null
     });
+
     userDispatch(setPrizeForUser(null));
     navigation.navigate("PagoCompletadoScreen");
+
+    const notId = await getData("notification-prize-expire");
+    await cancelNotification(notId);
+    await removeItem("notification-prize-expire");
   };
 
   return (

@@ -32,7 +32,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   const [loadingProducts, setLoadingProducts] = React.useState(false);
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
 
-  const [pressedProductId, setPressed] = React.useState("");
+  const [pressedProductId, setPressed] = React.useState(0);
   const [price_usd, setPrice_usd] = React.useState("");
 
   React.useEffect(() => {
@@ -122,10 +122,10 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
     );
   };
 
-  /*   React.useEffect(() => {
+  React.useEffect(() => {
     // console.log(loadingProducts);
-    //console.log("recargas disp screen, contactos", contactosSeleccionados);
-  }, [contactosSeleccionados]); */
+    console.log("recargas disp screen, contactos", contactosSeleccionados);
+  }, [contactosSeleccionados]);
 
   React.useEffect(() => {
     const CancelToken = axios.CancelToken;
@@ -166,11 +166,11 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
 
   const create_transaction = (contacto) => {
     const user_token = userState.token;
-    const url = `${BASE_URL}/topup/products`;
+    const url = `${BASE_URL}/topup/create-transaction`;
     let config;
     if (contacto.prize != null) {
       config = {
-        method: "get",
+        method: "post",
         url,
         data: {
           "beneficiary": contacto.contactNumber,
@@ -183,10 +183,11 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
       };
     } else {
       config = {
-        method: "get",
+        method: "post",
         url,
         data: {
           "beneficiary": contacto.contactNumber,
+          "prizeCode": "",
           "dtoneProductId": pressedProductId
         },
         headers: {
@@ -194,10 +195,12 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         }
       };
     }
+    console.log(config);
     return axios(config);
   };
 
   const onPressContinuar = () => {
+    let transaction_id_array = [];
     if (pressedProductId === "") {
       Toast.show("Debe seleccionar algún producto para continuar", Toast.SHORT);
     } else {
@@ -209,15 +212,21 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
       });
 
       Promise.all(promisesForTransaction)
-        .then((res) => {
+        .then((response) => {
+          response.forEach((transaction) => {
+            //console.log(transaction.data);
+            console.log(transaction.data.id);
+            transaction_id_array.push(transaction.data.id);
+          });
           setLoadingContinuar(false);
           navigation.navigate("PrePagoScreen", {
             price_usd,
-            transaction_id: pressedProductId
+            transaction_id_array
           });
         })
         .catch((err) => {
-          console.log(err.mess);
+          console.log(err.message);
+          setLoadingContinuar(false);
           Toast.show("No se pudo crear la transacción", Toast.SHORT);
         });
     }

@@ -17,46 +17,175 @@ import { NeuButton, NeuView } from "react-native-neu-element";
 import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
-import { setPrizeForUser } from "../../context/Actions/actions";
+import {
+  resetNuevaRecargaState,
+  setPrizeForUser
+} from "../../context/Actions/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-simple-toast";
 import moment from "moment";
-import { StackActions, useNavigationState } from "@react-navigation/native";
+import * as SecureStore from "expo-secure-store";
+import Constants from "expo-constants";
+import * as Notifications from "expo-notifications";
+import { getData, storeData } from "../../libs/asyncStorage.lib";
+import {
+  cancelNotification,
+  scheduleNotificationAtSecondsFromNow
+} from "../../libs/expoPushNotification.lib";
 
-//const user_token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QxIiwic3ViIjoxMTQsImlhdCI6MTYyMzIwMDQ1OX0.Nmm96Cam4SmoSGxmyxphAfbxqN70PP9fGSe2dRTInx4`;
-//const base_url = "https://ache-backend.herokuapp.com";
 const { width, height } = Dimensions.get("screen");
 
+async function storeSacureValue(key, value) {
+  await SecureStore.setItemAsync(key, value);
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    console.log("final status", finalStatus);
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log("expo push token", token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  return token;
+}
+
 const GameScreen = ({ navigation }) => {
+  //const expoPushToken = useExpoPushToken();
+
   const [modalVisible, setModalVisible] = React.useState(false);
   const [prizeLocal, setPrizeLocal] = React.useState(null);
   const [casillaFinal, setCasillaFinal] = React.useState("1800deg");
-  //const [thereIsPrizeResult, setThereIsPrizeResult] = React.useState(false);
-
   const thereIsPrizeResult = React.useRef(false);
-
-  const [stopAnimation, setStopAnimation] = React.useState(false);
-  const { userState, userDispatch } = React.useContext(GlobalContext);
-
-  //let wheelValue = new Animated.Value(0);
-  //const wheelValue = React.useRef(new Animated.Value(0)).current;
+  const { userState, userDispatch, nuevaRecargaDispatch } =
+    React.useContext(GlobalContext);
   const wheelValue = React.useRef(new Animated.Value(0));
   const enMovimiento = React.useRef(false);
 
-  const storeData = async (value) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("user", jsonValue);
-    } catch (e) {
-      // saving error
-      console.log(e);
+  React.useEffect(() => {
+    async function expoTokenAsync() {
+      let token;
+      token = await SecureStore.getItemAsync("expo-push-token");
+      //console.log(token);
+      if (token != null) {
+        return;
+      } else {
+        registerForPushNotificationsAsync().then((token) => {
+          storeSacureValue("expo-push-token", token);
+          setTokenRequest(token);
+        });
+      }
     }
+    expoTokenAsync();
+  }, []);
+
+  React.useEffect(() => {
+    async function twoDaysOutOfTheApp() {
+      const currentNotId = await getData("notification-two-days-out");
+
+      const now = moment();
+      const twoDaysLater = moment().add(2, "days");
+      const seconds_diff = twoDaysLater.diff(now, "seconds");
+
+      console.log(seconds_diff);
+      let notId;
+
+      // si es sí, utilizar el value para cancelar notificación, crear otra con fecha actualizada, setear nuevo key
+      if (currentNotId == null) {
+        // schedule notif recuperar id
+        notId = await scheduleNotificationAtSecondsFromNow(
+          "Demasiado tiempo fuera",
+          "Te tomará unos segundos lanzar la ruleta",
+          seconds_diff
+        );
+        if (notId != undefined) {
+          console.log("notId", notId);
+          // setear en async storage id
+          await storeData("notification-two-days-out", notId);
+        }
+      } else {
+        // cancel notificacion actual con ese id
+        await cancelNotification(currentNotId);
+        // crea una nueva, recupera el id
+        notId = await scheduleNotificationAtSecondsFromNow(
+          "Demasiado tiempo fuera",
+          "Te tomará unos segundos lanzar la ruleta",
+          seconds_diff
+        );
+        // sobreescribe el key notification-two-days-later
+        if (notId != undefined) {
+          await storeData("notification-two-days-out", notId);
+        }
+      }
+    }
+    twoDaysOutOfTheApp();
+  }, []);
+
+  const setPremioCercanoAExpirarNotification = async () => {
+    const now = moment();
+    const fechaLim = moment().add(2.5, "days");
+    const seconds_diff = fechaLim.diff(now, "seconds");
+
+    console.log(seconds_diff);
+    // crear notificación
+    const notId = await scheduleNotificationAtSecondsFromNow(
+      "Hey, no te descuides",
+      "Tu premio expira en 12 horas",
+      seconds_diff
+    );
+    // setear id en key "notification-prize-expire"
+    if (notId != undefined) {
+      storeData("notification-prize-expire", notId);
+    }
+
+    // se cancela
+    // - cuando se cobra el premio por método normal
+    // - cuando se hace exhange por código
   };
 
-  /*  React.useEffect(() => {
-    console.log("userStatae", userState);
-  }, [userState]); */
+  const setTokenRequest = (expoPushToken) => {
+    const user_token = userState.token;
+    const url = `${BASE_URL}/auth/set-token/${expoPushToken}`;
 
+    const config = {
+      method: "post",
+      url: url,
+      headers: {
+        "Authorization": `Bearer ${user_token}`
+      }
+    };
+
+    axios(config)
+      .then((response) => {
+        console.log("status in set-token", response.status);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  React.useEffect(() => {
+    console.log("userState", userState);
+  }, [userState]);
+
+  /* React.useEffect(() => {
+    console.log(expoPushToken);
+  });
+ */
   const ImageConditional = ({ typeOfPrize }) => {
     switch (typeOfPrize) {
       case "Jackpot":
@@ -158,10 +287,12 @@ const GameScreen = ({ navigation }) => {
 
               console.log(minutos_restantes);
 
+              nuevaRecargaDispatch(resetNuevaRecargaState());
+
               setTimeout(() => {
                 //storeData({ ...userState, prize: null });
                 //userDispatch(set_prize(null));
-                storeData({
+                storeData("user", {
                   ...userState,
                   prize: {
                     type: "Nada",
@@ -193,9 +324,12 @@ const GameScreen = ({ navigation }) => {
               );
 
               console.log(minutos_restantes);
+              nuevaRecargaDispatch(resetNuevaRecargaState());
 
               setTimeout(() => {
-                storeData({
+                setPremioCercanoAExpirarNotification();
+
+                storeData("user", {
                   ...userState,
                   prize: {
                     ...prize_result,

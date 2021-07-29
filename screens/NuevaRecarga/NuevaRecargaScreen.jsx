@@ -92,7 +92,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
             });
         }
       }
-    }, [contactosSeleccionados, fields])
+    }, [contactosSeleccionados, fields, validated_prizes, userState])
   );
 
   /* React.useEffect(() => {
@@ -133,11 +133,10 @@ const NuevaRecargaScreen = ({ navigation }) => {
     };
   }, []); */
 
-  /* 
-  React.useEffect(() => {
+  /*   React.useEffect(() => {
     //console.log("validated_prizes nueva recarga screen", validated_prizes);
-    console.log("nuevaRecargaState", nuevaRecargaState);
-  }, [nuevaRecargaState]); */
+    console.log("validated_prizes", validated_prizes);
+  }, [validated_prizes]); */
 
   const overwritePrizeForField = (fieldId) => {
     const prizeForFinishCheckout = validated_prizes.find(
@@ -296,48 +295,49 @@ const NuevaRecargaScreen = ({ navigation }) => {
       );
     } else {
       setLoadingContinuar(true);
-      const hayPremio =
+      /*  const hayPremio =
         userState.prize != null && userState.prize.type !== "Nada";
       if (!hayPremio) {
         setLoadingContinuar(false);
         navigation.navigate("RecargasDisponiblesScreen");
         console.log("No hay premio");
+      } else { */
+      if (validatetInProcess) {
+        Toast.show("Se están validando tus premios", Toast.SHORT);
+        setLoadingContinuar(false);
       } else {
-        if (validatetInProcess) {
-          Toast.show("Se están validando tus premios", Toast.SHORT);
+        // init checkout de los premios validados
+        // si un premio está asociado a un contacto, es que está en checkout
+        if (validated_prizes.length === 0) {
+          Toast.show("No hay premios válidos por cobrar", Toast.SHORT);
           setLoadingContinuar(false);
+          navigation.navigate("RecargasDisponiblesScreen");
         } else {
-          // init checkout de los premios validados
-          // si un premio está asociado a un contacto, es que está en checkout
-          if (validated_prizes === []) {
-            Toast.show("No hay premios válidos por cobrar", Toast.SHORT);
-          } else {
-            let prizesForInitCheckoutPromise = [];
+          let prizesForInitCheckoutPromise = [];
 
-            validated_prizes.forEach((prize_validado) => {
-              prizesForInitCheckoutPromise.push(
-                prize_init_checkout(prize_validado.uuid)
-              );
-            });
+          validated_prizes.forEach((prize_validado) => {
+            prizesForInitCheckoutPromise.push(
+              prize_init_checkout(prize_validado.uuid)
+            );
+          });
 
-            Promise.all(prizesForInitCheckoutPromise)
-              .then(() => {
-                validated_prizes.forEach((prize) => {
-                  nuevaRecargaDispatch(
-                    updatePrizeForContact(prize.fieldId, {
-                      uuid: prize.uuid,
-                      type: prize.type
-                    })
-                  );
-                });
-                setLoadingContinuar(false);
-                navigation.navigate("RecargasDisponiblesScreen");
-              })
-              .catch((err) => {
-                setLoadingContinuar(false);
-                Toast.show(err.message, Toast.SHORT);
+          Promise.all(prizesForInitCheckoutPromise)
+            .then(() => {
+              validated_prizes.forEach((prize) => {
+                nuevaRecargaDispatch(
+                  updatePrizeForContact(prize.fieldId, {
+                    uuid: prize.uuid,
+                    type: prize.type
+                  })
+                );
               });
-          }
+              setLoadingContinuar(false);
+              navigation.navigate("RecargasDisponiblesScreen");
+            })
+            .catch((err) => {
+              setLoadingContinuar(false);
+              Toast.show(err.message, Toast.SHORT);
+            });
         }
       }
     }

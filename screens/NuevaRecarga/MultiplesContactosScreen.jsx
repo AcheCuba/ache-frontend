@@ -58,12 +58,12 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 
   const onPressContact = (id, contactName, contactNumber) => {
     nuevaRecargaDispatch(deleteContact(fieldInputId));
-
+    const cleanContactNumber = contactNumber.replace(/ /g, "");
     nuevaRecargaDispatch(
       selectContact({
         id,
         contactName,
-        contactNumber,
+        contactNumber: cleanContactNumber,
         fieldInputId,
         prize: prizeForCurrentField
       })

@@ -7,15 +7,20 @@ import { NeuButton, NeuView } from "react-native-neu-element";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import axios from "axios";
 import { BASE_URL } from "../../../constants/domain";
-import { setPrizeForUser } from "../../../context/Actions/actions";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  resetNuevaRecargaState,
+  setPrizeForUser
+} from "../../../context/Actions/actions";
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-simple-toast";
+import { getData, removeItem, storeData } from "../../../libs/asyncStorage.lib";
+import { cancelNotification } from "../../../libs/expoPushNotification.lib";
 
 const { width, height } = Dimensions.get("screen");
 
 const CobrarPremioContent = ({ navigation, setModalVisible }) => {
-  const { userState, userDispatch } = React.useContext(GlobalContext);
+  const { userState, userDispatch, nuevaRecargaDispatch } =
+    React.useContext(GlobalContext);
 
   const currentPrize = userState.prize;
 
@@ -33,7 +38,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
     Clipboard.setString(code);
   };
 
-  const storeData = async (value) => {
+  /* const storeData = async (value) => {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem("user", jsonValue);
@@ -41,7 +46,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
       // saving error
       console.log(e);
     }
-  };
+  }; */
 
   const EncriptarCodigo = (codigo) => {
     const codigoEncriptado =
@@ -77,9 +82,19 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
             const prizeResultUpdated = response.data; // exchanged true
             const prizeCode = currentPrize.uuid;
 
-            storeData({ ...userState, prize: prizeResultUpdated });
+            // actualizar persistencia
+            //storeData({ ...userState, prize: prizeResultUpdated });
+            storeData("user", { ...userState, prize: null });
+
+            // actualizar estado global
             userDispatch(setPrizeForUser(null));
-            storeData({ ...userState, prize: null });
+            // para no afectar al estado de Nueva Recarga
+            nuevaRecargaDispatch(resetNuevaRecargaState());
+
+            // limpiar notificación
+            cleanNotification();
+
+            // actualizar estado local
             setCodigo(prizeCode);
             setCodigoGenerado(true);
             setLoading(false);
@@ -97,6 +112,12 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
       setCodigo("aj3d44Pk5Md***kd213");
       setCodigoGenerado(true);
     }
+  };
+
+  const cleanNotification = async () => {
+    const notId = await getData("notification-prize-expire");
+    cancelNotification(notId);
+    removeItem(notId);
   };
 
   const onPressCopiar = () => {

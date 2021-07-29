@@ -16,7 +16,7 @@ const CodigoRecargaModal = ({
 
   React.useEffect(() => {
     setText("");
-  }, []);
+  }, [fieldIdMatched]);
 
   return (
     <Modal

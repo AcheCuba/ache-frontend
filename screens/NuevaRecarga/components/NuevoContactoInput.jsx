@@ -30,10 +30,8 @@ const NuevoContactoInput = ({
 }) => {
   const [text, setText] = useState("");
   const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
-  const { contactosSeleccionados } = nuevaRecargaState;
+  const { contactosSeleccionados, validated_prizes } = nuevaRecargaState;
   const { userState } = React.useContext(GlobalContext);
-
-  //console.log("prize by field id:", prizeByFieldId);
 
   const onChangeText = (value) => {
     setText(value);
@@ -85,7 +83,7 @@ const NuevoContactoInput = ({
           return (
             <Image
               source={require("../../../assets/images/nueva_recarga/diez.png")}
-              style={{ height: 20, width: 20 }}
+              style={{ height: 25, width: 23 }}
             />
           );
 
@@ -101,6 +99,8 @@ const NuevoContactoInput = ({
           ); */
       }
     } else {
+      //console.log("here");
+      //console.log(prizeByFieldId);
       // return <Ionicons name={iconName} color="gray" size={20} />;
       if (prizeByFieldId?.loading) {
         return <ActivityIndicator size="small" color="#01f9d2" />;

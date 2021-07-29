@@ -7,30 +7,11 @@ import * as React from "react";
 import { GlobalContext } from "../context/GlobalProvider";
 import { restore_user } from "../context/Actions/actions";
 import moment from "moment";
+import { getData, storeData } from "../libs/asyncStorage.lib";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const { userState, userDispatch } = React.useContext(GlobalContext);
-
-  const getData = async (key) => {
-    try {
-      const jsonValue = await AsyncStorage.getItem(key);
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-      // error reading value
-      console.log(e);
-    }
-  };
-
-  const storeData = async (value) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("user", jsonValue);
-    } catch (e) {
-      // saving error
-      console.log(e);
-    }
-  };
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
@@ -62,10 +43,13 @@ export default function useCachedResources() {
         //user = await getData("user");
         //===================== solo para eliminar user ===========================
 
+        //===================== solo para eliminar token de expo push not ===========================
+        //await SecureStore.deleteItemAsync("expo-push-token");
+        //===================== solo para eliminar user ===========================
+
         //console.log(user);
         //console.log(token);
         if (user != null && token != null) {
-          // && user.id != undefined
           if (user.prize !== null && user.prize.exchanged === false) {
             const currentPrizeState = user.prize;
 
@@ -75,13 +59,13 @@ export default function useCachedResources() {
             console.log(minutos_restantes);
             if (minutos_restantes < 0) {
               // premio expirado
-              storeData({
+              storeData("user", {
                 ...user,
                 prize: null
               });
               userDispatch(restore_user({ ...user, prize: null, token }));
             } else {
-              storeData({
+              storeData("user", {
                 ...user,
                 prize: {
                   ...currentPrizeState,
