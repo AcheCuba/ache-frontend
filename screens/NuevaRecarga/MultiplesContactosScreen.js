@@ -238,13 +238,21 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       setLoading(true);
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
+        console.log(Contacts.Fields);
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.PhoneNumbers]
         });
 
         if (data.length > 0) {
+          // console.log("==============================00");
+
           let _data = data.filter((cont) => {
-            return cont.firstName.length > 0 && cont.phoneNumbers?.length > 0;
+            if (cont.phoneNumbers != undefined && cont.firstName != undefined) {
+              // console.log(cont.phoneNumbers[0].number);
+              return cont.firstName.length > 0 && cont.phoneNumbers.length > 0;
+            } else {
+              //console.log(cont.phoneNumbers);
+            }
           });
 
           _data = _data.map((contact) => {

@@ -1,5 +1,19 @@
 import * as Notifications from "expo-notifications";
 
+export async function _setNotificationHandler(
+  shouldShowAlert,
+  shouldPlaySound,
+  shouldSetBadge
+) {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert,
+      shouldPlaySound,
+      shouldSetBadge
+    })
+  });
+}
+
 export async function scheduleNotificationAtSecondsFromNow(
   title,
   body,
