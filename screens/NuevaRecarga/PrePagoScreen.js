@@ -11,7 +11,7 @@ import {
   setPrizeForUser
 } from "../../context/Actions/actions";
 
-import Toast from "react-native-simple-toast";
+import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
 import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
@@ -82,12 +82,26 @@ const PrePagoScreen = ({ navigation, route }) => {
         .then(() => {
           Toast.show(
             "Los premios están libres, y podrán cobrarse en otro momento",
-            Toast.LONG
+            {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0
+            }
           );
         })
         .catch((e) => {
           console.log(e.message);
-          Toast.show("Los premios no pudieron liberarse", Toast.SHORT);
+          Toast.show("Los premios no pudieron liberarse", {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0
+          });
         });
     }
   };

@@ -4,7 +4,7 @@ import {
   View,
   Text as RNText,
   Dimensions,
-  Animated,
+  Animated
 } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Svg from "react-native-svg";
@@ -28,7 +28,7 @@ const makeWheel = () => {
   const arcs = d3Shape.pie()(data);
   const colors = color({
     luminosity: "dark",
-    count: numberOfSegments,
+    count: numberOfSegments
   });
 
   return arcs.map((arc, index) => {
@@ -42,7 +42,7 @@ const makeWheel = () => {
       path: instance(arc),
       color: colors[index],
       value: Math.round(Math.random() * 10 + 1) * 200, //[200, 2200]
-      centroid: instance.centroid(arc),
+      centroid: instance.centroid(arc)
     };
   });
 };
@@ -55,7 +55,7 @@ class Ruleta extends React.Component {
   state = {
     enabled: true,
     finished: false,
-    winner: null,
+    winner: null
   };
 
   componentDidMount() {
@@ -63,7 +63,7 @@ class Ruleta extends React.Component {
       if (this.state.enabled) {
         this.setState({
           enabled: false,
-          finished: false,
+          finished: false
         });
       }
 
@@ -90,20 +90,20 @@ class Ruleta extends React.Component {
       Animated.decay(this._angle, {
         velocity: velocityY / 1000,
         deceleration: 0.999,
-        useNativeDriver: true,
+        useNativeDriver: true
       }).start(() => {
         this._angle.setValue(this.angle % oneTurn);
         const snapTo = snap(oneTurn / numberOfSegments);
         Animated.timing(this._angle, {
           toValue: snapTo(this.angle),
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver: true
         }).start(() => {
           const winnerIndex = this._getWinnerIndex();
           this.setState({
             enabled: true,
             finished: true,
-            winner: this._wheelPaths[winnerIndex].value,
+            winner: this._wheelPaths[winnerIndex].value
           });
         });
         // do something here;
@@ -146,17 +146,10 @@ class Ruleta extends React.Component {
             {
               rotate: YOLO.interpolate({
                 inputRange: [-1, -0.5, -0.0001, 0.0001, 0.5, 1],
-                outputRange: [
-                  "0deg",
-                  "0deg",
-                  "35deg",
-                  "-35deg",
-                  "0deg",
-                  "0deg",
-                ],
-              }),
-            },
-          ],
+                outputRange: ["0deg", "0deg", "35deg", "-35deg", "0deg", "0deg"]
+              })
+            }
+          ]
         }}
       >
         <Svg
@@ -192,10 +185,10 @@ class Ruleta extends React.Component {
               {
                 rotate: this._angle.interpolate({
                   inputRange: [-oneTurn, 0, oneTurn],
-                  outputRange: [`-${oneTurn}deg`, `0deg`, `${oneTurn}deg`],
-                }),
-              },
-            ],
+                  outputRange: [`-${oneTurn}deg`, `0deg`, `${oneTurn}deg`]
+                })
+              }
+            ]
           }}
         >
           <Svg
@@ -254,12 +247,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   winnerText: {
     fontSize: 32,
     fontFamily: "Menlo",
     position: "absolute",
-    bottom: 10,
-  },
+    bottom: 10
+  }
 });

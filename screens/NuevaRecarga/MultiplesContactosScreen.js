@@ -1,14 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import * as Contacts from "expo-contacts";
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  Image,
-  Dimensions,
-  ScrollView
-} from "react-native";
+import { StyleSheet, View, Text, FlatList, Dimensions } from "react-native";
 import Contact from "./components/Contact";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -21,7 +13,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import { NeuButton, NeuInput, NeuSpinner } from "react-native-neu-element";
-import Toast from "react-native-simple-toast";
+import Toast from "react-native-root-toast";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -175,10 +167,14 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       nuevaRecargaDispatch(toogleAddContactAvaiable(true));
       navigation.navigate("NuevaRecargaScreen");
     } else {
-      Toast.show(
-        "Introduzca un número de teléfono válidado en Cuba",
-        Toast.SHORT
-      );
+      Toast.show("Introduzca un número de teléfono válidado en Cuba", {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0
+      });
     }
   };
 

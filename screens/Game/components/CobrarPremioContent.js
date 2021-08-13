@@ -12,7 +12,7 @@ import {
   setPrizeForUser
 } from "../../../context/Actions/actions";
 import { ActivityIndicator } from "react-native";
-import Toast from "react-native-simple-toast";
+import Toast from "react-native-root-toast";
 import { getData, removeItem, storeData } from "../../../libs/asyncStorage.lib";
 import { cancelNotification } from "../../../libs/expoPushNotification.lib";
 
@@ -122,9 +122,19 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
 
   const onPressCopiar = () => {
     copyToClipboard(codigo);
-    Toast.show("Código copiado al portapapeles", Toast.SHORT, [
+
+    Toast.show("Código copiado al portapapeles", {
+      duaration: Toast.durations.LONG,
+      position: Toast.positions.BOTTOM,
+      shadow: true,
+      animation: true,
+      hideOnPress: true,
+      delay: 0
+    });
+
+    /* Toast.show("Código copiado al portapapeles", Toast.SHORT, [
       "RCTModalHostViewController"
-    ]);
+    ]); */
     //setCodigoGenerado(false);
   };
 

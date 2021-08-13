@@ -24,7 +24,7 @@ import {
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import { NeuButton, NeuView } from "react-native-neu-element";
 import { Ionicons } from "@expo/vector-icons";
-import Toast from "react-native-simple-toast";
+import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
@@ -220,8 +220,22 @@ const NuevaRecargaScreen = ({ navigation }) => {
           nuevaRecargaDispatch(toggleValidateInProcess(false));
         })
         .catch((error) => {
-          Toast.show("El premio no es válido", Toast.SHORT);
-          Toast.show(error.message, Toast.SHORT);
+          Toast.show("El premio no es válido", {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0
+          });
+          Toast.show(error.message, {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0
+          });
           //eleminar el que se añadió y actualizar loading, no es válido
           nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
           nuevaRecargaDispatch(toggleValidateInProcess(false));
@@ -242,7 +256,14 @@ const NuevaRecargaScreen = ({ navigation }) => {
       //al final -> deshabilitar botón
       nuevaRecargaDispatch(toogleAddContactAvaiable(false));
     } else {
-      Toast.show("Añade un contacto antes de añadir otro campo", Toast.SHORT);
+      Toast.show("Añade un contacto antes de añadir otro campo", {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0
+      });
     }
   };
 
@@ -291,10 +312,14 @@ const NuevaRecargaScreen = ({ navigation }) => {
 
   const onPressContinuar = () => {
     if (!addContactAvaiable) {
-      Toast.show(
-        "Selecciona al menos a un contacto para recargar",
-        Toast.SHORT
-      );
+      Toast.show("Selecciona al menos a un contacto para recargar", {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0
+      });
     } else {
       setLoadingContinuar(true);
       /*  const hayPremio =
@@ -305,13 +330,27 @@ const NuevaRecargaScreen = ({ navigation }) => {
         console.log("No hay premio");
       } else { */
       if (validatetInProcess) {
-        Toast.show("Se están validando tus premios", Toast.SHORT);
+        Toast.show("Se están validando tus premios", {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0
+        });
         setLoadingContinuar(false);
       } else {
         // init checkout de los premios validados
         // si un premio está asociado a un contacto, es que está en checkout
         if (validated_prizes.length === 0) {
-          Toast.show("No hay premios válidos por cobrar", Toast.SHORT);
+          Toast.show("No hay premios válidos por cobrar", {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0
+          });
           setLoadingContinuar(false);
           navigation.navigate("RecargasDisponiblesScreen");
         } else {
@@ -338,7 +377,14 @@ const NuevaRecargaScreen = ({ navigation }) => {
             })
             .catch((err) => {
               setLoadingContinuar(false);
-              Toast.show(err.message, Toast.SHORT);
+              Toast.show(err.message, {
+                duaration: Toast.durations.LONG,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0
+              });
             });
         }
       }

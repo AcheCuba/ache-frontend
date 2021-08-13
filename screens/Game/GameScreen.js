@@ -22,7 +22,7 @@ import {
   setPrizeForUser
 } from "../../context/Actions/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Toast from "react-native-simple-toast";
+import Toast from "react-native-root-toast";
 import moment from "moment";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
@@ -247,7 +247,10 @@ const GameScreen = ({ navigation }) => {
 
   const onPressWheel = async () => {
     if (enMovimiento.current) {
-      Toast.show("Ruleta en movimiento, espere", Toast.SHORT);
+      Toast.show("Ruleta en movimiento, espere", {
+        duaration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM
+      });
     } else {
       wheelRotateInit();
 
@@ -352,13 +355,19 @@ const GameScreen = ({ navigation }) => {
           .catch((error) => {
             console.log(error);
             thereIsPrizeResult.current = true;
-            Toast.show(error.message, Toast.SHORT);
+            Toast.show(error.message, {
+              duaration: Toast.durations.SHORT,
+              position: Toast.positions.BOTTOM
+            });
           });
       } else {
         setTimeout(() => {
           thereIsPrizeResult.current = true;
           setCasilla({ type: "default" });
-          Toast.show("Segundo Premio Ganado", Toast.SHORT);
+          Toast.show("Segundo Premio Ganado", {
+            duaration: Toast.durations.SHORT,
+            position: Toast.positions.BOTTOM
+          });
         }, 7500);
       }
     }
@@ -473,14 +482,24 @@ const GameScreen = ({ navigation }) => {
                 onPress={() => {
                   if (userState.prize !== null) {
                     if (userState.prize.type === "Nada") {
-                      Toast.show("No ganaste nada, de momento", Toast.SHORT);
+                      Toast.show("No ganaste nada, de momento", {
+                        duaration: Toast.durations.SHORT,
+                        position: Toast.positions.BOTTOM
+                      });
                     } else {
                       setModalVisible(true);
                     }
                   } else {
-                    Toast.show(
+                    let toast = Toast.show(
                       "No tiene premio para cobrar, pruebe suerte!",
-                      Toast.SHORT
+                      {
+                        duaration: Toast.durations.LONG,
+                        position: Toast.positions.BOTTOM,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0
+                      }
                     );
                   }
                 }}

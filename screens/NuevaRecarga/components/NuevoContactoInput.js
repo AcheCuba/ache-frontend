@@ -14,7 +14,7 @@ import {
 } from "../../../context/Actions/actions";
 import { NeuInput, NeuButton, NeuView } from "react-native-neu-element";
 import { ActivityIndicator } from "react-native";
-import Toast from "react-native-simple-toast";
+import Toast from "react-native-root-toast";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("screen");
@@ -48,7 +48,14 @@ const NuevoContactoInput = ({
     if (contactoExistente !== undefined) {
       onPressBarcode(fieldInputId);
     } else {
-      Toast.show("Añade un contacto primero", Toast.SHORT);
+      Toast.show("Añade un contacto primero", {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0
+      });
     }
   };
 

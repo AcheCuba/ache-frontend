@@ -15,7 +15,7 @@ import CommonHeader from "../../components/CommonHeader";
 
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
-import Toast from "react-native-simple-toast";
+import Toast from "react-native-root-toast";
 import axios from "axios";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { resetNuevaRecargaState } from "../../context/Actions/actions";
@@ -73,12 +73,26 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         .then(() => {
           Toast.show(
             "Los premios están libres, y podrán cobrarse en otro momento",
-            Toast.LONG
+            {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0
+            }
           );
         })
         .catch((e) => {
           console.log(e.message);
-          Toast.show("Los premios no pudieron liberarse", Toast.SHORT);
+          Toast.show("Los premios no pudieron liberarse", {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0
+          });
         });
     }
   };
@@ -202,7 +216,14 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   const onPressContinuar = () => {
     let transaction_id_array = [];
     if (pressedProductId === "") {
-      Toast.show("Debe seleccionar algún producto para continuar", Toast.SHORT);
+      Toast.show("Debe seleccionar algún producto para continuar", {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0
+      });
     } else {
       setLoadingContinuar(true);
 
@@ -227,7 +248,14 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         .catch((err) => {
           console.log(err.message);
           setLoadingContinuar(false);
-          Toast.show("No se pudo crear la transacción", Toast.SHORT);
+          Toast.show("No se pudo crear la transacción", {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0
+          });
         });
     }
   };
