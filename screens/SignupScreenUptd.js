@@ -189,8 +189,8 @@ const SignupScreenUptd = ({ navigation }) => {
           //resizeMode="center"
           style={{
             marginLeft: width / 10,
-            width: width / 4,
-            height: width / 8,
+            width: width / 4.5,
+            height: width / 8.6,
           }}
         />
       </View>
