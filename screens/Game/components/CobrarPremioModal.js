@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, StyleSheet, View, Dimensions, StatusBar } from "react-native";
 import CobrarPremioContent from "./CobrarPremioContent";
 import CommonHeader from "../../../components/CommonHeader";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -15,19 +16,21 @@ const CobrarPremioModal = ({ modalVisible, setModalVisible, navigation }) => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <CommonHeader
-          width={width}
-          height={height}
-          _onPress={() => setModalVisible(false)}
-        />
-        <View style={styles.ModalOuterContent}>
-          {/*  <View style={styles.ModalContent}> */}
-          <CobrarPremioContent
-            navigation={navigation}
-            setModalVisible={setModalVisible}
+        <RootSiblingParent>
+          <CommonHeader
+            width={width}
+            height={height}
+            _onPress={() => setModalVisible(false)}
           />
-          {/*  </View> */}
-        </View>
+          <View style={styles.ModalOuterContent}>
+            {/*  <View style={styles.ModalContent}> */}
+            <CobrarPremioContent
+              navigation={navigation}
+              setModalVisible={setModalVisible}
+            />
+            {/*  </View> */}
+          </View>
+        </RootSiblingParent>
       </Modal>
     </>
   );

@@ -9,17 +9,16 @@ import {
   Image,
   TouchableWithoutFeedback,
   Animated,
-  Easing
+  Easing,
 } from "react-native";
-import CustomButtom from "../../components/CustomButton";
 import CobrarPremioModal from "./components/CobrarPremioModal";
-import { NeuButton, NeuView } from "react-native-neu-element";
+import { NeuButton } from "react-native-neu-element";
 import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import {
   resetNuevaRecargaState,
-  setPrizeForUser
+  setPrizeForUser,
 } from "../../context/Actions/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-root-toast";
@@ -30,7 +29,8 @@ import * as Notifications from "expo-notifications";
 import { getData, storeData } from "../../libs/asyncStorage.lib";
 import {
   cancelNotification,
-  scheduleNotificationAtSecondsFromNow
+  scheduleNotificationAtSecondsFromNow,
+  _setNotificationHandler,
 } from "../../libs/expoPushNotification.lib";
 
 const { width, height } = Dimensions.get("screen");
@@ -67,7 +67,6 @@ const GameScreen = ({ navigation }) => {
   //const expoPushToken = useExpoPushToken();
 
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [prizeLocal, setPrizeLocal] = React.useState(null);
   const [casillaFinal, setCasillaFinal] = React.useState("1800deg");
   const thereIsPrizeResult = React.useRef(false);
   const { userState, userDispatch, nuevaRecargaDispatch } =
@@ -79,13 +78,16 @@ const GameScreen = ({ navigation }) => {
     async function expoTokenAsync() {
       let token;
       token = await SecureStore.getItemAsync("expo-push-token");
-      //console.log(token);
+      console.log("token del storage", token);
+
       if (token != null) {
         return;
       } else {
         registerForPushNotificationsAsync().then((token) => {
-          storeSacureValue("expo-push-token", token);
-          setTokenRequest(token);
+          if (token != undefined) {
+            storeSacureValue("expo-push-token", token);
+            setTokenRequest(token);
+          }
         });
       }
     }
@@ -164,8 +166,8 @@ const GameScreen = ({ navigation }) => {
       method: "post",
       url: url,
       headers: {
-        "Authorization": `Bearer ${user_token}`
-      }
+        Authorization: `Bearer ${user_token}`,
+      },
     };
 
     axios(config)
@@ -192,10 +194,10 @@ const GameScreen = ({ navigation }) => {
         return (
           <Image
             source={require("../../assets/images/home/premios/diamanteCopia.png")}
-            resizeMode="center"
+            //resizeMode="center"
             style={{
               width: width / 5,
-              height: width / 5
+              height: width / 5,
             }}
           />
         );
@@ -203,19 +205,25 @@ const GameScreen = ({ navigation }) => {
         return (
           <Image
             source={require("../../assets/images/home/premios/capa102Copia.png")}
-            resizeMode="center"
+            //resizeMode="center"
             style={{
               width: width / 5,
-              height: width / 5
+              height: width / 4.5,
             }}
           />
         );
       case "Nada":
         return (
-          <Image
-            source={require("../../assets/images/home/premios/Nada2.png")}
-            resizeMode="center"
-          />
+          <View>
+            <Image
+              source={require("../../assets/images/home/premios/Nada2.png")}
+              //resizeMode="center"
+              style={{
+                width: width,
+                height: width,
+              }}
+            />
+          </View>
         );
       default:
         return null;
@@ -249,7 +257,7 @@ const GameScreen = ({ navigation }) => {
     if (enMovimiento.current) {
       Toast.show("Ruleta en movimiento, espere", {
         duaration: Toast.durations.SHORT,
-        position: Toast.positions.BOTTOM
+        position: Toast.positions.BOTTOM,
       });
     } else {
       wheelRotateInit();
@@ -263,8 +271,8 @@ const GameScreen = ({ navigation }) => {
         method: "post",
         url: url,
         headers: {
-          "Authorization": `Bearer ${user_token}`
-        }
+          Authorization: `Bearer ${user_token}`,
+        },
       };
 
       if (current_prize === null) {
@@ -302,8 +310,8 @@ const GameScreen = ({ navigation }) => {
                     exchanged: false, // no se puede cambiar
                     prizeStartTime,
                     prizeEndTime,
-                    minutos_restantes
-                  }
+                    minutos_restantes,
+                  },
                 });
                 userDispatch(
                   setPrizeForUser({
@@ -311,7 +319,7 @@ const GameScreen = ({ navigation }) => {
                     exchanged: false, // no se puede cambiar
                     prizeStartTime,
                     prizeEndTime,
-                    minutos_restantes
+                    minutos_restantes,
                   })
                 );
               }, 7000);
@@ -338,15 +346,15 @@ const GameScreen = ({ navigation }) => {
                     ...prize_result,
                     prizeStartTime,
                     prizeEndTime,
-                    minutos_restantes
-                  }
+                    minutos_restantes,
+                  },
                 });
                 userDispatch(
                   setPrizeForUser({
                     ...prize_result,
                     prizeStartTime,
                     prizeEndTime,
-                    minutos_restantes
+                    minutos_restantes,
                   })
                 );
               }, 7000);
@@ -357,7 +365,7 @@ const GameScreen = ({ navigation }) => {
             thereIsPrizeResult.current = true;
             Toast.show(error.message, {
               duaration: Toast.durations.SHORT,
-              position: Toast.positions.BOTTOM
+              position: Toast.positions.BOTTOM,
             });
           });
       } else {
@@ -366,7 +374,7 @@ const GameScreen = ({ navigation }) => {
           setCasilla({ type: "default" });
           Toast.show("Segundo Premio Ganado", {
             duaration: Toast.durations.SHORT,
-            position: Toast.positions.BOTTOM
+            position: Toast.positions.BOTTOM,
           });
         }, 7500);
       }
@@ -381,7 +389,7 @@ const GameScreen = ({ navigation }) => {
       toValue: 1,
       duration: 3000,
       easing: Easing.ease,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start((complete) => {
       if (complete.finished) {
         wheelRotateLoop();
@@ -397,7 +405,7 @@ const GameScreen = ({ navigation }) => {
       toValue: 1,
       duration: 1800,
       easing: Easing.linear,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start((complete) => {
       if (complete.finished) {
         if (!thereIsPrizeResult.current) {
@@ -418,7 +426,7 @@ const GameScreen = ({ navigation }) => {
       toValue: 1,
       duration: 3000,
       easing: Easing.out(Easing.ease),
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start((complete) => {
       if (complete.finished) {
         thereIsPrizeResult.current = false;
@@ -429,7 +437,7 @@ const GameScreen = ({ navigation }) => {
 
   const wheelLoop = wheelValue.current.interpolate({
     inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
-    outputRange: ["0deg", "360deg", "720deg", "1080deg", "1440deg", "1800deg"]
+    outputRange: ["0deg", "360deg", "720deg", "1080deg", "1440deg", "1800deg"],
   });
 
   const wheel = wheelValue.current.interpolate({
@@ -441,15 +449,19 @@ const GameScreen = ({ navigation }) => {
       "720deg",
       "1080deg",
       "1440deg",
-      casillaFinal
+      casillaFinal,
       //1800 complete
-    ]
+    ],
   });
 
-  /*const center = centerValue.interpolate({
-		inputRange: [0, 1],
-		outputRange: ["0deg", "0deg"],
-	});*/
+  const [showNot, setShowNot] = React.useState(true);
+
+  /* const onPressToggleNotif = async () => {
+    await _setNotificationHandler(showNot, true, false);
+    console.log("done");
+
+    setShowNot(!showNot);
+  }; */
 
   return (
     <>
@@ -467,7 +479,7 @@ const GameScreen = ({ navigation }) => {
           style={{
             width: "100%",
             height: "100%",
-            flex: 1
+            flex: 1,
           }}
           transition={false}
         >
@@ -478,13 +490,15 @@ const GameScreen = ({ navigation }) => {
                 width={width / 3.5}
                 height={width / 3.5}
                 borderRadius={width / 7}
-                style={{ marginBottom: "90%" }}
+                style={{
+                  marginBottom: "90%",
+                }}
                 onPress={() => {
                   if (userState.prize !== null) {
                     if (userState.prize.type === "Nada") {
                       Toast.show("No ganaste nada, de momento", {
                         duaration: Toast.durations.SHORT,
-                        position: Toast.positions.BOTTOM
+                        position: Toast.positions.BOTTOM,
                       });
                     } else {
                       setModalVisible(true);
@@ -498,7 +512,7 @@ const GameScreen = ({ navigation }) => {
                         shadow: true,
                         animation: true,
                         hideOnPress: true,
-                        delay: 0
+                        delay: 0,
                       }
                     );
                   }
@@ -514,7 +528,7 @@ const GameScreen = ({ navigation }) => {
               style={{
                 position: "absolute",
                 left: -height / 3,
-                top: height / 6
+                top: height / 6,
               }}
             >
               <ImageBackground
@@ -523,7 +537,7 @@ const GameScreen = ({ navigation }) => {
                   width: height / 1.5,
                   height: height / 1.5,
                   justifyContent: "center",
-                  alignItems: "center"
+                  alignItems: "center",
                 }}
                 transition={false}
               >
@@ -531,7 +545,7 @@ const GameScreen = ({ navigation }) => {
                   style={{
                     position: "absolute",
                     right: -6,
-                    elevation: 2
+                    zIndex: 2,
                   }}
                 >
                   <Image
@@ -546,7 +560,7 @@ const GameScreen = ({ navigation }) => {
                     width: height / 2 + 10,
                     height: height / 2 + 10,
                     justifyContent: "center",
-                    alignItems: "center"
+                    alignItems: "center",
                   }}
                   transition={false}
                 >
@@ -554,8 +568,8 @@ const GameScreen = ({ navigation }) => {
                     <Animated.View
                       style={{
                         transform: [
-                          { rotate: !thereIsPrizeResult ? wheelLoop : wheel }
-                        ]
+                          { rotate: !thereIsPrizeResult ? wheelLoop : wheel },
+                        ],
                       }}
                     >
                       <ImageBackground
@@ -564,13 +578,13 @@ const GameScreen = ({ navigation }) => {
                           width: height / 2,
                           height: height / 2,
                           justifyContent: "center",
-                          alignItems: "center"
+                          alignItems: "center",
                         }}
                         transition={false}
                       >
                         <View
                           style={{
-                            elevation: 5
+                            elevation: 5,
                             //position: "absolute",
                           }}
                         >
@@ -578,7 +592,7 @@ const GameScreen = ({ navigation }) => {
                             source={require("../../assets/images/home/centro.png")}
                             style={{
                               width: width / 5,
-                              height: width / 5
+                              height: width / 5,
                             }}
                             transition={false}
                           />
@@ -597,6 +611,12 @@ const GameScreen = ({ navigation }) => {
                 </ImageBackground>
               </ImageBackground>
             </View>
+            {/*  <View>
+              <Button
+                title="toggle notif"
+                onPress={() => onPressToggleNotif()}
+              />
+            </View> */}
             <View key={3} style={styles.buttonContainer}>
               <NeuButton
                 color="#311338"
@@ -613,7 +633,7 @@ const GameScreen = ({ navigation }) => {
                   //const pushAction = StackActions.push("Nueva Recarga");
                   //navigation.dispatch(pushAction);
                   navigation.jumpTo("Nueva Recarga", {
-                    screen: "NuevaRecargaScreen"
+                    screen: "NuevaRecargaScreen",
                   });
                 }}
               />
@@ -631,20 +651,20 @@ const styles = StyleSheet.create({
   containerGame: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "space-around"
+    justifyContent: "space-around",
   },
   containerCobrar: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    width: "80%"
-  }
+    width: "80%",
+  },
 });

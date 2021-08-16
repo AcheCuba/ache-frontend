@@ -8,7 +8,7 @@ import { GlobalContext } from "../../context/GlobalProvider";
 import {
   selectContact,
   deleteContact,
-  toogleAddContactAvaiable
+  toogleAddContactAvaiable,
 } from "../../context/Actions/actions";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -57,7 +57,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         contactName,
         contactNumber: cleanContactNumber,
         fieldInputId,
-        prize: prizeForCurrentField
+        prize: prizeForCurrentField,
       })
     );
     nuevaRecargaDispatch(toogleAddContactAvaiable(true));
@@ -76,7 +76,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         return {
           id: c.id,
           firstName: contacts[i].firstName,
-          phoneNumber: c.number
+          phoneNumber: c.number,
         };
       });
 
@@ -161,7 +161,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           contactName: undefined,
           contactNumber: text,
           fieldInputId: fieldInputId,
-          prize: prizeForCurrentField
+          prize: prizeForCurrentField,
         })
       );
       nuevaRecargaDispatch(toogleAddContactAvaiable(true));
@@ -173,7 +173,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         shadow: true,
         animation: true,
         hideOnPress: true,
-        delay: 0
+        delay: 0,
       });
     }
   };
@@ -223,7 +223,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     (data, index) => ({
       length: 100,
       offset: 100 * index,
-      index
+      index,
     }),
 
     []
@@ -234,9 +234,9 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       setLoading(true);
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
-        console.log(Contacts.Fields);
+        //sconsole.log(Contacts.Fields);
         const { data } = await Contacts.getContactsAsync({
-          fields: [Contacts.Fields.PhoneNumbers]
+          fields: [Contacts.Fields.PhoneNumbers],
         });
 
         if (data.length > 0) {
@@ -256,7 +256,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
               id: contact.id,
               firstName: contact.firstName,
               //phoneNumber: contact.phoneNumbers[0].number,
-              phoneNumbers: contact.phoneNumbers
+              phoneNumbers: contact.phoneNumbers,
             };
           });
 
@@ -281,7 +281,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           height: height / 6,
           backgroundColor: "rgba(112, 28, 87, 1)",
           flexDirection: "row",
-          justifyContent: "space-between"
+          justifyContent: "space-between",
         }}
       >
         <NeuButton
@@ -361,7 +361,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#701c57"
+    backgroundColor: "#701c57",
     //alignItems: "center",
     //justifyContent: "center",
   },
@@ -373,8 +373,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "gray",
     paddingLeft: 20,
     marginHorizontal: 20,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });
 
 export default MultiplesContactosScreen;

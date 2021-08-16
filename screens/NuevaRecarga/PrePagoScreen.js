@@ -8,7 +8,7 @@ import { useAndroidBackHandler } from "react-navigation-backhandler";
 import {
   resetNuevaRecargaState,
   restoreNuevaRecargaInitialState,
-  setPrizeForUser
+  setPrizeForUser,
 } from "../../context/Actions/actions";
 
 import Toast from "react-native-root-toast";
@@ -56,8 +56,8 @@ const PrePagoScreen = ({ navigation, route }) => {
       method: "post",
       url: url,
       headers: {
-        "Authorization": `Bearer ${user_token}`
-      }
+        Authorization: `Bearer ${user_token}`,
+      },
     };
     return axios(config);
   };
@@ -88,7 +88,7 @@ const PrePagoScreen = ({ navigation, route }) => {
               shadow: true,
               animation: true,
               hideOnPress: true,
-              delay: 0
+              delay: 0,
             }
           );
         })
@@ -100,7 +100,7 @@ const PrePagoScreen = ({ navigation, route }) => {
             shadow: true,
             animation: true,
             hideOnPress: true,
-            delay: 0
+            delay: 0,
           });
         });
     }
@@ -122,8 +122,8 @@ const PrePagoScreen = ({ navigation, route }) => {
           text: "Cancelar recarga",
           style: "destructive",
 
-          onPress: () => onPressCancelarRecarga()
-        }
+          onPress: () => onPressCancelarRecarga(),
+        },
       ]
     );
   };
@@ -135,8 +135,8 @@ const PrePagoScreen = ({ navigation, route }) => {
       method: "post",
       url,
       headers: {
-        "Authorization": `Bearer ${user_token}`
-      }
+        Authorization: `Bearer ${user_token}`,
+      },
     };
     //console.log(config);
     return axios(config);
@@ -149,8 +149,8 @@ const PrePagoScreen = ({ navigation, route }) => {
       method: "post",
       url,
       headers: {
-        "Authorization": `Bearer ${user_token}`
-      }
+        Authorization: `Bearer ${user_token}`,
+      },
     };
     return axios(config);
   };
@@ -195,7 +195,7 @@ const PrePagoScreen = ({ navigation, route }) => {
       name: userState.name,
       email: userState.email,
       phone: userState.phone,
-      prize: null
+      prize: null,
     });
 
     userDispatch(setPrizeForUser(null));
@@ -219,16 +219,15 @@ const PrePagoScreen = ({ navigation, route }) => {
           alignItems: "center",
           justifyContent: "center",
           flex: 1,
-          marginTop: -90
+          marginTop: -90,
         }}
       >
         <Text
           style={{
-            fontFamily:
-              Platform.OS === "android" ? "monospace" : "San Francisco",
+            fontFamily: Platform.OS === "android" ? "monospace" : null,
             fontSize: 100,
             fontWeight: "bold",
-            color: "#ddd"
+            color: "#ddd",
           }}
         >
           ${amount}
@@ -248,7 +247,7 @@ const PrePagoScreen = ({ navigation, route }) => {
                 fontSize: 24,
                 fontWeight: "bold",
                 color: "#01f9d2",
-                textTransform: "uppercase"
+                textTransform: "uppercase",
               }}
             >
               Enter your card and pay
@@ -259,7 +258,7 @@ const PrePagoScreen = ({ navigation, route }) => {
           style={{
             flexDirection: "row",
             marginTop: 20,
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           <NeuButton
@@ -277,7 +276,7 @@ const PrePagoScreen = ({ navigation, route }) => {
                   fontSize: 18,
                   fontWeight: "bold",
                   color: "#f00000",
-                  textTransform: "uppercase"
+                  textTransform: "uppercase",
                 }}
               >
                 Cancelar por Error
@@ -299,7 +298,7 @@ const PrePagoScreen = ({ navigation, route }) => {
                   fontSize: 18,
                   fontWeight: "bold",
                   color: "#00f000",
-                  textTransform: "uppercase"
+                  textTransform: "uppercase",
                 }}
               >
                 Confirmar Éxito

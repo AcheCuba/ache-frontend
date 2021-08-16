@@ -11,17 +11,18 @@ const MoreScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View
         style={{
-          paddingTop: 50,
+          paddingTop: 60,
           width: width,
           height: height / 6,
           backgroundColor: "rgba(112, 28, 87, 1)",
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
         }}
       >
         <Image
           source={require("../../assets/images/more/asset3.png")}
-          resizeMode="center"
+          //resizeMode="center"
+          style = {{marginLeft: width/10, width: width/4, height: width/8}}
         />
       </View>
       <View style={styles.containerButtons}>

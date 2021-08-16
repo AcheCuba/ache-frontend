@@ -5,12 +5,13 @@ export async function _setNotificationHandler(
   shouldPlaySound,
   shouldSetBadge
 ) {
+  console.log(shouldShowAlert);
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert,
       shouldPlaySound,
-      shouldSetBadge
-    })
+      shouldSetBadge,
+    }),
   });
 }
 
@@ -23,18 +24,18 @@ export async function scheduleNotificationAtSecondsFromNow(
     handleNotification: async () => ({
       shouldShowAlert: true,
       shouldPlaySound: false,
-      shouldSetBadge: false
-    })
+      shouldSetBadge: false,
+    }),
   });
 
   const identifier = await Notifications.scheduleNotificationAsync({
     content: {
       title,
-      body
+      body,
     },
     trigger: {
-      seconds
-    }
+      seconds,
+    },
   });
 
   return identifier;

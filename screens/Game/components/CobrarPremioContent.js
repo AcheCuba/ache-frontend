@@ -9,7 +9,7 @@ import axios from "axios";
 import { BASE_URL } from "../../../constants/domain";
 import {
   resetNuevaRecargaState,
-  setPrizeForUser
+  setPrizeForUser,
 } from "../../../context/Actions/actions";
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
@@ -73,8 +73,8 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
         method: "post",
         url: url,
         headers: {
-          "Authorization": `Bearer ${user_token}`
-        }
+          Authorization: `Bearer ${user_token}`,
+        },
       };
       axios(config)
         .then((response) => {
@@ -129,7 +129,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
       shadow: true,
       animation: true,
       hideOnPress: true,
-      delay: 0
+      delay: 0,
     });
 
     /* Toast.show("Código copiado al portapapeles", Toast.SHORT, [
@@ -154,30 +154,31 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
             width: width / 2.2,
             height: width / 2.2,
             borderRadius: width / 4.4,
-            elevation: 0.01,
+            //elevation: 0.01,
+            zIndex: 2,
             position: "absolute",
             borderBottomWidth: 0,
             borderBottomColor: "#701c57",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           {prizeType === "Jackpot" ? (
             <Image
               source={require("../../../assets/images/home/premios/diamanteCopia.png")}
-              resizeMode="center"
+              //resizeMode="center"
               style={{
                 width: width / 5,
-                height: width / 5
+                height: width / 5,
               }}
             />
           ) : (
             <Image
               source={require("../../../assets/images/home/premios/capa102Copia.png")}
-              resizeMode="center"
+              //resizeMode="center"
               style={{
                 width: width / 5,
-                height: width / 5
+                height: width / 4.5,
               }}
             />
           )}
@@ -196,14 +197,14 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
               height: height / 7,
               position: "absolute",
               bottom: 0,
-              paddingHorizontal: width / 1.2 / 6
+              paddingHorizontal: width / 1.2 / 6,
             }}
           >
             <Text
               style={{
                 color: "#01f9d2",
                 fontWeight: "bold",
-                fontSize: 20
+                fontSize: 20,
               }}
             >
               NOMBRE PREMIO
@@ -213,7 +214,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
                 color: "gray",
                 fontStyle: "italic",
                 fontSize: 20,
-                marginBottom: 20
+                marginBottom: 20,
               }}
             >
               Texto explicativo con los detalles del premio
@@ -239,7 +240,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
                   style={{
                     color: "gray",
                     fontStyle: "italic",
-                    fontSize: 16
+                    fontSize: 16,
                   }}
                 >
                   {EncriptarCodigo(codigo)}
@@ -256,7 +257,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
                   style={{
                     color: "#01f9d2",
                     fontWeight: "bold",
-                    fontSize: 18
+                    fontSize: 18,
                   }}
                 >
                   {" "}
@@ -271,7 +272,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
               onPress={() => {
                 setModalVisible(false);
                 navigation.jumpTo("Nueva Recarga", {
-                  screen: "Nueva Recarga"
+                  screen: "Nueva Recarga",
                 });
               }}
             />
@@ -313,20 +314,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: "rgba(112, 28, 87, .6)"
+    backgroundColor: "rgba(112, 28, 87, .6)",
   },
 
   title: {
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   button: {
-    marginTop: 20
+    marginTop: 20,
   },
   codeModalContainer: {
     flex: 1,
     //justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
 
   codeModalContent: {
@@ -337,6 +338,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 17,
     marginHorizontal: 10,
-    marginTop: 80
-  }
+    marginTop: 80,
+  },
 });

@@ -27,7 +27,7 @@ export default function useCachedResources() {
     require("../assets/images/nueva_recarga/Nada2.png"),
     require("../assets/images/onboarding_test/circle.png"),
     require("../assets/images/onboarding_test/square.png"),
-    require("../assets/images/onboarding_test/triangle.png")
+    require("../assets/images/onboarding_test/triangle.png"),
   ]);
 
   // Load any resources or data that we need prior to rendering the app
@@ -45,13 +45,14 @@ export default function useCachedResources() {
         //console.log(token);
 
         //===================== solo para eliminar premio en app ===========================
-        /*   storeData({
+
+        /*storeData("user", {
           ...user,
-          prize: null
+          prize: null,
         });
         userDispatch(restore_user({ ...user, prize: null, token }));
 
-        user = await getData("user"); */
+        user = await getData("user");*/
 
         //===================== solo para eliminar premio en app ===========================
 
@@ -78,7 +79,7 @@ export default function useCachedResources() {
               // premio expirado
               storeData("user", {
                 ...user,
-                prize: null
+                prize: null,
               });
               userDispatch(restore_user({ ...user, prize: null, token }));
             } else {
@@ -86,17 +87,17 @@ export default function useCachedResources() {
                 ...user,
                 prize: {
                   ...currentPrizeState,
-                  minutos_restantes
-                }
+                  minutos_restantes,
+                },
               });
               userDispatch(
                 restore_user({
                   ...user,
                   prize: {
                     ...currentPrizeState,
-                    minutos_restantes
+                    minutos_restantes,
                   },
-                  token
+                  token,
                 })
               );
             }
@@ -111,7 +112,7 @@ export default function useCachedResources() {
 
         await Font.loadAsync({
           ...Ionicons.font,
-          "space-mono": require("../assets/fonts/SpaceMono-Regular.ttf")
+          "space-mono": require("../assets/fonts/SpaceMono-Regular.ttf"),
         });
       } catch (e) {
         // We might want to provide this error information to an error reporting service

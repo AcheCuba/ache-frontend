@@ -65,15 +65,15 @@ const SignupScreenUptd = ({ navigation }) => {
 
   const fetchRegister = async (name, email, phone) => {
     let data = {
-      "name": name,
-      "email": email,
-      "phone": phone
+      name: name,
+      email: email,
+      phone: phone,
     };
 
     let requestOptions = {
       method: "post",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     };
 
     const url = `${BASE_URL}/auth/register`;
@@ -99,7 +99,7 @@ const SignupScreenUptd = ({ navigation }) => {
             name: newUser.name,
             email: newUser.email,
             phone: newUser.phone,
-            prize: null
+            prize: null,
           });
 
           userDispatch(
@@ -109,7 +109,7 @@ const SignupScreenUptd = ({ navigation }) => {
               name: newUser.name,
               email: newUser.email,
               phone: newUser.phone,
-              prize: null
+              prize: null,
             })
           );
         }
@@ -124,7 +124,7 @@ const SignupScreenUptd = ({ navigation }) => {
           shadow: true,
           animation: true,
           hideOnPress: true,
-          delay: 0
+          delay: 0,
         });
         setLoading(false);
       });
@@ -181,12 +181,17 @@ const SignupScreenUptd = ({ navigation }) => {
           height: height / 6,
           backgroundColor: "rgba(112, 28, 87, 1)",
           flexDirection: "row",
-          justifyContent: "space-between"
+          justifyContent: "space-between",
         }}
       >
         <Image
           source={require("../assets/images/logo.png")}
-          resizeMode="center"
+          //resizeMode="center"
+          style={{
+            marginLeft: width / 10,
+            width: width / 4,
+            height: width / 8,
+          }}
         />
       </View>
       <View style={{ alignItems: "center", marginTop: 30 }}>
@@ -197,7 +202,7 @@ const SignupScreenUptd = ({ navigation }) => {
         style={{
           flex: 2,
           alignItems: "center",
-          marginTop: 30
+          marginTop: 30,
         }}
       >
         <View style={{ marginTop: 30 }}>
@@ -206,7 +211,7 @@ const SignupScreenUptd = ({ navigation }) => {
               textStyle={{
                 color: "#fff",
                 fontWeight: "bold",
-                fontFamily: "monospace"
+                fontFamily: Platform.OS === "android" ? "monospace" : null,
               }}
               placeholder="Name"
               width={(4 / 5) * width}
@@ -223,7 +228,7 @@ const SignupScreenUptd = ({ navigation }) => {
               style={{
                 color: "#ddd",
                 fontSize: 16,
-                fontFamily: "monospace"
+                fontFamily: Platform.OS === "android" ? "monospace" : null,
               }}
             >
               {nameError}
@@ -236,7 +241,7 @@ const SignupScreenUptd = ({ navigation }) => {
               textStyle={{
                 color: "#fff",
                 fontWeight: "bold",
-                fontFamily: "monospace"
+                fontFamily: Platform.OS === "android" ? "monospace" : null,
               }}
               placeholder="Email"
               width={(4 / 5) * width}
@@ -254,7 +259,7 @@ const SignupScreenUptd = ({ navigation }) => {
               style={{
                 color: "#ddd",
                 fontSize: 16,
-                fontFamily: "monospace"
+                fontFamily: Platform.OS === "android" ? "monospace" : null,
               }}
             >
               {emailError}
@@ -267,7 +272,7 @@ const SignupScreenUptd = ({ navigation }) => {
               textStyle={{
                 color: "#fff",
                 fontWeight: "bold",
-                fontFamily: "monospace"
+                fontFamily: Platform.OS === "android" ? "monospace" : null,
               }}
               placeholder="Phone"
               width={(4 / 5) * width}
@@ -286,7 +291,7 @@ const SignupScreenUptd = ({ navigation }) => {
               style={{
                 color: "#ddd",
                 fontSize: 16,
-                fontFamily: "monospace"
+                fontFamily: Platform.OS === "android" ? "monospace" : null,
               }}
             >
               {phoneError}
@@ -311,7 +316,7 @@ const SignupScreenUptd = ({ navigation }) => {
                 color: "#01f9d2",
                 fontWeight: "bold",
                 fontSize: 20,
-                textTransform: "uppercase"
+                textTransform: "uppercase",
               }}
             >
               Submit
@@ -328,14 +333,14 @@ export default SignupScreenUptd;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(112, 28, 87, 1)"
+    backgroundColor: "rgba(112, 28, 87, 1)",
   },
   title: {
     fontSize: 40,
     //flex: 0.5,
     fontWeight: "bold",
     marginBottom: 20,
-    marginTop: 50
+    marginTop: 50,
   },
   input: {
     width: "85%",
@@ -345,11 +350,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "rgba(112, 28, 87, 1)",
     marginVertical: 15,
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   submitButton: {
     width: "90%",
     height: 50,
-    marginTop: 30
-  }
+    marginTop: 30,
+  },
 });
