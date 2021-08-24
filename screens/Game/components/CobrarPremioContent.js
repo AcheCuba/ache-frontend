@@ -18,15 +18,24 @@ import { cancelNotification } from "../../../libs/expoPushNotification.lib";
 
 const { width, height } = Dimensions.get("screen");
 
-const CobrarPremioContent = ({ navigation, setModalVisible }) => {
+const CobrarPremioContent = ({
+  navigation,
+  setModalVisible,
+  setCodigo,
+  codigo,
+  copiarCodigoAlSalir,
+  setCopiado,
+  codigoGenerado,
+  setCodigoGenerado,
+}) => {
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
 
   const currentPrize = userState.prize;
 
-  const [codigoGenerado, setCodigoGenerado] = useState(false);
+  console.log(userState);
+
   const [loading, setLoading] = useState(false);
-  const [codigo, setCodigo] = useState("");
   const [prizeType, setPrizeType] = useState("");
 
   React.useEffect(() => {
@@ -47,6 +56,10 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
       console.log(e);
     }
   }; */
+
+  const onPressTerminar = () => {
+    copiarCodigoAlSalir();
+  };
 
   const EncriptarCodigo = (codigo) => {
     const codigoEncriptado =
@@ -122,7 +135,6 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
 
   const onPressCopiar = () => {
     copyToClipboard(codigo);
-
     Toast.show("Código copiado al portapapeles", {
       duaration: Toast.durations.LONG,
       position: Toast.positions.BOTTOM,
@@ -132,6 +144,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
       delay: 0,
     });
 
+    setCopiado(true);
     /* Toast.show("Código copiado al portapapeles", Toast.SHORT, [
       "RCTModalHostViewController"
     ]); */
@@ -284,9 +297,7 @@ const CobrarPremioContent = ({ navigation, setModalVisible }) => {
               screenWidth={width}
               text={codigoGenerado ? "TERMINAR" : "GENERAR CÓDIGO"}
               onPress={() => {
-                codigoGenerado
-                  ? setModalVisible(false)
-                  : onPressGenerarCodigo();
+                codigoGenerado ? onPressTerminar() : onPressGenerarCodigo();
               }}
             />
           ) : (

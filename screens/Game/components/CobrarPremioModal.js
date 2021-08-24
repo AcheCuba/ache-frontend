@@ -3,10 +3,38 @@ import { Modal, StyleSheet, View, Dimensions, StatusBar } from "react-native";
 import CobrarPremioContent from "./CobrarPremioContent";
 import CommonHeader from "../../../components/CommonHeader";
 import { RootSiblingParent } from "react-native-root-siblings";
+import Clipboard from "expo-clipboard";
+import Toast from "react-native-root-toast";
 
 const { width, height } = Dimensions.get("screen");
 
 const CobrarPremioModal = ({ modalVisible, setModalVisible, navigation }) => {
+  const [codigo, setCodigo] = useState("");
+  const [copiado, setCopiado] = useState(false);
+  const [codigoGenerado, setCodigoGenerado] = useState(false);
+
+  const copiarCodigoAlSalir = () => {
+    if (codigoGenerado && !copiado) {
+      Clipboard.setString(codigo);
+      Toast.show("Código copiado al portapapeles", {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+      });
+
+      setTimeout(() => {
+        setModalVisible(false);
+      }, 500);
+      setCopiado(false);
+    } else {
+      setCopiado(false);
+      setModalVisible(false);
+    }
+  };
+
   return (
     <>
       <StatusBar backgroundColor="rgb(112, 28, 87)" style="light" />
@@ -16,17 +44,25 @@ const CobrarPremioModal = ({ modalVisible, setModalVisible, navigation }) => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
+        <CommonHeader
+          width={width}
+          height={height}
+          _onPress={() => {
+            copiarCodigoAlSalir();
+          }}
+        />
         <RootSiblingParent>
-          <CommonHeader
-            width={width}
-            height={height}
-            _onPress={() => setModalVisible(false)}
-          />
           <View style={styles.ModalOuterContent}>
             {/*  <View style={styles.ModalContent}> */}
             <CobrarPremioContent
               navigation={navigation}
               setModalVisible={setModalVisible}
+              codigo={codigo}
+              setCodigo={setCodigo}
+              copiarCodigoAlSalir={copiarCodigoAlSalir}
+              setCopiado={setCopiado}
+              setCodigoGenerado={setCodigoGenerado}
+              codigoGenerado={codigoGenerado}
             />
             {/*  </View> */}
           </View>

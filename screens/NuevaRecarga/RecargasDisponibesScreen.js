@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { NeuButton, NeuView } from "react-native-neu-element";
 import CommonHeader from "../../components/CommonHeader";
@@ -47,8 +47,8 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
       method: "post",
       url: url,
       headers: {
-        "Authorization": `Bearer ${user_token}`
-      }
+        Authorization: `Bearer ${user_token}`,
+      },
     };
     return axios(config);
   };
@@ -79,7 +79,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
               shadow: true,
               animation: true,
               hideOnPress: true,
-              delay: 0
+              delay: 0,
             }
           );
         })
@@ -91,7 +91,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
             shadow: true,
             animation: true,
             hideOnPress: true,
-            delay: 0
+            delay: 0,
           });
         });
     }
@@ -130,15 +130,15 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
           text: "Cancelar recarga",
           style: "destructive",
 
-          onPress: () => onPressCancelarRecarga()
-        }
+          onPress: () => onPressCancelarRecarga(),
+        },
       ]
     );
   };
 
   React.useEffect(() => {
     // console.log(loadingProducts);
-    console.log("recargas disp screen, contactos", contactosSeleccionados);
+    // console.log("recargas disp screen, contactos", contactosSeleccionados);
   }, [contactosSeleccionados]);
 
   React.useEffect(() => {
@@ -163,8 +163,8 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
       cancelToken,
       url,
       headers: {
-        "Authorization": `Bearer ${user_token}`
-      }
+        Authorization: `Bearer ${user_token}`,
+      },
     };
 
     axios(config)
@@ -187,29 +187,29 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         method: "post",
         url,
         data: {
-          "beneficiary": contacto.contactNumber,
-          "prizeCode": contacto.prize.uuid,
-          "dtoneProductId": pressedProductId
+          beneficiary: contacto.contactNumber,
+          prizeCode: contacto.prize.uuid,
+          dtoneProductId: pressedProductId,
         },
         headers: {
-          "Authorization": `Bearer ${user_token}`
-        }
+          Authorization: `Bearer ${user_token}`,
+        },
       };
     } else {
       config = {
         method: "post",
         url,
         data: {
-          "beneficiary": contacto.contactNumber,
-          "prizeCode": "",
-          "dtoneProductId": pressedProductId
+          beneficiary: contacto.contactNumber,
+          prizeCode: "",
+          dtoneProductId: pressedProductId,
         },
         headers: {
-          "Authorization": `Bearer ${user_token}`
-        }
+          Authorization: `Bearer ${user_token}`,
+        },
       };
     }
-    console.log(config);
+    //console.log(config);
     return axios(config);
   };
 
@@ -222,7 +222,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         shadow: true,
         animation: true,
         hideOnPress: true,
-        delay: 0
+        delay: 0,
       });
     } else {
       setLoadingContinuar(true);
@@ -236,13 +236,13 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         .then((response) => {
           response.forEach((transaction) => {
             //console.log(transaction.data);
-            console.log(transaction.data.id);
+            //console.log(transaction.data.id);
             transaction_id_array.push(transaction.data.id);
           });
           setLoadingContinuar(false);
           navigation.navigate("PrePagoScreen", {
             price_usd,
-            transaction_id_array
+            transaction_id_array,
           });
         })
         .catch((err) => {
@@ -254,7 +254,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
             shadow: true,
             animation: true,
             hideOnPress: true,
-            delay: 0
+            delay: 0,
           });
         });
     }
@@ -273,7 +273,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
             style={{
               flex: 1,
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
             }}
           >
             <ActivityIndicator size="large" color="#01f9d2" />
@@ -288,7 +288,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                     onPress={() => {
                       setPressed(product.id);
                       setPrice_usd(product.price_usd);
-                      console.log(product);
+                      //console.log(product);
                     }}
                     style={{
                       width: width / 1.3,
@@ -297,7 +297,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                       backgroundColor:
                         pressedProductId === product.id
                           ? "rgba(0,0,0,0.1)"
-                          : "rgba(0,0,0,0)"
+                          : "rgba(0,0,0,0)",
                     }}
                     key={index}
                   >
@@ -319,7 +319,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                           backgroundColor:
                             pressedProductId === product.id
                               ? "rgba(0,0,0,0.1)"
-                              : "rgba(0,0,0,0)"
+                              : "rgba(0,0,0,0)",
                         }}
                       >
                         <Text
@@ -328,7 +328,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                             fontSize: 20,
                             textTransform: "uppercase",
                             color: "#01f9d2",
-                            marginBottom: 6
+                            marginBottom: 6,
                           }}
                         >
                           {product.name}
@@ -338,7 +338,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                             fontWeight: "bold",
                             fontSize: 20,
                             color: "gray",
-                            marginBottom: 6
+                            marginBottom: 6,
                           }}
                         >
                           {`monto: ${product.amount_cup} CUP`}
@@ -348,7 +348,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                             fontWeight: "bold",
                             fontSize: 20,
                             color: "gray",
-                            marginBottom: 4
+                            marginBottom: 4,
                           }}
                         >
                           {`precio: ${product.price_usd} USD`}
@@ -368,7 +368,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
           alignItems: "center",
           justifyContent: "center",
           height: height / 7,
-          elevation: 30
+          elevation: 30,
           // TODO: shadow on iOS
         }}
       >
@@ -388,7 +388,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                 color: "#01f9d2",
                 fontWeight: "bold",
                 fontSize: 20,
-                textTransform: "uppercase"
+                textTransform: "uppercase",
               }}
             >
               continuar
@@ -405,7 +405,7 @@ export default RecargasDisponiblesScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#701c57"
+    backgroundColor: "#701c57",
     //alignItems: "center",
     //justifyContent: "flex-start",
   },
@@ -413,17 +413,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#701c57",
     flex: 1,
     marginTop: 10,
-    alignItems: "center"
+    alignItems: "center",
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10
+    marginBottom: 10,
   },
   button: {
     width: "90%",
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });
 
 /* 

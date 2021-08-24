@@ -1,16 +1,24 @@
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import { ActivityIndicator } from "react-native";
-import { KeyboardAvoidingView } from "react-native";
+import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
 import Toast from "react-native-root-toast";
-import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Image,
+  Platform,
+} from "react-native";
 import { NeuButton, NeuInput } from "react-native-neu-element";
 import { BASE_URL } from "../constants/domain";
 import { signup } from "../context/Actions/actions";
 import { GlobalContext } from "../context/GlobalProvider";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Keyboard } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -167,164 +175,176 @@ const SignupScreenUptd = ({ navigation }) => {
       }
     }
   };
-
-  return (
-    <KeyboardAvoidingView
+  {
+    /* <KeyboardAvoidingView
       style={styles.container}
-      behavior="height"
-      enabled={false}
-    >
-      <View
-        style={{
-          paddingTop: 50,
-          width: width,
-          height: height / 6,
-          backgroundColor: "rgba(112, 28, 87, 1)",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Image
-          source={require("../assets/images/logo.png")}
-          //resizeMode="center"
+      behavior={Platform.OS === "ios" ? "height" : "height"}
+      enabled={true}
+    ></KeyboardAvoidingView>
+ */
+  }
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <View
           style={{
-            marginLeft: width / 10,
-            width: width / 4.5,
-            height: width / 8.6,
+            paddingTop: 50,
+            width: width,
+            height: height / 6,
+            backgroundColor: "rgba(112, 28, 87, 1)",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 30,
           }}
-        />
-      </View>
-      <View style={{ alignItems: "center", marginTop: 30 }}>
-        <Ionicons name="person-sharp" size={130} color="#ddd" />
-      </View>
-
-      <View
-        style={{
-          flex: 2,
-          alignItems: "center",
-          marginTop: 30,
-        }}
-      >
-        <View style={{ marginTop: 30 }}>
-          <View style={{ marginBottom: 5 }}>
-            <NeuInput
-              textStyle={{
-                color: "#fff",
-                fontWeight: "bold",
-                fontFamily: Platform.OS === "android" ? "monospace" : null,
-              }}
-              placeholder="Name"
-              width={(4 / 5) * width}
-              height={40}
-              borderRadius={20}
-              onChangeText={(value) => onChangeName(value)}
-              value={name}
-              placeholderTextColor="gray"
-              color="#701c57"
-            />
-          </View>
-          {nameError !== "" ? (
-            <Text
-              style={{
-                color: "#ddd",
-                fontSize: 16,
-                fontFamily: Platform.OS === "android" ? "monospace" : null,
-              }}
-            >
-              {nameError}
-            </Text>
-          ) : null}
-        </View>
-        <View style={{ marginTop: 30 }}>
-          <View style={{ marginBottom: 5 }}>
-            <NeuInput
-              textStyle={{
-                color: "#fff",
-                fontWeight: "bold",
-                fontFamily: Platform.OS === "android" ? "monospace" : null,
-              }}
-              placeholder="Email"
-              width={(4 / 5) * width}
-              height={40}
-              borderRadius={20}
-              onChangeText={(value) => onChangeEmail(value)}
-              value={email}
-              placeholderTextColor="gray"
-              color="#701c57"
-            />
-          </View>
-
-          {emailError !== "" ? (
-            <Text
-              style={{
-                color: "#ddd",
-                fontSize: 16,
-                fontFamily: Platform.OS === "android" ? "monospace" : null,
-              }}
-            >
-              {emailError}
-            </Text>
-          ) : null}
-        </View>
-        <View style={{ marginTop: 30 }}>
-          <View style={{ marginBottom: 5 }}>
-            <NeuInput
-              textStyle={{
-                color: "#fff",
-                fontWeight: "bold",
-                fontFamily: Platform.OS === "android" ? "monospace" : null,
-              }}
-              placeholder="Phone"
-              width={(4 / 5) * width}
-              height={40}
-              borderRadius={20}
-              onChangeText={(value) => onChangePhone(value)}
-              value={phone}
-              placeholderTextColor="gray"
-              color="#701c57"
-              keyboardType="phone-pad"
-            />
-          </View>
-
-          {phoneError !== "" ? (
-            <Text
-              style={{
-                color: "#ddd",
-                fontSize: 16,
-                fontFamily: Platform.OS === "android" ? "monospace" : null,
-              }}
-            >
-              {phoneError}
-            </Text>
-          ) : null}
-        </View>
-      </View>
-      <View style={{ zIndex: 0, flex: 1, alignItems: "center" }}>
-        <NeuButton
-          color="#701c57"
-          width={(4 / 5) * width}
-          height={width / 7.5}
-          borderRadius={width / 7.5}
-          onPress={() => onSubmit()}
-          style={{}}
         >
-          {loading ? (
-            <ActivityIndicator size="large" color="#01f9d2" />
-          ) : (
-            <Text
-              style={{
-                color: "#01f9d2",
-                fontWeight: "bold",
-                fontSize: 20,
-                textTransform: "uppercase",
-              }}
-            >
-              Submit
-            </Text>
-          )}
-        </NeuButton>
+          <Image
+            source={require("../assets/images/logo.png")}
+            //resizeMode="center"
+            style={{
+              marginLeft: width / 10,
+              width: width / 4.5,
+              height: width / 8.6,
+            }}
+          />
+        </View>
+
+        <View style={{ alignItems: "center" }}>
+          <Ionicons name="person-sharp" size={130} color="#ddd" />
+        </View>
+        <KeyboardAwareScrollView extraScrollHeight={-30}>
+          <View
+            style={{
+              flex: 2,
+              alignItems: "center",
+              marginTop: 40,
+            }}
+          >
+            <View style={{ marginTop: 30 }}>
+              <View style={{ marginBottom: 5 }}>
+                <NeuInput
+                  textStyle={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                  }}
+                  placeholder="Name"
+                  width={(4 / 5) * width}
+                  height={40}
+                  borderRadius={20}
+                  onChangeText={(value) => onChangeName(value)}
+                  value={name}
+                  placeholderTextColor="gray"
+                  color="#701c57"
+                  autoCapitaize="none"
+                />
+              </View>
+              {nameError !== "" ? (
+                <Text
+                  style={{
+                    color: "#ddd",
+                    fontSize: 16,
+                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                  }}
+                >
+                  {nameError}
+                </Text>
+              ) : null}
+            </View>
+            <View style={{ marginTop: 30 }}>
+              <View style={{ marginBottom: 5 }}>
+                <NeuInput
+                  textStyle={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                  }}
+                  placeholder="Email"
+                  width={(4 / 5) * width}
+                  height={40}
+                  borderRadius={20}
+                  onChangeText={(value) => onChangeEmail(value)}
+                  value={email}
+                  placeholderTextColor="gray"
+                  color="#701c57"
+                  keyboardType="email-address"
+                  autoCapitaize="none"
+                />
+              </View>
+
+              {emailError !== "" ? (
+                <Text
+                  style={{
+                    color: "#ddd",
+                    fontSize: 16,
+                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                  }}
+                >
+                  {emailError}
+                </Text>
+              ) : null}
+            </View>
+            <View style={{ marginTop: 30 }}>
+              <View style={{}}>
+                <NeuInput
+                  textStyle={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                  }}
+                  placeholder="Phone"
+                  width={(4 / 5) * width}
+                  height={40}
+                  borderRadius={20}
+                  onChangeText={(value) => onChangePhone(value)}
+                  value={phone}
+                  placeholderTextColor="gray"
+                  color="#701c57"
+                  keyboardType="phone-pad"
+                />
+              </View>
+
+              {phoneError !== "" ? (
+                <Text
+                  style={{
+                    color: "#ddd",
+                    fontSize: 16,
+                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                  }}
+                >
+                  {phoneError}
+                </Text>
+              ) : null}
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
+
+        <View style={{ zIndex: 0, flex: 1, alignItems: "center" }}>
+          <NeuButton
+            color="#701c57"
+            width={(4 / 5) * width}
+            height={width / 7.5}
+            borderRadius={width / 7.5}
+            onPress={() => onSubmit()}
+            style={{}}
+          >
+            {loading ? (
+              <ActivityIndicator size="large" color="#01f9d2" />
+            ) : (
+              <Text
+                style={{
+                  color: "#01f9d2",
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  textTransform: "uppercase",
+                }}
+              >
+                Submit
+              </Text>
+            )}
+          </NeuButton>
+        </View>
       </View>
-    </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 

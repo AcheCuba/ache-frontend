@@ -106,7 +106,7 @@ const PrePagoScreen = ({ navigation, route }) => {
     }
   };
 
-  const onPressCancelarRecarga = () => {
+  const onPressCancelarRecargaOnAlert = () => {
     finish_checkout_all_prizes();
     nuevaRecargaDispatch(resetNuevaRecargaState());
     navigation.navigate("NuevaRecargaScreen");
@@ -122,7 +122,7 @@ const PrePagoScreen = ({ navigation, route }) => {
           text: "Cancelar recarga",
           style: "destructive",
 
-          onPress: () => onPressCancelarRecarga(),
+          onPress: () => onPressCancelarRecargaOnAlert(),
         },
       ]
     );
@@ -156,6 +156,7 @@ const PrePagoScreen = ({ navigation, route }) => {
   };
 
   const onPressCancelarPorError = () => {
+    finish_checkout_all_prizes();
     let cancelTransactionPromisesArray = [];
 
     transaction_id_array.forEach((transaction_id) => {
@@ -175,7 +176,7 @@ const PrePagoScreen = ({ navigation, route }) => {
   const onPressConfirmarPago = async () => {
     let confirmTransactionPromisesArray = [];
 
-    console.log(transaction_id_array);
+    //console.log(transaction_id_array);
 
     transaction_id_array.forEach((transaction_id) => {
       confirmTransactionPromisesArray.push(

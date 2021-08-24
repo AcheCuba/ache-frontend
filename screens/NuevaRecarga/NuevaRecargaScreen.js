@@ -6,7 +6,7 @@ import {
   Dimensions,
   ScrollView,
   ActivityIndicator,
-  Alert
+  Alert,
 } from "react-native";
 
 import NuevoContactoInput from "./components/NuevoContactoInput";
@@ -19,7 +19,7 @@ import {
   setPrize,
   toggleValidateInProcess,
   toogleAddContactAvaiable,
-  updatePrize
+  updatePrize,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import { NeuButton, NeuView } from "react-native-neu-element";
@@ -50,7 +50,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
     contactosSeleccionados,
     validated_prizes,
     fields,
-    validatetInProcess
+    validatetInProcess,
   } = nuevaRecargaState;
   const { userState } = React.useContext(GlobalContext);
 
@@ -80,7 +80,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
 
           validate_prize(uuid)
             .then((resp) => {
-              console.log("validate in useEffect", resp.data);
+              //console.log("validate in useEffect", resp.data);
               nuevaRecargaDispatch(
                 setPrize({ fieldId, uuid, type, loading: false })
               );
@@ -159,8 +159,8 @@ const NuevaRecargaScreen = ({ navigation }) => {
       method: "post",
       url: url,
       headers: {
-        "Authorization": `Bearer ${user_token}`
-      }
+        Authorization: `Bearer ${user_token}`,
+      },
     };
     return axios(config);
   };
@@ -175,8 +175,8 @@ const NuevaRecargaScreen = ({ navigation }) => {
       method: "get",
       url: url,
       headers: {
-        "Authorization": `Bearer ${user_token}`
-      }
+        Authorization: `Bearer ${user_token}`,
+      },
     };
 
     return axios(config);
@@ -226,7 +226,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
             shadow: true,
             animation: true,
             hideOnPress: true,
-            delay: 0
+            delay: 0,
           });
           Toast.show(error.message, {
             duaration: Toast.durations.LONG,
@@ -234,7 +234,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
             shadow: true,
             animation: true,
             hideOnPress: true,
-            delay: 0
+            delay: 0,
           });
           //eleminar el que se añadió y actualizar loading, no es válido
           nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
@@ -262,7 +262,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
         shadow: true,
         animation: true,
         hideOnPress: true,
-        delay: 0
+        delay: 0,
       });
     }
   };
@@ -318,17 +318,11 @@ const NuevaRecargaScreen = ({ navigation }) => {
         shadow: true,
         animation: true,
         hideOnPress: true,
-        delay: 0
+        delay: 0,
       });
     } else {
       setLoadingContinuar(true);
-      /*  const hayPremio =
-        userState.prize != null && userState.prize.type !== "Nada";
-      if (!hayPremio) {
-        setLoadingContinuar(false);
-        navigation.navigate("RecargasDisponiblesScreen");
-        console.log("No hay premio");
-      } else { */
+
       if (validatetInProcess) {
         Toast.show("Se están validando tus premios", {
           duaration: Toast.durations.LONG,
@@ -336,7 +330,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
           shadow: true,
           animation: true,
           hideOnPress: true,
-          delay: 0
+          delay: 0,
         });
         setLoadingContinuar(false);
       } else {
@@ -349,7 +343,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
             shadow: true,
             animation: true,
             hideOnPress: true,
-            delay: 0
+            delay: 0,
           });
           setLoadingContinuar(false);
           navigation.navigate("RecargasDisponiblesScreen");
@@ -368,7 +362,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
                 nuevaRecargaDispatch(
                   updatePrizeForContact(prize.fieldId, {
                     uuid: prize.uuid,
-                    type: prize.type
+                    type: prize.type,
                   })
                 );
               });
@@ -383,7 +377,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
                 shadow: true,
                 animation: true,
                 hideOnPress: true,
-                delay: 0
+                delay: 0,
               });
             });
         }
@@ -395,7 +389,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
     <View
       style={{
         flex: 1,
-        backgroundColor: "rgba(112, 28, 87, 1)"
+        backgroundColor: "rgba(112, 28, 87, 1)",
       }}
     >
       <View
@@ -405,7 +399,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
           height: height / 6,
           backgroundColor: "rgba(112, 28, 87, 1)",
           flexDirection: "row",
-          justifyContent: "space-between"
+          justifyContent: "space-between",
         }}
       >
         <NeuButton
@@ -469,7 +463,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
                 marginTop: 20,
                 flex: 1,
                 width: "100%",
-                alignItems: "center"
+                alignItems: "center",
               }}
             ></View>
           </View>
@@ -492,7 +486,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
                 color: "#01f9d2",
                 fontWeight: "bold",
                 fontSize: 20,
-                textTransform: "uppercase"
+                textTransform: "uppercase",
               }}
             >
               continuar
@@ -516,20 +510,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     //height: height,
-    marginHorizontal: marginGlobal
+    marginHorizontal: marginGlobal,
 
     //justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   button_add_contacto: {
     marginTop: 30,
-    marginBottom: 20
+    marginBottom: 20,
   },
   button_continuar: {
-    marginBottom: 25
+    marginBottom: 25,
   },
 
   input: {
@@ -541,6 +535,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(112, 28, 87, 1)",
     marginBottom: 10,
     paddingLeft: 10,
-    marginHorizontal: 10
-  }
+    marginHorizontal: 10,
+  },
 });

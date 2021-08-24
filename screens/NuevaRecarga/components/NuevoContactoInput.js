@@ -4,18 +4,20 @@ import {
   StyleSheet,
   View,
   Dimensions,
-  TouchableWithoutFeedback,
-  Image
+  Pressable,
+  Image,
+  Modal,
 } from "react-native";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import {
   deleteField,
-  toogleAddContactAvaiable
+  toogleAddContactAvaiable,
 } from "../../../context/Actions/actions";
 import { NeuInput, NeuButton, NeuView } from "react-native-neu-element";
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import DeletePrizeModal from "./DeletePrizeModal";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -29,18 +31,21 @@ const NuevoContactoInput = ({
   contactSelected,
   onPressBarcode,
   prizeByFieldId,
-  isFirstInput
+  isFirstInput,
 }) => {
   const [text, setText] = useState("");
   const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
   const { contactosSeleccionados, validated_prizes } = nuevaRecargaState;
   const { userState } = React.useContext(GlobalContext);
 
+  const [deletePrizeModalVisible, setDeletePrizeModalVisible] =
+    React.useState(false);
+
   const onChangeText = (value) => {
     setText(value);
   };
 
-  const openPopUp = () => {
+  const openPopUpForEntryCode = () => {
     const contactoExistente = contactosSeleccionados.find(
       (contacto) => contacto.fieldInputId === fieldInputId
     );
@@ -54,8 +59,23 @@ const NuevoContactoInput = ({
         shadow: true,
         animation: true,
         hideOnPress: true,
-        delay: 0
+        delay: 0,
       });
+    }
+  };
+
+  const openPopUpForDeletePrize = () => {
+    setDeletePrizeModalVisible(true);
+  };
+
+  const returnPrizeType = () => {
+    const currentPrize = validated_prizes.find(
+      (prize) => prize.fieldId === fieldInputId
+    );
+    if (currentPrize != undefined) {
+      return currentPrize.type;
+    } else {
+      return undefined;
     }
   };
 
@@ -63,13 +83,24 @@ const NuevoContactoInput = ({
     if (isFirstInput && userState.prize !== null) {
       if (userState.prize.type === "Nada") {
         // hay premio pero es la nada
-        openPopUp();
+        openPopUpForEntryCode();
       } else {
-        return;
+        // hay premio en el primer slot
+        openPopUpForDeletePrize();
       }
     } else {
-      // no hay premio
-      openPopUp();
+      // no es el primer slot
+      // pinchar aqui
+      const currentPrize = validated_prizes.find(
+        (prize) => prize.fieldId === fieldInputId
+      );
+      if (currentPrize != undefined) {
+        // hay premio asociado, abrir popup
+        openPopUpForDeletePrize();
+      } else {
+        // no hay premio asociado
+        openPopUpForEntryCode();
+      }
     }
   };
 
@@ -109,9 +140,6 @@ const NuevoContactoInput = ({
           ); */
       }
     } else {
-      //console.log("here");
-      //console.log(prizeByFieldId);
-      // return <Ionicons name={iconName} color="gray" size={20} />;
       if (prizeByFieldId?.loading) {
         return <ActivityIndicator size="small" color="#01f9d2" />;
       } else {
@@ -138,86 +166,111 @@ const NuevoContactoInput = ({
   };
 
   const onPressDeleteContact = () => {
+    // falta finish checkout del premio
     nuevaRecargaDispatch(deleteField(fieldInputId));
     if (contactosSeleccionados.length > 0) {
       nuevaRecargaDispatch(toogleAddContactAvaiable(true));
     }
   };
 
+  const onPressCancelar = () => {
+    setDeletePrizeModalVisible(false);
+  };
+
+  const onPressDeletePrize = () => {
+    //delete prize
+
+    setDeletePrizeModalVisible(false);
+  };
+
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 20
-      }}
-    >
-      <TouchableOpacity
-        onPress={() => onPressDeleteContact()}
+    <>
+      <Modal
+        transparent={true}
+        animationType="fade"
+        visible={deletePrizeModalVisible}
+        onRequestClose={() => setDeletePrizeModalVisible(false)}
+      >
+        <DeletePrizeModal
+          fieldInputId={fieldInputId}
+          type={returnPrizeType()}
+          onPressDeletePrize={onPressDeletePrize}
+          onPressCancelar={onPressCancelar}
+        />
+      </Modal>
+      <View
         style={{
-          //width: width / 8,
-          //heigth: width / 8,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "yelow",
-          marginTop: 3
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 20,
         }}
       >
-        <MaterialCommunityIcons
-          name="trash-can"
-          color="rgba(248,85,34, 0.5)"
-          //  color="rgba(148,13,10, 0.5)"
-          size={28}
-        />
-      </TouchableOpacity>
-
-      <TouchableWithoutFeedback
-        onPress={() =>
-          navigation.navigate("MultiplesContactosScreen", {
-            fieldInputId: fieldInputId
-          })
-        }
-      >
-        <View>
-          <NeuInput
-            textStyle={{ color: "#fff", fontWeight: "bold" }}
-            placeholder="Toca para ir a Contactos"
-            width={inputWidth}
-            height={40}
-            borderRadius={20}
-            onChangeText={(value) => onChangeText(value)}
-            value={
-              contactSelected
-                ? contactSelected.contactName !== undefined &&
-                  contactSelected.id !== undefined
-                  ? contactSelected.contactName
-                  : contactSelected.contactNumber
-                : ""
-            }
-            placeholderTextColor="gray"
-            color="#701c57"
-            keyboardType="phone-pad"
-            name={fieldInputId}
-            editable={false}
-          />
-        </View>
-      </TouchableWithoutFeedback>
-
-      <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-        <NeuButton
-          color="#701c57"
-          width={width / 8}
-          height={width / 8}
-          borderRadius={width / 16}
-          onPress={() => handlePressBarcode()}
-          style={{}}
+        <TouchableOpacity
+          onPress={() => onPressDeleteContact()}
+          style={{
+            //width: width / 8,
+            //heigth: width / 8,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "yelow",
+            marginTop: 3,
+          }}
         >
-          {/* si tiene premio (simbolizado con piedra azul) se coloca al primer contacto */}
-          {/* si no tiene, barcode igual */}
-          <Figure />
-        </NeuButton>
+          <MaterialCommunityIcons
+            name="trash-can"
+            color="rgba(248,85,34, 0.5)"
+            //  color="rgba(148,13,10, 0.5)"
+            size={28}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            navigation.navigate("MultiplesContactosScreen", {
+              fieldInputId: fieldInputId,
+            })
+          }
+        >
+          <View>
+            <NeuInput
+              textStyle={{ color: "#fff", fontWeight: "bold" }}
+              placeholder="Toca para ir a Contactos"
+              width={inputWidth}
+              height={40}
+              borderRadius={20}
+              onChangeText={(value) => onChangeText(value)}
+              value={
+                contactSelected
+                  ? contactSelected.contactName !== undefined &&
+                    contactSelected.id !== undefined
+                    ? contactSelected.contactName
+                    : contactSelected.contactNumber
+                  : ""
+              }
+              placeholderTextColor="gray"
+              color="#701c57"
+              keyboardType="phone-pad"
+              name={fieldInputId}
+              editable={false}
+            />
+          </View>
+        </TouchableOpacity>
+
+        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+          <NeuButton
+            color="#701c57"
+            width={width / 8}
+            height={width / 8}
+            borderRadius={width / 16}
+            onPress={() => handlePressBarcode()}
+            style={{}}
+          >
+            <Figure />
+          </NeuButton>
+        </View>
       </View>
-    </View>
+    </>
   );
 };
 
@@ -230,6 +283,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(112, 28, 87, 1)",
     marginBottom: 10,
     paddingLeft: 10,
-    marginHorizontal: 10
-  }
+    marginHorizontal: 10,
+  },
 });

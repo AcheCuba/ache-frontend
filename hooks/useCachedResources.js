@@ -46,13 +46,13 @@ export default function useCachedResources() {
 
         //===================== solo para eliminar premio en app ===========================
 
-        /*storeData("user", {
+        /* storeData("user", {
           ...user,
           prize: null,
         });
         userDispatch(restore_user({ ...user, prize: null, token }));
 
-        user = await getData("user");*/
+        user = await getData("user"); */
 
         //===================== solo para eliminar premio en app ===========================
 

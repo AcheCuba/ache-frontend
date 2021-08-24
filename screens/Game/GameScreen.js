@@ -45,7 +45,7 @@ async function registerForPushNotificationsAsync() {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
-    console.log("final status", finalStatus);
+    // console.log("final status", finalStatus);
     if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
@@ -102,7 +102,7 @@ const GameScreen = ({ navigation }) => {
       const twoDaysLater = moment().add(2, "days");
       const seconds_diff = twoDaysLater.diff(now, "seconds");
 
-      console.log(seconds_diff);
+      //console.log(seconds_diff);
       let notId;
 
       // si es sí, utilizar el value para cancelar notificación, crear otra con fecha actualizada, setear nuevo key
@@ -231,7 +231,7 @@ const GameScreen = ({ navigation }) => {
   };
 
   const setCasilla = (prize) => {
-    console.log("prize", prize);
+    //console.log("prize", prize);
     switch (prize.type) {
       case "Nada":
         setCasillaFinal("1733deg");
@@ -296,7 +296,7 @@ const GameScreen = ({ navigation }) => {
                 "minutes"
               );
 
-              console.log(minutos_restantes);
+              //console.log(minutos_restantes);
 
               nuevaRecargaDispatch(resetNuevaRecargaState());
 
@@ -334,7 +334,7 @@ const GameScreen = ({ navigation }) => {
                 "minutes"
               );
 
-              console.log(minutos_restantes);
+              // console.log(minutos_restantes);
               nuevaRecargaDispatch(resetNuevaRecargaState());
 
               setTimeout(() => {
@@ -400,7 +400,7 @@ const GameScreen = ({ navigation }) => {
   const wheelRotateLoop = () => {
     wheelValue.current.setValue(0);
 
-    console.log("loop", thereIsPrizeResult.current);
+    //console.log("loop", thereIsPrizeResult.current);
     Animated.timing(wheelValue.current, {
       toValue: 1,
       duration: 1800,
@@ -584,8 +584,10 @@ const GameScreen = ({ navigation }) => {
                       >
                         <View
                           style={{
-                            elevation: 5,
-                            //position: "absolute",
+                            zIndex: 5,
+                            position: "relative",
+                            top: 6.5,
+                            right: 3,
                           }}
                         >
                           <Image

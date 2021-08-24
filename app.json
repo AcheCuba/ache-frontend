@@ -2,6 +2,7 @@
   "expo": {
     "name": "ache",
     "slug": "ache",
+    "privacy": "unlisted",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -20,11 +21,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.achecuba.ache",
+      "bundleIdentifier": "com.achecuba.achev1",
       "buildNumber": "1.0.0"
     },
     "android": {
-      "package": "com.achecuba.ache",
+      "package": "com.achecuba.achev1",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
