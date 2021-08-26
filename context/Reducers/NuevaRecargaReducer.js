@@ -15,6 +15,7 @@ const RESET_NUEVA_RECARGA_STATE = actionTypes.RESET_NUEVA_RECARGA_STATE;
 const RESTORE_NUEVA_RECARGA_INITIAL_STATE =
   actionTypes.RESTORE_NUEVA_RECARGA_INITIAL_STATE;
 const DELETE_FIELD = actionTypes.DELETE_FIELD;
+const DELETE_ALL_VALIDATED_PRIZES = actionTypes.DELETE_ALL_VALIDATED_PRIZES;
 
 const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
   switch (action.type) {
@@ -35,7 +36,7 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
             : [], */
         // fields: [state.fields[0]],
         fields: [],
-        validatetInProcess: false
+        validatetInProcess: false,
       };
 
     // contacts
@@ -50,19 +51,19 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         ...state,
         contactosSeleccionados: [
           ...state.contactosSeleccionados,
-          action.payload
-        ]
+          action.payload,
+        ],
       };
     case UPDATE_PRIZE_FOR_CONTACT:
       let newContactsArr = state.contactosSeleccionados.map((c) => {
         if (c.fieldInputId === action.fieldInputId) {
           return {
             ...c,
-            prize: action.prize
+            prize: action.prize,
           };
         } else {
           return {
-            ...c
+            ...c,
           };
         }
       });
@@ -73,7 +74,7 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         ...state,
         contactosSeleccionados: state.contactosSeleccionados.filter(
           (contact) => action.payload !== contact.fieldInputId
-        )
+        ),
       };
 
     case DELETE_FIELD:
@@ -85,14 +86,16 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         validated_prizes: state.validated_prizes.filter(
           (prize) => prize.fieldId !== action.payload
         ),
-        fields: state.fields.filter((field) => field.fieldId !== action.payload)
+        fields: state.fields.filter(
+          (field) => field.fieldId !== action.payload
+        ),
       };
 
     // prizes
     case SET_PRIZE:
       return {
         ...state,
-        validated_prizes: [...state.validated_prizes, action.payload]
+        validated_prizes: [...state.validated_prizes, action.payload],
       };
 
     case UPDATE_PRIZE:
@@ -104,7 +107,7 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
           } else {
             return prize;
           }
-        })
+        }),
       };
 
     case DELETE_PRIZE:
@@ -113,7 +116,7 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         ...state,
         validated_prizes: state.validated_prizes.filter(
           (prize) => uuid !== prize.uuid
-        )
+        ),
       };
 
     case DELETE_PRIZE_BY_FIELD_ID:
@@ -121,7 +124,13 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         ...state,
         validated_prizes: state.validated_prizes.filter(
           (prize) => action.fieldId !== prize.fieldId
-        )
+        ),
+      };
+
+    case DELETE_ALL_VALIDATED_PRIZES:
+      return {
+        ...state,
+        validated_prizes: [],
       };
 
     // fields
@@ -130,8 +139,8 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         ...state,
         fields: [
           ...state.fields,
-          { isFirstField: action.isFirstField, fieldId: action.fieldId }
-        ]
+          { isFirstField: action.isFirstField, fieldId: action.fieldId },
+        ],
       };
 
     default:

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { NeuButton, NeuInput, NeuView } from "react-native-neu-element";
 
 const CodigoRecargaModal = ({
@@ -30,6 +31,7 @@ const CodigoRecargaModal = ({
           backgroundColor: "rgba(112, 28, 87, .8)",
           justifyContent: "center",
           alignItems: "center",
+          marginBottom: 80,
         }}
       >
         <NeuView

@@ -1,6 +1,13 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import * as Contacts from "expo-contacts";
-import { StyleSheet, View, Text, FlatList, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import Contact from "./components/Contact";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,6 +21,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { NeuButton, NeuInput, NeuSpinner } from "react-native-neu-element";
 import Toast from "react-native-root-toast";
+
+import { OptimizedFlatList } from "react-native-optimized-flatlist";
+import { ScrollView } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -219,15 +229,17 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     );
   };
 
-  const getItemLayout = useCallback(
-    (data, index) => ({
-      length: 100,
-      offset: 100 * index,
-      index,
-    }),
+  const getItemLayout = (data, index) => ({
+    length: height / 9,
+    offset: (height / 9) * index,
+    index,
+  });
 
-    []
-  );
+  /*   const getItemLayout = useCallback((data, index) => ({
+    length: width / 8 + 15 + 2 + 2,
+    offset: (width / 8 + 15 + 2) * index,
+    index,
+  })); */
 
   useEffect(() => {
     (async () => {
@@ -264,7 +276,11 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 
           setContacts(_data);
 
+          /* setTimeout(() => {
+            setLoading(false);
+          }, 500); */
           setLoading(false);
+
           //console.log(contacts[10]);
           // console.log(contacts.length);
         }
@@ -290,7 +306,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           height={width / 7}
           borderRadius={width / 14}
           onPress={() => {
-            navigation.goBack();
+            navigation.navigate("NuevaRecargaScreen");
           }}
           style={{ marginLeft: marginGlobal, marginTop: 10 }}
         >
@@ -327,32 +343,31 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <NeuSpinner
-            color="#701c57"
-            indicatorColor="#701c57"
-            width={50}
-            height={50}
-            size={50}
-          />
+          <ActivityIndicator size="large" color="#01f9d2" />
         </View>
       ) : (
-        <FlatList
-          keyExtractor={(item, index) => item.id}
-          data={
-            contactsFiltered.length === 0 && text === ""
-              ? contacts
-              : contactsFiltered
-          }
-          renderItem={renderItemContact}
-          ListEmptyComponent={renderEmptyList}
-          getItemLayout={getItemLayout}
-          //performance
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={8}
-          initialNumToRender={8}
-          updateCellsBatchingPeriod={1}
-          windowSize={10}
-        />
+        <View style={{ flex: 1 }}>
+          <FlatList
+            keyExtractor={(item, index) => item.id}
+            data={
+              contactsFiltered.length === 0 && text === ""
+                ? contacts
+                : contactsFiltered
+            }
+            renderItem={renderItemContact}
+            ListEmptyComponent={renderEmptyList}
+            //performance
+            //getItemLayout={getItemLayout} // esto traba el final del scroll
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={45}
+            initialNumToRender={50}
+            updateCellsBatchingPeriod={0.01}
+            windowSize={41} //default
+            //onEndReachedThreshold={0.5}
+            //disableVirtualization={false}
+            scrollIndicatorInsets={{ right: 1 }}
+          />
+        </View>
       )}
     </View>
   );
@@ -378,3 +393,11 @@ const styles = StyleSheet.create({
 });
 
 export default MultiplesContactosScreen;
+
+/*   <NeuSpinner
+            color="#701c57"
+            indicatorColor="#701c57"
+            width={50}
+            height={50}
+            size={50}
+          /> */

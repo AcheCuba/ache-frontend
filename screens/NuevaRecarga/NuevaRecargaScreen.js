@@ -20,6 +20,8 @@ import {
   toggleValidateInProcess,
   toogleAddContactAvaiable,
   updatePrize,
+  deleteAllValidatedPrizes,
+  resetNuevaRecargaState,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import { NeuButton, NeuView } from "react-native-neu-element";
@@ -28,6 +30,7 @@ import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -43,7 +46,10 @@ function makeid(length) {
   return result;
 }
 
-const NuevaRecargaScreen = ({ navigation }) => {
+const NuevaRecargaScreen = ({ navigation, route }) => {
+  const inOrderToCobrarPremio = route.params?.inOrderToCobrarPremio;
+  //console.log("inOrderToCobrarPremio", inOrderToCobrarPremio);
+
   const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
   const {
     addContactAvaiable,
@@ -54,46 +60,128 @@ const NuevaRecargaScreen = ({ navigation }) => {
   } = nuevaRecargaState;
   const { userState } = React.useContext(GlobalContext);
 
-  //console.log(userState.prize);
-
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [fieldIdMatched, setFieldIdMatched] = React.useState("");
 
   useFocusEffect(
     React.useCallback(() => {
-      // console.log("contactos selec", contactosSeleccionados);
+      //console.log("inOrder on focus", inOrderToCobrarPremio);
+
+      // cuando no hay ningun contacto agregado
       if (contactosSeleccionados.length === 0 && fields.length === 0) {
         const firstFieldId = makeid(15);
 
         // set first field
         nuevaRecargaDispatch(setFields(true, firstFieldId));
 
-        //console.log("contactos === 0");
-        // si el usuario tiene premio añadirlo a la lista
-        const hayPremio =
-          userState.prize != null && userState.prize.type !== "Nada";
-        if (validated_prizes.length === 0 && hayPremio) {
+        // cuando el usuario viene a cobrar premio
+        if (inOrderToCobrarPremio === true) {
           const type = userState.prize.type;
           const uuid = userState.prize.uuid;
           const fieldId = firstFieldId;
 
+          nuevaRecargaDispatch(
+            setPrize({ fieldId, uuid, type, loading: true })
+          );
+
           validate_prize(uuid)
-            .then((resp) => {
-              //console.log("validate in useEffect", resp.data);
+            .then(() => {
               nuevaRecargaDispatch(
-                setPrize({ fieldId, uuid, type, loading: false })
+                updatePrize(uuid, { fieldId, uuid, type, loading: false })
               );
               nuevaRecargaDispatch(toggleValidateInProcess(false));
             })
             .catch((err) => {
               console.log(err.message);
+              deletePrizeByFieldId(fieldId);
               nuevaRecargaDispatch(toggleValidateInProcess(false));
             });
         }
+      } else {
+        // cuando no se trata del primer slot
+        // cuando el usuario viene a cobrar premio
+
+        if (inOrderToCobrarPremio === true) {
+          // verificar que el premio no esta agregado ya
+          const prizeAlreadyExist = validated_prizes.find(
+            (prize) => prize.uuid === userState.prize.uuid
+          );
+
+          // si existe, no hacer nada
+          // si no existe, agregar
+          if (prizeAlreadyExist === undefined) {
+            // si hay un slot vacio, solo agregar
+            const type = userState.prize.type;
+            const uuid = userState.prize.uuid;
+
+            if (contactosSeleccionados.length < fields.length) {
+              const fieldId = fields[fields.length - 1].fieldId;
+
+              nuevaRecargaDispatch(
+                setPrize({ fieldId, uuid, type, loading: true })
+              );
+
+              validate_prize(uuid)
+                .then(() => {
+                  nuevaRecargaDispatch(
+                    updatePrize(uuid, { fieldId, uuid, type, loading: false })
+                  );
+                  nuevaRecargaDispatch(toggleValidateInProcess(false));
+                })
+                .catch((err) => {
+                  console.log(err.message);
+                  deletePrizeByFieldId(fieldId);
+                  nuevaRecargaDispatch(toggleValidateInProcess(false));
+                });
+            } else {
+              // si no hay un slot vacio, agregar slot y premio
+              const fieldId = makeid(15);
+
+              nuevaRecargaDispatch(setFields(true, fieldId));
+
+              nuevaRecargaDispatch(
+                setPrize({ fieldId, uuid, type, loading: true })
+              );
+
+              validate_prize(uuid)
+                .then(() => {
+                  nuevaRecargaDispatch(
+                    updatePrize(uuid, { fieldId, uuid, type, loading: false })
+                  );
+                  nuevaRecargaDispatch(toggleValidateInProcess(false));
+                })
+                .catch((err) => {
+                  console.log(err.message);
+                  deletePrizeByFieldId(fieldId);
+                  nuevaRecargaDispatch(toggleValidateInProcess(false));
+                });
+            }
+          }
+          navigation.setParams({ inOrderToCobrarPremio: false });
+        }
       }
-    }, [contactosSeleccionados, fields, validated_prizes, userState])
+
+      //const hayPremio =
+      //userState.prize != null && userState.prize.type !== "Nada";
+      //contactosSeleccionados, fields, userState, validated_prizes
+    }, [
+      contactosSeleccionados,
+      userState,
+      fields,
+      validated_prizes,
+      inOrderToCobrarPremio,
+    ])
   );
+
+  React.useEffect(() => {
+    const unsub = navigation.addListener("blur", () => {
+      //console.log("masdmasd");
+      navigation.setParams({ inOrderToCobrarPremio: false });
+    });
+
+    return unsub;
+  }, [navigation]);
 
   /* React.useEffect(() => {
     if (contactosSeleccionados.length === 0) {
@@ -140,16 +228,16 @@ const NuevaRecargaScreen = ({ navigation }) => {
     console.log("validated_prizes", validated_prizes);
   }, [validated_prizes]); */
 
-  const overwritePrizeForField = (fieldId) => {
-    const prizeForFinishCheckout = validated_prizes.find(
+  /*   const overwritePrizeForField = (fieldId) => {
+    const prizeForDelete = validated_prizes.find(
       (prize) => prize.fieldId === fieldId
     );
 
-    if (prizeForFinishCheckout !== undefined) {
-      nuevaRecargaDispatch(deletePrize(prizeForFinishCheckout.uuid));
+    if (prizeForDelete !== undefined) {
+      nuevaRecargaDispatch(deletePrize(prizeForDelete.uuid));
     }
   };
-
+ */
   const prize_init_checkout = (prize_id) => {
     console.log("init checkout");
     const user_token = userState.token;
@@ -182,26 +270,34 @@ const NuevaRecargaScreen = ({ navigation }) => {
     return axios(config);
   };
 
-  const comprobarUuidRepetido = (fieldId, uuid) => {
+  const comprobarUuidRepetido = (uuid) => {
     //premio asociado a este fieldId
-    const prizeForField = validated_prizes.find((prize) => {
-      return prize.fieldId === fieldId;
+    const prizeAlreadyValidated = validated_prizes.find((prize) => {
+      return prize.uuid === uuid;
     });
 
-    if (prizeForField != undefined) {
-      return prizeForField.uuid === uuid;
-    } else {
-      return false;
-    }
+    return prizeAlreadyValidated !== undefined;
   };
 
   const onPressOkModal = (fieldId, uuid) => {
-    const repetido = comprobarUuidRepetido(fieldId, uuid);
+    const repetido = comprobarUuidRepetido(uuid);
     if (repetido) {
-      // no se hace nada más
+      // el premio esta siendo usado
+      // el premio ya esta validado para otro beneficiario, considere eliminarlo
+      Toast.show(
+        "El premio ya esta validado para otro beneficiario, considere eliminarlo",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
       setModalVisible(false);
     } else {
-      overwritePrizeForField(fieldId);
+      // overwritePrizeForField(fieldId);
 
       // actualizar loading
       nuevaRecargaDispatch(
@@ -220,7 +316,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
           nuevaRecargaDispatch(toggleValidateInProcess(false));
         })
         .catch((error) => {
-          Toast.show("El premio no es válido", {
+          Toast.show("La cadena introducida no es válida", {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
             shadow: true,
@@ -228,14 +324,14 @@ const NuevaRecargaScreen = ({ navigation }) => {
             hideOnPress: true,
             delay: 0,
           });
-          Toast.show(error.message, {
+          /*     Toast.show(error.message, {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
             shadow: true,
             animation: true,
             hideOnPress: true,
             delay: 0,
-          });
+          }); */
           //eleminar el que se añadió y actualizar loading, no es válido
           nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
           nuevaRecargaDispatch(toggleValidateInProcess(false));
@@ -408,7 +504,7 @@ const NuevaRecargaScreen = ({ navigation }) => {
           height={width / 7}
           borderRadius={width / 14}
           onPress={() => {
-            navigation.jumpTo("Juego");
+            navigation.jumpTo("Juego"), { screen: "Juego" };
           }}
           style={{ marginLeft: marginGlobal, marginTop: 10 }}
         >

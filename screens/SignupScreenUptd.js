@@ -91,7 +91,8 @@ const SignupScreenUptd = ({ navigation }) => {
         if (response.ok) {
           return response.json();
         } else {
-          throw Error(`Request rejected with status ${response.status}`);
+          //throw Error(`Request rejected with status ${response.status}`);
+          throw Error("No se pudo registrar a este usuario");
         }
       })
       .then((result) => {
@@ -176,12 +177,6 @@ const SignupScreenUptd = ({ navigation }) => {
     }
   };
   {
-    /* <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "height" : "height"}
-      enabled={true}
-    ></KeyboardAvoidingView>
- */
   }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -211,12 +206,15 @@ const SignupScreenUptd = ({ navigation }) => {
         <View style={{ alignItems: "center" }}>
           <Ionicons name="person-sharp" size={130} color="#ddd" />
         </View>
-        <KeyboardAwareScrollView extraScrollHeight={-30}>
+        <KeyboardAwareScrollView
+          extraScrollHeight={Platform.OS === "ios" ? -30 : 0}
+        >
           <View
             style={{
               flex: 2,
               alignItems: "center",
               marginTop: 40,
+              paddingBottom: Platform.OS === "android" ? 50 : 0,
             }}
           >
             <View style={{ marginTop: 30 }}>
@@ -235,7 +233,6 @@ const SignupScreenUptd = ({ navigation }) => {
                   value={name}
                   placeholderTextColor="gray"
                   color="#701c57"
-                  autoCapitaize="none"
                 />
               </View>
               {nameError !== "" ? (
@@ -267,7 +264,7 @@ const SignupScreenUptd = ({ navigation }) => {
                   placeholderTextColor="gray"
                   color="#701c57"
                   keyboardType="email-address"
-                  autoCapitaize="none"
+                  autoCapitalize="none"
                 />
               </View>
 

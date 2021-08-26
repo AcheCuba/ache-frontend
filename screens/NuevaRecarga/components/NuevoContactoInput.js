@@ -7,10 +7,12 @@ import {
   Pressable,
   Image,
   Modal,
+  Platform,
 } from "react-native";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import {
   deleteField,
+  deletePrizeByFieldId,
   toogleAddContactAvaiable,
 } from "../../../context/Actions/actions";
 import { NeuInput, NeuButton, NeuView } from "react-native-neu-element";
@@ -80,6 +82,20 @@ const NuevoContactoInput = ({
   };
 
   const handlePressBarcode = () => {
+    // comun para todos los slots
+    const currentPrize = validated_prizes.find(
+      (prize) => prize.fieldId === fieldInputId
+    );
+    if (currentPrize != undefined) {
+      // hay premio asociado, abrir popup
+      openPopUpForDeletePrize();
+    } else {
+      // no hay premio asociado
+      openPopUpForEntryCode();
+    }
+  };
+
+  /*  const handlePressBarcode = () => {
     if (isFirstInput && userState.prize !== null) {
       if (userState.prize.type === "Nada") {
         // hay premio pero es la nada
@@ -102,16 +118,42 @@ const NuevoContactoInput = ({
         openPopUpForEntryCode();
       }
     }
-  };
+  }; */
 
   const Figure = () => {
+    //prizeByFieldId?.loading es undefined si prizeByFieldId es null, y salta el default
+    if (prizeByFieldId?.loading) {
+      return <ActivityIndicator size="small" color="#01f9d2" />;
+    } else {
+      switch (prizeByFieldId?.type) {
+        case "TopUpBonus":
+          return (
+            <Image
+              source={require("../../../assets/images/nueva_recarga/diez.png")}
+              style={{ height: 25, width: 23 }}
+            />
+          );
+        case "Jackpot":
+          return (
+            <Image
+              source={require("../../../assets/images/nueva_recarga/jackpot.png")}
+              style={{ height: 20, width: 20 }}
+            />
+          );
+        default:
+          return <Ionicons name={iconName} color="gray" size={20} />;
+      }
+    }
+  };
+
+  /*const Figure = () => {
     // esta porción de código solo se utiliza para el primer input, en caso de que tenga premio
     if (
       isFirstInput &&
       userState.prize !== null &&
       userState.prize.type !== "Nada"
     ) {
-      switch (userState.prize.type) {
+      switch (currentValidatedPrize.type) {
         case "Jackpot":
           return (
             <Image
@@ -137,9 +179,10 @@ const NuevoContactoInput = ({
               style={{ height: 200, width: 200 }}
               resizeMode="center"
             />
-          ); */
+          ); 
       }
     } else {
+      //prizeByFieldId?.loading es undefined si prizeByFieldId es null, y salta el default
       if (prizeByFieldId?.loading) {
         return <ActivityIndicator size="small" color="#01f9d2" />;
       } else {
@@ -163,7 +206,7 @@ const NuevoContactoInput = ({
         }
       }
     }
-  };
+  }; */
 
   const onPressDeleteContact = () => {
     // falta finish checkout del premio
@@ -179,7 +222,7 @@ const NuevoContactoInput = ({
 
   const onPressDeletePrize = () => {
     //delete prize
-
+    nuevaRecargaDispatch(deletePrizeByFieldId(fieldInputId));
     setDeletePrizeModalVisible(false);
   };
 
@@ -224,38 +267,72 @@ const NuevoContactoInput = ({
           />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() =>
-            navigation.navigate("MultiplesContactosScreen", {
-              fieldInputId: fieldInputId,
-            })
-          }
-        >
-          <View>
-            <NeuInput
-              textStyle={{ color: "#fff", fontWeight: "bold" }}
-              placeholder="Toca para ir a Contactos"
-              width={inputWidth}
-              height={40}
-              borderRadius={20}
-              onChangeText={(value) => onChangeText(value)}
-              value={
-                contactSelected
-                  ? contactSelected.contactName !== undefined &&
-                    contactSelected.id !== undefined
-                    ? contactSelected.contactName
-                    : contactSelected.contactNumber
-                  : ""
-              }
-              placeholderTextColor="gray"
-              color="#701c57"
-              keyboardType="phone-pad"
-              name={fieldInputId}
-              editable={false}
-            />
-          </View>
-        </TouchableOpacity>
+        {Platform.OS === "ios" ? (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() =>
+              navigation.navigate("MultiplesContactosScreen", {
+                fieldInputId: fieldInputId,
+              })
+            }
+          >
+            <View>
+              <NeuInput
+                textStyle={{ color: "#fff", fontWeight: "bold" }}
+                placeholder="Toca para ir a Contactos"
+                width={inputWidth}
+                height={40}
+                borderRadius={20}
+                onChangeText={(value) => onChangeText(value)}
+                value={
+                  contactSelected
+                    ? contactSelected.contactName !== undefined &&
+                      contactSelected.id !== undefined
+                      ? contactSelected.contactName
+                      : contactSelected.contactNumber
+                    : ""
+                }
+                placeholderTextColor="gray"
+                color="#701c57"
+                keyboardType="phone-pad"
+                name={fieldInputId}
+                editable={false}
+              />
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <Pressable
+            onPress={() =>
+              navigation.navigate("MultiplesContactosScreen", {
+                fieldInputId: fieldInputId,
+              })
+            }
+          >
+            <View>
+              <NeuInput
+                textStyle={{ color: "#fff", fontWeight: "bold" }}
+                placeholder="Toca para ir a Contactos"
+                width={inputWidth}
+                height={40}
+                borderRadius={20}
+                onChangeText={(value) => onChangeText(value)}
+                value={
+                  contactSelected
+                    ? contactSelected.contactName !== undefined &&
+                      contactSelected.id !== undefined
+                      ? contactSelected.contactName
+                      : contactSelected.contactNumber
+                    : ""
+                }
+                placeholderTextColor="gray"
+                color="#701c57"
+                keyboardType="phone-pad"
+                name={fieldInputId}
+                editable={false}
+              />
+            </View>
+          </Pressable>
+        )}
 
         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           <NeuButton

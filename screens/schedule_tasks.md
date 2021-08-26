@@ -90,6 +90,7 @@ two factor auth, dar opcion en caso de duplicado, mediante email o sms
   (+) -BUG- despues de cancelar recarga por error, las imagenes que indican que hay premio permanecen, pero el premio no existe
   NOTA: lo que esta pasando es que no se esta finalizando el checkout de los premios - revisar
   NOTA2: haciendo esto descubri que cuando un usuario tiene un premio en checkout y lo pierde, no ganara mas ninguno (Nada todo el tiempo)
+  NOTA3: por que un usuario comienza a ganar nada indefinidamente? tiene que ver con tener premios sin cobrar?
   (+) en presionar terminar, tambien copiar codigo al portapapeles
 
 - screen de recarga directa:
@@ -116,18 +117,35 @@ Notas mias
   si no tiene internet: toast: verifica que tienes una conexion a internet estable
 - cuando el usuario abre la app: home
 
-## TODO hoy (24 de agosto)
+## TODO hoy (26 de agosto)
 
-- bugs en recarga directa (In progress)
-  - ir a NuevoContactoInput, funcion 'onPressDeletePrize'
-  - reajustar funcion 'onPressOkModal' en screen NuevaRecargaScreen
-    codigo para utilizar - f03ff5d5-b965-4092-b7ba-0c472cbe28ca
-- bugs en multiples contactos
-- bugs en recargas disponibles
-- bugs en proceso de pago
-- comunicar a backend la opcion para eliminar usuario
+- solucion definitiva para contactos **OK**
+  / opcion - aumentar el initialNumTORender hasta que no pueda percibirse que se para el scroll **_selected_**
+  / opcion - retardar que salgan los contactos : delay en useEffect en el loading
+- lograr el push a github
+- comunicar a backend la
+  / opcion para eliminar usuario
+  / correr app en su iphone
+- consultar con adriana (escribir aqui)
+  / sobre la solucion para el signup
+  / sobre la solucion para recarga directa
+  / sobre la solucion para recargas disponibles
+  / sobre la solucion para proceso de recarga
+  / sobre la solucion de los contactos
 
 ## Pending
 
 - capitalize en email
 - finish checkout cuando eliminas un slot (contacto=premio si tiene)
+
+### Mis notas
+
+**Funcionamiento de recarga directa y Cobrar premio**
+
+- Si entras por recarga directa, no sucede nada nuevo, puedes agregar codigo al primer contacto
+- Si entras por CObrar premio, se agrega un usuario al final de los agregados, con su premio (si hay un slot libre, el premio se agrega a ese slot)
+- Siempre se podra eliminar el premio
+
+  codigo para utilizar - f03ff5d5-b965-4092-b7ba-0c472cbe28ca
+
+**github token:** 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

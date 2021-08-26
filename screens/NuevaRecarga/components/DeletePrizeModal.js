@@ -1,15 +1,12 @@
 import React, { useState } from "react";
+import { ActivityIndicator } from "react-native";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 import { NeuButton, NeuInput, NeuView } from "react-native-neu-element";
 
 const { width, height } = Dimensions.get("screen");
 
-const DeletePrizeModal = ({
-  fieldInputId,
-  type,
-  onPressDeletePrize,
-  onPressCancelar,
-}) => {
+const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
+  //console.log(type);
   const PrizeImage = () => {
     switch (type) {
       case "Jackpot":
@@ -25,11 +22,24 @@ const DeletePrizeModal = ({
         return (
           <Image
             source={require("../../../assets/images/home/premios/capa102Copia.png")}
-            style={{ height: width / 8 + 7, width: width / 8 }}
+            style={{ height: width / 7 + 5, width: width / 7 }}
           />
         );
       default:
-        return <Text>Non-Valid Prize</Text>;
+        return (
+          <View style={{ height: width / 8 + 7 }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                marginTop: 20,
+                color: "#222",
+              }}
+            >
+              No se ha podido validar su premio
+            </Text>
+          </View>
+        );
     }
   };
 
@@ -49,56 +59,74 @@ const DeletePrizeModal = ({
         color="#701c57"
         borderRadius={10}
       >
-        <View>
-          <PrizeImage />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginTop: 30,
-            width: width / 1.4,
-          }}
-        >
-          <NeuButton
-            color="#701c57"
-            width={width / 3}
-            height={40}
-            borderRadius={20}
-            onPress={onPressCancelar}
-          >
+        {type === undefined ? (
+          <View style={{ height: width / 8 + 7 }}>
+            <ActivityIndicator size="small" color="#01f9d2" />
             <Text
               style={{
-                color: "#01f9d2",
+                fontSize: 18,
                 fontWeight: "bold",
-                fontSize: 16,
-                textTransform: "uppercase",
+                marginTop: 20,
+                color: "#222",
               }}
             >
-              CANCELAR
+              Estamos validando su premio
             </Text>
-          </NeuButton>
-          <NeuButton
-            color="#701c57"
-            width={width / 5}
-            height={40}
-            borderRadius={20}
-            onPress={() => {
-              onPressDeletePrize();
-            }}
-          >
-            <Text
+          </View>
+        ) : (
+          <>
+            <View>
+              <PrizeImage />
+            </View>
+            <View
               style={{
-                color: "#01f9d2",
-                fontWeight: "bold",
-                fontSize: 16,
-                textTransform: "uppercase",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: 30,
+                width: width / 1.4,
               }}
             >
-              Quitar
-            </Text>
-          </NeuButton>
-        </View>
+              <NeuButton
+                color="#701c57"
+                width={width / 3}
+                height={40}
+                borderRadius={20}
+                onPress={onPressCancelar}
+              >
+                <Text
+                  style={{
+                    color: "#01f9d2",
+                    fontWeight: "bold",
+                    fontSize: 16,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  CANCELAR
+                </Text>
+              </NeuButton>
+              <NeuButton
+                color="#701c57"
+                width={width / 5}
+                height={40}
+                borderRadius={20}
+                onPress={() => {
+                  onPressDeletePrize();
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#01f9d2",
+                    fontWeight: "bold",
+                    fontSize: 16,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Quitar
+                </Text>
+              </NeuButton>
+            </View>
+          </>
+        )}
       </NeuView>
     </View>
   );

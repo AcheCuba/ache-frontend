@@ -70,9 +70,9 @@ export default function BottomTabNavigator({ navigation, route }) {
           backgroundColor: "rgba(112, 28, 87, 1)",
           borderTopWidth: 2,
           paddingHorizontal: 20,
-          paddingBottom: 3
+          paddingBottom: 3,
         },
-        tabStyle: {}
+        tabStyle: {},
       }}
       // screenOptions={({ route }) => ({ tabBarVisible: isTabBarVisible(route) })}
     >
@@ -94,7 +94,7 @@ export default function BottomTabNavigator({ navigation, route }) {
             }
 
             return true;
-          })(route)
+          })(route),
         }}
       />
       <BottomTab.Screen
@@ -122,7 +122,7 @@ export default function BottomTabNavigator({ navigation, route }) {
               default:
                 return true;
             }
-          })(route)
+          })(route),
         }}
       />
       <BottomTab.Screen
@@ -132,7 +132,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="information-circle" color={color} />
           ),
-          tabBarLabel: "MÁS"
+          tabBarLabel: "MÁS",
         }}
       />
       <BottomTab.Screen
@@ -146,7 +146,7 @@ export default function BottomTabNavigator({ navigation, route }) {
 
             // Do something with the `navigation` object
             //navigation.goBack();
-          }
+          },
         })}
         options={{
           tabBarIcon: ({ color }) => (
@@ -156,7 +156,7 @@ export default function BottomTabNavigator({ navigation, route }) {
               color={color}
             />
           ),
-          tabBarLabel: spa ? "INGLÉS" : "SPANISH"
+          tabBarLabel: spa ? "INGLÉS" : "SPANISH",
         }}
       />
     </BottomTab.Navigator>
@@ -214,7 +214,7 @@ function GameNavigator({ navigation, route }) {
           headerShown: false,
           headerTitle: "Aché",
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
     </GameStack.Navigator>
@@ -233,7 +233,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
           //headerTitle: "Nueva Recarga",
           headerShown: false,
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
 
@@ -242,9 +242,9 @@ function NuevaRecargaNavigator({ navigation, route }) {
         component={RecargasDisponiblesScreen}
         options={{
           headerShown: false,
-          //headerTitle: "Recargas disponibles",
+          gestureEnabled: false,
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <NuevaRecargaStack.Screen
@@ -253,7 +253,8 @@ function NuevaRecargaNavigator({ navigation, route }) {
         options={{
           headerShown: false,
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          gestureEnabled: false,
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <NuevaRecargaStack.Screen
@@ -262,7 +263,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
         options={{
           headerShown: false,
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <NuevaRecargaStack.Screen
@@ -271,7 +272,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
         options={{
           headerShown: false,
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <NuevaRecargaStack.Screen
@@ -280,7 +281,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
         options={{
           headerShown: false,
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <NuevaRecargaStack.Screen
@@ -289,7 +290,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
         options={{
           headerShown: false,
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
     </NuevaRecargaStack.Navigator>
@@ -308,7 +309,7 @@ function MoreNavigator({ navigation, route }) {
           headerShown: false,
           //headerTitle: "Más",
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <MoreStack.Screen
@@ -317,7 +318,7 @@ function MoreNavigator({ navigation, route }) {
         options={{
           headerTitle: "Sobre Nosotros",
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <MoreStack.Screen
@@ -326,7 +327,7 @@ function MoreNavigator({ navigation, route }) {
         options={{
           headerTitle: "Modo de Uso",
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <MoreStack.Screen
@@ -335,7 +336,7 @@ function MoreNavigator({ navigation, route }) {
         options={{
           headerTitle: "Política de Privacidad",
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <MoreStack.Screen
@@ -344,7 +345,7 @@ function MoreNavigator({ navigation, route }) {
         options={{
           headerTitle: "Términos de Uso",
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
       <MoreStack.Screen
@@ -353,7 +354,7 @@ function MoreNavigator({ navigation, route }) {
         options={{
           headerTitle: "Premios del Mes",
           gestureDirection: "horizontal",
-          cardStyleInterpolator: forHorizontal
+          cardStyleInterpolator: forHorizontal,
         }}
       />
     </MoreStack.Navigator>

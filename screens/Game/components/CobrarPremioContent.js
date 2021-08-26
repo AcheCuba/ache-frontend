@@ -33,7 +33,7 @@ const CobrarPremioContent = ({
 
   const currentPrize = userState.prize;
 
-  console.log(userState);
+  //console.log(userState);
 
   const [loading, setLoading] = useState(false);
   const [prizeType, setPrizeType] = useState("");
@@ -284,8 +284,13 @@ const CobrarPremioContent = ({
               text="COBRAR PREMIO"
               onPress={() => {
                 setModalVisible(false);
+                /* navigation.jumpTo("Nueva Recarga", {
+                  screen: "NuevaRecargaScreen",
+                  fromCobrarPremio: true,
+                }); */
                 navigation.jumpTo("Nueva Recarga", {
-                  screen: "Nueva Recarga",
+                  screen: "NuevaRecargaScreen",
+                  params: { inOrderToCobrarPremio: true },
                 });
               }}
             />

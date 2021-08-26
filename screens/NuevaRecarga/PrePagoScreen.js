@@ -20,7 +20,7 @@ import { cancelNotification } from "../../libs/expoPushNotification.lib";
 const { width, height } = Dimensions.get("screen");
 
 const PrePagoScreen = ({ navigation, route }) => {
-  const { price_usd, transaction_id_array } = route.params;
+  const { productPriceUsd, transaction_id_array } = route.params;
 
   const { userState, userDispatch } = React.useContext(GlobalContext);
   const { nuevaRecargaState, nuevaRecargaDispatch } = useContext(GlobalContext);
@@ -31,7 +31,7 @@ const PrePagoScreen = ({ navigation, route }) => {
   //const [precioRecarga, setPrecioRecarga] = React.useState("20");
 
   React.useEffect(() => {
-    setAmount(quantity * price_usd);
+    setAmount(quantity * productPriceUsd);
   }, []);
 
   useAndroidBackHandler(() => {
@@ -212,15 +212,18 @@ const PrePagoScreen = ({ navigation, route }) => {
       <CommonHeader
         width={width}
         height={height}
-        _onPress={() => onPressBackButton()}
+        _onPress={
+          () => onPressBackButton()
+          //onPressBackTest()
+        }
       />
       <View
         style={{
-          // backgroundColor: "blue",
+          //backgroundColor: "blue",
           alignItems: "center",
           justifyContent: "center",
           flex: 1,
-          marginTop: -90,
+          marginBottom: 90,
         }}
       >
         <Text
@@ -276,7 +279,8 @@ const PrePagoScreen = ({ navigation, route }) => {
                   textAlign: "center",
                   fontSize: 18,
                   fontWeight: "bold",
-                  color: "#f00000",
+                  //color: "#f00000",
+                  color: "#f781a6",
                   textTransform: "uppercase",
                 }}
               >
@@ -298,7 +302,8 @@ const PrePagoScreen = ({ navigation, route }) => {
                   textAlign: "center",
                   fontSize: 18,
                   fontWeight: "bold",
-                  color: "#00f000",
+                  //color: "#00f000",
+                  color: "#1e9e69",
                   textTransform: "uppercase",
                 }}
               >

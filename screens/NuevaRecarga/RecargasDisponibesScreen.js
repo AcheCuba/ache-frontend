@@ -6,7 +6,6 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Alert,
   ActivityIndicator,
 } from "react-native";
@@ -19,6 +18,7 @@ import Toast from "react-native-root-toast";
 import axios from "axios";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { resetNuevaRecargaState } from "../../context/Actions/actions";
+import { Ionicons } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -33,7 +33,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
 
   const [pressedProductId, setPressed] = React.useState(0);
-  const [price_usd, setPrice_usd] = React.useState("");
+  //const [price_usd, setPrice_usd] = React.useState("");
 
   React.useEffect(() => {
     //console.log("pressedProductId", pressedProductId);
@@ -178,7 +178,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
       });
   };
 
-  const create_transaction = (contacto) => {
+  const create_transaction = (contacto, productId) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/create-transaction`;
     let config;
@@ -189,7 +189,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         data: {
           beneficiary: contacto.contactNumber,
           prizeCode: contacto.prize.uuid,
-          dtoneProductId: pressedProductId,
+          dtoneProductId: productId,
         },
         headers: {
           Authorization: `Bearer ${user_token}`,
@@ -202,7 +202,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         data: {
           beneficiary: contacto.contactNumber,
           prizeCode: "",
-          dtoneProductId: pressedProductId,
+          dtoneProductId: productId,
         },
         headers: {
           Authorization: `Bearer ${user_token}`,
@@ -213,51 +213,41 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
     return axios(config);
   };
 
-  const onPressContinuar = () => {
+  const onPressProduct = (productId, productPriceUsd) => {
     let transaction_id_array = [];
-    if (pressedProductId === "") {
-      Toast.show("Debe seleccionar algún producto para continuar", {
-        duaration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
-    } else {
-      setLoadingContinuar(true);
+    //console.log(productPriceUsd);
+    setLoadingContinuar(true);
 
-      let promisesForTransaction = [];
-      contactosSeleccionados.forEach((contacto) => {
-        promisesForTransaction.push(create_transaction(contacto));
-      });
+    let promisesForTransaction = [];
+    contactosSeleccionados.forEach((contacto) => {
+      promisesForTransaction.push(create_transaction(contacto, productId));
+    });
 
-      Promise.all(promisesForTransaction)
-        .then((response) => {
-          response.forEach((transaction) => {
-            //console.log(transaction.data);
-            //console.log(transaction.data.id);
-            transaction_id_array.push(transaction.data.id);
-          });
-          setLoadingContinuar(false);
-          navigation.navigate("PrePagoScreen", {
-            price_usd,
-            transaction_id_array,
-          });
-        })
-        .catch((err) => {
-          console.log(err.message);
-          setLoadingContinuar(false);
-          Toast.show("No se pudo crear la transacción", {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          });
+    Promise.all(promisesForTransaction)
+      .then((response) => {
+        response.forEach((transaction) => {
+          //console.log(transaction.data);
+          //console.log(transaction.data.id);
+          transaction_id_array.push(transaction.data.id);
         });
-    }
+        setLoadingContinuar(false);
+        navigation.navigate("PrePagoScreen", {
+          productPriceUsd,
+          transaction_id_array,
+        });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setLoadingContinuar(false);
+        Toast.show("No se pudo crear la transacción", {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        });
+      });
   };
 
   return (
@@ -283,118 +273,98 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
             <View style={styles.innerContainer}>
               {products.map((product, index) => {
                 return (
-                  <TouchableOpacity
-                    activeOpacity={0.7}
+                  <NeuButton
                     onPress={() => {
-                      setPressed(product.id);
-                      setPrice_usd(product.price_usd);
                       //console.log(product);
+                      setPressed(product.id); // para el loading
+                      onPressProduct(product.id, product.price_usd);
                     }}
+                    width={width / 1.3}
+                    height={height / 8}
+                    borderRadius={10}
+                    color="#701c57"
                     style={{
-                      width: width / 1.3,
-                      height: height / 8,
                       marginBottom: 25,
-                      backgroundColor:
-                        pressedProductId === product.id
-                          ? "rgba(0,0,0,0.1)"
-                          : "rgba(0,0,0,0)",
                     }}
                     key={index}
                   >
-                    <NeuView
-                      color="#701c57"
-                      width={width / 1.3}
-                      height={height / 8}
-                      borderRadius={10}
-                      inset={pressedProductId === product.id ? true : false}
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderWidth: 0,
+                        width: width / 1.3,
+                        height: height / 8,
+                        borderRadius: 10,
+                      }}
                     >
                       <View
                         style={{
-                          flex: 1,
+                          flexDirection: "row",
+                          justifyContent: "space-around",
                           alignItems: "center",
-                          justifyContent: "center",
-                          borderWidth: 0,
                           width: width / 1.3,
-                          borderRadius: 10,
-                          backgroundColor:
-                            pressedProductId === product.id
-                              ? "rgba(0,0,0,0.1)"
-                              : "rgba(0,0,0,0)",
                         }}
                       >
-                        <Text
+                        <View>
+                          <Text
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 20,
+                              textTransform: "uppercase",
+                              color: "#01f9d2",
+                              marginBottom: 6,
+                            }}
+                          >
+                            {product.name}
+                          </Text>
+                          <Text
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 20,
+                              color: "gray",
+                              marginBottom: 6,
+                            }}
+                          >
+                            {`monto: ${product.amount_cup} CUP`}
+                          </Text>
+                          <Text
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 20,
+                              color: "gray",
+                              marginBottom: 4,
+                            }}
+                          >
+                            {`precio: ${product.price_usd} USD`}
+                          </Text>
+                        </View>
+                        <View
                           style={{
-                            fontWeight: "bold",
-                            fontSize: 20,
-                            textTransform: "uppercase",
-                            color: "#01f9d2",
-                            marginBottom: 6,
+                            height: height / 8,
+                            justifyContent: "center",
                           }}
                         >
-                          {product.name}
-                        </Text>
-                        <Text
-                          style={{
-                            fontWeight: "bold",
-                            fontSize: 20,
-                            color: "gray",
-                            marginBottom: 6,
-                          }}
-                        >
-                          {`monto: ${product.amount_cup} CUP`}
-                        </Text>
-                        <Text
-                          style={{
-                            fontWeight: "bold",
-                            fontSize: 20,
-                            color: "gray",
-                            marginBottom: 4,
-                          }}
-                        >
-                          {`precio: ${product.price_usd} USD`}
-                        </Text>
+                          {loadingContinuar &&
+                          product.id === pressedProductId ? (
+                            <ActivityIndicator size="small" color="#01f9d2" />
+                          ) : (
+                            <Ionicons
+                              name="chevron-forward-outline"
+                              size={25}
+                              color="#01f9d2"
+                            />
+                          )}
+                        </View>
                       </View>
-                    </NeuView>
-                  </TouchableOpacity>
+                    </View>
+                  </NeuButton>
                 );
               })}
             </View>
           </ScrollView>
         )}
-      </View>
-      <View
-        style={{
-          backgroundColor: "#701c57",
-          alignItems: "center",
-          justifyContent: "center",
-          height: height / 7,
-          elevation: 30,
-          // TODO: shadow on iOS
-        }}
-      >
-        <NeuButton
-          color="#701c57"
-          width={(4 / 5) * width}
-          height={width / 7.5}
-          borderRadius={width / 7.5}
-          onPress={() => onPressContinuar()}
-          style={{}}
-        >
-          {loadingContinuar ? (
-            <ActivityIndicator size="large" color="#01f9d2" />
-          ) : (
-            <Text
-              style={{
-                color: "#01f9d2",
-                fontWeight: "bold",
-                fontSize: 20,
-                textTransform: "uppercase",
-              }}
-            >
-              continuar
-            </Text>
-          )}
-        </NeuButton>
       </View>
     </>
   );

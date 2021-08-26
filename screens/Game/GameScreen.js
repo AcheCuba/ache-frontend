@@ -636,6 +636,7 @@ const GameScreen = ({ navigation }) => {
                   //navigation.dispatch(pushAction);
                   navigation.jumpTo("Nueva Recarga", {
                     screen: "NuevaRecargaScreen",
+                    params: { inOrderToCobrarPremio: false },
                   });
                 }}
               />
