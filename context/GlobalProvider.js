@@ -3,10 +3,12 @@ import { createContext, useReducer, useContext } from "react";
 
 // initial states
 import nuevaRecargaInitialState from "./initialStates/nuevaRecargaInitialState";
+import socketInitialState from "./initialStates/socketInitialState";
 import userInitialState from "./initialStates/userInitialState";
 
 // reducers
 import NuevaRecargaReducer from "./Reducers/NuevaRecargaReducer";
+import SocketReducer from "./Reducers/SocketReducer";
 import UserReducer from "./Reducers/UserReducer";
 
 const GlobalContext = createContext();
@@ -29,6 +31,10 @@ const GlobalProvider = ({ children }) => {
     NuevaRecargaReducer,
     nuevaRecargaInitialState
   );
+  const [socketState, socketDispatch] = useReducer(
+    SocketReducer,
+    socketInitialState
+  );
 
   /*  const value = {
     authState,
@@ -41,7 +47,9 @@ const GlobalProvider = ({ children }) => {
         userState,
         userDispatch,
         nuevaRecargaState,
-        nuevaRecargaDispatch
+        nuevaRecargaDispatch,
+        socketState,
+        socketDispatch,
       }}
     >
       {children}

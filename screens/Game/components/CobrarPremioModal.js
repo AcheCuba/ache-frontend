@@ -3,8 +3,6 @@ import { Modal, StyleSheet, View, Dimensions, StatusBar } from "react-native";
 import CobrarPremioContent from "./CobrarPremioContent";
 import CommonHeader from "../../../components/CommonHeader";
 import { RootSiblingParent } from "react-native-root-siblings";
-import Clipboard from "expo-clipboard";
-import Toast from "react-native-root-toast";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -13,8 +11,8 @@ const CobrarPremioModal = ({ modalVisible, setModalVisible, navigation }) => {
   const [copiado, setCopiado] = useState(false);
   const [codigoGenerado, setCodigoGenerado] = useState(false);
 
-  const copiarCodigoAlSalir = () => {
-    if (codigoGenerado && !copiado) {
+  const Salir = () => {
+    /*    if (codigoGenerado && !copiado) {
       Clipboard.setString(codigo);
       Toast.show("Código copiado al portapapeles", {
         duaration: Toast.durations.LONG,
@@ -32,41 +30,43 @@ const CobrarPremioModal = ({ modalVisible, setModalVisible, navigation }) => {
     } else {
       setCopiado(false);
       setModalVisible(false);
-    }
+    } */
+    setModalVisible(false);
   };
 
   return (
     <>
       <StatusBar backgroundColor="rgb(112, 28, 87)" style="light" />
+
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <CommonHeader
-          width={width}
-          height={height}
-          _onPress={() => {
-            copiarCodigoAlSalir();
-          }}
-        />
-        <RootSiblingParent>
-          <View style={styles.ModalOuterContent}>
+        <View style={styles.ModalOuterContent}>
+          {/*    <CommonHeader
+            width={width}
+            height={height}
+            _onPress={() => {
+              copiarCodigoAlSalir();
+            }}
+          /> */}
+          <RootSiblingParent>
             {/*  <View style={styles.ModalContent}> */}
             <CobrarPremioContent
               navigation={navigation}
               setModalVisible={setModalVisible}
-              codigo={codigo}
+              //codigo={codigo}
               setCodigo={setCodigo}
-              copiarCodigoAlSalir={copiarCodigoAlSalir}
+              Salir={Salir}
               setCopiado={setCopiado}
               setCodigoGenerado={setCodigoGenerado}
               codigoGenerado={codigoGenerado}
             />
             {/*  </View> */}
-          </View>
-        </RootSiblingParent>
+          </RootSiblingParent>
+        </View>
       </Modal>
     </>
   );
@@ -80,6 +80,8 @@ const styles = StyleSheet.create({
     //justifyContent: "center",
     //alignItems: "center",
     backgroundColor: "rgba(112, 28, 87, 1)",
+    width: "100%",
+    height: "100%",
   },
   /*  ModalContent: {
     backgroundColor: "rgba(112, 28, 87, 1)",

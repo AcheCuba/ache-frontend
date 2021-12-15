@@ -12,17 +12,18 @@ const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
       case "Jackpot":
         return (
           <Image
-            //source={require("../../../assets/images/nueva_recarga/diez.png")}
-            source={require("../../../assets/images/home/premios/diamanteCopia.png")}
-            style={{ height: width / 7 + 7, width: width / 7 }}
+            //source={require("../../../assets/images/home/premios/diamanteCopia.png")}
+            source={require("../../../assets/images/iconos/icono_gran_premio.png")}
+            style={{ height: width / 6, width: width / 6 + 11 }}
           />
         );
 
       case "TopUpBonus":
         return (
           <Image
-            source={require("../../../assets/images/home/premios/capa102Copia.png")}
-            style={{ height: width / 7 + 5, width: width / 7 }}
+            //source={require("../../../assets/images/home/premios/capa102Copia.png")}
+            source={require("../../../assets/images/iconos/icono_premio.png")}
+            style={{ height: width / 6, width: width / 6 }}
           />
         );
       default:

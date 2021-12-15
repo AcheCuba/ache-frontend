@@ -5,7 +5,6 @@ import {
   Text,
   View,
   Dimensions,
-  TouchableOpacity,
   Alert,
   ActivityIndicator,
 } from "react-native";
@@ -17,7 +16,12 @@ import { GlobalContext } from "../../context/GlobalProvider";
 import Toast from "react-native-root-toast";
 import axios from "axios";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
-import { resetNuevaRecargaState } from "../../context/Actions/actions";
+import {
+  closeSocket,
+  resetNuevaRecargaState,
+  setTransaccionesEsperadas,
+  setTransaccionesResultado,
+} from "../../context/Actions/actions";
 import { Ionicons } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("screen");
@@ -29,7 +33,15 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   const { contactosSeleccionados } = nuevaRecargaState;
 
   const [products, setProducts] = React.useState([]);
+  const [productsWithPromo, setProductsWithPromo] = React.useState([]);
+  const [promoTitle, setPromoTitle] = React.useState(undefined);
+
+  const { socketState, socketDispatch } = React.useContext(GlobalContext);
+  const { socketId } = socketState;
+  //console.log(socketId);
+
   const [loadingProducts, setLoadingProducts] = React.useState(false);
+  const [loadingPromotions, setLoadingPromotions] = React.useState(false);
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
 
   const [pressedProductId, setPressed] = React.useState(0);
@@ -115,6 +127,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   const onPressCancelarRecarga = () => {
     //console.log(nuevaRecargaState);
 
+    socketDispatch(closeSocket());
     finish_checkout_all_prizes();
     nuevaRecargaDispatch(resetNuevaRecargaState());
     navigation.navigate("NuevaRecargaScreen");
@@ -142,9 +155,15 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   }, [contactosSeleccionados]);
 
   React.useEffect(() => {
+    // get products
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     getProducts(source.token);
+
+    // get promotions
+    const CancelTokenPromotions = axios.CancelToken;
+    const sourceProm = CancelTokenPromotions.source();
+    getPromotions(sourceProm.token);
 
     return () => {
       source.cancel("Operation canceled by the user.");
@@ -152,6 +171,42 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
       setProducts([]);
     };
   }, []);
+
+  const getPromotions = (cancelToken) => {
+    setLoadingPromotions(true);
+    const user_token = userState.token;
+    const url = `${BASE_URL}/topup/promotions`;
+
+    const config = {
+      method: "get",
+      cancelToken,
+      url,
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    axios(config)
+      .then((response) => {
+        //setProducts(response.data);
+        //console.log("Promociones");
+        //console.log(response.data);
+        const data = response.data;
+        // console.log(data.length);
+        if (data.length !== 0) {
+          //console.log(response.data);
+          //console.log(data[0].productsIds);
+          setProductsWithPromo(data[0].productsIds);
+          //console.log(data[0].title);
+          setPromoTitle(data[0].title);
+        }
+        setLoadingPromotions(false);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setLoadingPromotions(false);
+      });
+  };
 
   const getProducts = (cancelToken) => {
     setLoadingProducts(true);
@@ -170,6 +225,8 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
     axios(config)
       .then((response) => {
         setProducts(response.data);
+        //console.log("products");
+        //console.log(response.data);
         setLoadingProducts(false);
       })
       .catch((err) => {
@@ -181,6 +238,8 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   const create_transaction = (contacto, productId) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/create-transaction`;
+    console.log("socket id pasado al endpoint");
+    console.log(socketId);
     let config;
     if (contacto.prize != null) {
       config = {
@@ -190,6 +249,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
           beneficiary: contacto.contactNumber,
           prizeCode: contacto.prize.uuid,
           dtoneProductId: productId,
+          socketId: socketId,
         },
         headers: {
           Authorization: `Bearer ${user_token}`,
@@ -203,6 +263,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
           beneficiary: contacto.contactNumber,
           prizeCode: "",
           dtoneProductId: productId,
+          socketId: socketId,
         },
         headers: {
           Authorization: `Bearer ${user_token}`,
@@ -214,8 +275,10 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   };
 
   const onPressProduct = (productId, productPriceUsd) => {
+    // por cada contacto, se crea una transaccion
+    // endpoint: create-transacition
+
     let transaction_id_array = [];
-    //console.log(productPriceUsd);
     setLoadingContinuar(true);
 
     let promisesForTransaction = [];
@@ -223,14 +286,30 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
       promisesForTransaction.push(create_transaction(contacto, productId));
     });
 
+    // para comunicacion socket
+    let transacciones_esperadas = []; // [{mobile_number, transaction_id}, ...]
+    socketDispatch(setTransaccionesResultado([]));
+
     Promise.all(promisesForTransaction)
       .then((response) => {
         response.forEach((transaction) => {
           //console.log(transaction.data);
           //console.log(transaction.data.id);
           transaction_id_array.push(transaction.data.id);
+          transacciones_esperadas.push({
+            mobile_number:
+              transaction.data.credit_party_identifier.mobile_number,
+            transaction_id: transaction.data.id,
+          });
         });
         setLoadingContinuar(false);
+
+        console.log(
+          "esperadas en recargas disponibles screen",
+          transacciones_esperadas
+        );
+        socketDispatch(setTransaccionesEsperadas(transacciones_esperadas));
+
         navigation.navigate("PrePagoScreen", {
           productPriceUsd,
           transaction_id_array,
@@ -258,17 +337,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
         _onPress={() => onPressBackButton()}
       />
       <View style={styles.container}>
-        {loadingProducts ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ActivityIndicator size="large" color="#01f9d2" />
-          </View>
-        ) : (
+        {!loadingProducts && !loadingPromotions ? (
           <ScrollView style={{ flex: 1 }}>
             <View style={styles.innerContainer}>
               {products.map((product, index) => {
@@ -280,7 +349,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                       onPressProduct(product.id, product.price_usd);
                     }}
                     width={width / 1.3}
-                    height={height / 8}
+                    height={height / 6}
                     borderRadius={10}
                     color="#701c57"
                     style={{
@@ -295,7 +364,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                         justifyContent: "center",
                         borderWidth: 0,
                         width: width / 1.3,
-                        height: height / 8,
+                        height: height / 6,
                         borderRadius: 10,
                       }}
                     >
@@ -315,6 +384,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                               textTransform: "uppercase",
                               color: "#01f9d2",
                               marginBottom: 6,
+                              marginTop: 5,
                             }}
                           >
                             {product.name}
@@ -339,6 +409,20 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                           >
                             {`precio: ${product.price_usd} USD`}
                           </Text>
+                          {promoTitle != undefined &&
+                          productsWithPromo.includes(product.id) ? (
+                            <Text
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: 15,
+                                textTransform: "uppercase",
+                                color: "#01f9d2",
+                                marginTop: 5,
+                              }}
+                            >
+                              {`promotion: ${promoTitle}`}
+                            </Text>
+                          ) : null}
                         </View>
                         <View
                           style={{
@@ -364,6 +448,16 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
               })}
             </View>
           </ScrollView>
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ActivityIndicator size="large" color="#01f9d2" />
+          </View>
         )}
       </View>
     </>

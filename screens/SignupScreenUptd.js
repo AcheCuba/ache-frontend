@@ -74,9 +74,11 @@ const SignupScreenUptd = ({ navigation }) => {
   const fetchRegister = async (name, email, phone) => {
     let data = {
       name: name,
-      email: email,
-      phone: phone,
+      email: email.trim(),
+      phone: phone.trim(),
     };
+
+    console.log(data);
 
     let requestOptions = {
       method: "post",
@@ -119,6 +121,7 @@ const SignupScreenUptd = ({ navigation }) => {
               email: newUser.email,
               phone: newUser.phone,
               prize: null,
+              idioma: "spa",
             })
           );
         }
@@ -188,7 +191,8 @@ const SignupScreenUptd = ({ navigation }) => {
             height: height / 6,
             backgroundColor: "rgba(112, 28, 87, 1)",
             flexDirection: "row",
-            justifyContent: "space-between",
+            //justifyContent: "space-between",
+            justifyContent: "center",
             marginBottom: 30,
           }}
         >
@@ -196,7 +200,7 @@ const SignupScreenUptd = ({ navigation }) => {
             source={require("../assets/images/logo.png")}
             //resizeMode="center"
             style={{
-              marginLeft: width / 10,
+              //marginLeft: width / 10,
               width: width / 4.5,
               height: width / 8.6,
             }}
@@ -204,7 +208,12 @@ const SignupScreenUptd = ({ navigation }) => {
         </View>
 
         <View style={{ alignItems: "center" }}>
-          <Ionicons name="person-sharp" size={130} color="#ddd" />
+          {/*           <Ionicons name="person-sharp" size={130} color="#ddd" />
+           */}
+          <Image
+            source={require("../assets/images/emojis/emoji_wink.png")}
+            style={{ width: 130, height: 130 }}
+          />
         </View>
         <KeyboardAwareScrollView
           extraScrollHeight={Platform.OS === "ios" ? -30 : 0}
@@ -315,7 +324,14 @@ const SignupScreenUptd = ({ navigation }) => {
           </View>
         </KeyboardAwareScrollView>
 
-        <View style={{ zIndex: 0, flex: 1, alignItems: "center" }}>
+        <View
+          style={{
+            zIndex: 0,
+            flex: 1,
+            alignItems: "center",
+            marginTop: -120,
+          }}
+        >
           <NeuButton
             color="#701c57"
             width={(4 / 5) * width}
@@ -329,13 +345,13 @@ const SignupScreenUptd = ({ navigation }) => {
             ) : (
               <Text
                 style={{
-                  color: "#01f9d2",
+                  color: "#fff800",
                   fontWeight: "bold",
                   fontSize: 20,
                   textTransform: "uppercase",
                 }}
               >
-                Submit
+                enviar
               </Text>
             )}
           </NeuButton>
@@ -372,6 +388,6 @@ const styles = StyleSheet.create({
   submitButton: {
     width: "90%",
     height: 50,
-    marginTop: 30,
+    //marginTop: 30,
   },
 });

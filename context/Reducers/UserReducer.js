@@ -4,6 +4,7 @@ import userInitialState from "../initialStates/userInitialState";
 const SIGNUP = actionTypes.SIGNUP;
 const RESTORE_USER = actionTypes.RESTORE_USER;
 const SET_PRIZE_FOR_USER = actionTypes.SET_PRIZE_FOR_USER;
+const SET_IDIOMA = actionTypes.SET_IDIOMA;
 
 const UserReducer = (state = userInitialState, action) => {
   switch (action.type) {
@@ -16,7 +17,12 @@ const UserReducer = (state = userInitialState, action) => {
       // console.log("========================== reducer", action.prize);
       return {
         ...state,
-        prize: action.prize
+        prize: action.prize,
+      };
+    case SET_IDIOMA:
+      return {
+        ...state,
+        idioma: action.idioma,
       };
     default:
       //console.log("Default case (in user reducer):", state);

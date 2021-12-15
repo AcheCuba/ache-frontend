@@ -1,42 +1,139 @@
 import React from "react";
-import { StyleSheet, Text, View, Linking } from "react-native";
+import { Dimensions } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { NeuView } from "react-native-neu-element";
+import CommonHeader from "../../components/CommonHeader";
 
-const PremioScreen = () => {
-  return (
-    <View style={styles.container}>
-      <View style={{ flex: 1, marginVertical: 10, marginHorizontal: 20 }}>
-        <ScrollView>
-          <Text style={styles.title}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-            {"\n"} {"\n"}
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-            accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-            quae ab illo inventore veritatis et quasi architecto beatae vitae
-            dicta sunt explicabo.
+const { width, height } = Dimensions.get("screen");
+const marginGlobal = width / 10;
+
+const PremioScreen = ({ navigation }) => {
+  const PremioCard = ({ type }) => {
+    let imagen;
+    switch (type) {
+      case "Jackpot":
+        imagen = (
+          <Image
+            source={require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")}
+            style={{
+              width: width / 6,
+              height: width / 6,
+            }}
+          />
+        );
+        break;
+      case "Bonus 250":
+        imagen = (
+          <Image
+            source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
+            style={{
+              width: width / 5.8,
+              height: width / 6,
+            }}
+          />
+        );
+        break;
+      case "Bonus 500":
+        imagen = (
+          <Image
+            source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
+            style={{
+              width: width / 5.9,
+              height: width / 6,
+            }}
+          />
+        );
+        break;
+
+      default:
+        break;
+    }
+    return (
+      <View
+        style={{
+          alignItems: "center",
+          padding: 10,
+          flex: 1,
+        }}
+      >
+        <NeuView
+          width={width / 1.3}
+          height={height / 7}
+          borderRadius={10}
+          color="#701c57"
+          style={{ marginTop: 10 }}
+          containerStyle={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+          }}
+        >
+          {imagen}
+          <Text
+            style={{
+              textTransform: "uppercase",
+              fontSize: 22,
+              fontWeight: "bold",
+              color: "#fff800",
+              textAlign: "center",
+            }}
+          >
+            {type}
           </Text>
-          <View style={{ alignItems: "flex-end" }}>
-            <Text
-              style={{
-                color: "#5870cb",
-                fontSize: 30,
-                fontWeight: "bold",
-                marginTop: 10,
-              }}
-              onPress={() => Linking.openURL("http://google.com")}
-            >
-              ... Saber más
-            </Text>
-          </View>
-        </ScrollView>
+        </NeuView>
       </View>
-    </View>
+    );
+  };
+
+  return (
+    <>
+      <CommonHeader
+        width={width}
+        height={height}
+        _onPress={() => navigation.navigate("MoreScreen")}
+      />
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          backgroundColor: "rgba(112, 28, 87, 1)",
+        }}
+      >
+        <View style={styles.container}>
+          <View style={{ flex: 1, marginVertical: 0, marginHorizontal: 10 }}>
+            <View
+              style={{
+                width: width,
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  textTransform: "uppercase",
+                  fontSize: 25,
+                  fontWeight: "bold",
+                  color: "#fff800",
+                }}
+              >
+                PREMIOS DEL MES
+              </Text>
+            </View>
+
+            <ScrollView
+              contentContainerStyle={{ width: width, alignItems: "center" }}
+            >
+              <PremioCard type="Jackpot" />
+
+              <PremioCard type="Bonus 250" />
+
+              <PremioCard type="Bonus 500" />
+            </ScrollView>
+          </View>
+        </View>
+      </View>
+    </>
   );
 };
 
@@ -45,12 +142,12 @@ export default PremioScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(112, 28, 87, 1)",
+    marginHorizontal: marginGlobal,
   },
   title: {
-    fontSize: 30,
+    fontSize: 20,
     //fontWeight: "bold",
     fontStyle: "italic",
     color: "#eee",

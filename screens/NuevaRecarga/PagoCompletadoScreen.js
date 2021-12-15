@@ -1,4 +1,5 @@
 import React from "react";
+import { Image } from "react-native";
 import { Text, View, Button, Dimensions } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 
@@ -9,19 +10,63 @@ const PagoCompletadoScreen = ({ navigation }) => {
     <View
       style={{
         flex: 1,
-        justifyContent: "center",
+        //justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#701c57"
+        backgroundColor: "#701c57",
       }}
     >
-      <Text style={{ fontSize: 20, fontWeight: "bold", color: "#01f9d2" }}>
-        Se ha realizado el pago exitosamente
-      </Text>
-      <View style={{ marginTop: 25 }}>
+      <View
+        style={{
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 100,
+        }}
+      >
+        <Image
+          source={require("../../assets/animaciones/moneda_check.gif")}
+          style={{
+            width: width / 1.5,
+            height: width / 1.5,
+          }}
+        />
+      </View>
+      <View
+        style={{
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            color: "#01f9d2",
+            textTransform: "uppercase",
+          }}
+        >
+          ¡Recarga Exitosa!
+        </Text>
+      </View>
+
+      <View style={{ marginTop: 50 }}>
         <CommonNeuButton
-          text="Ir a Inicio"
+          text="Jugar"
           onPress={() => {
             navigation.navigate("Juego");
+          }}
+          screenWidth={width}
+        />
+      </View>
+      <View style={{ marginTop: 40 }}>
+        <CommonNeuButton
+          text="Atrás"
+          onPress={() => {
+            navigation.jumpTo("Nueva Recarga", {
+              screen: "NuevaRecargaScreen",
+              params: { inOrderToCobrarPremio: false },
+            });
           }}
           screenWidth={width}
         />

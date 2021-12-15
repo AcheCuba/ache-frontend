@@ -129,19 +129,28 @@ const NuevoContactoInput = ({
         case "TopUpBonus":
           return (
             <Image
-              source={require("../../../assets/images/nueva_recarga/diez.png")}
-              style={{ height: 25, width: 23 }}
+              source={require("../../../assets/images/iconos/icono_premio.png")}
+              style={{ height: 26, width: 26 }}
             />
           );
         case "Jackpot":
           return (
             <Image
-              source={require("../../../assets/images/nueva_recarga/jackpot.png")}
-              style={{ height: 20, width: 20 }}
+              source={require("../../../assets/images/iconos/icono_gran_premio.png")}
+              style={{ height: 22, width: 25 }}
             />
           );
         default:
-          return <Ionicons name={iconName} color="gray" size={20} />;
+          return (
+            <Image
+              source={require("../../../assets/images/iconos/brillo.png")}
+              style={{ height: 25, width: 25 }}
+            />
+          );
+          {
+            /* <Ionicons name={iconName} color="gray" size={20} />;
+             */
+          }
       }
     }
   };
@@ -209,7 +218,7 @@ const NuevoContactoInput = ({
   }; */
 
   const onPressDeleteContact = () => {
-    // falta finish checkout del premio
+    // falta finish checkout del premio?
     nuevaRecargaDispatch(deleteField(fieldInputId));
     if (contactosSeleccionados.length > 0) {
       nuevaRecargaDispatch(toogleAddContactAvaiable(true));
@@ -237,6 +246,7 @@ const NuevoContactoInput = ({
         <DeletePrizeModal
           fieldInputId={fieldInputId}
           type={returnPrizeType()}
+          //type="Jackpot" // for testing
           onPressDeletePrize={onPressDeletePrize}
           onPressCancelar={onPressCancelar}
         />
@@ -248,7 +258,7 @@ const NuevoContactoInput = ({
           marginTop: 20,
         }}
       >
-        <TouchableOpacity
+        {/*   <TouchableOpacity
           onPress={() => onPressDeleteContact()}
           style={{
             //width: width / 8,
@@ -259,13 +269,32 @@ const NuevoContactoInput = ({
             marginTop: 3,
           }}
         >
-          <MaterialCommunityIcons
-            name="trash-can"
-            color="rgba(248,85,34, 0.5)"
-            //  color="rgba(148,13,10, 0.5)"
-            size={28}
+          <Image
+            source={require("../../../assets/images/iconos/Boton_Eliminar.png")}
+            //style={{ width: 31, height: 21 }}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: -2,
+          }}
+        >
+          <NeuButton
+            color="#701c57"
+            width={width / 9.5}
+            height={width / 9.5}
+            borderRadius={width / 16}
+            onPress={() => onPressDeleteContact()}
+            style={{}}
+          >
+            <Image
+              source={require("../../../assets/images/iconos/Boton_Eliminar.png")}
+              style={{ width: width / 9.5 - 22, height: 4 }}
+            />
+          </NeuButton>
+        </View>
 
         {Platform.OS === "ios" ? (
           <TouchableOpacity
@@ -334,11 +363,17 @@ const NuevoContactoInput = ({
           </Pressable>
         )}
 
-        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: -2,
+          }}
+        >
           <NeuButton
             color="#701c57"
-            width={width / 8}
-            height={width / 8}
+            width={width / 9.5}
+            height={width / 9.5}
             borderRadius={width / 16}
             onPress={() => handlePressBarcode()}
             style={{}}
@@ -352,14 +387,3 @@ const NuevoContactoInput = ({
 };
 
 export default NuevoContactoInput;
-
-const styles = StyleSheet.create({
-  input: {
-    width: "50%",
-    borderBottomWidth: 2,
-    borderBottomColor: "rgba(112, 28, 87, 1)",
-    marginBottom: 10,
-    paddingLeft: 10,
-    marginHorizontal: 10,
-  },
-});

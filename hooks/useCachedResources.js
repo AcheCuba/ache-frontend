@@ -63,7 +63,7 @@ export default function useCachedResources() {
 
         //===================== solo para eliminar token de expo push not ===========================
         //await SecureStore.deleteItemAsync("expo-push-token");
-        //===================== solo para eliminar user ===========================
+        //===================== solo para eliminar token de expo push not ===========================
 
         //console.log(user);
         //console.log(token);

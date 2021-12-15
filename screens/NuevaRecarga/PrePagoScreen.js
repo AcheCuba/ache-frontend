@@ -203,8 +203,10 @@ const PrePagoScreen = ({ navigation, route }) => {
     navigation.navigate("PagoCompletadoScreen");
 
     const notId = await getData("notification-prize-expire");
-    await cancelNotification(notId);
-    await removeItem("notification-prize-expire");
+    if (notId != null) {
+      await cancelNotification(notId);
+      await removeItem("notification-prize-expire");
+    }
   };
 
   return (
@@ -242,7 +244,7 @@ const PrePagoScreen = ({ navigation, route }) => {
           height={height / 7}
           color="#701c57"
           borderRadius={10}
-          onPress={() => navigation.navigate("PagoScreen")}
+          onPress={() => navigation.navigate("PagoScreen", { amount: amount })}
         >
           <View style={{ paddingHorizontal: width / 6 }}>
             <Text

@@ -34,6 +34,10 @@ import MultiplesContactosScreen from "../screens/NuevaRecarga/MultiplesContactos
 import { forHorizontal } from "./forHorizontal";
 
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import TabButtonNeo from "./TabButtonNeo";
+import { GlobalContext } from "../context/GlobalProvider";
+import { setIdioma } from "../context/Actions/actions";
+import { storeData } from "../libs/asyncStorage.lib";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -51,7 +55,10 @@ const isTabBarVisible = (route) => {
 export default function BottomTabNavigator({ navigation, route }) {
   //const colorScheme = useColorScheme();
   const state = useNavigationState((state) => state);
-  const [spa, setSpanish] = useState(true);
+  //const [spa, setSpanish] = useState(true);
+  const { userState, userDispatch } = React.useContext(GlobalContext);
+  const idioma_definido = userState?.idioma;
+
   //Ej: activeTintColor: Colors[colorScheme].tint => dice a la app qué esquema de coloresusar según la conf del usuario
 
   return (
@@ -59,20 +66,35 @@ export default function BottomTabNavigator({ navigation, route }) {
       initialRouteName="Juego"
       tabBarOptions={{
         //activeTintColor: Colors.light.tint,
-        activeTintColor: "#01f9d2",
+        activeTintColor: "rgb(255, 248, 0)",
         inactiveTintColor: "rgba(255,255,255,0.3)",
         keyboardHidesTabBar: true,
-        labelStyle: { fontSize: 13, marginBottom: 10, marginTop: -10 },
+        labelStyle: { fontSize: 12, marginBottom: 15, marginTop: -10 },
         style: {
-          height: 80,
-          paddingTop: 3,
+          justifyContent: "center",
+          height: 110,
+          // paddingTop: 3,
           allowFontScaling: true,
           backgroundColor: "rgba(112, 28, 87, 1)",
-          borderTopWidth: 2,
-          paddingHorizontal: 20,
-          paddingBottom: 3,
+          color: "yellow",
+          borderTopWidth: 0,
+          // zIndex: 10,
+          /*  paddingHorizontal: 20,
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30, */
+          paddingBottom: 2,
+          borderTopWidth: Platform.OS === "android" ? 1 : 0,
+          borderTopColor:
+            Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
+          shadowColor: Platform.OS === "android" ? "#000" : "#1f0918",
+          shadowOffset: { width: -3, height: -3 },
+          shadowOpacity: 0.4,
+          shadowRadius: 5,
+          elevation: Platform.OS === "android" ? 30 : null,
         },
-        tabStyle: {},
+        tabStyle: {
+          backgroundColor: "rgba(112, 28, 87, 1)",
+        },
       }}
       // screenOptions={({ route }) => ({ tabBarVisible: isTabBarVisible(route) })}
     >
@@ -80,10 +102,11 @@ export default function BottomTabNavigator({ navigation, route }) {
         name="Juego"
         component={GameNavigator}
         options={{
-          tabBarIcon: ({ color }) => (
+          /*  tabBarIcon: ({ color }) => (
             <TabBarIcon name="game-controller" color={color} />
-          ),
-          tabBarLabel: "JUEGO",
+          ), */
+          tabBarIcon: () => <TabButtonNeo iconName="Ruleta" />,
+          tabBarLabel: idioma_definido === "spa" ? "JUEGA" : "PLAY",
           tabBarVisible: ((route) => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? "Juego"; // trampilla
             //console.log("route name", routeName);
@@ -101,8 +124,9 @@ export default function BottomTabNavigator({ navigation, route }) {
         name="Nueva Recarga"
         component={NuevaRecargaNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="card" color={color} />,
-          tabBarLabel: "RECARGA",
+          tabBarIcon: () => <TabButtonNeo iconName="Recarga" />,
+
+          tabBarLabel: idioma_definido === "spa" ? "RECARGA" : "RECHARGE",
           tabBarVisible: ((route) => {
             /* const routeName =
               getFocusedRouteNameFromRoute(route) ?? "MultiplesContactosScreen"; */
@@ -129,10 +153,9 @@ export default function BottomTabNavigator({ navigation, route }) {
         name="Más"
         component={MoreNavigator}
         options={{
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="information-circle" color={color} />
-          ),
-          tabBarLabel: "MÁS",
+          tabBarIcon: () => <TabButtonNeo iconName="Settings" />,
+
+          tabBarLabel: idioma_definido === "spa" ? "MÁS" : "MORE",
         }}
       />
       <BottomTab.Screen
@@ -142,21 +165,40 @@ export default function BottomTabNavigator({ navigation, route }) {
           tabPress: (e) => {
             // Prevent default action
             e.preventDefault();
-            setSpanish(!spa);
+            //setSpanish(!spa);
+            if (idioma_definido === "spa") {
+              userDispatch(setIdioma("eng"));
+
+              storeData("user", {
+                ...userState,
+                idioma: "eng",
+              });
+            }
+
+            if (idioma_definido === "eng") {
+              userDispatch(setIdioma("spa"));
+
+              storeData("user", {
+                ...userState,
+                idioma: "spa",
+              });
+            }
 
             // Do something with the `navigation` object
             //navigation.goBack();
           },
         })}
         options={{
-          tabBarIcon: ({ color }) => (
+          /*  tabBarIcon: ({ color }) => (
             <TabBarIcon
               name="flag"
               //color={spa ? "#005005" : "#8e0000"}
               color={color}
             />
-          ),
-          tabBarLabel: spa ? "INGLÉS" : "SPANISH",
+          ), */
+          tabBarIcon: () => <TabButtonNeo iconName="Idioma" />,
+          tabBarLabel: idioma_definido === "spa" ? "IDIOMA" : "LANGUAGE",
+          //tabBarLabel: spa ? "INGLÉS" : "SPANISH",
         }}
       />
     </BottomTab.Navigator>
@@ -316,6 +358,8 @@ function MoreNavigator({ navigation, route }) {
         name="AboutUsScreen"
         component={AboutUsScreen}
         options={{
+          headerShown: false,
+
           headerTitle: "Sobre Nosotros",
           gestureDirection: "horizontal",
           cardStyleInterpolator: forHorizontal,
@@ -325,6 +369,8 @@ function MoreNavigator({ navigation, route }) {
         name="ModoUsoScreen"
         component={ModoUsoScreen}
         options={{
+          headerShown: false,
+
           headerTitle: "Modo de Uso",
           gestureDirection: "horizontal",
           cardStyleInterpolator: forHorizontal,
@@ -334,6 +380,8 @@ function MoreNavigator({ navigation, route }) {
         name="PrivacidadScreen"
         component={PrivacidadScreen}
         options={{
+          headerShown: false,
+
           headerTitle: "Política de Privacidad",
           gestureDirection: "horizontal",
           cardStyleInterpolator: forHorizontal,
@@ -343,6 +391,8 @@ function MoreNavigator({ navigation, route }) {
         name="TermUsoScreen"
         component={TermUsoScreen}
         options={{
+          headerShown: false,
+
           headerTitle: "Términos de Uso",
           gestureDirection: "horizontal",
           cardStyleInterpolator: forHorizontal,
@@ -352,6 +402,8 @@ function MoreNavigator({ navigation, route }) {
         name="PremioScreen"
         component={PremioScreen}
         options={{
+          headerShown: false,
+
           headerTitle: "Premios del Mes",
           gestureDirection: "horizontal",
           cardStyleInterpolator: forHorizontal,

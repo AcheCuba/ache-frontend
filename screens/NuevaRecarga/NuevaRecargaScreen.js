@@ -22,6 +22,7 @@ import {
   updatePrize,
   deleteAllValidatedPrizes,
   resetNuevaRecargaState,
+  openSocket,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import { NeuButton, NeuView } from "react-native-neu-element";
@@ -31,6 +32,7 @@ import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Image } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -59,6 +61,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     validatetInProcess,
   } = nuevaRecargaState;
   const { userState } = React.useContext(GlobalContext);
+
+  const { socketDispatch } = React.useContext(GlobalContext);
 
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -94,7 +98,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             })
             .catch((err) => {
               console.log(err.message);
-              deletePrizeByFieldId(fieldId);
+              nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
               nuevaRecargaDispatch(toggleValidateInProcess(false));
             });
         }
@@ -131,7 +135,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                 })
                 .catch((err) => {
                   console.log(err.message);
-                  deletePrizeByFieldId(fieldId);
+                  nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 });
             } else {
@@ -183,61 +187,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     return unsub;
   }, [navigation]);
 
-  /* React.useEffect(() => {
-    if (contactosSeleccionados.length === 0) {
-      const firstFieldId = makeid(15);
-
-      if (fields.length === 0) {
-        nuevaRecargaDispatch(setFields(true, firstFieldId));
-      }
-
-      //console.log("contactos === 0");
-      // si el usuario tiene premio añadirlo a la lista
-      const hayPremio =
-        userState.prize != null && userState.prize.type !== "Nada";
-      if (validated_prizes.length === 0 && hayPremio) {
-        const type = userState.prize.type;
-        const uuid = userState.prize.uuid;
-        const fieldId = firstFieldId;
-
-        validate_prize(uuid)
-          .then((resp) => {
-            console.log("validate in useEffect", resp.data);
-            nuevaRecargaDispatch(
-              setPrize({ fieldId, uuid, type, loading: false })
-            );
-            nuevaRecargaDispatch(toggleValidateInProcess(false));
-          })
-          .catch((err) => {
-            console.log(err.message);
-            nuevaRecargaDispatch(toggleValidateInProcess(false));
-          });
-      }
-    }
-
-    return () => {
-      //console.log("cleanup?");
-      //finish_checkout_all_prizes();
-    };
-  }, []); */
-
-  /* React.useEffect(() => {
-    //console.log("validated_prizes nueva recarga screen", validated_prizes);
-    console.log("fields", fields);
-    console.log("contactos seleccionados", contactosSeleccionados);
-    console.log("validated_prizes", validated_prizes);
-  }, [validated_prizes]); */
-
-  /*   const overwritePrizeForField = (fieldId) => {
-    const prizeForDelete = validated_prizes.find(
-      (prize) => prize.fieldId === fieldId
-    );
-
-    if (prizeForDelete !== undefined) {
-      nuevaRecargaDispatch(deletePrize(prizeForDelete.uuid));
-    }
-  };
- */
   const prize_init_checkout = (prize_id) => {
     console.log("init checkout");
     const user_token = userState.token;
@@ -297,8 +246,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       );
       setModalVisible(false);
     } else {
-      // overwritePrizeForField(fieldId);
-
       // actualizar loading
       nuevaRecargaDispatch(
         setPrize({ fieldId, uuid, type: undefined, loading: true })
@@ -324,14 +271,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             hideOnPress: true,
             delay: 0,
           });
-          /*     Toast.show(error.message, {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          }); */
           //eleminar el que se añadió y actualizar loading, no es válido
           nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
           nuevaRecargaDispatch(toggleValidateInProcess(false));
@@ -402,10 +341,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     }
   };
 
-  /* const onPressContinuar = () => {
-    navigation.navigate("RecargasDisponiblesScreen");
-  }; */
-
   const onPressContinuar = () => {
     if (!addContactAvaiable) {
       Toast.show("Selecciona al menos a un contacto para recargar", {
@@ -430,8 +365,14 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         });
         setLoadingContinuar(false);
       } else {
+        // open socket
+        // guardar id
+        console.log("se ha llamado a open socket");
+        socketDispatch(openSocket());
+
         // init checkout de los premios validados
         // si un premio está asociado a un contacto, es que está en checkout
+
         if (validated_prizes.length === 0) {
           Toast.show("No hay premios válidos por cobrar", {
             duaration: Toast.durations.LONG,
@@ -463,6 +404,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                 );
               });
               setLoadingContinuar(false);
+              console.log(BASE_URL);
               navigation.navigate("RecargasDisponiblesScreen");
             })
             .catch((err) => {
@@ -501,29 +443,38 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         <NeuButton
           color="#701c57"
           width={width / 7}
-          height={width / 7}
-          borderRadius={width / 14}
+          height={width / 7 - 20}
+          borderRadius={5}
           onPress={() => {
             navigation.jumpTo("Juego"), { screen: "Juego" };
           }}
           style={{ marginLeft: marginGlobal, marginTop: 10 }}
         >
-          <Ionicons name="chevron-back" size={30} color="#01f9d2" />
+          {/*           <Ionicons name="chevron-back" size={30} color="#01f9d2" />
+           */}
+          <Image
+            source={require("../../assets/images/iconos/atras.png")}
+            style={{ width: 15, height: 15 }}
+          />
         </NeuButton>
         <NeuButton
           color="#701c57"
           width={width / 7}
-          height={width / 7}
-          borderRadius={width / 14}
+          height={width / 7 - 20}
+          borderRadius={5}
           onPress={() => onPressAddContact()}
           style={{ marginRight: marginGlobal, marginTop: 10 }}
         >
-          <Ionicons name="person-outline" size={30} color="gray" />
-          <Ionicons
+          {/*    <Ionicons name="person-outline" size={30} color="gray" /> */}
+          {/* <Ionicons
             name="add-circle-sharp"
             size={30}
             color="#01f9d2"
             style={{ position: "absolute", right: -2, bottom: -5 }}
+          /> */}
+          <Image
+            source={require("../../assets/images/iconos/Añadir_usuario.png")}
+            style={{ width: 31, height: 21 }}
           />
         </NeuButton>
       </View>

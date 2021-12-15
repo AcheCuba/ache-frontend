@@ -4,7 +4,8 @@ export default {
   name: undefined,
   email: undefined,
   phone: undefined,
-  prize: null
+  prize: null,
+  idioma: "spa",
 };
 
 // actions que lo modifican:

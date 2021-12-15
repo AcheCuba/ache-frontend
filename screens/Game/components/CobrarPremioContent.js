@@ -22,8 +22,8 @@ const CobrarPremioContent = ({
   navigation,
   setModalVisible,
   setCodigo,
-  codigo,
-  copiarCodigoAlSalir,
+  //codigo,
+  Salir,
   setCopiado,
   codigoGenerado,
   setCodigoGenerado,
@@ -37,9 +37,11 @@ const CobrarPremioContent = ({
 
   const [loading, setLoading] = useState(false);
   const [prizeType, setPrizeType] = useState("");
+  const [prizeAmount, setPrizeAmount] = useState(0);
 
   React.useEffect(() => {
     setPrizeType(currentPrize?.type);
+    setPrizeAmount(currentPrize?.amount);
     //console.log(currentPrize?.type);
   }, []);
 
@@ -57,10 +59,6 @@ const CobrarPremioContent = ({
     }
   }; */
 
-  const onPressTerminar = () => {
-    copiarCodigoAlSalir();
-  };
-
   const EncriptarCodigo = (codigo) => {
     const codigoEncriptado =
       codigo.slice(0, 13) +
@@ -73,59 +71,73 @@ const CobrarPremioContent = ({
   const onPressGenerarCodigo = () => {
     // setear codigo a la API
     // setear código resultante
-    if (currentPrize !== null) {
-      setLoading(true);
 
-      const user_token = userState.token;
-      const prize_id = currentPrize.uuid;
-      const url = `${BASE_URL}/prize/exchange/${prize_id}`;
-      //console.log(userState);
-      //console.log(url);
+    //if (currentPrize !== null) {
+    setLoading(true);
 
-      let config = {
-        method: "post",
-        url: url,
-        headers: {
-          Authorization: `Bearer ${user_token}`,
-        },
-      };
-      axios(config)
-        .then((response) => {
-          if (response.status === 201) {
-            const prizeResultUpdated = response.data; // exchanged true
-            const prizeCode = currentPrize.uuid;
+    const user_token = userState.token;
+    const prize_id = currentPrize.uuid;
+    const url = `${BASE_URL}/prize/exchange/${prize_id}`;
+    //console.log(userState);
+    //console.log(url);
 
-            // actualizar persistencia
-            //storeData({ ...userState, prize: prizeResultUpdated });
-            storeData("user", { ...userState, prize: null });
+    // ====== fake para probar
+    /*  userDispatch(setPrizeForUser(null));
 
-            // actualizar estado global
-            userDispatch(setPrizeForUser(null));
-            // para no afectar al estado de Nueva Recarga
-            nuevaRecargaDispatch(resetNuevaRecargaState());
+    setTimeout(() => {
+      setCodigo("prizeCode fake");
+      setCodigoGenerado(true);
+      copiarCodeYsalir("prizeCode fake");
+      setLoading(false);
+    }, 3000); */
+    // ===== fake
 
-            // limpiar notificación
-            cleanNotification();
+    //====================== comentado para trastear
 
-            // actualizar estado local
-            setCodigo(prizeCode);
-            setCodigoGenerado(true);
-            setLoading(false);
-          } else {
-            // do something
-            console.log(response.status);
-            setLoading(false);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
+    let config = {
+      method: "post",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+    axios(config)
+      .then((response) => {
+        if (response.status === 201) {
+          const prizeResultUpdated = response.data; // exchanged true
+          const prizeCode = currentPrize.uuid;
+
+          // actualizar persistencia
+          //storeData({ ...userState, prize: prizeResultUpdated });
+          storeData("user", { ...userState, prize: null });
+
+          // actualizar estado global
+          userDispatch(setPrizeForUser(null));
+          // para no afectar al estado de Nueva Recarga
+          nuevaRecargaDispatch(resetNuevaRecargaState());
+
+          // limpiar notificación
+          cleanNotification();
+
+          // actualizar estado local
+          setCodigo(prizeCode);
+          setCodigoGenerado(true);
+          copiarCodeYsalir(prizeCode);
           setLoading(false);
-        });
-    } else {
+        } else {
+          // do something
+          console.log(response.status);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  }; /* else {
       setCodigo("aj3d44Pk5Md***kd213");
       setCodigoGenerado(true);
-    }
-  };
+    } */
 
   const cleanNotification = async () => {
     const notId = await getData("notification-prize-expire");
@@ -133,8 +145,8 @@ const CobrarPremioContent = ({
     removeItem(notId);
   };
 
-  const onPressCopiar = () => {
-    copyToClipboard(codigo);
+  const copiarCodeYsalir = (code) => {
+    copyToClipboard(code);
     Toast.show("Código copiado al portapapeles", {
       duaration: Toast.durations.LONG,
       position: Toast.positions.BOTTOM,
@@ -145,100 +157,252 @@ const CobrarPremioContent = ({
     });
 
     setCopiado(true);
+
+    setTimeout(() => {
+      setModalVisible(false);
+    }, 2000);
+
     /* Toast.show("Código copiado al portapapeles", Toast.SHORT, [
       "RCTModalHostViewController"
     ]); */
     //setCodigoGenerado(false);
   };
 
+  const onPressObtenerPremio = () => {
+    setModalVisible(false);
+    /* navigation.jumpTo("Nueva Recarga", {
+        screen: "NuevaRecargaScreen",
+        fromCobrarPremio: true,
+      }); */
+    navigation.jumpTo("Nueva Recarga", {
+      screen: "NuevaRecargaScreen",
+      params: { inOrderToCobrarPremio: true },
+    });
+  };
+
+  const RenderPrizeImage = () => {
+    switch (prizeType) {
+      case "Jackpot":
+        return (
+          <Image
+            source={require("../../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")}
+            style={{
+              width: width / 4,
+              height: width / 4,
+            }}
+          />
+        );
+      case "TopUpBonus":
+        if (prizeAmount === 250) {
+          return (
+            <Image
+              source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
+              style={{
+                width: width / 3.8,
+                height: width / 3.9,
+              }}
+            />
+          );
+        }
+
+        if (prizeAmount === 500) {
+          return (
+            <Image
+              source={require("../../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
+              style={{
+                width: width / 3.8,
+                height: width / 3.9,
+              }}
+            />
+          );
+        }
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <View style={{ alignItems: "center" }}>
-        <NeuView
-          style={{ marginBottom: (width / 4.4) * -1 }}
-          width={width / 2.2}
-          height={width / 2.2}
-          color="#701c57"
-          borderRadius={width / 4.4}
-        ></NeuView>
-        <View
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 150,
+        }}
+      >
+        {/*   {prizeType === "Jackpot" ? (
+          <Image
+            //source={require("../../../assets/images/home/premios/diamanteCopia.png")}
+            source={require("../../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")}
+            //resizeMode="center"
+            style={{
+              width: width / 4,
+              height: width / 4,
+            }}
+          />
+        ) : (
+          <Image
+            source={require("../../../assets/images/home/premios/capa102Copia.png")}
+            //resizeMode="center"
+            style={{
+              width: width / 5,
+              height: width / 4.5,
+            }}
+          />
+        )} */}
+        <RenderPrizeImage />
+      </View>
+
+      <View
+        style={{
+          alignItems: "center",
+          //paddingHorizontal: width / 10,
+          marginTop: 20,
+          width: width / 1.5,
+        }}
+      >
+        <Text
           style={{
-            backgroundColor: "#701c57",
-            width: width / 2.2,
-            height: width / 2.2,
-            borderRadius: width / 4.4,
-            //elevation: 0.01,
-            zIndex: 2,
-            position: "absolute",
-            borderBottomWidth: 0,
-            borderBottomColor: "#701c57",
-            justifyContent: "center",
-            alignItems: "center",
+            color: "#01f9d2",
+            fontWeight: "bold",
+            fontSize: 20,
           }}
         >
-          {prizeType === "Jackpot" ? (
-            <Image
-              source={require("../../../assets/images/home/premios/diamanteCopia.png")}
-              //resizeMode="center"
-              style={{
-                width: width / 5,
-                height: width / 5,
-              }}
-            />
-          ) : (
-            <Image
-              source={require("../../../assets/images/home/premios/capa102Copia.png")}
-              //resizeMode="center"
-              style={{
-                width: width / 5,
-                height: width / 4.5,
-              }}
-            />
-          )}
-        </View>
-        <NeuView
-          style={{}}
-          width={width / 1.2}
-          height={height / 4}
-          color="#701c57"
-          borderRadius={10}
+          NOMBRE PREMIO
+        </Text>
+        <Text
+          style={{
+            color: "#01f9d2",
+            fontStyle: "italic",
+            fontSize: 18,
+            marginTop: 10,
+            textAlign: "center",
+          }}
         >
-          <View
-            style={{
-              justifyContent: "space-around",
-              alignItems: "center",
-              height: height / 7,
-              position: "absolute",
-              bottom: 0,
-              paddingHorizontal: width / 1.2 / 6,
+          Texto descriptivo del premio dos lineas de texto
+        </Text>
+      </View>
+
+      <View style={{ marginTop: 30 }}>
+        <View style={styles.button}>
+          <CommonNeuButton
+            screenWidth={width}
+            text="OBTENER PREMIO"
+            onPress={() => {
+              loading ? null : onPressObtenerPremio();
             }}
+          />
+        </View>
+        <View style={styles.button}>
+          {!loading ? (
+            /*       <CommonNeuButton
+              screenWidth={width}
+              text={codigoGenerado ? "TERMINAR" : "COPIAR CÓDIGO"}
+              onPress={() => {
+                codigoGenerado ? onPressTerminar() : onPressGenerarCodigo();
+              }}
+            /> */
+            <NeuButton
+              color="#701c57"
+              width={(4 / 5) * width}
+              height={width / 7.5}
+              borderRadius={width / 7.5}
+              onPress={() => {
+                codigoGenerado ? null : onPressGenerarCodigo(); //genera y copia el code de una vez
+              }}
+              active={codigoGenerado}
+              style={{ marginTop: 5 }}
+            >
+              <Text
+                style={{
+                  color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  textTransform: "uppercase",
+                }}
+              >
+                COPIAR CÓDIGO
+              </Text>
+            </NeuButton>
+          ) : (
+            <NeuButton
+              color="#701c57"
+              width={(4 / 5) * width}
+              height={width / 7.5}
+              borderRadius={width / 7.5}
+              onPress={() => {}}
+              inset
+              style={{ marginTop: 5 }}
+            >
+              <ActivityIndicator size="large" color="#fff800" />
+            </NeuButton>
+          )}
+
+          <NeuButton
+            color="#701c57"
+            width={(4 / 5) * width}
+            height={width / 7.5}
+            borderRadius={width / 7.5}
+            onPress={() => {
+              loading ? null : Salir();
+            }}
+            style={{ marginTop: 90 }}
           >
             <Text
               style={{
-                color: "#01f9d2",
+                color: "#fff800", //"#01f9d2",
                 fontWeight: "bold",
                 fontSize: 20,
+                textTransform: "uppercase",
               }}
             >
-              NOMBRE PREMIO
+              CANCELAR
             </Text>
-            <Text
-              style={{
-                color: "gray",
-                fontStyle: "italic",
-                fontSize: 20,
-                marginBottom: 20,
-              }}
-            >
-              Texto explicativo con los detalles del premio
-            </Text>
-          </View>
-        </NeuView>
+          </NeuButton>
+        </View>
       </View>
+    </View>
+  );
+};
 
-      <View style={{}}>
-        <View style={styles.button}>
-          {codigoGenerado ? (
+export default CobrarPremioContent;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    //justifyContent: "center",
+    //backgroundColor: "rgba(112, 28, 87, .6)",
+  },
+
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  button: {
+    marginTop: 20,
+  },
+  codeModalContainer: {
+    flex: 1,
+    //justifyContent: "center",
+    alignItems: "center",
+  },
+
+  codeModalContent: {
+    //backgroundColor: "rgba(112, 28, 87, .6)",
+    padding: 22,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 17,
+    marginHorizontal: 10,
+    marginTop: 80,
+  },
+});
+
+/*
+{codigoGenerado ? (
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
@@ -278,82 +442,4 @@ const CobrarPremioContent = ({
                 </Text>
               </NeuButton>
             </View>
-          ) : (
-            <CommonNeuButton
-              screenWidth={width}
-              text="COBRAR PREMIO"
-              onPress={() => {
-                setModalVisible(false);
-                /* navigation.jumpTo("Nueva Recarga", {
-                  screen: "NuevaRecargaScreen",
-                  fromCobrarPremio: true,
-                }); */
-                navigation.jumpTo("Nueva Recarga", {
-                  screen: "NuevaRecargaScreen",
-                  params: { inOrderToCobrarPremio: true },
-                });
-              }}
-            />
-          )}
-        </View>
-        <View style={styles.button}>
-          {!loading ? (
-            <CommonNeuButton
-              screenWidth={width}
-              text={codigoGenerado ? "TERMINAR" : "GENERAR CÓDIGO"}
-              onPress={() => {
-                codigoGenerado ? onPressTerminar() : onPressGenerarCodigo();
-              }}
-            />
-          ) : (
-            <NeuButton
-              color="#701c57"
-              width={(4 / 5) * width}
-              height={width / 7.5}
-              borderRadius={width / 7.5}
-              onPress={() => {}}
-              inset
-            >
-              <ActivityIndicator size="large" color="#01f9d2" />
-            </NeuButton>
-          )}
-        </View>
-      </View>
-    </View>
-  );
-};
-
-export default CobrarPremioContent;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "space-around",
-    backgroundColor: "rgba(112, 28, 87, .6)",
-  },
-
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  button: {
-    marginTop: 20,
-  },
-  codeModalContainer: {
-    flex: 1,
-    //justifyContent: "center",
-    alignItems: "center",
-  },
-
-  codeModalContent: {
-    backgroundColor: "rgba(112, 28, 87, .6)",
-    padding: 22,
-    justifyContent: "space-between",
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 17,
-    marginHorizontal: 10,
-    marginTop: 80,
-  },
-});
+*/

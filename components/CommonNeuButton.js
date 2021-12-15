@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
+import { Image } from "react-native";
 import { Text } from "react-native";
 import { NeuButton } from "react-native-neu-element";
 
@@ -15,7 +16,7 @@ const CommonNeuButton = ({ text, screenWidth, onPress }) => {
     >
       <Text
         style={{
-          color: "#01f9d2",
+          color: "#fff800", //"#01f9d2",
           fontWeight: "bold",
           fontSize: 20,
           textTransform: "uppercase",

@@ -17,10 +17,11 @@ import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import {
+  closeSocket,
+  openSocket,
   resetNuevaRecargaState,
   setPrizeForUser,
 } from "../../context/Actions/actions";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-root-toast";
 import moment from "moment";
 import * as SecureStore from "expo-secure-store";
@@ -32,6 +33,10 @@ import {
   scheduleNotificationAtSecondsFromNow,
   _setNotificationHandler,
 } from "../../libs/expoPushNotification.lib";
+
+import ConfettiCannon from "react-native-confetti-cannon";
+import { Modal } from "react-native";
+import CommonNeuButton from "../../components/CommonNeuButton";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -65,12 +70,16 @@ async function registerForPushNotificationsAsync() {
 
 const GameScreen = ({ navigation }) => {
   //const expoPushToken = useExpoPushToken();
+  const [animate, SetAnimate] = React.useState(false);
+  const [clickEvent, SetClickEvent] = React.useState(false);
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [casillaFinal, setCasillaFinal] = React.useState("1800deg");
   const thereIsPrizeResult = React.useRef(false);
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
+  const { socketDispatch, socketState } = React.useContext(GlobalContext);
+
   const wheelValue = React.useRef(new Animated.Value(0));
   const enMovimiento = React.useRef(false);
 
@@ -78,7 +87,7 @@ const GameScreen = ({ navigation }) => {
     async function expoTokenAsync() {
       let token;
       token = await SecureStore.getItemAsync("expo-push-token");
-      console.log("token del storage", token);
+      console.log("expo token del storage", token);
 
       if (token != null) {
         return;
@@ -180,53 +189,58 @@ const GameScreen = ({ navigation }) => {
       });
   };
 
-  React.useEffect(() => {
-    console.log("userState", userState);
-  }, [userState]);
+  const startAnimation = () => {
+    SetAnimate(true);
+    SetClickEvent(true);
 
-  /* React.useEffect(() => {
-    console.log(expoPushToken);
-  });
- */
+    setTimeout(() => {
+      SetAnimate(false);
+    }, 5000);
+  };
+
   const ImageConditional = ({ typeOfPrize }) => {
+    //console.log(typeOfPrize);
     switch (typeOfPrize) {
       case "Jackpot":
-        return (
-          <Image
-            source={require("../../assets/images/home/premios/diamanteCopia.png")}
-            //resizeMode="center"
-            style={{
-              width: width / 5,
-              height: width / 5,
-            }}
-          />
-        );
       case "TopUpBonus":
         return (
           <Image
-            source={require("../../assets/images/home/premios/capa102Copia.png")}
+            source={require("../../assets/animaciones/TROFEO.gif")}
             //resizeMode="center"
             style={{
-              width: width / 5,
-              height: width / 4.5,
+              width: width / 3,
+              height: width / 3,
             }}
           />
         );
+
       case "Nada":
         return (
           <View>
             <Image
-              source={require("../../assets/images/home/premios/Nada2.png")}
+              source={require("../../assets/animaciones/Calavera.gif")}
               //resizeMode="center"
               style={{
-                width: width,
-                height: width,
+                width: width / 3,
+                height: width / 3,
               }}
             />
           </View>
         );
       default:
-        return null;
+        return (
+          <View>
+            <Image
+              source={require("../../assets/images/home/trofeo.png")}
+              //resizeMode="center"
+              style={{
+                width: width / 3.5,
+                height: width / 2.9,
+                marginBottom: 30,
+              }}
+            />
+          </View>
+        );
     }
   };
 
@@ -234,17 +248,57 @@ const GameScreen = ({ navigation }) => {
     //console.log("prize", prize);
     switch (prize.type) {
       case "Nada":
-        setCasillaFinal("1733deg");
+        setTimeout(() => {
+          setNadaWon(true);
+          setTimeout(() => {
+            setNadaWon(false);
+          }, 10000);
+        }, 8000);
+        const random_seed = Math.random();
+        console.log(random_seed);
+
+        if (random_seed < 0.33) {
+          setCasillaFinal("1913deg");
+        }
+        if (random_seed >= 0.33 && random_seed < 0.66) {
+          setCasillaFinal("2003deg");
+        }
+        if (random_seed >= 0.66) {
+          setCasillaFinal("2093deg");
+        }
         break;
       case "Jackpot":
-        setCasillaFinal("1868deg");
+        setTimeout(() => {
+          startAnimation();
+        }, 7000);
+
+        setCasillaFinal("1823deg");
         break;
       case "TopUpBonus":
         if (prize.amount === 10 || prize.amount === 250) {
-          setCasillaFinal("1823deg");
+          //setCasillaFinal("1823deg");
+          const random_seed = Math.random();
+          console.log(random_seed);
+
+          if (random_seed < 0.5) {
+            setCasillaFinal("1868deg");
+          }
+          if (random_seed >= 0.5) {
+            setCasillaFinal("1958deg");
+          }
         }
         if (prize.amount === 20 || prize.amount === 500) {
-          setCasillaFinal("1778deg");
+          //setCasillaFinal("1778deg");
+          const random_seed = Math.random();
+          console.log(random_seed);
+          console.log(prize.amount);
+
+          if (random_seed < 0.5) {
+            setCasillaFinal("1778deg");
+          }
+          if (random_seed >= 0.5) {
+            setCasillaFinal("1688deg");
+          }
         }
         break;
       default:
@@ -275,6 +329,28 @@ const GameScreen = ({ navigation }) => {
         },
       };
 
+      // +++++++++++++++ fake para test
+
+      /*  const fakePrize = { type: "TopUpBonus", amount: 500 };
+
+      setCasilla(fakePrize);
+      thereIsPrizeResult.current = true;
+
+      setTimeout(() => {
+        userDispatch(
+          setPrizeForUser({
+            type: "TopUpBonus",
+            exchanged: false, // no se puede cambiar
+            amount: 500,
+            //prizeStartTime,
+            //prizeEndTime,
+            //minutos_restantes,
+          })
+        );
+      }, 8000); */
+
+      // ++++++++++++++++ fake para test
+
       if (current_prize === null) {
         axios(config)
           .then((response) => {
@@ -290,7 +366,7 @@ const GameScreen = ({ navigation }) => {
               setCasilla({ type: "Nada" });
               // time
               const prizeStartTime = moment();
-              const prizeEndTime = moment().add(3, "days");
+              const prizeEndTime = moment().add(1, "days");
               const minutos_restantes = prizeEndTime.diff(
                 prizeStartTime,
                 "minutes"
@@ -322,7 +398,7 @@ const GameScreen = ({ navigation }) => {
                     minutos_restantes,
                   })
                 );
-              }, 7000);
+              }, 8000);
             } else {
               setCasilla(prize_result);
 
@@ -357,7 +433,7 @@ const GameScreen = ({ navigation }) => {
                     minutos_restantes,
                   })
                 );
-              }, 7000);
+              }, 8000);
             }
           })
           .catch((error) => {
@@ -387,8 +463,8 @@ const GameScreen = ({ navigation }) => {
     console.log("init");
     Animated.timing(wheelValue.current, {
       toValue: 1,
-      duration: 3000,
-      easing: Easing.ease,
+      duration: 2800, //3000
+      easing: Easing.in(Easing.ease),
       useNativeDriver: true,
     }).start((complete) => {
       if (complete.finished) {
@@ -400,10 +476,10 @@ const GameScreen = ({ navigation }) => {
   const wheelRotateLoop = () => {
     wheelValue.current.setValue(0);
 
-    //console.log("loop", thereIsPrizeResult.current);
+    console.log("loop");
     Animated.timing(wheelValue.current, {
       toValue: 1,
-      duration: 1800,
+      duration: 2300, //1800
       easing: Easing.linear,
       useNativeDriver: true,
     }).start((complete) => {
@@ -424,7 +500,7 @@ const GameScreen = ({ navigation }) => {
     console.log("final");
     Animated.timing(wheelValue.current, {
       toValue: 1,
-      duration: 3000,
+      duration: 3000, //3000
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start((complete) => {
@@ -454,25 +530,16 @@ const GameScreen = ({ navigation }) => {
     ],
   });
 
-  const [showNot, setShowNot] = React.useState(true);
-
-  /* const onPressToggleNotif = async () => {
-    await _setNotificationHandler(showNot, true, false);
-    console.log("done");
-
-    setShowNot(!showNot);
-  }; */
+  const [NadaWon, setNadaWon] = React.useState(false);
 
   return (
     <>
       {modalVisible ? (
-        <View style={styles.containerCobrar}>
-          <CobrarPremioModal
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
-            navigation={navigation}
-          />
-        </View>
+        <CobrarPremioModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          navigation={navigation}
+        />
       ) : (
         <ImageBackground
           source={require("../../assets/images/home/fondoOscuro.png")}
@@ -483,9 +550,126 @@ const GameScreen = ({ navigation }) => {
           }}
           transition={false}
         >
+          {animate ? (
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={animate}
+              onRequestClose={() => SetAnimate(false)}
+            >
+              <View
+                style={{
+                  zIndex: 10,
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
+              </View>
+            </Modal>
+          ) : null}
+
+          {NadaWon ? (
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={NadaWon}
+              onRequestClose={() => setNadaWon(false)}
+            >
+              <View
+                style={{
+                  // zIndex: 2,
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(112, 28, 87,0.9)",
+                  alignItems: "center",
+                }}
+              >
+                <View style={{ marginTop: 100 }}>
+                  <Image
+                    source={require("../../assets/animaciones/Calavera.gif")}
+                    style={{ width: width / 1.2, height: width / 1.2 }}
+                  />
+                </View>
+                <View
+                  style={{
+                    width: width / 1.5,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: -30,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      color: "#01f9d2",
+                      textTransform: "uppercase",
+                      textAlign: "center",
+                    }}
+                  >
+                    Texto que te anima a volver a jugar
+                  </Text>
+                </View>
+
+                <View style={{ marginTop: 50 }}>
+                  <CommonNeuButton
+                    text="Volver a Jugar"
+                    onPress={() => {
+                      setNadaWon(false);
+                    }}
+                    screenWidth={width}
+                  />
+                </View>
+              </View>
+            </Modal>
+          ) : null}
+
           <View style={styles.containerGame}>
             <View style={styles.buttonContainer} key={1}>
               <NeuButton
+                color="#fe8457"
+                width={width / 3.5}
+                height={width / 3.5}
+                borderRadius={width / 7}
+                style={{
+                  marginBottom: "90%",
+                }}
+                onPress={() => {
+                  if (userState.prize !== null) {
+                    if (userState.prize.type === "Nada") {
+                      Toast.show("No ganaste nada por el momento", {
+                        duaration: Toast.durations.SHORT,
+                        position: Toast.positions.BOTTOM,
+                      });
+                    } else {
+                      enMovimiento.current = false;
+
+                      setModalVisible(true);
+                    }
+                  } else {
+                    let toast = Toast.show(
+                      "No tiene premio para cobrar, pruebe suerte!",
+                      {
+                        duaration: Toast.durations.LONG,
+                        position: Toast.positions.BOTTOM,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0,
+                      }
+                    );
+                  }
+                }}
+              >
+                {/*   {userState.prize !== null ? (
+                  <ImageConditional typeOfPrize={userState.prize.type} />
+                ) : null} */}
+                <ImageConditional typeOfPrize={userState?.prize?.type} />
+              </NeuButton>
+              {/*  <NeuButton
                 color="#fe8457"
                 width={width / 3.5}
                 height={width / 3.5}
@@ -501,6 +685,8 @@ const GameScreen = ({ navigation }) => {
                         position: Toast.positions.BOTTOM,
                       });
                     } else {
+                      enMovimiento.current = false;
+
                       setModalVisible(true);
                     }
                   } else {
@@ -521,7 +707,11 @@ const GameScreen = ({ navigation }) => {
                 {userState.prize !== null ? (
                   <ImageConditional typeOfPrize={userState.prize.type} />
                 ) : null}
-              </NeuButton>
+              </NeuButton> */}
+              {/*  <Image
+                source={require("../../assets/images/Monedas-250-CUP.gif")}
+                style={{ width: 200, height: 200 }}
+              /> */}
             </View>
             <View
               key={2}
@@ -533,6 +723,7 @@ const GameScreen = ({ navigation }) => {
             >
               <ImageBackground
                 source={require("../../assets/images/home/fondo.png")}
+                //source={require("../../assets/images/home/ruleta/Fijo_borde_y_sombra.png")}
                 style={{
                   width: height / 1.5,
                   height: height / 1.5,
@@ -551,6 +742,23 @@ const GameScreen = ({ navigation }) => {
                   <Image
                     source={require("../../assets/images/home/selecor.png")}
                     style={{ height: 105, width: 85 }}
+                  />
+                </View>
+                <View
+                  style={{
+                    zIndex: 5,
+                    position: "absolute",
+                    top: height / 3.4,
+                    //right: 3,
+                  }}
+                >
+                  <Image
+                    source={require("../../assets/images/home/centro.png")}
+                    style={{
+                      width: width / 5,
+                      height: width / 5,
+                    }}
+                    transition={false}
                   />
                 </View>
 
@@ -573,7 +781,8 @@ const GameScreen = ({ navigation }) => {
                       }}
                     >
                       <ImageBackground
-                        source={require("../../assets/images/home/casillas2.png")}
+                        //source={require("../../assets/images/home/casillas2.png")}
+                        source={require("../../assets/images/home/ruleta/Mueve_slots.png")}
                         style={{
                           width: height / 2,
                           height: height / 2,
@@ -582,7 +791,7 @@ const GameScreen = ({ navigation }) => {
                         }}
                         transition={false}
                       >
-                        <View
+                        {/*   <View
                           style={{
                             zIndex: 5,
                             position: "relative",
@@ -598,25 +807,17 @@ const GameScreen = ({ navigation }) => {
                             }}
                             transition={false}
                           />
-                        </View>
+                        </View> */}
                       </ImageBackground>
                     </Animated.View>
-                    {/*	<Image
-												source={require("../../assets/images/home/centro.png")}
-												style={{
-													width: width / 5,
-													height: width / 5,
-													position: "absolute",
-												}}
-											/>*/}
                   </TouchableWithoutFeedback>
                 </ImageBackground>
               </ImageBackground>
             </View>
-            {/*  <View>
+            {/*  <View style={{ height: 40, width: 100, backgroundColor: "pink" }}>
               <Button
-                title="toggle notif"
-                onPress={() => onPressToggleNotif()}
+                title="toggle socket"
+                onPress={() => onPressToggleSocket()}
               />
             </View> */}
             <View key={3} style={styles.buttonContainer}>
@@ -634,12 +835,22 @@ const GameScreen = ({ navigation }) => {
                 onPress={() => {
                   //const pushAction = StackActions.push("Nueva Recarga");
                   //navigation.dispatch(pushAction);
+                  enMovimiento.current = false;
                   navigation.jumpTo("Nueva Recarga", {
                     screen: "NuevaRecargaScreen",
                     params: { inOrderToCobrarPremio: false },
                   });
                 }}
-              />
+              >
+                <Image
+                  source={require("../../assets/animaciones/moneda-recarga-rapida.gif")}
+                  //resizeMode="center"
+                  style={{
+                    width: width / 4,
+                    height: width / 4,
+                  }}
+                />
+              </NeuButton>
             </View>
           </View>
         </ImageBackground>
@@ -656,11 +867,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
   },
-  containerCobrar: {
+  /*   containerCobrar: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
+  }, */
   title: {
     fontSize: 20,
     fontWeight: "bold",

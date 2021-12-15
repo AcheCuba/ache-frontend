@@ -22,6 +22,13 @@ export const setPrizeForUser = (prize) => {
   };
 };
 
+export const setIdioma = (idioma) => {
+  return {
+    type: actionTypes.SET_IDIOMA,
+    idioma,
+  };
+};
+
 // ================================= ACTIONS FOR NUEVA RECARGA STATE ===========================
 
 export const resetNuevaRecargaState = () => {
@@ -126,5 +133,47 @@ export const setFields = (isFirstField, fieldId) => {
     type: actionTypes.SET_FIELDS,
     fieldId,
     isFirstField,
+  };
+};
+
+// ================================= ACTIONS FOR sockt STATE ===========================
+
+export const openSocket = () => {
+  return {
+    type: actionTypes.OPEN_SOCKET,
+  };
+};
+
+export const closeSocket = () => {
+  return {
+    type: actionTypes.CLOSE_SOCKET,
+  };
+};
+export const setSocketId = (socketId) => {
+  return {
+    type: actionTypes.SET_SOCKET_ID,
+    socketId,
+  };
+};
+
+export const setTransaccionesEsperadas = (transactions) => {
+  return {
+    type: actionTypes.SET_TRANSACCIONES_ESPERADAS,
+    transactions,
+  };
+};
+
+export const setTransaccionesResultado = (transactions) => {
+  return {
+    type: actionTypes.SET_TRANSACCIONES_RESULTADO,
+    transactions,
+  };
+};
+
+export const SetUpdateCompleted = (completed) => {
+  //espera boolean
+  return {
+    type: actionTypes.SET_UPDATE_COMPLETED,
+    completed,
   };
 };
