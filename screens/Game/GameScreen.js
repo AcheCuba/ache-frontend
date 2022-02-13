@@ -37,6 +37,16 @@ import {
 import ConfettiCannon from "react-native-confetti-cannon";
 import { Modal } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
+import { Pressable } from "react-native";
+import { TouchableOpacity } from "react-native";
+import { RootSiblingParent } from "react-native-root-siblings";
+import CobrarPremioContent from "./components/CobrarPremioContent";
+import {
+  NuevaRecargaTextEnglish,
+  NuevaRecargaTextSpanish,
+} from "../../constants/Texts";
+import { TextBold, TextItalic } from "../../components/CommonText";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -74,11 +84,16 @@ const GameScreen = ({ navigation }) => {
   const [clickEvent, SetClickEvent] = React.useState(false);
 
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [NadaWon, setNadaWon] = React.useState(false);
+  const [codigo, setCodigo] = React.useState("");
+  const [codigoGenerado, setCodigoGenerado] = React.useState(false);
+  const [premioAcumulado, setPremioAcumulado] = React.useState(false);
+
   const [casillaFinal, setCasillaFinal] = React.useState("1800deg");
   const thereIsPrizeResult = React.useRef(false);
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
-  const { socketDispatch, socketState } = React.useContext(GlobalContext);
+  //const { socketDispatch, socketState } = React.useContext(GlobalContext);
 
   const wheelValue = React.useRef(new Animated.Value(0));
   const enMovimiento = React.useRef(false);
@@ -208,8 +223,8 @@ const GameScreen = ({ navigation }) => {
             source={require("../../assets/animaciones/TROFEO.gif")}
             //resizeMode="center"
             style={{
-              width: width / 3,
-              height: width / 3,
+              width: 95, //width / 3,
+              height: 115, //width / 3,
             }}
           />
         );
@@ -218,11 +233,11 @@ const GameScreen = ({ navigation }) => {
         return (
           <View>
             <Image
-              source={require("../../assets/animaciones/Calavera.gif")}
+              source={require("../../assets/animaciones/calavera_roja.gif")}
               //resizeMode="center"
               style={{
-                width: width / 3,
-                height: width / 3,
+                width: 100,
+                height: 100,
               }}
             />
           </View>
@@ -234,9 +249,9 @@ const GameScreen = ({ navigation }) => {
               source={require("../../assets/images/home/trofeo.png")}
               //resizeMode="center"
               style={{
-                width: width / 3.5,
-                height: width / 2.9,
-                marginBottom: 30,
+                width: 65, //width / 3.5,
+                height: 80, //width / 2.9,
+                //marginBottom: 30,
               }}
             />
           </View>
@@ -250,10 +265,15 @@ const GameScreen = ({ navigation }) => {
       case "Nada":
         setTimeout(() => {
           setNadaWon(true);
+        }, 8000);
+
+        // pa que se vaya solo
+        /*   setTimeout(() => {
+          setNadaWon(true);
           setTimeout(() => {
             setNadaWon(false);
           }, 10000);
-        }, 8000);
+        }, 8000); */
         const random_seed = Math.random();
         console.log(random_seed);
 
@@ -331,7 +351,7 @@ const GameScreen = ({ navigation }) => {
 
       // +++++++++++++++ fake para test
 
-      /*  const fakePrize = { type: "TopUpBonus", amount: 500 };
+      /* const fakePrize = { type: "TopUpBonus", amount: 500 };
 
       setCasilla(fakePrize);
       thereIsPrizeResult.current = true;
@@ -448,10 +468,8 @@ const GameScreen = ({ navigation }) => {
         setTimeout(() => {
           thereIsPrizeResult.current = true;
           setCasilla({ type: "default" });
-          Toast.show("Segundo Premio Ganado", {
-            duaration: Toast.durations.SHORT,
-            position: Toast.positions.BOTTOM,
-          });
+
+          setPremioAcumulado(true);
         }, 7500);
       }
     }
@@ -463,8 +481,8 @@ const GameScreen = ({ navigation }) => {
     console.log("init");
     Animated.timing(wheelValue.current, {
       toValue: 1,
-      duration: 2800, //3000
-      easing: Easing.in(Easing.ease),
+      duration: 3000, //ultimo exitoso: 3200 //3000
+      easing: Easing.in(Easing.cubic), //Easing.in(Easing.cubic)
       useNativeDriver: true,
     }).start((complete) => {
       if (complete.finished) {
@@ -479,8 +497,8 @@ const GameScreen = ({ navigation }) => {
     console.log("loop");
     Animated.timing(wheelValue.current, {
       toValue: 1,
-      duration: 2300, //1800
-      easing: Easing.linear,
+      duration: 1600, ////ultimo exitoso: 1800 //1800
+      easing: Easing.linear, //Easing.linear
       useNativeDriver: true,
     }).start((complete) => {
       if (complete.finished) {
@@ -500,8 +518,8 @@ const GameScreen = ({ navigation }) => {
     console.log("final");
     Animated.timing(wheelValue.current, {
       toValue: 1,
-      duration: 3000, //3000
-      easing: Easing.out(Easing.ease),
+      duration: 3000, //ultimo exitoso: 3200 //3000
+      easing: Easing.out(Easing.cubic), //Easing.out(Easing.ease)
       useNativeDriver: true,
     }).start((complete) => {
       if (complete.finished) {
@@ -512,13 +530,32 @@ const GameScreen = ({ navigation }) => {
   };
 
   const wheelLoop = wheelValue.current.interpolate({
-    inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
-    outputRange: ["0deg", "360deg", "720deg", "1080deg", "1440deg", "1800deg"],
+    inputRange: [0, 0.16, 0.32, 0.48, 0.64, 0.8, 1],
+    outputRange: [
+      "0deg",
+      "60deg",
+      "120deg",
+      "180deg",
+      "240deg",
+      "300deg",
+      "360deg",
+    ],
+    //outputRange: ["0deg", "360deg", "720deg", "1080deg", "1440deg", "1800deg"],
   });
 
   const wheel = wheelValue.current.interpolate({
     // Next, interpolate beginning and end values (in this case 0 and 1)
     inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
+    //inputRange: [0, 0.16, 0.32, 0.48, 0.64, 0.8, 1],
+    /*  outputRange: [
+      "0deg",
+      "60deg",
+      "120deg",
+      "180deg",
+      "240deg",
+      "300deg",
+      casillaFinal,
+    ], */
     outputRange: [
       "0deg",
       "360deg",
@@ -530,52 +567,108 @@ const GameScreen = ({ navigation }) => {
     ],
   });
 
-  const [NadaWon, setNadaWon] = React.useState(false);
+  const Salir = () => {
+    setCodigoGenerado(false);
+    setModalVisible(false);
+  };
+
+  React.useEffect(() => {
+    console.log("codigo generado game screen", codigoGenerado);
+    //console.log(currentPrize?.type);
+  }, [codigoGenerado]);
+
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = NuevaRecargaTextSpanish();
+    const textEng = NuevaRecargaTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
 
   return (
-    <>
+    <ImageBackground
+      source={require("../../assets/images/degradado_home.png")}
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+      }}
+      transition={false}
+    >
       {modalVisible ? (
-        <CobrarPremioModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          navigation={navigation}
-        />
-      ) : (
-        <ImageBackground
-          source={require("../../assets/images/home/fondoOscuro.png")}
-          style={{
-            width: "100%",
-            height: "100%",
-            flex: 1,
-          }}
-          transition={false}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
         >
-          {animate ? (
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={animate}
-              onRequestClose={() => SetAnimate(false)}
+          <LinearGradient
+            colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(112, 28, 87, 0.5)",
+              }}
             >
-              <View
-                style={{
-                  zIndex: 10,
-                  flex: 1,
-                  width: "100%",
-                  height: "100%",
-                }}
-              >
-                <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
-              </View>
-            </Modal>
-          ) : null}
+              <RootSiblingParent>
+                <CobrarPremioContent
+                  navigation={navigation}
+                  setModalVisible={setModalVisible}
+                  setCodigo={setCodigo}
+                  Salir={Salir}
+                  setCodigoGenerado={setCodigoGenerado}
+                  codigoGenerado={codigoGenerado}
+                />
+              </RootSiblingParent>
+            </View>
+          </LinearGradient>
+        </Modal>
+      ) : null}
+      {animate ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={animate}
+          onRequestClose={() => SetAnimate(false)}
+        >
+          <View
+            style={{
+              zIndex: 10,
+              flex: 1,
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
+          </View>
+        </Modal>
+      ) : null}
 
-          {NadaWon ? (
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={NadaWon}
-              onRequestClose={() => setNadaWon(false)}
+      {premioAcumulado ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={premioAcumulado}
+          onRequestClose={() => setPremioAcumulado(false)}
+        >
+          <Pressable
+            onPress={() => {
+              setPremioAcumulado(false);
+            }}
+          >
+            <LinearGradient
+              colors={["rgba(112, 28, 87,0.9)", "rgba(55,07,55,0.9)"]}
+              style={{ width: "100%", height: "100%" }}
             >
               <View
                 style={{
@@ -583,14 +676,14 @@ const GameScreen = ({ navigation }) => {
                   flex: 1,
                   width: "100%",
                   height: "100%",
-                  backgroundColor: "rgba(112, 28, 87,0.9)",
+                  backgroundColor: "rgba(112, 28, 87, 0.3)",
                   alignItems: "center",
                 }}
               >
                 <View style={{ marginTop: 100 }}>
                   <Image
-                    source={require("../../assets/animaciones/Calavera.gif")}
-                    style={{ width: width / 1.2, height: width / 1.2 }}
+                    source={require("../../assets/animaciones/TROFEO.gif")}
+                    style={{ width: width / 1.5, height: width / 1.5 }}
                   />
                 </View>
                 <View
@@ -598,264 +691,321 @@ const GameScreen = ({ navigation }) => {
                     width: width / 1.5,
                     justifyContent: "center",
                     alignItems: "center",
-                    marginTop: -30,
+                    //marginTop: -30,
                   }}
                 >
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: "bold",
-                      color: "#01f9d2",
-                      textTransform: "uppercase",
-                      textAlign: "center",
-                    }}
-                  >
-                    Texto que te anima a volver a jugar
-                  </Text>
+                  <View style={{ marginTop: 20 }}>
+                    <TextBold
+                      text="Premio acumulado"
+                      style={{
+                        fontSize: 26,
+                        color: "#01f9d2",
+                        textTransform: "uppercase",
+                      }}
+                    />
+                  </View>
+
+                  <View style={{ marginTop: 20 }}>
+                    <TextItalic
+                      text="Texto explicativo que no puedes seguir acumulando premios hasta que no reclames el que ya tienes acumulado"
+                      style={{
+                        fontSize: 20,
+                        color: "#01f9d2",
+                        textAlign: "center",
+                        //textTransform: "uppercase",
+                      }}
+                    />
+                  </View>
                 </View>
 
                 <View style={{ marginTop: 50 }}>
-                  <CommonNeuButton
-                    text="Volver a Jugar"
+                  <NeuButton
+                    color="#501a46"
+                    width={(4 / 5) * width}
+                    height={width / 7.5}
+                    borderRadius={width / 7.5}
                     onPress={() => {
-                      setNadaWon(false);
+                      setPremioAcumulado(false);
+                      navigation.jumpTo("Nueva Recarga", {
+                        screen: "NuevaRecargaScreen",
+                        params: { inOrderToCobrarPremio: true },
+                      });
                     }}
-                    screenWidth={width}
-                  />
+                    style={{}}
+                  >
+                    <TextBold
+                      text="Obtener Premio"
+                      style={{
+                        fontSize: 20,
+                        color: "#fffb00",
+                        textAlign: "center",
+                        textTransform: "uppercase",
+                      }}
+                    />
+                  </NeuButton>
                 </View>
               </View>
-            </Modal>
-          ) : null}
+            </LinearGradient>
+          </Pressable>
+        </Modal>
+      ) : null}
 
-          <View style={styles.containerGame}>
-            <View style={styles.buttonContainer} key={1}>
-              <NeuButton
-                color="#fe8457"
-                width={width / 3.5}
-                height={width / 3.5}
-                borderRadius={width / 7}
-                style={{
-                  marginBottom: "90%",
-                }}
-                onPress={() => {
-                  if (userState.prize !== null) {
-                    if (userState.prize.type === "Nada") {
-                      Toast.show("No ganaste nada por el momento", {
-                        duaration: Toast.durations.SHORT,
-                        position: Toast.positions.BOTTOM,
-                      });
-                    } else {
-                      enMovimiento.current = false;
-
-                      setModalVisible(true);
-                    }
-                  } else {
-                    let toast = Toast.show(
-                      "No tiene premio para cobrar, pruebe suerte!",
-                      {
-                        duaration: Toast.durations.LONG,
-                        position: Toast.positions.BOTTOM,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                      }
-                    );
-                  }
-                }}
-              >
-                {/*   {userState.prize !== null ? (
-                  <ImageConditional typeOfPrize={userState.prize.type} />
-                ) : null} */}
-                <ImageConditional typeOfPrize={userState?.prize?.type} />
-              </NeuButton>
-              {/*  <NeuButton
-                color="#fe8457"
-                width={width / 3.5}
-                height={width / 3.5}
-                borderRadius={width / 7}
-                style={{
-                  marginBottom: "90%",
-                }}
-                onPress={() => {
-                  if (userState.prize !== null) {
-                    if (userState.prize.type === "Nada") {
-                      Toast.show("No ganaste nada, de momento", {
-                        duaration: Toast.durations.SHORT,
-                        position: Toast.positions.BOTTOM,
-                      });
-                    } else {
-                      enMovimiento.current = false;
-
-                      setModalVisible(true);
-                    }
-                  } else {
-                    let toast = Toast.show(
-                      "No tiene premio para cobrar, pruebe suerte!",
-                      {
-                        duaration: Toast.durations.LONG,
-                        position: Toast.positions.BOTTOM,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                      }
-                    );
-                  }
-                }}
-              >
-                {userState.prize !== null ? (
-                  <ImageConditional typeOfPrize={userState.prize.type} />
-                ) : null}
-              </NeuButton> */}
-              {/*  <Image
-                source={require("../../assets/images/Monedas-250-CUP.gif")}
-                style={{ width: 200, height: 200 }}
-              /> */}
+      {NadaWon ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={NadaWon}
+          onRequestClose={() => setNadaWon(false)}
+        >
+          <LinearGradient
+            colors={["rgba(112, 28, 87,0.9)", "rgba(55,07,55,0.9)"]}
+            style={{
+              width: "100%",
+              height: "100%",
+              flex: 1,
+              alignItems: "center",
+            }}
+          >
+            <View style={{ marginTop: 100 }}>
+              <Image
+                source={require("../../assets/animaciones/calavera_roja.gif")}
+                style={{ width: width / 1.2, height: width / 1.2 }}
+              />
             </View>
             <View
-              key={2}
               style={{
-                position: "absolute",
-                left: -height / 3,
-                top: height / 6,
+                width: width / 1.5,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: -30,
               }}
             >
-              <ImageBackground
-                source={require("../../assets/images/home/fondo.png")}
-                //source={require("../../assets/images/home/ruleta/Fijo_borde_y_sombra.png")}
+              <Text
                 style={{
-                  width: height / 1.5,
-                  height: height / 1.5,
-                  justifyContent: "center",
-                  alignItems: "center",
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "#01f9d2",
+                  textTransform: "uppercase",
+                  textAlign: "center",
+                }}
+              >
+                Texto que te anima a volver a jugar
+              </Text>
+            </View>
+
+            <View style={{ marginTop: 50 }}>
+              <CommonNeuButton
+                text="Volver a Jugar"
+                onPress={() => {
+                  setNadaWon(false);
+                }}
+                screenWidth={width}
+                color="#3f143d"
+              />
+            </View>
+          </LinearGradient>
+        </Modal>
+      ) : null}
+
+      <View style={styles.containerGame}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            width: "80%",
+            //backgroundColor: "green",
+            marginBottom: height / 5,
+            zIndex: 10,
+
+            //marginRight: width / 10,
+          }}
+        >
+          <NeuButton
+            color="#fe8457"
+            width={width / 3.5}
+            height={width / 3.5}
+            borderRadius={width / 7}
+            //noShadow
+
+            onPress={() => {
+              if (userState.prize !== null) {
+                if (userState.prize.type === "Nada") {
+                  Toast.show("No ganaste nada por el momento", {
+                    duaration: Toast.durations.SHORT,
+                    position: Toast.positions.BOTTOM,
+                  });
+                } else {
+                  enMovimiento.current = false;
+
+                  setModalVisible(true);
+                }
+              } else {
+                let toast = Toast.show(
+                  "No tiene premio para cobrar, pruebe suerte!",
+                  {
+                    duaration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                  }
+                );
+              }
+            }}
+          >
+            <ImageConditional typeOfPrize={userState?.prize?.type} />
+          </NeuButton>
+        </View>
+
+        <View
+          key={2}
+          style={{
+            position: "absolute",
+            left: -height / 3.2,
+            top: height / 6.4,
+          }}
+        >
+          <ImageBackground
+            source={require("../../assets/images/home/fondo.png")}
+            //source={require("../../assets/images/home/ruleta/Fijo_borde_y_sombra.png")}
+            style={{
+              width: height / 1.6,
+              height: height / 1.6,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            transition={false}
+          >
+            <View
+              style={{
+                position: "absolute",
+                right: -6.4,
+                zIndex: 2,
+              }}
+            >
+              <Image
+                source={require("../../assets/images/home/selecor.png")}
+                style={{ height: 95, width: 80 }}
+              />
+            </View>
+            <View
+              style={{
+                zIndex: 5,
+                position: "absolute",
+                top: height / 3.6,
+                //right: 3,
+              }}
+            >
+              <Image
+                source={require("../../assets/images/home/centro.png")}
+                style={{
+                  width: width / 5.2,
+                  height: width / 5.2,
                 }}
                 transition={false}
-              >
-                <View
-                  style={{
-                    position: "absolute",
-                    right: -6,
-                    zIndex: 2,
-                  }}
-                >
-                  <Image
-                    source={require("../../assets/images/home/selecor.png")}
-                    style={{ height: 105, width: 85 }}
-                  />
-                </View>
-                <View
-                  style={{
-                    zIndex: 5,
-                    position: "absolute",
-                    top: height / 3.4,
-                    //right: 3,
-                  }}
-                >
-                  <Image
-                    source={require("../../assets/images/home/centro.png")}
-                    style={{
-                      width: width / 5,
-                      height: width / 5,
-                    }}
-                    transition={false}
-                  />
-                </View>
+              />
+            </View>
 
-                <ImageBackground
-                  source={require("../../assets/images/home/bisel.png")}
+            <ImageBackground
+              source={require("../../assets/images/home/bisel.png")}
+              style={{
+                width: height / 2.1 + 8,
+                height: height / 2.1 + 8,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              transition={false}
+            >
+              <TouchableWithoutFeedback onPress={() => onPressWheel()}>
+                <Image
+                  source={require("../../assets/images/home/sombra.png")}
                   style={{
-                    width: height / 2 + 10,
-                    height: height / 2 + 10,
+                    width: height / 2.1,
+                    height: height / 2.1,
                     justifyContent: "center",
                     alignItems: "center",
+                    zIndex: 4,
+                    position: "absolute",
+                    //top: 30,
                   }}
                   transition={false}
-                >
-                  <TouchableWithoutFeedback onPress={() => onPressWheel()}>
-                    <Animated.View
-                      style={{
-                        transform: [
-                          { rotate: !thereIsPrizeResult ? wheelLoop : wheel },
-                        ],
-                      }}
-                    >
-                      <ImageBackground
-                        //source={require("../../assets/images/home/casillas2.png")}
-                        source={require("../../assets/images/home/ruleta/Mueve_slots.png")}
-                        style={{
-                          width: height / 2,
-                          height: height / 2,
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                        transition={false}
-                      >
-                        {/*   <View
-                          style={{
-                            zIndex: 5,
-                            position: "relative",
-                            top: 6.5,
-                            right: 3,
-                          }}
-                        >
-                          <Image
-                            source={require("../../assets/images/home/centro.png")}
-                            style={{
-                              width: width / 5,
-                              height: width / 5,
-                            }}
-                            transition={false}
-                          />
-                        </View> */}
-                      </ImageBackground>
-                    </Animated.View>
-                  </TouchableWithoutFeedback>
-                </ImageBackground>
-              </ImageBackground>
-            </View>
-            {/*  <View style={{ height: 40, width: 100, backgroundColor: "pink" }}>
+                />
+              </TouchableWithoutFeedback>
+
+              <Animated.View
+                style={{
+                  transform: [
+                    { rotate: !thereIsPrizeResult ? wheelLoop : wheel },
+                  ],
+                }}
+              >
+                <ImageBackground
+                  //source={require("../../assets/images/home/casillas2.png")}
+                  source={require("../../assets/images/home/ruleta/Mueve_slots.png")}
+                  style={{
+                    width: height / 2.1,
+                    height: height / 2.1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 3,
+                  }}
+                  transition={false}
+                />
+              </Animated.View>
+            </ImageBackground>
+          </ImageBackground>
+        </View>
+        {/*  <View style={{ height: 40, width: 100, backgroundColor: "pink" }}>
               <Button
                 title="toggle socket"
                 onPress={() => onPressToggleSocket()}
               />
             </View> */}
-            <View key={3} style={styles.buttonContainer}>
-              <NeuButton
-                color="#311338"
-                width={width / 3.5}
-                height={width / 3.5}
-                borderRadius={width / 7}
-                style={{ marginTop: "90%" }}
-                /*  onPress={() => {
+        <View
+          key={3}
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: height / 5,
+            zIndex: 10,
+            width: "80%",
+            //backgroundColor: "pink",
+          }}
+        >
+          <NeuButton
+            color="#311338"
+            width={width / 3.5}
+            height={width / 3.5}
+            borderRadius={width / 7}
+            style={{ zIndex: 3 }}
+            /*  onPress={() => {
                   navigation.jumpTo("Nueva Recarga", {
                     screen: "Nueva Recarga"
                   });
                 }} */
-                onPress={() => {
-                  //const pushAction = StackActions.push("Nueva Recarga");
-                  //navigation.dispatch(pushAction);
-                  enMovimiento.current = false;
-                  navigation.jumpTo("Nueva Recarga", {
-                    screen: "NuevaRecargaScreen",
-                    params: { inOrderToCobrarPremio: false },
-                  });
-                }}
-              >
-                <Image
-                  source={require("../../assets/animaciones/moneda-recarga-rapida.gif")}
-                  //resizeMode="center"
-                  style={{
-                    width: width / 4,
-                    height: width / 4,
-                  }}
-                />
-              </NeuButton>
-            </View>
-          </View>
-        </ImageBackground>
-      )}
-    </>
+            onPress={() => {
+              //const pushAction = StackActions.push("Nueva Recarga");
+              //navigation.dispatch(pushAction);
+              enMovimiento.current = false;
+              navigation.jumpTo("Nueva Recarga", {
+                screen: "NuevaRecargaScreen",
+                params: { inOrderToCobrarPremio: false },
+              });
+            }}
+          >
+            <Image
+              source={require("../../assets/animaciones/moneda-recarga-rapida.gif")}
+              //resizeMode="center"
+              style={{
+                width: 95, //width / 4,
+                height: 115, //width / 4,
+              }}
+            />
+          </NeuButton>
+        </View>
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -879,6 +1029,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    width: "80%",
+    zIndex: 2,
+    //width: width / 3.5, //"80%",
+    //height: width / 3.5,
   },
 });

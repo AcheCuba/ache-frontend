@@ -307,8 +307,13 @@ const NuevoContactoInput = ({
           >
             <View>
               <NeuInput
-                textStyle={{ color: "#fff", fontWeight: "bold" }}
-                placeholder="Toca para ir a Contactos"
+                textStyle={{
+                  color: "#fff",
+                  fontWeight: "bold",
+                  fontFamily: "bs-italic",
+                  fontSize: 18,
+                }}
+                placeholder="Phone Number"
                 width={inputWidth}
                 height={40}
                 borderRadius={20}

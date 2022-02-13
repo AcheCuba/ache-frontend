@@ -201,11 +201,11 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
   };
 
   const renderItemContact = ({ item }) => {
-    if (item.firstName === "AAA") {
-      //console.log("another");
-      //console.log(item.firstName, item.id);
-      // console.log(item.phoneNumbers);
-    }
+    // if (item.firstName === "AAA") {
+    //console.log("another");
+    //console.log(item.firstName, item.id);
+    // console.log(item.phoneNumbers);
+    //}
     //console.log(item.firstName, item.phoneNumbers);
 
     return (
@@ -222,7 +222,14 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
   const renderEmptyList = () => {
     return (
       <View style={{ flex: 1, alignItems: "center", marginTop: 30 }}>
-        <Text style={{ color: "gray", fontSize: 20, fontWeight: "bold" }}>
+        <Text
+          style={{
+            color: "gray",
+            fontSize: 20,
+            fontWeight: "bold",
+            fontFamily: "bs-italic",
+          }}
+        >
           No se encontraron coincidencias{" "}
         </Text>
       </View>
@@ -325,9 +332,20 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           <Ionicons name="checkmark" size={30} color="#01f9d2" />
         </NeuButton>
       </View>
-      <View style={{ alignItems: "center", marginTop: 10, marginBottom: 10 }}>
+      <View
+        style={{
+          alignItems: "center",
+          marginTop: height / 30,
+          marginBottom: 20,
+        }}
+      >
         <NeuInput
-          textStyle={{ color: "#fff" }}
+          textStyle={{
+            color: "#fff",
+            fontWeight: "bold",
+            fontFamily: "bs-italic",
+            fontSize: 18,
+          }}
           placeholder="Buscar por nombre o  teléfono"
           onChangeText={(value) => onChangeText(value)}
           value={text}

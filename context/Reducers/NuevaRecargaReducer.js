@@ -16,6 +16,12 @@ const RESTORE_NUEVA_RECARGA_INITIAL_STATE =
   actionTypes.RESTORE_NUEVA_RECARGA_INITIAL_STATE;
 const DELETE_FIELD = actionTypes.DELETE_FIELD;
 const DELETE_ALL_VALIDATED_PRIZES = actionTypes.DELETE_ALL_VALIDATED_PRIZES;
+const SET_PREMIOS_CONFIRMADOS_SOCKET =
+  actionTypes.SET_PREMIOS_CONFIRMADOS_SOCKET;
+const SET_RECARGAS_CONFIRMADAS_SOCKET =
+  actionTypes.SET_RECARGAS_CONFIRMADAS_SOCKET;
+const DELETE_ALL_PREMIOS_SOCKET = actionTypes.DELETE_ALL_PREMIOS_SOCKET;
+const DELETE_ALL_RECARGAS_SOCKET = actionTypes.DELETE_ALL_RECARGAS_SOCKET;
 
 const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
   switch (action.type) {
@@ -141,6 +147,36 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
           ...state.fields,
           { isFirstField: action.isFirstField, fieldId: action.fieldId },
         ],
+      };
+
+    // SOCKETS
+    case SET_PREMIOS_CONFIRMADOS_SOCKET:
+      return {
+        ...state,
+        //premiosConfirmadosSocket: action.premiosConfirmados,
+        premiosConfirmadosSocket: state.premiosConfirmadosSocket.concat(
+          action.premiosConfirmados
+        ),
+      };
+
+    case SET_RECARGAS_CONFIRMADAS_SOCKET:
+      return {
+        ...state,
+        recargasConfirmadasSocket: action.recargasConfirmadas,
+      };
+
+    case DELETE_ALL_PREMIOS_SOCKET:
+      return {
+        ...state,
+        //premiosConfirmadosSocket: action.premiosConfirmados,
+        premiosConfirmadosSocket: [],
+      };
+
+    case DELETE_ALL_RECARGAS_SOCKET:
+      return {
+        ...state,
+        //premiosConfirmadosSocket: action.premiosConfirmados,
+        recargasConfirmadasSocket: [],
       };
 
     default:

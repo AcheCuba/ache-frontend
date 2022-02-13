@@ -3,5 +3,7 @@ export default {
   contactosSeleccionados: [],
   validated_prizes: [], // UI
   fields: [],
-  validatetInProcess: false
+  validatetInProcess: false,
+  premiosConfirmadosSocket: [],
+  recargasConfirmadasSocket: [],
 };

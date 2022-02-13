@@ -177,3 +177,29 @@ export const SetUpdateCompleted = (completed) => {
     completed,
   };
 };
+
+export const setPremiosConfirmadosSocket = (premiosConfirmados) => {
+  return {
+    type: actionTypes.SET_PREMIOS_CONFIRMADOS_SOCKET,
+    premiosConfirmados,
+  };
+};
+
+export const deleteAllPremiosSocket = () => {
+  return {
+    type: actionTypes.DELETE_ALL_PREMIOS_SOCKET,
+  };
+};
+
+export const setRecargasConfirmadasSocket = (recargasConfirmadas) => {
+  return {
+    type: actionTypes.SET_RECARGAS_CONFIRMADAS_SOCKET,
+    recargasConfirmadas,
+  };
+};
+
+export const deleteAllRecargasSocket = () => {
+  return {
+    type: actionTypes.DELETE_ALL_RECARGAS_SOCKET,
+  };
+};

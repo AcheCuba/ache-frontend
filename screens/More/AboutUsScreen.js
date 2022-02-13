@@ -1,5 +1,6 @@
 import React from "react";
 import { Dimensions } from "react-native";
+import { ImageBackground } from "react-native";
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
@@ -19,18 +20,21 @@ const AboutUsScreen = ({ navigation }) => {
 
   return (
     <>
-      <CommonHeader
-        width={width}
-        height={height}
-        _onPress={() => navigation.navigate("MoreScreen")}
-      />
-      <View
+      <ImageBackground
+        source={require("../../assets/images/degradado_general.png")}
         style={{
+          width: "100%",
+          height: "100%",
           flex: 1,
-          alignItems: "center",
-          backgroundColor: "rgba(112, 28, 87, 1)",
+          //justifyContent: "center",
         }}
+        transition={false}
       >
+        <CommonHeader
+          width={width}
+          height={height}
+          _onPress={() => navigation.navigate("MoreScreen")}
+        />
         <View style={styles.container}>
           <View style={{ flex: 1, marginVertical: 10, marginHorizontal: 20 }}>
             <ScrollView>
@@ -64,7 +68,7 @@ const AboutUsScreen = ({ navigation }) => {
             </ScrollView>
           </View>
         </View>
-      </View>
+      </ImageBackground>
     </>
   );
 };
@@ -75,7 +79,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "rgba(112, 28, 87, 1)",
+    //backgroundColor: "rgba(112, 28, 87, 1)",
     marginHorizontal: marginGlobal,
   },
   title: {

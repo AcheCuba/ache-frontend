@@ -23,14 +23,19 @@ import {
   setTransaccionesResultado,
 } from "../../context/Actions/actions";
 import { Ionicons } from "@expo/vector-icons";
+import { TextBold, TextMedium } from "../../components/CommonText";
+import { ImageBackground } from "react-native";
+import { Image } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 
-const RecargasDisponiblesScreen = ({ navigation }) => {
+const RecargasDisponiblesScreen = ({ navigation, route }) => {
+  //const { esDirecta } = route?.params;
+
   const { userState } = React.useContext(GlobalContext);
   const { nuevaRecargaState, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
-  const { contactosSeleccionados } = nuevaRecargaState;
+  const { contactosSeleccionados, validated_prizes } = nuevaRecargaState;
 
   const [products, setProducts] = React.useState([]);
   const [productsWithPromo, setProductsWithPromo] = React.useState([]);
@@ -45,11 +50,14 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
 
   const [pressedProductId, setPressed] = React.useState(0);
+
   //const [price_usd, setPrice_usd] = React.useState("");
 
   React.useEffect(() => {
     //console.log("pressedProductId", pressedProductId);
     //console.log("price_usd", price_usd);
+    //console.log(esDirecta);
+    //console.log("rec disp", validated_prizes);
   });
 
   const prize_finish_checkout = (uuid) => {
@@ -58,6 +66,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
     let config = {
       method: "post",
       url: url,
+      params: { success: false }, // el premio no se ha cobrado
       headers: {
         Authorization: `Bearer ${user_token}`,
       },
@@ -66,6 +75,7 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   };
 
   const finish_checkout_all_prizes = () => {
+    //console.log("finish checkout recargas disponibles screen");
     let primisesForFinish = [];
     const prizesInCheckout = contactosSeleccionados.map(
       (contacto) => contacto.prize
@@ -135,12 +145,12 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
 
   const popUpAlert = () => {
     Alert.alert(
-      "¿Desea cancelar?",
+      "¿Desea salir?",
       "Si abandona la pantalla, se perderá el progreso de la recarga actual",
       [
-        { text: "No quiero salir", style: "cancel", onPress: () => {} },
+        { text: "Atrás", style: "cancel", onPress: () => {} },
         {
-          text: "Cancelar recarga",
+          text: "Salir",
           style: "destructive",
 
           onPress: () => onPressCancelarRecarga(),
@@ -292,14 +302,30 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
 
     Promise.all(promisesForTransaction)
       .then((response) => {
-        response.forEach((transaction) => {
+        response.forEach((transactions_array) => {
+          const _transactions_array = transactions_array.data;
+          console.log("is array?", Array.isArray(_transactions_array));
+          console.log(_transactions_array.length);
+          //console.log(_transactions_array);
+
           //console.log(transaction.data);
           //console.log(transaction.data.id);
-          transaction_id_array.push(transaction.data.id);
+
+          /* transaction_id_array.push(transaction.data.id);
           transacciones_esperadas.push({
             mobile_number:
               transaction.data.credit_party_identifier.mobile_number,
             transaction_id: transaction.data.id,
+          }); */
+
+          // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
+          _transactions_array.map((transaction) => {
+            console.log("transaction id", transaction.id);
+            transaction_id_array.push(transaction.id);
+            transacciones_esperadas.push({
+              mobile_number: transaction.credit_party_identifier.mobile_number,
+              transaction_id: transaction.id,
+            });
           });
         });
         setLoadingContinuar(false);
@@ -330,18 +356,65 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
   };
 
   return (
-    <>
+    <ImageBackground
+      source={require("../../assets/images/degradado_general.png")}
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        alignItems: "center",
+      }}
+      transition={false}
+    >
       <CommonHeader
         width={width}
         height={height}
         _onPress={() => onPressBackButton()}
       />
-      <View style={styles.container}>
-        {!loadingProducts && !loadingPromotions ? (
-          <ScrollView style={{ flex: 1 }}>
-            <View style={styles.innerContainer}>
-              {products.map((product, index) => {
-                return (
+      {/*       <View style={styles.container}>
+       */}
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: 20,
+        }}
+      >
+        <TextBold
+          text="Ofertas Disponibles"
+          style={{
+            fontSize: 30,
+            color: "#fffb00",
+            textTransform: "uppercase",
+          }}
+        />
+      </View>
+      {!loadingProducts && !loadingPromotions ? (
+        <View
+          style={{
+            //flex: 1,
+            marginTop: 10,
+            alignItems: "center",
+            width: width,
+          }}
+        >
+          <ScrollView
+            contentContainerStyle={{
+              width: width,
+              //flex: 1,
+              alignItems: "center",
+            }}
+          >
+            {products.map((product, index) => {
+              return (
+                <View
+                  style={{
+                    alignItems: "center",
+                    padding: 5,
+                    flex: 1,
+                  }}
+                  key={index}
+                >
                   <NeuButton
                     onPress={() => {
                       //console.log(product);
@@ -355,112 +428,110 @@ const RecargasDisponiblesScreen = ({ navigation }) => {
                     style={{
                       marginBottom: 25,
                     }}
-                    key={index}
+                    //key={index}
+                    containerStyle={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
                   >
                     <View
                       style={{
-                        flex: 1,
+                        flexDirection: "row",
+                        justifyContent: "space-around",
                         alignItems: "center",
-                        justifyContent: "center",
-                        borderWidth: 0,
                         width: width / 1.3,
-                        height: height / 6,
-                        borderRadius: 10,
                       }}
                     >
+                      <View>
+                        <TextBold
+                          text={product.name}
+                          style={{
+                            fontSize: 24,
+                            textTransform: "uppercase",
+                            color: "#fffb00",
+                            marginBottom: 6,
+                            marginTop: 5,
+                          }}
+                        />
+
+                        <TextMedium
+                          text={`monto: ${product.amount_cup} CUP`}
+                          style={{
+                            fontSize: 20,
+                            color: "rgba(255,255,255,0.6)",
+                            marginBottom: 6,
+                            textTransform: "uppercase",
+                          }}
+                        />
+
+                        <TextMedium
+                          text={`precio: ${product.price_usd} USD`}
+                          style={{
+                            fontSize: 20,
+                            color: "rgba(255,255,255,0.6)",
+                            marginBottom: 6,
+                            textTransform: "uppercase",
+                          }}
+                        />
+
+                        {promoTitle != undefined &&
+                        productsWithPromo.includes(product.id) ? (
+                          <TextBold
+                            text={`promotion: ${promoTitle}`}
+                            style={{
+                              fontSize: 16,
+                              color: "#fffb00",
+                              marginTop: 5,
+                              textTransform: "uppercase",
+                            }}
+                          />
+                        ) : null}
+                      </View>
                       <View
                         style={{
-                          flexDirection: "row",
-                          justifyContent: "space-around",
-                          alignItems: "center",
-                          width: width / 1.3,
+                          height: height / 8,
+                          justifyContent: "center",
                         }}
                       >
-                        <View>
-                          <Text
+                        {loadingContinuar && product.id === pressedProductId ? (
+                          <ActivityIndicator size="small" color="#fffb00" />
+                        ) : (
+                          /*     <Ionicons
+                            name="chevron-forward-outline"
+                            size={25}
+                            color="#fffb00"
+                          /> */
+
+                          <Image
+                            source={require("../../assets/images/iconos/atras.png")}
                             style={{
-                              fontWeight: "bold",
-                              fontSize: 20,
-                              textTransform: "uppercase",
-                              color: "#01f9d2",
-                              marginBottom: 6,
-                              marginTop: 5,
+                              width: 15,
+                              height: 15,
+                              transform: [{ rotate: "180deg" }],
                             }}
-                          >
-                            {product.name}
-                          </Text>
-                          <Text
-                            style={{
-                              fontWeight: "bold",
-                              fontSize: 20,
-                              color: "gray",
-                              marginBottom: 6,
-                            }}
-                          >
-                            {`monto: ${product.amount_cup} CUP`}
-                          </Text>
-                          <Text
-                            style={{
-                              fontWeight: "bold",
-                              fontSize: 20,
-                              color: "gray",
-                              marginBottom: 4,
-                            }}
-                          >
-                            {`precio: ${product.price_usd} USD`}
-                          </Text>
-                          {promoTitle != undefined &&
-                          productsWithPromo.includes(product.id) ? (
-                            <Text
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: 15,
-                                textTransform: "uppercase",
-                                color: "#01f9d2",
-                                marginTop: 5,
-                              }}
-                            >
-                              {`promotion: ${promoTitle}`}
-                            </Text>
-                          ) : null}
-                        </View>
-                        <View
-                          style={{
-                            height: height / 8,
-                            justifyContent: "center",
-                          }}
-                        >
-                          {loadingContinuar &&
-                          product.id === pressedProductId ? (
-                            <ActivityIndicator size="small" color="#01f9d2" />
-                          ) : (
-                            <Ionicons
-                              name="chevron-forward-outline"
-                              size={25}
-                              color="#01f9d2"
-                            />
-                          )}
-                        </View>
+                          />
+                        )}
                       </View>
                     </View>
                   </NeuButton>
-                );
-              })}
-            </View>
+                </View>
+              );
+            })}
           </ScrollView>
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ActivityIndicator size="large" color="#01f9d2" />
-          </View>
-        )}
-      </View>
-    </>
+        </View>
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ActivityIndicator size="large" color="#01f9d2" />
+        </View>
+      )}
+    </ImageBackground>
   );
 };
 
@@ -469,15 +540,12 @@ export default RecargasDisponiblesScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#701c57",
+    //backgroundColor: "#701c57",
     //alignItems: "center",
     //justifyContent: "flex-start",
   },
   innerContainer: {
-    backgroundColor: "#701c57",
-    flex: 1,
-    marginTop: 10,
-    alignItems: "center",
+    //backgroundColor: "#701c57",
   },
   title: {
     fontSize: 20,
@@ -489,62 +557,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-
-/* 
- <View style={styles.button}>
-              <CustomButton
-                customStyle={customStyle}
-                title="Recarga 1"
-                onPress={() => navigation.navigate("PagoScreen")}
-              />
-            </View>
-            <View style={styles.button}>
-              <CustomButton
-                customStyle={customStyle}
-                title="Recarga 2"
-                onPress={() => navigation.navigate("PagoScreen")}
-              />
-            </View>
-            <View style={styles.button}>
-              <CustomButton
-                customStyle={customStyle}
-                title="Recarga 3"
-                onPress={() => navigation.navigate("PagoScreen")}
-              />
-            </View>
-            <View style={styles.button}>
-              <CustomButton
-                customStyle={customStyle}
-                title="Recarga 4"
-                onPress={() => navigation.navigate("PagoScreen")}
-              />
-            </View>
-            <View style={styles.button}>
-              <CustomButton
-                customStyle={customStyle}
-                title="Recarga 5"
-                onPress={() => navigation.navigate("PagoScreen")}
-              />
-            </View>
-            <View style={styles.button}>
-              <CustomButton
-                customStyle={customStyle}
-                title="Recarga 6"
-                onPress={() => navigation.navigate("PagoScreen")}
-              />
-            </View>
-            <View style={styles.button}>
-              <CustomButton
-                customStyle={customStyle}
-                title="Recarga 7"
-                onPress={() => navigation.navigate("PagoScreen")}
-              />
-            </View>
-            <View style={styles.button}>
-              <CustomButton
-                customStyle={customStyle}
-                title="Recarga 8"
-                onPress={() => navigation.navigate("PagoScreen")}
-              />
-            </View>
-*/

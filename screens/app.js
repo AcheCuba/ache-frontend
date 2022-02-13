@@ -12,6 +12,8 @@ import io from "socket.io-client";
 import { GlobalContext } from "../context/GlobalProvider";
 import {
   closeSocket,
+  setPremiosConfirmadosSocket,
+  setRecargasConfirmadasSocket,
   setSocketId,
   setTransaccionesResultado,
 } from "../context/Actions/actions";
@@ -43,7 +45,12 @@ export default function MainApp() {
 
   //const colorScheme = useColorScheme();
 
-  const { socketDispatch, socketState } = useContext(GlobalContext);
+  const {
+    socketDispatch,
+    socketState,
+    nuevaRecargaState,
+    nuevaRecargaDispatch,
+  } = useContext(GlobalContext);
   const { socketOpen, transacciones_esperadas, transacciones_resultado } =
     socketState;
 
@@ -82,6 +89,33 @@ export default function MainApp() {
       });
 
       //console.log("resultados con nums", resultadoConNumeros);
+      nuevaRecargaDispatch(setRecargasConfirmadasSocket(resultadoConNumeros));
+
+      //================================================================
+
+      //recordar: el bono (premio) se considera una recarga independiente
+      const recargaConPremio = resultadoConNumeros.filter((transaction) => {
+        return transaction.isTopUpBonus === true;
+      });
+
+      const clearRecargaConPremio = recargaConPremio.map((rec) => {
+        return { uuid: rec.uuid, status: rec.status };
+      });
+
+      /*  const clearRecargaConPremio = transacciones_resultado.map((rec) => {
+        return { uuid: rec.uuid, status: rec.status };
+      }); */
+
+      nuevaRecargaDispatch(setPremiosConfirmadosSocket(clearRecargaConPremio));
+
+      /*   nuevaRecargaDispatch(
+        setPremiosConfirmadosSocket(recargaConPremio)
+      );
+ */
+
+      //console.log(recargaConPremio);
+
+      //================================================================
 
       const declinadas = resultadoConNumeros.filter((elemento) => {
         return elemento.status !== "ACCEPTED";
@@ -121,8 +155,8 @@ export default function MainApp() {
 
       socket.on("socketid", (sid) => {
         // guardar id
-        console.log("socket id below");
-        console.log(sid);
+        //console.log("socket id below");
+        //console.log(sid);
         socketDispatch(setSocketId(sid));
       });
     }

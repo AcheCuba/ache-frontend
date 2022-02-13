@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { View } from "react-native";
 import { Image, Dimensions, Platform } from "react-native";
-import { NeuView } from "react-native-neu-element";
+import { NeuView, NeuButton } from "react-native-neu-element";
 
 const TabButtonNeo = ({ iconName }) => {
   const StyledCrossPlat = (shadowPosition) => {
@@ -33,28 +33,28 @@ const TabButtonNeo = ({ iconName }) => {
         return (
           <Image
             source={require("../assets/images/iconos/Ruleta.png")}
-            style={{ width: 40, height: 35, marginLeft: 5 }}
+            style={{ width: 35, height: 30, marginLeft: 5 }}
           />
         );
       case "Recarga":
         return (
           <Image
             source={require("../assets/images/iconos/RecargaRapida.png")}
-            style={{ width: 37, height: 37 }}
+            style={{ width: 32, height: 32 }}
           />
         );
       case "Settings":
         return (
           <Image
             source={require("../assets/images/iconos/Settings.png")}
-            style={{ width: 37, height: 37 }}
+            style={{ width: 32, height: 32 }}
           />
         );
       case "Idioma":
         return (
           <Image
             source={require("../assets/images/iconos/Idioma.png")}
-            style={{ width: 37, height: 37 }}
+            style={{ width: 32, height: 32 }}
           />
         );
       default:
@@ -63,17 +63,18 @@ const TabButtonNeo = ({ iconName }) => {
   };
 
   return (
-    /*   <NeuView
+    /*    <NeuButton
       color="#701c57"
-      width={60}
-      height={60}
-      borderRadius={30}
+      width={50}
+      height={50}
+      borderRadius={25}
       style={{ justifyContent: "center", alignItems: "center" }}
     >
       <Icon />
-    </NeuView> */
+    </NeuButton> */
+    <Icon />
 
-    <View
+    /*   <View
       style={{
         backgroundColor: "#701c57",
         width: 58,
@@ -95,9 +96,8 @@ const TabButtonNeo = ({ iconName }) => {
           ...StyledCrossPlat("bottomShadow"),
         }}
       >
-        <Icon />
       </View>
-    </View>
+    </View> */
   );
 };
 

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ImageBackground } from "react-native";
 import { Image } from "react-native";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
@@ -8,13 +9,22 @@ const { width, height } = Dimensions.get("screen");
 
 const MoreScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require("../../assets/images/degradado_general.png")}
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        justifyContent: "center",
+      }}
+      transition={false}
+    >
       <View
         style={{
           paddingTop: 60,
           width: width,
           height: height / 6,
-          backgroundColor: "rgba(112, 28, 87, 1)",
+          //backgroundColor: "rgba(112, 28, 87, 1)",
           flexDirection: "row",
           justifyContent: "flex-start",
         }}
@@ -66,7 +76,7 @@ const MoreScreen = ({ navigation }) => {
           />
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 

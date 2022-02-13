@@ -15,6 +15,7 @@ import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
 import { getData, removeItem, storeData } from "../../../libs/asyncStorage.lib";
 import { cancelNotification } from "../../../libs/expoPushNotification.lib";
+import { TextBold, TextItalic } from "../../../components/CommonText";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -22,11 +23,9 @@ const CobrarPremioContent = ({
   navigation,
   setModalVisible,
   setCodigo,
-  //codigo,
   Salir,
-  setCopiado,
   codigoGenerado,
-  setCodigoGenerado,
+  setCodigoGenerado, // equivale a codigo copiado
 }) => {
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
@@ -44,6 +43,11 @@ const CobrarPremioContent = ({
     setPrizeAmount(currentPrize?.amount);
     //console.log(currentPrize?.type);
   }, []);
+
+  React.useEffect(() => {
+    console.log("codigo generado", codigoGenerado);
+    //console.log(currentPrize?.type);
+  }, [codigoGenerado]);
 
   const copyToClipboard = (code) => {
     Clipboard.setString(code);
@@ -121,8 +125,7 @@ const CobrarPremioContent = ({
 
           // actualizar estado local
           setCodigo(prizeCode);
-          setCodigoGenerado(true);
-          copiarCodeYsalir(prizeCode);
+          copiarCode(prizeCode);
           setLoading(false);
         } else {
           // do something
@@ -145,22 +148,13 @@ const CobrarPremioContent = ({
     removeItem(notId);
   };
 
-  const copiarCodeYsalir = (code) => {
+  const copiarCode = (code) => {
     copyToClipboard(code);
-    Toast.show("Código copiado al portapapeles", {
-      duaration: Toast.durations.LONG,
-      position: Toast.positions.BOTTOM,
-      shadow: true,
-      animation: true,
-      hideOnPress: true,
-      delay: 0,
-    });
+    setCodigoGenerado(true);
 
-    setCopiado(true);
-
-    setTimeout(() => {
+    /* setTimeout(() => {
       setModalVisible(false);
-    }, 2000);
+    }, 2000); */
 
     /* Toast.show("Código copiado al portapapeles", Toast.SHORT, [
       "RCTModalHostViewController"
@@ -198,8 +192,10 @@ const CobrarPremioContent = ({
             <Image
               source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
               style={{
-                width: width / 3.8,
-                height: width / 3.9,
+                width: width / 3,
+                height: width / 3.1,
+                //width: width / 3.8,
+                //height: width / 3.9,
               }}
             />
           );
@@ -210,8 +206,8 @@ const CobrarPremioContent = ({
             <Image
               source={require("../../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
               style={{
-                width: width / 3.8,
-                height: width / 3.9,
+                width: width / 3,
+                height: width / 3.1,
               }}
             />
           );
@@ -258,20 +254,21 @@ const CobrarPremioContent = ({
         style={{
           alignItems: "center",
           //paddingHorizontal: width / 10,
-          marginTop: 20,
+          marginTop: 35,
           width: width / 1.5,
         }}
       >
-        <Text
+        <TextBold
           style={{
             color: "#01f9d2",
             fontWeight: "bold",
             fontSize: 20,
+            textTransform: "uppercase",
           }}
-        >
-          NOMBRE PREMIO
-        </Text>
-        <Text
+          text="Nombre del Premio"
+        />
+
+        <TextItalic
           style={{
             color: "#01f9d2",
             fontStyle: "italic",
@@ -279,30 +276,37 @@ const CobrarPremioContent = ({
             marginTop: 10,
             textAlign: "center",
           }}
-        >
-          Texto descriptivo del premio dos lineas de texto
-        </Text>
+          text="Texto descriptivo del premio dos lineas de texto"
+        />
       </View>
 
       <View style={{ marginTop: 30 }}>
         <View style={styles.button}>
-          <CommonNeuButton
-            screenWidth={width}
-            text="OBTENER PREMIO"
+          <NeuButton
+            color="#701c57"
+            width={(4 / 5) * width}
+            height={width / 7.5}
+            borderRadius={width / 7.5}
             onPress={() => {
-              loading ? null : onPressObtenerPremio();
+              // antes el condicional era con loading solo
+              codigoGenerado || loading ? null : onPressObtenerPremio();
             }}
-          />
+            active={codigoGenerado}
+            inset={false}
+            style={{ marginTop: 5 }}
+          >
+            <TextBold
+              text="OBTENER PREMIO"
+              style={{
+                color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
+                fontSize: 20,
+                textTransform: "uppercase",
+              }}
+            />
+          </NeuButton>
         </View>
         <View style={styles.button}>
           {!loading ? (
-            /*       <CommonNeuButton
-              screenWidth={width}
-              text={codigoGenerado ? "TERMINAR" : "COPIAR CÓDIGO"}
-              onPress={() => {
-                codigoGenerado ? onPressTerminar() : onPressGenerarCodigo();
-              }}
-            /> */
             <NeuButton
               color="#701c57"
               width={(4 / 5) * width}
@@ -310,20 +314,20 @@ const CobrarPremioContent = ({
               borderRadius={width / 7.5}
               onPress={() => {
                 codigoGenerado ? null : onPressGenerarCodigo(); //genera y copia el code de una vez
-              }}
+              }} // la condicion de generado implica que ha sido copiado ya
               active={codigoGenerado}
+              //inset={codigoGenerado}
               style={{ marginTop: 5 }}
             >
-              <Text
+              <TextBold
+                text="Copiar código"
                 style={{
                   color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
                   fontWeight: "bold",
                   fontSize: 20,
                   textTransform: "uppercase",
                 }}
-              >
-                COPIAR CÓDIGO
-              </Text>
+              />
             </NeuButton>
           ) : (
             <NeuButton
@@ -339,26 +343,40 @@ const CobrarPremioContent = ({
             </NeuButton>
           )}
 
+          <View style={{ height: 30 }}>
+            {codigoGenerado ? (
+              <TextItalic
+                style={{
+                  color: "#01f9d2",
+                  fontStyle: "italic",
+                  fontSize: 16,
+                  marginTop: 10,
+                  textAlign: "center",
+                }}
+                text="Código copiado al portapapeles"
+              />
+            ) : null}
+          </View>
+
           <NeuButton
-            color="#701c57"
+            color="#4f1b47"
             width={(4 / 5) * width}
             height={width / 7.5}
             borderRadius={width / 7.5}
             onPress={() => {
               loading ? null : Salir();
             }}
-            style={{ marginTop: 90 }}
+            style={{ marginTop: 60 }}
           >
-            <Text
+            <TextBold
+              text="Cancelar"
               style={{
                 color: "#fff800", //"#01f9d2",
                 fontWeight: "bold",
                 fontSize: 20,
                 textTransform: "uppercase",
               }}
-            >
-              CANCELAR
-            </Text>
+            />
           </NeuButton>
         </View>
       </View>
@@ -372,8 +390,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    //justifyContent: "center",
-    //backgroundColor: "rgba(112, 28, 87, .6)",
   },
 
   title: {
@@ -385,12 +401,10 @@ const styles = StyleSheet.create({
   },
   codeModalContainer: {
     flex: 1,
-    //justifyContent: "center",
     alignItems: "center",
   },
 
   codeModalContent: {
-    //backgroundColor: "rgba(112, 28, 87, .6)",
     padding: 22,
     justifyContent: "space-between",
     flexDirection: "row",
@@ -400,46 +414,3 @@ const styles = StyleSheet.create({
     marginTop: 80,
   },
 });
-
-/*
-{codigoGenerado ? (
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <NeuView
-                style={{}}
-                width={width / 2}
-                height={width / 8}
-                color="#701c57"
-                borderRadius={width / 8}
-              >
-                <Text
-                  style={{
-                    color: "gray",
-                    fontStyle: "italic",
-                    fontSize: 16,
-                  }}
-                >
-                  {EncriptarCodigo(codigo)}
-                </Text>
-              </NeuView>
-              <NeuButton
-                color="#701c57"
-                width={width / 4}
-                height={width / 8}
-                borderRadius={width / 8}
-                onPress={() => onPressCopiar()}
-              >
-                <Text
-                  style={{
-                    color: "#01f9d2",
-                    fontWeight: "bold",
-                    fontSize: 18,
-                  }}
-                >
-                  {" "}
-                  COPIAR{" "}
-                </Text>
-              </NeuButton>
-            </View>
-*/

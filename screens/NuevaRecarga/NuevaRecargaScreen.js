@@ -33,6 +33,12 @@ import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Image } from "react-native";
+import { ImageBackground } from "react-native";
+import { TextBold } from "../../components/CommonText";
+import {
+  NuevaRecargaTextEnglish,
+  NuevaRecargaTextSpanish,
+} from "../../constants/Texts";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -70,7 +76,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      //console.log("inOrder on focus", inOrderToCobrarPremio);
+      console.log("inOrder on focus", inOrderToCobrarPremio);
 
       // cuando no hay ningun contacto agregado
       if (contactosSeleccionados.length === 0 && fields.length === 0) {
@@ -112,12 +118,15 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             (prize) => prize.uuid === userState.prize.uuid
           );
 
+          console.log(prizeAlreadyExist);
+
           // si existe, no hacer nada
           // si no existe, agregar
           if (prizeAlreadyExist === undefined) {
             // si hay un slot vacio, solo agregar
             const type = userState.prize.type;
             const uuid = userState.prize.uuid;
+            //let fieldId;
 
             if (contactosSeleccionados.length < fields.length) {
               const fieldId = fields[fields.length - 1].fieldId;
@@ -182,6 +191,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     const unsub = navigation.addListener("blur", () => {
       //console.log("masdmasd");
       navigation.setParams({ inOrderToCobrarPremio: false });
+      //console.log("prize", userState.prize);
     });
 
     return unsub;
@@ -383,7 +393,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             delay: 0,
           });
           setLoadingContinuar(false);
-          navigation.navigate("RecargasDisponiblesScreen");
+          navigation.navigate("RecargasDisponiblesScreen", { esDirecta: true });
         } else {
           let prizesForInitCheckoutPromise = [];
 
@@ -405,7 +415,9 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               });
               setLoadingContinuar(false);
               console.log(BASE_URL);
-              navigation.navigate("RecargasDisponiblesScreen");
+              navigation.navigate("RecargasDisponiblesScreen", {
+                esDirecta: false,
+              });
             })
             .catch((err) => {
               setLoadingContinuar(false);
@@ -423,12 +435,29 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     }
   };
 
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = NuevaRecargaTextSpanish();
+    const textEng = NuevaRecargaTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
+
   return (
-    <View
+    <ImageBackground
+      source={require("../../assets/images/degradado_general.png")}
       style={{
+        width: "100%",
+        height: "100%",
         flex: 1,
-        backgroundColor: "rgba(112, 28, 87, 1)",
       }}
+      transition={false}
     >
       <View
         style={{
@@ -523,12 +552,21 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           height={width / 7.5}
           borderRadius={width / 7.5}
           onPress={() => onPressContinuar()}
-          style={{}}
+          style={{ marginBottom: 100 }}
         >
           {loadingContinuar ? (
             <ActivityIndicator size="large" color="#01f9d2" />
           ) : (
-            <Text
+            <TextBold
+              text={ResolveText("continuar")}
+              style={{
+                fontSize: 20,
+                color: "#01f9d2",
+                textTransform: "uppercase",
+              }}
+            />
+
+            /*   <Text
               style={{
                 color: "#01f9d2",
                 fontWeight: "bold",
@@ -537,11 +575,11 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               }}
             >
               continuar
-            </Text>
+            </Text> */
           )}
         </NeuButton>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 

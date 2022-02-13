@@ -38,6 +38,7 @@ const ContactCreds = ({ contactName, contactNumber, width }) => {
             fontSize: 18,
             color: "gray",
             //position: "absolute",
+            fontFamily: "bs-medium",
             left: 0,
           }}
         >
@@ -45,7 +46,9 @@ const ContactCreds = ({ contactName, contactNumber, width }) => {
         </Text>
       </View>
 
-      <Text style={{ fontSize: 18, color: "gray" }}>{contactNumber}</Text>
+      <Text style={{ fontSize: 18, color: "gray", fontFamily: "bs-medium" }}>
+        {contactNumber}
+      </Text>
     </View>
   );
 };

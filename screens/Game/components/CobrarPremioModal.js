@@ -36,37 +36,37 @@ const CobrarPremioModal = ({ modalVisible, setModalVisible, navigation }) => {
 
   return (
     <>
-      <StatusBar backgroundColor="rgb(112, 28, 87)" style="light" />
-
+      {/*       <StatusBar backgroundColor="rgb(112, 28, 87)" style="light" />
+       */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.ModalOuterContent}>
-          {/*    <CommonHeader
+        {/*    <View style={styles.ModalOuterContent}> */}
+        {/*    <CommonHeader
             width={width}
             height={height}
             _onPress={() => {
               copiarCodigoAlSalir();
             }}
           /> */}
-          <RootSiblingParent>
-            {/*  <View style={styles.ModalContent}> */}
-            <CobrarPremioContent
-              navigation={navigation}
-              setModalVisible={setModalVisible}
-              //codigo={codigo}
-              setCodigo={setCodigo}
-              Salir={Salir}
-              setCopiado={setCopiado}
-              setCodigoGenerado={setCodigoGenerado}
-              codigoGenerado={codigoGenerado}
-            />
-            {/*  </View> */}
-          </RootSiblingParent>
-        </View>
+        <RootSiblingParent>
+          {/*  <View style={styles.ModalContent}> */}
+          <CobrarPremioContent
+            navigation={navigation}
+            setModalVisible={setModalVisible}
+            //codigo={codigo}
+            setCodigo={setCodigo}
+            Salir={Salir}
+            setCopiado={setCopiado}
+            setCodigoGenerado={setCodigoGenerado}
+            codigoGenerado={codigoGenerado}
+          />
+          {/*  </View> */}
+        </RootSiblingParent>
+        {/*    </View> */}
       </Modal>
     </>
   );
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     //justifyContent: "center",
     //alignItems: "center",
-    backgroundColor: "rgba(112, 28, 87, 1)",
+    //backgroundColor: "rgba(112, 28, 87, 1)",
     width: "100%",
     height: "100%",
   },

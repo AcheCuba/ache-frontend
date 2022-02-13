@@ -16,6 +16,9 @@ import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
 import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
 import { cancelNotification } from "../../libs/expoPushNotification.lib";
+import { TextBold } from "../../components/CommonText";
+import CommonNeuButton from "../../components/CommonNeuButton";
+import { ImageBackground } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -27,12 +30,21 @@ const PrePagoScreen = ({ navigation, route }) => {
   const { contactosSeleccionados } = nuevaRecargaState;
 
   const quantity = contactosSeleccionados.length;
-  const [amount, setAmount] = React.useState("0");
+  const [amount, setAmount] = React.useState(0);
   //const [precioRecarga, setPrecioRecarga] = React.useState("20");
 
   React.useEffect(() => {
     setAmount(quantity * productPriceUsd);
+    //console.log(esDirecta);
   }, []);
+
+  /* React.useEffect(() => {
+    console.log(typeof amount);
+    console.log(amount);
+    return () => {
+      //cleanup
+    };
+  }); */
 
   useAndroidBackHandler(() => {
     /*
@@ -55,6 +67,7 @@ const PrePagoScreen = ({ navigation, route }) => {
     let config = {
       method: "post",
       url: url,
+      params: { success: false }, // el premio no se ha cobrado
       headers: {
         Authorization: `Bearer ${user_token}`,
       },
@@ -114,12 +127,12 @@ const PrePagoScreen = ({ navigation, route }) => {
 
   const popUpAlert = () => {
     Alert.alert(
-      "¿Desea cancelar?",
+      "¿Desea salir?",
       "Si abandona la pantalla, se perderá el progreso de la recarga actual",
       [
-        { text: "No quiero salir", style: "cancel", onPress: () => {} },
+        { text: "Atrás", style: "cancel", onPress: () => {} },
         {
-          text: "Cancelar recarga",
+          text: "Salir",
           style: "destructive",
 
           onPress: () => onPressCancelarRecargaOnAlert(),
@@ -128,7 +141,7 @@ const PrePagoScreen = ({ navigation, route }) => {
     );
   };
 
-  const confirmTransactionRequest = (transaction_id) => {
+  /*   const confirmTransactionRequest = (transaction_id) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/confirm-transaction/${transaction_id}`;
     const config = {
@@ -140,9 +153,9 @@ const PrePagoScreen = ({ navigation, route }) => {
     };
     //console.log(config);
     return axios(config);
-  };
+  }; */
 
-  const cancelTransactionRequest = (transaction_id) => {
+  /*  const cancelTransactionRequest = (transaction_id) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/cancel-transaction/${transaction_id}`;
     const config = {
@@ -153,9 +166,9 @@ const PrePagoScreen = ({ navigation, route }) => {
       },
     };
     return axios(config);
-  };
+  }; */
 
-  const onPressCancelarPorError = () => {
+  /*   const onPressCancelarPorError = () => {
     finish_checkout_all_prizes();
     let cancelTransactionPromisesArray = [];
 
@@ -171,9 +184,9 @@ const PrePagoScreen = ({ navigation, route }) => {
 
     nuevaRecargaDispatch(resetNuevaRecargaState());
     navigation.navigate("PagoErrorScreen");
-  };
+  }; */
 
-  const onPressConfirmarPago = async () => {
+  /*   const onPressConfirmarPago = async () => {
     let confirmTransactionPromisesArray = [];
 
     //console.log(transaction_id_array);
@@ -207,10 +220,19 @@ const PrePagoScreen = ({ navigation, route }) => {
       await cancelNotification(notId);
       await removeItem("notification-prize-expire");
     }
-  };
+  }; */
 
   return (
-    <View style={{ backgroundColor: "#701c57", flex: 1, alignItems: "center" }}>
+    <ImageBackground
+      source={require("../../assets/images/degradado_general.png")}
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        alignItems: "center",
+      }}
+      transition={false}
+    >
       <CommonHeader
         width={width}
         height={height}
@@ -228,7 +250,33 @@ const PrePagoScreen = ({ navigation, route }) => {
           marginBottom: 90,
         }}
       >
-        <Text
+        <View style={{ marginBottom: 20 }}>
+          <TextBold
+            text="TOTAL"
+            style={{
+              fontSize: 34,
+              textTransform: "uppercase",
+              color: "#fffb00",
+              //marginBottom: 6,
+              //marginTop: 5,
+            }}
+          />
+        </View>
+
+        <View>
+          <TextBold
+            text={`$${amount}`}
+            style={{
+              fontSize: 100,
+              textTransform: "uppercase",
+              color: "#01f9d2",
+              //marginBottom: 6,
+              //marginTop: 5,
+            }}
+          />
+        </View>
+
+        {/*    <Text
           style={{
             fontFamily: Platform.OS === "android" ? "monospace" : null,
             fontSize: 100,
@@ -237,33 +285,33 @@ const PrePagoScreen = ({ navigation, route }) => {
           }}
         >
           ${amount}
-        </Text>
-        <NeuButton
-          style={{ marginTop: 40 }}
-          width={width / 1.2}
-          height={height / 7}
-          color="#701c57"
-          borderRadius={10}
-          onPress={() => navigation.navigate("PagoScreen", { amount: amount })}
-        >
-          <View style={{ paddingHorizontal: width / 6 }}>
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 24,
-                fontWeight: "bold",
-                color: "#01f9d2",
-                textTransform: "uppercase",
-              }}
-            >
-              Enter your card and pay
-            </Text>
-          </View>
-        </NeuButton>
-        <View
+        </Text> */}
+
+        <View style={{ marginTop: 20 }}>
+          <CommonNeuButton
+            text="Pagar"
+            screenWidth={width}
+            onPress={() => {
+              navigation.navigate("PagoScreen", {
+                amount,
+                transaction_id_array,
+                productPriceUsd,
+              });
+            }}
+          />
+        </View>
+      </View>
+    </ImageBackground>
+  );
+};
+
+export default PrePagoScreen;
+
+/* codigo para probar recargas sin stripe
+  <View
           style={{
             flexDirection: "row",
-            marginTop: 20,
+            paddingTop: 80,
             justifyContent: "space-between",
           }}
         >
@@ -314,9 +362,4 @@ const PrePagoScreen = ({ navigation, route }) => {
             </View>
           </NeuButton>
         </View>
-      </View>
-    </View>
-  );
-};
-
-export default PrePagoScreen;
+*/

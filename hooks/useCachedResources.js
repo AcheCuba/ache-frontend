@@ -9,6 +9,7 @@ import { restore_user } from "../context/Actions/actions";
 import moment from "moment";
 import { getData, storeData } from "../libs/asyncStorage.lib";
 import { useAssets } from "expo-asset";
+import { useFonts } from "expo-font";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -22,13 +23,20 @@ export default function useCachedResources() {
     require("../assets/images/home/premios/diamanteCopia.png"),
     require("../assets/images/home/premios/Nada2.png"),
     require("../assets/images/more/asset3.png"),
-    require("../assets/images/nueva_recarga/diez.png"),
+    /*     require("../assets/images/nueva_recarga/diez.png"),
     require("../assets/images/nueva_recarga/jackpot.png"),
     require("../assets/images/nueva_recarga/Nada2.png"),
     require("../assets/images/onboarding_test/circle.png"),
     require("../assets/images/onboarding_test/square.png"),
-    require("../assets/images/onboarding_test/triangle.png"),
+    require("../assets/images/onboarding_test/triangle.png"), */
   ]);
+
+  const [loaded] = useFonts({
+    "space-mono": require("../assets/fonts/SpaceMono-Regular.ttf"),
+    "bs-medium": require("../assets/fonts/bloggerSans/BloggerSans-Medium.ttf"),
+    "bs-bold": require("../assets/fonts/bloggerSans/BloggerSans-Bold.ttf"),
+    "bs-italic": require("../assets/fonts/bloggerSans/BloggerSans-MediumItalic.ttf"),
+  });
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
@@ -67,6 +75,7 @@ export default function useCachedResources() {
 
         //console.log(user);
         //console.log(token);
+
         if (user != null && token != null) {
           if (user.prize !== null && user.prize.exchanged === false) {
             const currentPrizeState = user.prize;
@@ -109,11 +118,15 @@ export default function useCachedResources() {
         // Load fonts
         // api calls
         // etc, etc ...
-
-        await Font.loadAsync({
-          ...Ionicons.font,
+        console.log("async loading");
+        /*  await Font.loadAsync({
+          //...Ionicons.font,
           "space-mono": require("../assets/fonts/SpaceMono-Regular.ttf"),
-        });
+          "bs-medium": require("../assets/fonts/BloggerSans-Medium.ttf"),
+          "bs-bold": require("../assets/fonts/BloggerSans-Bold.ttf"),
+          "bs-italic": require("../assets/fonts/BloggerSans-MediumItalic.ttf"),
+          //"bs-light": require("../assets/fonts/BloggerSans-Light.otf"),
+        }); */
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
@@ -126,7 +139,7 @@ export default function useCachedResources() {
     loadResourcesAndDataAsync();
   }, []);
 
-  if (!assets) {
+  if (!assets || !loaded) {
     return false;
   }
   return isLoadingComplete;

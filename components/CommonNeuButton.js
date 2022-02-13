@@ -4,11 +4,17 @@ import { Image } from "react-native";
 import { Text } from "react-native";
 import { NeuButton } from "react-native-neu-element";
 
-const CommonNeuButton = ({ text, screenWidth, onPress }) => {
+const CommonNeuButton = ({
+  text,
+  screenWidth,
+  onPress,
+  color = "#701c57",
+  width = (4 / 5) * screenWidth,
+}) => {
   return (
     <NeuButton
-      color="#701c57"
-      width={(4 / 5) * screenWidth}
+      color={color}
+      width={width}
       height={screenWidth / 7.5}
       borderRadius={screenWidth / 7.5}
       onPress={onPress}
@@ -16,10 +22,11 @@ const CommonNeuButton = ({ text, screenWidth, onPress }) => {
     >
       <Text
         style={{
-          color: "#fff800", //"#01f9d2",
-          fontWeight: "bold",
+          color: "#fffc00", //"#01f9d2",
+          //fontWeight: "bold",
           fontSize: 20,
           textTransform: "uppercase",
+          fontFamily: "bs-bold",
         }}
       >
         {text}

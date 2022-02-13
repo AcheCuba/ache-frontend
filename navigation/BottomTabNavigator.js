@@ -38,6 +38,12 @@ import TabButtonNeo from "./TabButtonNeo";
 import { GlobalContext } from "../context/GlobalProvider";
 import { setIdioma } from "../context/Actions/actions";
 import { storeData } from "../libs/asyncStorage.lib";
+import { View } from "react-native";
+import { NeuButton } from "react-native-neu-element";
+import { Text } from "react-native";
+import { Image } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import PremioDescription from "../screens/More/PremioDescription";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -59,44 +65,126 @@ export default function BottomTabNavigator({ navigation, route }) {
   const { userState, userDispatch } = React.useContext(GlobalContext);
   const idioma_definido = userState?.idioma;
 
+  function MyTabBar({ state, descriptors, navigation }) {
+    return (
+      <View style={{ flexDirection: "row" }}>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+              ? options.title
+              : route.name;
+
+          const isFocused = state.index === index;
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              // The `merge: true` option makes sure that the params inside the tab screen are preserved
+              navigation.navigate({ name: route.name, merge: true });
+            }
+          };
+
+          const onLongPress = () => {
+            navigation.emit({
+              type: "tabLongPress",
+              target: route.key,
+            });
+          };
+
+          return (
+            <NeuButton
+              color="#701c57"
+              width={60}
+              height={60}
+              borderRadius={30}
+              style={{ position: "absolute" }}
+            >
+              <Text style={{ color: isFocused ? "#673ab7" : "#222" }}>
+                {label}
+              </Text>
+            </NeuButton>
+          );
+        })}
+      </View>
+    );
+  }
+
   //Ej: activeTintColor: Colors[colorScheme].tint => dice a la app qué esquema de coloresusar según la conf del usuario
 
   return (
     <BottomTab.Navigator
+      //tabBar={(props) => <MyTabBar {...props} />}
       initialRouteName="Juego"
       tabBarOptions={{
         //activeTintColor: Colors.light.tint,
         activeTintColor: "rgb(255, 248, 0)",
         inactiveTintColor: "rgba(255,255,255,0.3)",
         keyboardHidesTabBar: true,
-        labelStyle: { fontSize: 12, marginBottom: 15, marginTop: -10 },
+        //labelStyle: { fontSize: 12, marginBottom: 15, marginTop: -10 },
+        labelStyle: {
+          fontSize: 12,
+          position: "absolute",
+          bottom: 0,
+          marginBottom: -23,
+          flex: 1,
+          width: 70,
+        },
+
+        indicatorStyle: {
+          backgroundColor: "transparent",
+        },
         style: {
           justifyContent: "center",
-          height: 110,
-          // paddingTop: 3,
+          alignItems: "center",
+          height: 100,
+          //paddingTop: 3,
           allowFontScaling: true,
           backgroundColor: "rgba(112, 28, 87, 1)",
-          color: "yellow",
           borderTopWidth: 0,
           // zIndex: 10,
-          /*  paddingHorizontal: 20,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30, */
-          paddingBottom: 2,
-          borderTopWidth: Platform.OS === "android" ? 1 : 0,
-          borderTopColor:
-            Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
-          shadowColor: Platform.OS === "android" ? "#000" : "#1f0918",
-          shadowOffset: { width: -3, height: -3 },
-          shadowOpacity: 0.4,
-          shadowRadius: 5,
-          elevation: Platform.OS === "android" ? 30 : null,
+          paddingHorizontal: 20,
+          borderTopLeftRadius: 35,
+          borderTopRightRadius: 35,
+          paddingBottom: 1,
+          //borderTopColor:
+          //  Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
+          shadowColor: Platform.OS === "android" ? null : "#1f0918",
+          shadowOffset:
+            Platform.OS === "android" ? null : { width: -6, height: -6 },
+          shadowOpacity: Platform.OS === "android" ? null : 0.6,
+          shadowRadius: Platform.OS === "android" ? null : 7,
+          elevation: Platform.OS === "android" ? 200 : null,
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
         },
-        tabStyle: {
-          backgroundColor: "rgba(112, 28, 87, 1)",
+        /* tabBarStyle: {
+          
+        }, */
+      }}
+      screenOptions={{
+        /*  tabBarBackground: () => (
+          <Image
+            source={require("../assets/images/bg_nav.png")}
+            style={{ height: 220, width: 220 }}
+          />
+        ), */
+        //tabBarVisible: isTabBarVisible(route),
+
+        tabBarStyle: {
+          //position: "absolute",
+          //backgroundColor: "#000", //rgba(112, 28, 87, 1)",
         },
       }}
-      // screenOptions={({ route }) => ({ tabBarVisible: isTabBarVisible(route) })}
     >
       <BottomTab.Screen
         name="Juego"
@@ -106,6 +194,27 @@ export default function BottomTabNavigator({ navigation, route }) {
             <TabBarIcon name="game-controller" color={color} />
           ), */
           tabBarIcon: () => <TabButtonNeo iconName="Ruleta" />,
+          tabBarButton: (props) => {
+            return (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 15,
+                  flex: 1,
+                }}
+              >
+                <NeuButton
+                  {...props}
+                  width={50}
+                  height={50}
+                  color="#701c57"
+                  borderRadius={25}
+                />
+              </View>
+            );
+          },
+
           tabBarLabel: idioma_definido === "spa" ? "JUEGA" : "PLAY",
           tabBarVisible: ((route) => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? "Juego"; // trampilla
@@ -125,7 +234,26 @@ export default function BottomTabNavigator({ navigation, route }) {
         component={NuevaRecargaNavigator}
         options={{
           tabBarIcon: () => <TabButtonNeo iconName="Recarga" />,
-
+          tabBarButton: (props) => {
+            return (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 15,
+                  flex: 1,
+                }}
+              >
+                <NeuButton
+                  {...props}
+                  width={50}
+                  height={50}
+                  color="#701c57"
+                  borderRadius={25}
+                />
+              </View>
+            );
+          },
           tabBarLabel: idioma_definido === "spa" ? "RECARGA" : "RECHARGE",
           tabBarVisible: ((route) => {
             /* const routeName =
@@ -138,10 +266,15 @@ export default function BottomTabNavigator({ navigation, route }) {
             }
             switch (routeName) {
               case "MultiplesContactosScreen":
-                return false;
+              //return false;
               case "RecargasDisponiblesScreen":
-                return false;
+              //return false;
               case "PrePagoScreen":
+              //return false;
+              case "PagoScreen":
+              case "PagoCompletadoScreen":
+              case "PagoErrorScreen":
+              case "PremioDescription":
                 return false;
               default:
                 return true;
@@ -154,8 +287,46 @@ export default function BottomTabNavigator({ navigation, route }) {
         component={MoreNavigator}
         options={{
           tabBarIcon: () => <TabButtonNeo iconName="Settings" />,
-
+          tabBarButton: (props) => {
+            return (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 15,
+                  flex: 1,
+                }}
+              >
+                <NeuButton
+                  {...props}
+                  width={50}
+                  height={50}
+                  color="#701c57"
+                  borderRadius={25}
+                />
+              </View>
+            );
+          },
           tabBarLabel: idioma_definido === "spa" ? "MÁS" : "MORE",
+          tabBarVisible: ((route) => {
+            /* const routeName =
+              getFocusedRouteNameFromRoute(route) ?? "MultiplesContactosScreen"; */
+            let routeName;
+
+            const myRoutes = state?.routes[0]?.state?.routes[2].state?.routes;
+            if (myRoutes) {
+              routeName = myRoutes[myRoutes.length - 1]?.name;
+            }
+
+            //console.log("new", state?.routes[0]?.state.routes[2].state?.routes);
+
+            switch (routeName) {
+              case "PremioDescription":
+                return false;
+              default:
+                return true;
+            }
+          })(route),
         }}
       />
       <BottomTab.Screen
@@ -198,6 +369,26 @@ export default function BottomTabNavigator({ navigation, route }) {
           ), */
           tabBarIcon: () => <TabButtonNeo iconName="Idioma" />,
           tabBarLabel: idioma_definido === "spa" ? "IDIOMA" : "LANGUAGE",
+          tabBarButton: (props) => {
+            return (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 15,
+                  flex: 1,
+                }}
+              >
+                <NeuButton
+                  {...props}
+                  width={50}
+                  height={50}
+                  color="#701c57"
+                  borderRadius={25}
+                />
+              </View>
+            );
+          },
           //tabBarLabel: spa ? "INGLÉS" : "SPANISH",
         }}
       />
@@ -405,6 +596,17 @@ function MoreNavigator({ navigation, route }) {
           headerShown: false,
 
           headerTitle: "Premios del Mes",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <MoreStack.Screen
+        name="PremioDescription"
+        component={PremioDescription}
+        options={{
+          headerShown: false,
+
+          headerTitle: "",
           gestureDirection: "horizontal",
           cardStyleInterpolator: forHorizontal,
         }}

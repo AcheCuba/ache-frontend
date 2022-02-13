@@ -19,6 +19,9 @@ import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Keyboard } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { ImageBackground } from "react-native";
+import { TextItalic, TextMedium } from "../components/CommonText";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -41,6 +44,8 @@ const SignupScreenUptd = ({ navigation }) => {
       }),
     [navigation]
   );
+
+  //React.useEffect(() => console.log(loading));
 
   const onChangeName = (nameValue) => {
     // required
@@ -183,7 +188,16 @@ const SignupScreenUptd = ({ navigation }) => {
   }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
+      <ImageBackground
+        source={require("../assets/images/degradado_general.png")}
+        style={{
+          width: "100%",
+          height: "100%",
+          flex: 1,
+          justifyContent: "center",
+        }}
+        transition={false}
+      >
         <View
           style={{
             paddingTop: 50,
@@ -206,7 +220,6 @@ const SignupScreenUptd = ({ navigation }) => {
             }}
           />
         </View>
-
         <View style={{ alignItems: "center" }}>
           {/*           <Ionicons name="person-sharp" size={130} color="#ddd" />
            */}
@@ -217,6 +230,7 @@ const SignupScreenUptd = ({ navigation }) => {
         </View>
         <KeyboardAwareScrollView
           extraScrollHeight={Platform.OS === "ios" ? -30 : 0}
+          //behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <View
             style={{
@@ -232,7 +246,8 @@ const SignupScreenUptd = ({ navigation }) => {
                   textStyle={{
                     color: "#fff",
                     fontWeight: "bold",
-                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                    fontFamily: "bs-italic",
+                    fontSize: 18,
                   }}
                   placeholder="Name"
                   width={(4 / 5) * width}
@@ -245,15 +260,14 @@ const SignupScreenUptd = ({ navigation }) => {
                 />
               </View>
               {nameError !== "" ? (
-                <Text
+                <TextItalic
                   style={{
                     color: "#ddd",
                     fontSize: 16,
-                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                    marginLeft: 12,
                   }}
-                >
-                  {nameError}
-                </Text>
+                  text={nameError}
+                />
               ) : null}
             </View>
             <View style={{ marginTop: 30 }}>
@@ -262,7 +276,8 @@ const SignupScreenUptd = ({ navigation }) => {
                   textStyle={{
                     color: "#fff",
                     fontWeight: "bold",
-                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                    fontFamily: "bs-italic",
+                    fontSize: 18,
                   }}
                   placeholder="Email"
                   width={(4 / 5) * width}
@@ -278,15 +293,14 @@ const SignupScreenUptd = ({ navigation }) => {
               </View>
 
               {emailError !== "" ? (
-                <Text
+                <TextItalic
                   style={{
                     color: "#ddd",
                     fontSize: 16,
-                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                    marginLeft: 12,
                   }}
-                >
-                  {emailError}
-                </Text>
+                  text={emailError}
+                />
               ) : null}
             </View>
             <View style={{ marginTop: 30 }}>
@@ -295,7 +309,8 @@ const SignupScreenUptd = ({ navigation }) => {
                   textStyle={{
                     color: "#fff",
                     fontWeight: "bold",
-                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                    fontFamily: "bs-italic",
+                    fontSize: 18,
                   }}
                   placeholder="Phone"
                   width={(4 / 5) * width}
@@ -310,35 +325,35 @@ const SignupScreenUptd = ({ navigation }) => {
               </View>
 
               {phoneError !== "" ? (
-                <Text
+                <TextItalic
                   style={{
                     color: "#ddd",
                     fontSize: 16,
-                    fontFamily: Platform.OS === "android" ? "monospace" : null,
+                    marginLeft: 12,
+                    marginTop: 5,
                   }}
-                >
-                  {phoneError}
-                </Text>
+                  text={phoneError}
+                />
               ) : null}
             </View>
           </View>
         </KeyboardAwareScrollView>
-
         <View
           style={{
             zIndex: 0,
             flex: 1,
             alignItems: "center",
-            marginTop: -120,
+            //marginTop: -120,
           }}
         >
           <NeuButton
-            color="#701c57"
+            color="#521e4c"
             width={(4 / 5) * width}
             height={width / 7.5}
             borderRadius={width / 7.5}
             onPress={() => onSubmit()}
             style={{}}
+            active={loading}
           >
             {loading ? (
               <ActivityIndicator size="large" color="#01f9d2" />
@@ -356,7 +371,7 @@ const SignupScreenUptd = ({ navigation }) => {
             )}
           </NeuButton>
         </View>
-      </View>
+      </ImageBackground>
     </TouchableWithoutFeedback>
   );
 };
