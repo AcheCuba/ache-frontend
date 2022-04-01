@@ -1,22 +1,38 @@
-import axios from "axios";
 import React from "react";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
-import { Text, View, Dimensions } from "react-native";
+import { View, Dimensions } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold } from "../../components/CommonText";
-import { BASE_URL } from "../../constants/domain";
+import {
+  ResultadoPagoTextEnglish,
+  ResultadoPagoTextSpanish,
+} from "../../constants/Texts";
 import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width } = Dimensions.get("screen");
 
-const PagoErrorScreen = ({ navigation, route }) => {
-  //const { userState, nuevaRecargaState } = React.useContext(GlobalContext);
+const PagoErrorScreen = ({ navigation }) => {
+  const { userState, nuevaRecargaState } = React.useContext(GlobalContext);
   //const { premiosConfirmadosSocket } = nuevaRecargaState;
 
   //const { paymentIntentId, amount } = route.params;
   //const paymentIntentId = "pi_1234";
   //const amount = 250;
+
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = ResultadoPagoTextSpanish();
+    const textEng = ResultadoPagoTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
 
   return (
     <ImageBackground
@@ -61,21 +77,24 @@ const PagoErrorScreen = ({ navigation, route }) => {
             marginTop: 60,
           }}
         >
-          <TextBold
-            text="¡Recarga Fallida!"
-            style={{
-              fontSize: 24,
-              fontWeight: "bold",
-              color: "#01f9d2",
-              textTransform: "uppercase",
-            }}
-          />
+          <View style={{ width: "80%" }}>
+            <TextBold
+              text={ResolveText("errorEnPago")}
+              style={{
+                fontSize: 22,
+                fontWeight: "bold",
+                color: "#01f9d2",
+                textAlign: "center",
+                //textTransform: "uppercase",
+              }}
+            />
+          </View>
         </View>
 
         <View style={{ width: "100%", alignItems: "center" }}>
           <View style={{ marginTop: 50 }}>
             <CommonNeuButton
-              text="Reintentar"
+              text={ResolveText("reintentar")}
               onPress={() => {
                 navigation.navigate("Juego");
               }}

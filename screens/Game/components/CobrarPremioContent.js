@@ -16,16 +16,20 @@ import Toast from "react-native-root-toast";
 import { getData, removeItem, storeData } from "../../../libs/asyncStorage.lib";
 import { cancelNotification } from "../../../libs/expoPushNotification.lib";
 import { TextBold, TextItalic } from "../../../components/CommonText";
+import {
+  CobrarPremioTextEngish,
+  CobrarPremioTextSpanish,
+} from "../../../constants/Texts";
 
 const { width, height } = Dimensions.get("screen");
 
 const CobrarPremioContent = ({
   navigation,
   setModalVisible,
-  setCodigo,
   Salir,
   codigoGenerado,
   setCodigoGenerado, // equivale a codigo copiado
+  horasRestantes,
 }) => {
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
@@ -45,7 +49,7 @@ const CobrarPremioContent = ({
   }, []);
 
   React.useEffect(() => {
-    console.log("codigo generado", codigoGenerado);
+    //console.log("codigo generado", codigoGenerado);
     //console.log(currentPrize?.type);
   }, [codigoGenerado]);
 
@@ -86,17 +90,17 @@ const CobrarPremioContent = ({
     //console.log(url);
 
     // ====== fake para probar
-    /*  userDispatch(setPrizeForUser(null));
+    /*   userDispatch(setPrizeForUser(null));
 
     setTimeout(() => {
-      setCodigo("prizeCode fake");
+      //setCodigo("prizeCode fake");
       setCodigoGenerado(true);
-      copiarCodeYsalir("prizeCode fake");
+      copiarCode("prizeCode fake");
       setLoading(false);
     }, 3000); */
-    // ===== fake
+    // ===== fake para probar
 
-    //====================== comentado para trastear
+    //====================== comentar para trastear ============
 
     let config = {
       method: "post",
@@ -124,23 +128,21 @@ const CobrarPremioContent = ({
           cleanNotification();
 
           // actualizar estado local
-          setCodigo(prizeCode);
+          //setCodigo(prizeCode);
           copiarCode(prizeCode);
           setLoading(false);
         } else {
           // do something
-          console.log(response.status);
+          //console.log(response.status);
           setLoading(false);
         }
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
         setLoading(false);
       });
-  }; /* else {
-      setCodigo("aj3d44Pk5Md***kd213");
-      setCodigoGenerado(true);
-    } */
+    //====================== comentar para trastear ============
+  };
 
   const cleanNotification = async () => {
     const notId = await getData("notification-prize-expire");
@@ -172,6 +174,88 @@ const CobrarPremioContent = ({
       screen: "NuevaRecargaScreen",
       params: { inOrderToCobrarPremio: true },
     });
+  };
+
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = CobrarPremioTextSpanish();
+    const textEng = CobrarPremioTextEngish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
+
+  const RenderPrizeTItleAndDesc = () => {
+    const idioma = userState?.idioma;
+
+    let title;
+    let desc;
+
+    switch (prizeType) {
+      case "Jackpot":
+        if (idioma === "spa") {
+          title = "Joyita";
+          desc = `Tienes 500 dólares por cobrar durante las próximas ${horasRestantes} horas. Revisa tu email.`;
+        } else if (idioma === "eng") {
+          title = "Joyita";
+          desc = `Tienes 500 dólares por cobrar durante las próximas ${horasRestantes} horas. Revisa tu email.`;
+        }
+        break;
+      case "TopUpBonus":
+        if (prizeAmount === 250) {
+          if (idioma === "spa") {
+            title = "Media Bolsa";
+            desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
+          } else if (idioma === "eng") {
+            title = "Media Bolsa";
+            desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
+          }
+          break;
+        }
+
+        if (prizeAmount === 500) {
+          if (idioma === "spa") {
+            title = "bolsa llena";
+            desc = `Tienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas`;
+          } else if (idioma === "eng") {
+            title = "bolsa llena";
+            desc = `ienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
+          }
+        }
+
+      default:
+        break;
+    }
+
+    return (
+      <>
+        <TextBold
+          style={{
+            color: "#01f9d2",
+            fontWeight: "bold",
+            fontSize: 20,
+            textTransform: "uppercase",
+          }}
+          text={title}
+        />
+
+        <TextItalic
+          style={{
+            color: "#01f9d2",
+            fontStyle: "italic",
+            fontSize: 18,
+            marginTop: 10,
+            textAlign: "center",
+          }}
+          text={desc}
+        />
+      </>
+    );
   };
 
   const RenderPrizeImage = () => {
@@ -227,26 +311,6 @@ const CobrarPremioContent = ({
           marginTop: 150,
         }}
       >
-        {/*   {prizeType === "Jackpot" ? (
-          <Image
-            //source={require("../../../assets/images/home/premios/diamanteCopia.png")}
-            source={require("../../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")}
-            //resizeMode="center"
-            style={{
-              width: width / 4,
-              height: width / 4,
-            }}
-          />
-        ) : (
-          <Image
-            source={require("../../../assets/images/home/premios/capa102Copia.png")}
-            //resizeMode="center"
-            style={{
-              width: width / 5,
-              height: width / 4.5,
-            }}
-          />
-        )} */}
         <RenderPrizeImage />
       </View>
 
@@ -258,32 +322,13 @@ const CobrarPremioContent = ({
           width: width / 1.5,
         }}
       >
-        <TextBold
-          style={{
-            color: "#01f9d2",
-            fontWeight: "bold",
-            fontSize: 20,
-            textTransform: "uppercase",
-          }}
-          text="Nombre del Premio"
-        />
-
-        <TextItalic
-          style={{
-            color: "#01f9d2",
-            fontStyle: "italic",
-            fontSize: 18,
-            marginTop: 10,
-            textAlign: "center",
-          }}
-          text="Texto descriptivo del premio dos lineas de texto"
-        />
+        <RenderPrizeTItleAndDesc />
       </View>
 
-      <View style={{ marginTop: 30 }}>
+      <View style={{ marginTop: 30, alignItems: "center" }}>
         <View style={styles.button}>
           <NeuButton
-            color="#701c57"
+            color="#62194f"
             width={(4 / 5) * width}
             height={width / 7.5}
             borderRadius={width / 7.5}
@@ -296,7 +341,7 @@ const CobrarPremioContent = ({
             style={{ marginTop: 5 }}
           >
             <TextBold
-              text="OBTENER PREMIO"
+              text={ResolveText("obtenerPremio")}
               style={{
                 color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
                 fontSize: 20,
@@ -308,7 +353,7 @@ const CobrarPremioContent = ({
         <View style={styles.button}>
           {!loading ? (
             <NeuButton
-              color="#701c57"
+              color="#5e174d"
               width={(4 / 5) * width}
               height={width / 7.5}
               borderRadius={width / 7.5}
@@ -320,7 +365,7 @@ const CobrarPremioContent = ({
               style={{ marginTop: 5 }}
             >
               <TextBold
-                text="Copiar código"
+                text={ResolveText("copiarCodigo")}
                 style={{
                   color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
                   fontWeight: "bold",
@@ -331,7 +376,7 @@ const CobrarPremioContent = ({
             </NeuButton>
           ) : (
             <NeuButton
-              color="#701c57"
+              color="#5e174d"
               width={(4 / 5) * width}
               height={width / 7.5}
               borderRadius={width / 7.5}
@@ -343,7 +388,7 @@ const CobrarPremioContent = ({
             </NeuButton>
           )}
 
-          <View style={{ height: 30 }}>
+          <View style={{ height: 100, width: width / 1.3 }}>
             {codigoGenerado ? (
               <TextItalic
                 style={{
@@ -353,23 +398,23 @@ const CobrarPremioContent = ({
                   marginTop: 10,
                   textAlign: "center",
                 }}
-                text="Código copiado al portapapeles"
+                text={ResolveText("compartirCodigo")}
               />
             ) : null}
           </View>
 
           <NeuButton
-            color="#4f1b47"
+            color="#541348"
             width={(4 / 5) * width}
             height={width / 7.5}
             borderRadius={width / 7.5}
             onPress={() => {
               loading ? null : Salir();
             }}
-            style={{ marginTop: 60 }}
+            style={{ marginTop: 30 }}
           >
             <TextBold
-              text="Cancelar"
+              text={ResolveText("cancelar")}
               style={{
                 color: "#fff800", //"#01f9d2",
                 fontWeight: "bold",

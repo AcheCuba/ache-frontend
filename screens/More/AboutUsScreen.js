@@ -4,15 +4,35 @@ import { ImageBackground } from "react-native";
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
+import { TextBold, TextItalic } from "../../components/CommonText";
+import {
+  MoreNosotrosTextEnglish,
+  MoreNosotrosTextSpanish,
+} from "../../constants/Texts";
+import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const AboutUsScreen = ({ navigation }) => {
+  const { userState } = React.useContext(GlobalContext);
+
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = MoreNosotrosTextSpanish();
+    const textEng = MoreNosotrosTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
+
   /* React.useEffect(() => {
     const unsubs = navigation.addListener("beforeRemove", (e) => {
-      console.log("yep");
-      //console.log(navigation);
       e.preventDefault();
     });
     return unsubs;
@@ -38,7 +58,65 @@ const AboutUsScreen = ({ navigation }) => {
         <View style={styles.container}>
           <View style={{ flex: 1, marginVertical: 10, marginHorizontal: 20 }}>
             <ScrollView>
-              <Text style={styles.title}>
+              <View style={{ marginBottom: 20 }}>
+                <TextBold
+                  style={{
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                    color: "#eee",
+                    marginBottom: 5,
+                  }}
+                  text={ResolveText("quienesSomosTitle")}
+                />
+                <TextItalic
+                  style={{
+                    fontSize: 20,
+                    color: "#eee",
+                    textAlign: "left",
+                  }}
+                  text={ResolveText("quienesSomosBody")}
+                />
+              </View>
+              <View style={{ marginBottom: 20 }}>
+                <TextBold
+                  style={{
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                    color: "#eee",
+                    marginBottom: 5,
+                  }}
+                  text={ResolveText("queNosDistingueTitle")}
+                />
+                <TextItalic
+                  style={{
+                    fontSize: 20,
+                    color: "#eee",
+                    textAlign: "left",
+                  }}
+                  text={ResolveText("queNosDistingueBody")}
+                />
+              </View>
+              <View style={{ marginBottom: 20 }}>
+                <TextBold
+                  style={{
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                    color: "#eee",
+                    marginBottom: 5,
+                  }}
+                  text={ResolveText("acheTitle")}
+                />
+                <TextItalic
+                  style={{
+                    fontSize: 20,
+                    color: "#eee",
+                    textAlign: "left",
+                  }}
+                  text={ResolveText("acheBody")}
+                />
+              </View>
+
+              {/* <Text style={styles.title}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -51,8 +129,8 @@ const AboutUsScreen = ({ navigation }) => {
                 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
                 quae ab illo inventore veritatis et quasi architecto beatae
                 vitae dicta sunt explicabo.
-              </Text>
-              <View style={{ alignItems: "flex-end" }}>
+              </Text> */}
+              {/*  <View style={{ alignItems: "flex-end" }}>
                 <Text
                   style={{
                     color: "#fff800",
@@ -64,7 +142,7 @@ const AboutUsScreen = ({ navigation }) => {
                 >
                   ... Saber más
                 </Text>
-              </View>
+              </View> */}
             </ScrollView>
           </View>
         </View>

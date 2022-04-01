@@ -106,7 +106,7 @@ const PrePagoScreen = ({ navigation, route }) => {
           );
         })
         .catch((e) => {
-          console.log(e.message);
+          //console.log(e.message);
           Toast.show("Los premios no pudieron liberarse", {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
@@ -276,17 +276,6 @@ const PrePagoScreen = ({ navigation, route }) => {
           />
         </View>
 
-        {/*    <Text
-          style={{
-            fontFamily: Platform.OS === "android" ? "monospace" : null,
-            fontSize: 100,
-            fontWeight: "bold",
-            color: "#ddd",
-          }}
-        >
-          ${amount}
-        </Text> */}
-
         <View style={{ marginTop: 20 }}>
           <CommonNeuButton
             text="Pagar"
@@ -321,7 +310,7 @@ export default PrePagoScreen;
             height={height / 7}
             color="#701c57"
             borderRadius={10}
-            onPress={() => onPressCancelarPorError()}
+            onPress={() => navigation.navigate("PagoErrorScreen")}
           >
             <View style={{}}>
               <Text
@@ -344,7 +333,7 @@ export default PrePagoScreen;
             height={height / 7}
             color="#701c57"
             borderRadius={10}
-            onPress={() => onPressConfirmarPago()}
+            onPress={() => navigation.navigate("PagoCompletadoScreen")}
           >
             <View style={{}}>
               <Text

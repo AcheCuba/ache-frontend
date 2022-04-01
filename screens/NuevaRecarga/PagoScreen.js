@@ -1,7 +1,6 @@
 import React, { useContext, memo } from "react";
 import { StyleSheet, View, ActivityIndicator, Dimensions } from "react-native";
 import { WebView } from "react-native-webview";
-import Constants from "expo-constants";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
@@ -72,7 +71,7 @@ const PagoScreen = ({ navigation, route }) => {
   }, [premiosConfirmadosSocket, recargasConfirmadasSocket]);
 
   const refund = () => {
-    console.log("se inicia refund si es necesaria");
+    //console.log("se inicia refund si es necesaria");
     console.log("recargasConfirmadasSocket refound", recargasConfirmadasSocket);
 
     const user_token = userState.token;
@@ -84,7 +83,7 @@ const PagoScreen = ({ navigation, route }) => {
     for (let i = 0; i < recargasConfirmadasSocket.length; i++) {
       //const element = array[index];
       if (
-        recargasConfirmadasSocket[i].status === "DECLINED" &&
+        recargasConfirmadasSocket[i].status !== "COMPLETED" &&
         recargasConfirmadasSocket[i].isTopUpBonus === false
       ) {
         amount_refund = amount_refund + productPrice;
@@ -106,9 +105,11 @@ const PagoScreen = ({ navigation, route }) => {
 
     axios(config)
       .then((response) => {
-        console.log("refund", response.data);
+        //console.log("refund", response.data);
       })
-      .catch((e) => console.log("refund", e.message));
+      .catch((e) => {
+        //console.log("refund", e.message)
+      });
   };
 
   const createPaymentSession = async () => {
@@ -137,7 +138,7 @@ const PagoScreen = ({ navigation, route }) => {
     };
 
     //console.log(config);
-    console.log("Se ha iniciado el pago");
+    //console.log("Se ha iniciado el pago");
 
     axios(config)
       .then((response) => {
@@ -148,7 +149,9 @@ const PagoScreen = ({ navigation, route }) => {
         setUrl(initUrl + "payment?session=" + res.id);
         setLoading(false);
       })
-      .catch((e) => console.log(e.message));
+      .catch((e) => {
+        //console.log(e.message)
+      });
   };
 
   const cancelTransactionRequest = (transaction_id) => {
@@ -205,10 +208,10 @@ const PagoScreen = ({ navigation, route }) => {
     // finalizar checkout con true si fue aceotado, de lo contrario con false
     // actualmete se finaliza el checkout siempre con true
 
-    console.log(
+    /*   console.log(
       "premiosConfirmadosSocket finish checkout",
       premiosConfirmadosSocket
-    );
+    ); */
 
     /*  let primisesForFinish = [];
     const prizesInCheckout = contactosSeleccionados.map(
@@ -221,32 +224,18 @@ const PagoScreen = ({ navigation, route }) => {
 
     premiosConfirmadosSocket.forEach((prize) => {
       //primisesForFinish.push(prize_finish_checkout(prize.uuid, true));
-      if (prize.status !== "ACCEPTED") {
+      if (prize.status !== "COMPLETED") {
         promisesForFinish.push(prize_finish_checkout(prize.uuid, false));
-        console.log("finish checkout con false");
+        //console.log("finish checkout con false");
       } else {
         promisesForFinish.push(prize_finish_checkout(prize.uuid, true));
-        console.log("finish checkout con true");
+        //console.log("finish checkout con true");
       }
     });
 
     Promise.all(promisesForFinish)
       .then(() => {
-        Toast.show(
-          "Los premios están libres, y podrán cobrarse en otro momento",
-          {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          }
-        );
-      })
-      .catch((e) => {
-        console.log(e.message);
-        Toast.show("Error al finalizar checkout del premio", {
+        Toast.show("Los premios podrán cobrarse en otro momento", {
           duaration: Toast.durations.LONG,
           position: Toast.positions.BOTTOM,
           shadow: true,
@@ -254,6 +243,17 @@ const PagoScreen = ({ navigation, route }) => {
           hideOnPress: true,
           delay: 0,
         });
+      })
+      .catch((e) => {
+        console.log(e.message);
+        /* Toast.show("Error al finalizar checkout del premio", {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }); */
       });
   };
 
@@ -261,7 +261,7 @@ const PagoScreen = ({ navigation, route }) => {
     // eliminar o no
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
-    console.log("prize in app", prizeInApp);
+    //console.log("prize in app", prizeInApp);
     if (prizeInApp != null && prizeType != "Nada") {
       // hay premio en la app
 
@@ -276,11 +276,11 @@ const PagoScreen = ({ navigation, route }) => {
         return premio.uuid === prizeInApp.uuid;
       });
 
-      const isAccepted = currentPrizeSocket.status === "ACCEPTED";
+      const isCompleted = currentPrizeSocket.status === "COMPLETED";
 
-      console.log("isaccepted", isAccepted);
+      //console.log("isCompleted", isCompleted);
 
-      if (isAccepted) {
+      if (isCompleted) {
         // si esta es que esta aceptado: eliminar, viceversa
         storeData("user", {
           id: userState.id,
@@ -320,10 +320,12 @@ const PagoScreen = ({ navigation, route }) => {
       });
 
       Promise.all(confirmTransactionPromisesArray)
-        .then(() => console.log("Transaccion confirmada (Pago Screen)"))
-        .catch((err) =>
-          console.log("Error en confirm transaction:", err.message)
-        );
+        .then(() => {
+          //console.log("Transaccion confirmada (Pago Screen)")
+        })
+        .catch((err) => {
+          //console.log("Error en confirm transaction:", err.message)
+        });
 
       // setear premio a null SI LA RECARGA ES CON PREMIO
 
@@ -363,8 +365,12 @@ const PagoScreen = ({ navigation, route }) => {
       });
 
       Promise.all(cancelTransactionPromisesArray)
-        .then(() => console.log("ok cancelada"))
-        .catch((err) => console.log(err.message));
+        .then(() => {
+          //console.log("ok cancelada")
+        })
+        .catch((err) => {
+          //console.log(err.message)
+        });
 
       nuevaRecargaDispatch(resetNuevaRecargaState());
       // se pasa amount y payment intent id pa refound en caso de fallo

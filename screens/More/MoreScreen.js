@@ -49,7 +49,7 @@ const MoreScreen = ({ navigation }) => {
         </View>
         <View style={styles.buttons}>
           <CommonNeuButton
-            text="Premios del mes"
+            text="Premios"
             screenWidth={width}
             onPress={() => navigation.navigate("PremioScreen")}
           />

@@ -73,10 +73,14 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [fieldIdMatched, setFieldIdMatched] = React.useState("");
+  const [animacionPremioNoValido, setAnimacionPremioNoValido] = React.useState({
+    fieldId: undefined,
+    valid: true,
+  });
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("inOrder on focus", inOrderToCobrarPremio);
+      //console.log("inOrder on focus", inOrderToCobrarPremio);
 
       // cuando no hay ningun contacto agregado
       if (contactosSeleccionados.length === 0 && fields.length === 0) {
@@ -103,7 +107,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               nuevaRecargaDispatch(toggleValidateInProcess(false));
             })
             .catch((err) => {
-              console.log(err.message);
+              //console.log(err.message);
               nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
               nuevaRecargaDispatch(toggleValidateInProcess(false));
             });
@@ -118,7 +122,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             (prize) => prize.uuid === userState.prize.uuid
           );
 
-          console.log(prizeAlreadyExist);
+          //console.log(prizeAlreadyExist);
 
           // si existe, no hacer nada
           // si no existe, agregar
@@ -143,7 +147,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 })
                 .catch((err) => {
-                  console.log(err.message);
+                  //console.log(err.message);
                   nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 });
@@ -165,7 +169,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 })
                 .catch((err) => {
-                  console.log(err.message);
+                  //console.log(err.message);
                   deletePrizeByFieldId(fieldId);
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 });
@@ -189,7 +193,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
   React.useEffect(() => {
     const unsub = navigation.addListener("blur", () => {
-      //console.log("masdmasd");
       navigation.setParams({ inOrderToCobrarPremio: false });
       //console.log("prize", userState.prize);
     });
@@ -198,7 +201,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   }, [navigation]);
 
   const prize_init_checkout = (prize_id) => {
-    console.log("init checkout");
+    //console.log("init checkout");
     const user_token = userState.token;
     const url = `${BASE_URL}/prize/init-checkout/${prize_id}`;
 
@@ -214,7 +217,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
   const validate_prize = (prize_id) => {
     nuevaRecargaDispatch(toggleValidateInProcess(true));
-    console.log("init validate");
+    //console.log("init validate");
     const user_token = userState.token;
     const url = `${BASE_URL}/prize/validate/${prize_id}`;
 
@@ -266,14 +269,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           const currentPrize = response.data;
           const type = currentPrize.type;
 
-          // actualizar lista de premios validados
-          nuevaRecargaDispatch(
-            updatePrize(uuid, { fieldId, uuid, type, loading: false })
-          );
-          nuevaRecargaDispatch(toggleValidateInProcess(false));
-        })
-        .catch((error) => {
-          Toast.show("La cadena introducida no es válida", {
+          Toast.show(ResolveText("codigoValido"), {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
             shadow: true,
@@ -281,6 +277,28 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             hideOnPress: true,
             delay: 0,
           });
+          // actualizar lista de premios validados
+          nuevaRecargaDispatch(
+            updatePrize(uuid, { fieldId, uuid, type, loading: false })
+          );
+          nuevaRecargaDispatch(toggleValidateInProcess(false));
+        })
+        .catch((error) => {
+          Toast.show(ResolveText("codigoInvalido"), {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+          });
+          // activar/ desactivar despues de 1 seg: animacion de error
+          setAnimacionPremioNoValido({ fieldId, valid: false });
+
+          setTimeout(() => {
+            setAnimacionPremioNoValido({ fieldId: undefined, valid: true });
+          }, 1000);
+
           //eleminar el que se añadió y actualizar loading, no es válido
           nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
           nuevaRecargaDispatch(toggleValidateInProcess(false));
@@ -377,7 +395,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       } else {
         // open socket
         // guardar id
-        console.log("se ha llamado a open socket");
+        //console.log("se ha llamado a open socket");
         socketDispatch(openSocket());
 
         // init checkout de los premios validados
@@ -414,7 +432,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                 );
               });
               setLoadingContinuar(false);
-              console.log(BASE_URL);
+              //console.log(BASE_URL);
               navigation.navigate("RecargasDisponiblesScreen", {
                 esDirecta: false,
               });
@@ -525,11 +543,11 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                 <NuevoContactoInput
                   fieldInputId={field.fieldId}
                   navigation={navigation}
-                  iconName="barcode"
                   prizeByFieldId={filterCodes(field.fieldId)}
                   contactSelected={filterContactsByFieldId(field.fieldId)}
                   onPressBarcode={onPressBarcode}
                   isFirstInput={field.isFirstField}
+                  animacionPremioNoValido={animacionPremioNoValido}
                 />
               </View>
             ))}
@@ -547,7 +565,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       </ScrollView>
       <View style={[styles.button_continuar, { alignItems: "center" }]}>
         <NeuButton
-          color="#701c57"
+          color="#611951"
           width={(4 / 5) * width}
           height={width / 7.5}
           borderRadius={width / 7.5}

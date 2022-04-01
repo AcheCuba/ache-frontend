@@ -66,7 +66,7 @@ const OnBoardingScreen = ({ navigation }) => {
                 />
 
                 <TextBold
-                  text="Welcome"
+                  text="Bienvenida/o"
                   style={{
                     marginTop: 60,
                     fontSize: 40,
@@ -75,8 +75,7 @@ const OnBoardingScreen = ({ navigation }) => {
                   }}
                 />
                 <TextMedium
-                  text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua"
+                  text="¡Ya tienes ACHÉ! En breve podrás recargar y probar suerte jugando. Solo debes seguir los pasos. Gracias por ser miembro de nuestra comunidad."
                   style={{
                     marginTop: 20,
                     fontSize: 20,
@@ -104,36 +103,82 @@ const OnBoardingScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <TextMedium
-                text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore"
-                style={{
-                  //marginTop: 100,
-                  fontSize: 20,
-                  textAlign: "center",
-                  color: "#fffc00",
-                  position: "absolute",
-                  top: 80,
-                }}
-              />
+              <View
+                style={{ position: "absolute", top: 80, paddingHorizontal: 10 }}
+              >
+                <View
+                  style={{ flexDirection: "row", justifyContent: "center" }}
+                >
+                  <TextMedium
+                    text="¡Esta es nuestra "
+                    style={{
+                      //marginTop: 100,
+                      fontSize: 20,
+                      textAlign: "center",
+                      color: "#fffc00",
+                    }}
+                  />
+                  <TextBold
+                    text="Ruleta de la Fortuna!"
+                    style={{
+                      fontSize: 20,
+                      textAlign: "center",
+                      color: "#fffc00",
+                    }}
+                  />
+                </View>
+
+                <TextMedium
+                  text="Gana bonos, regálalos o agrégalos a tus recargas. Con buen ACHÉ te caerá"
+                  style={{
+                    //marginTop: 100,
+                    fontSize: 20,
+                    textAlign: "center",
+                    color: "#fffc00",
+                  }}
+                />
+                <TextMedium
+                  text="¡el súper premio!"
+                  style={{
+                    //marginTop: 100,
+                    fontSize: 20,
+                    textAlign: "center",
+                    color: "#fffc00",
+                  }}
+                />
+              </View>
+
               <View style={{ position: "absolute", left: 0, top: height / 6 }}>
                 <Image
-                  source={require("../assets/animaciones/media_ruleta.gif")}
+                  source={require("../assets/animaciones/media_ruleta_.gif")}
                   style={{ width: height / 2.4, height: height / 1.5 }}
                 />
               </View>
-              <TextMedium
-                text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore"
+              <View
                 style={{
                   marginTop: 100,
-                  fontSize: 20,
-                  textAlign: "center",
-                  color: "#fffc00",
                   position: "absolute",
                   bottom: 80,
+                  paddingHorizontal: 10,
                 }}
-              />
+              >
+                <TextMedium
+                  text="Gira la Ruleta y gana. Juega y comparte."
+                  style={{
+                    fontSize: 20,
+                    textAlign: "center",
+                    color: "#fffc00",
+                  }}
+                />
+                <TextMedium
+                  text="Con ACHÉ, tus recargas serán divertidas."
+                  style={{
+                    fontSize: 20,
+                    textAlign: "center",
+                    color: "#fffc00",
+                  }}
+                />
+              </View>
             </ImageBackground>
           ),
           title: "",
@@ -153,7 +198,7 @@ const OnBoardingScreen = ({ navigation }) => {
             >
               <View style={{ position: "absolute", left: 0, top: height / 6 }}>
                 <Image
-                  source={require("../assets/animaciones/media_ruleta.gif")}
+                  source={require("../assets/animaciones/media_ruleta_.gif")}
                   style={{ width: height / 2.4, height: height / 1.5 }}
                 />
               </View>
@@ -180,12 +225,28 @@ const OnBoardingScreen = ({ navigation }) => {
                     active={false}
                     onPress={() => {}}
                   >
-                    <Image
+                    {/* <Image
                       source={require("../assets/animaciones/TROFEO.gif")}
                       //resizeMode="center"
                       style={{
                         width: 95, //width / 3,
                         height: 115, //width / 3,
+                      }}
+                    /> */}
+                    {/*  <Image
+                      source={require("../assets/images/home/trofeo_lleno.png")}
+                      //resizeMode="center"
+                      style={{
+                        width: 60,
+                        height: 92,
+                      }}
+                    /> */}
+                    <Image
+                      source={require("../assets/animaciones/trofeo_lleno.gif")}
+                      //resizeMode="center"
+                      style={{
+                        width: 80, //width: 60,
+                        height: 115, //height: 92,
                       }}
                     />
                   </NeuButton>
@@ -197,20 +258,41 @@ const OnBoardingScreen = ({ navigation }) => {
                     alignItems: "center",
                   }}
                 >
-                  <TextMedium
-                    text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                    enim ad minim veniam"
-                    style={{
-                      //marginTop: 100,
-                      fontSize: 20,
-                      textAlign: "center",
-                      color: "#fffc00",
-                      paddingHorizontal: 40,
-                      //position: "absolute",
-                      //bottom: 80,
-                    }}
-                  />
+                  <View style={{ paddingHorizontal: 25 }}>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <TextMedium
+                        text="El "
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                        }}
+                      />
+                      <TextBold
+                        text="Trofeo"
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                        }}
+                      />
+                      <TextMedium
+                        text=" guarda tu ACHÉ."
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                        }}
+                      />
+                    </View>
+                    <TextMedium
+                      text="Cada premio que ganes lo encontrarás aquí. También podrás regalarlo como un código o añadirlo a una recarga directamente."
+                      style={{
+                        fontSize: 20,
+                        color: "#fffc00",
+                        textAlign: "center",
+                      }}
+                    />
+                  </View>
                 </View>
               </LinearGradient>
             </ImageBackground>
@@ -231,7 +313,7 @@ const OnBoardingScreen = ({ navigation }) => {
             >
               <View style={{ position: "absolute", left: 0, top: height / 6 }}>
                 <Image
-                  source={require("../assets/animaciones/media_ruleta.gif")}
+                  source={require("../assets/animaciones/media_ruleta_.gif")}
                   style={{ width: height / 2.4, height: height / 1.5 }}
                 />
               </View>
@@ -253,12 +335,20 @@ const OnBoardingScreen = ({ navigation }) => {
                   active={false}
                   onPress={() => {}}
                 >
-                  <Image
+                  {/*   <Image
                     source={require("../assets/animaciones/TROFEO.gif")}
                     //resizeMode="center"
                     style={{
                       width: 95, //width / 3,
                       height: 115, //width / 3,
+                    }}
+                  /> */}
+                  <Image
+                    source={require("../assets/images/home/trofeo_lleno.png")}
+                    //resizeMode="center"
+                    style={{
+                      width: 60,
+                      height: 92,
                     }}
                   />
                 </NeuButton>
@@ -286,12 +376,23 @@ const OnBoardingScreen = ({ navigation }) => {
                     active={false}
                     onPress={() => {}}
                   >
-                    <Image
-                      source={require("../assets/animaciones/moneda-recarga-rapida.gif")}
+                    {/* <Image
+                      //source={require("../assets/animaciones/moneda-recarga-rapida.gif")}
+                      source={require("../assets/images/home/recarga_directa.png")}
                       //resizeMode="center"
                       style={{
-                        width: 95, //width / 3,
-                        height: 115, //width / 3,
+                        width: 65,
+                        height: 67,
+
+                        //width: 95,
+                        //height: 115,
+                      }}
+                    /> */}
+                    <Image
+                      source={require("../assets/animaciones/moneda-recarga-rapida.gif")}
+                      style={{
+                        width: 90,
+                        height: 110,
                       }}
                     />
                   </NeuButton>
@@ -303,20 +404,41 @@ const OnBoardingScreen = ({ navigation }) => {
                     alignItems: "center",
                   }}
                 >
-                  <TextMedium
-                    text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                  enim ad minim veniam"
-                    style={{
-                      //marginTop: 100,
-                      fontSize: 20,
-                      textAlign: "center",
-                      color: "#fffc00",
-                      paddingHorizontal: 40,
-                      //position: "absolute",
-                      //bottom: 80,
-                    }}
-                  />
+                  <View style={{ paddingHorizontal: 25 }}>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <TextMedium
+                        text="La "
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                        }}
+                      />
+                      <TextBold
+                        text="Moneda"
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                        }}
+                      />
+                      <TextMedium
+                        text=" será tu ACHÉ rápido."
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                        }}
+                      />
+                    </View>
+                    <TextMedium
+                      text="Si tienes poco tiempo, aquí encontrarás la recarga instantánea. Podrás incluir varios contactos y decidir a quién envías el premio."
+                      style={{
+                        fontSize: 20,
+                        color: "#fffc00",
+                        textAlign: "center",
+                      }}
+                    />
+                  </View>
                 </View>
               </LinearGradient>
             </ImageBackground>

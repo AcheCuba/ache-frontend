@@ -4,11 +4,32 @@ import { ImageBackground } from "react-native";
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
+import { TextBold, TextItalic } from "../../components/CommonText";
+import {
+  ModoDeUsoTextEnglish,
+  ModoDeUsoTextSpanish,
+} from "../../constants/Texts";
+import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const ModoUsoScreen = ({ navigation }) => {
+  const { userState } = React.useContext(GlobalContext);
+
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = ModoDeUsoTextSpanish();
+    const textEng = ModoDeUsoTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
   return (
     <ImageBackground
       source={require("../../assets/images/degradado_general.png")}
@@ -35,20 +56,82 @@ const ModoUsoScreen = ({ navigation }) => {
         <View style={styles.container}>
           <View style={{ flex: 1, marginVertical: 10, marginHorizontal: 20 }}>
             <ScrollView>
-              <Text style={styles.title}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-                {"\n"} {"\n"}
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo.
-              </Text>
+              <View style={{ marginBottom: 20 }}>
+                <TextBold
+                  style={{
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                    color: "#eee",
+                    marginBottom: 5,
+                  }}
+                  text={ResolveText("juega")}
+                />
+                <TextItalic
+                  style={{
+                    fontSize: 20,
+                    color: "#eee",
+                    textAlign: "left",
+                  }}
+                  text={ResolveText("juegaDesc")}
+                />
+              </View>
+              <View style={{ marginBottom: 20 }}>
+                <TextBold
+                  style={{
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                    color: "#eee",
+                    marginBottom: 5,
+                  }}
+                  text={ResolveText("recarga")}
+                />
+                <TextItalic
+                  style={{
+                    fontSize: 20,
+                    color: "#eee",
+                    textAlign: "left",
+                  }}
+                  text={ResolveText("recargaDesc")}
+                />
+              </View>
+              <View style={{ marginBottom: 20 }}>
+                <TextBold
+                  style={{
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                    color: "#eee",
+                    marginBottom: 5,
+                  }}
+                  text={ResolveText("premios")}
+                />
+                <TextItalic
+                  style={{
+                    fontSize: 20,
+                    color: "#eee",
+                    textAlign: "left",
+                  }}
+                  text={ResolveText("premiosDesc")}
+                />
+              </View>
+              <View style={{ marginBottom: 20 }}>
+                <TextBold
+                  style={{
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                    color: "#eee",
+                    marginBottom: 5,
+                  }}
+                  text={ResolveText("tiempo")}
+                />
+                <TextItalic
+                  style={{
+                    fontSize: 20,
+                    color: "#eee",
+                    textAlign: "left",
+                  }}
+                  text={ResolveText("tiempoDesc")}
+                />
+              </View>
             </ScrollView>
           </View>
         </View>

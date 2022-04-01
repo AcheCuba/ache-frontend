@@ -8,6 +8,7 @@ import {
   Image,
   Modal,
   Platform,
+  Easing,
 } from "react-native";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import {
@@ -20,6 +21,7 @@ import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import DeletePrizeModal from "./DeletePrizeModal";
+import Animated from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -29,19 +31,48 @@ const inputWidth = width / 2;
 const NuevoContactoInput = ({
   fieldInputId,
   navigation,
-  iconName,
   contactSelected,
   onPressBarcode,
   prizeByFieldId,
   isFirstInput,
+  animacionPremioNoValido,
 }) => {
   const [text, setText] = useState("");
   const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
   const { contactosSeleccionados, validated_prizes } = nuevaRecargaState;
   const { userState } = React.useContext(GlobalContext);
 
+  const shakeValue = React.useRef(new Animated.Value(0));
+
+  useEffect(() => {
+    //effect
+    //console.log(animacionPremioNoValido.valid);
+    //console.log(animacionPremioNoValido.fieldId);
+
+    if (fieldInputId === animacionPremioNoValido.fieldId) {
+      if (!animacionPremioNoValido.valid) {
+        //start animation
+        startShake();
+      }
+    }
+
+    return () => {
+      //cleanup
+    };
+  }, [animacionPremioNoValido]);
+
   const [deletePrizeModalVisible, setDeletePrizeModalVisible] =
     React.useState(false);
+
+  const startShake = () => {
+    shakeValue.current.setValue(0);
+    Animated.timing(shakeValue.current, {
+      toValue: 1,
+      duration: 200,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
+  };
 
   const onChangeText = (value) => {
     setText(value);
@@ -368,11 +399,19 @@ const NuevoContactoInput = ({
           </Pressable>
         )}
 
-        <View
+        <Animated.View
           style={{
             flexDirection: "row",
             justifyContent: "space-around",
             marginTop: -2,
+            transform: [
+              {
+                translateX: shakeValue.current.interpolate({
+                  inputRange: [0, 0.25, 0.5, 0.75, 1],
+                  outputRange: [10, 20, 10, 20, 10],
+                }),
+              },
+            ],
           }}
         >
           <NeuButton
@@ -385,10 +424,20 @@ const NuevoContactoInput = ({
           >
             <Figure />
           </NeuButton>
-        </View>
+        </Animated.View>
       </View>
     </>
   );
 };
 
 export default NuevoContactoInput;
+
+/*
+<Animated.View style={{transform: [{
+    translateX: this.animatedValue.interpolate({
+        inputRange: [0, 0.25, 0.50, 0.75, 1],
+        outputRange: [10, 20, 10, 20, 10]
+     })
+  }]
+}}>
+*/

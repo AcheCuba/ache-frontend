@@ -6,15 +6,36 @@ import { ScrollView } from "react-native-gesture-handler";
 import { NeuButton, NeuView } from "react-native-neu-element";
 import CommonHeader from "../../components/CommonHeader";
 import { TextBold } from "../../components/CommonText";
+import {
+  PremioDescriptionTextEnglish,
+  PremioDescriptionTextSpanish,
+} from "../../constants/Texts";
+import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const PremioScreen = ({ navigation }) => {
+  const { userState } = React.useContext(GlobalContext);
+
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = PremioDescriptionTextSpanish();
+    const textEng = PremioDescriptionTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
+
   const PremioCard = ({ type, description }) => {
     let imagen;
     switch (type) {
-      case "Jackpot":
+      case "joyitas":
         imagen = (
           <Image
             source={require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")}
@@ -25,7 +46,7 @@ const PremioScreen = ({ navigation }) => {
           />
         );
         break;
-      case "Bonus 250":
+      case "mediaBolsa":
         imagen = (
           <Image
             source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
@@ -36,7 +57,7 @@ const PremioScreen = ({ navigation }) => {
           />
         );
         break;
-      case "Bonus 500":
+      case "bolsaLlena":
         imagen = (
           <Image
             source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
@@ -47,6 +68,13 @@ const PremioScreen = ({ navigation }) => {
           />
         );
         break;
+      case "calavera":
+        imagen = (
+          <Image
+            source={require("../../assets/images/home/premios_finales/calavera_roja.png")}
+            style={{ width: width / 5.8, height: width / 5.1 }}
+          />
+        );
 
       default:
         break;
@@ -65,7 +93,7 @@ const PremioScreen = ({ navigation }) => {
           borderRadius={10}
           onPress={() => {
             navigation.navigate("PremioDescription", {
-              type,
+              type: ResolveText(type),
               description,
             });
           }}
@@ -86,7 +114,7 @@ const PremioScreen = ({ navigation }) => {
               color: "#fff800",
               textAlign: "center",
             }}
-            text={type}
+            text={ResolveText(type)}
           />
         </NeuButton>
       </View>
@@ -130,7 +158,7 @@ const PremioScreen = ({ navigation }) => {
                   fontSize: 28,
                   color: "#fff800",
                 }}
-                text="premios del mes"
+                text={ResolveText("ruletaFortuna")}
               />
             </View>
 
@@ -138,18 +166,21 @@ const PremioScreen = ({ navigation }) => {
               contentContainerStyle={{ width: width, alignItems: "center" }}
             >
               <PremioCard
-                type="Jackpot"
-                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+                type="mediaBolsa"
+                description={ResolveText("mediaBolsaDesc")}
+              />
+              <PremioCard
+                type="bolsaLlena"
+                description={ResolveText("bolsaLlenaDesc")}
+              />
+              <PremioCard
+                type="joyitas"
+                description={ResolveText("joyitasDesc")}
               />
 
               <PremioCard
-                type="Bonus 250"
-                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
-              />
-
-              <PremioCard
-                type="Bonus 500"
-                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+                type="calavera"
+                description={ResolveText("calaveraDesc")}
               />
             </ScrollView>
           </View>

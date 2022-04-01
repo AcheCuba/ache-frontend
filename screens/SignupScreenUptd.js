@@ -21,7 +21,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Keyboard } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { ImageBackground } from "react-native";
-import { TextItalic, TextMedium } from "../components/CommonText";
+import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -83,7 +83,7 @@ const SignupScreenUptd = ({ navigation }) => {
       phone: phone.trim(),
     };
 
-    console.log(data);
+    //console.log(data);
 
     let requestOptions = {
       method: "post",
@@ -134,7 +134,7 @@ const SignupScreenUptd = ({ navigation }) => {
         setLoading(false);
       })
       .catch((error) => {
-        console.log("error", error);
+        //console.log("error", error);
         Toast.show(error.message, {
           duaration: Toast.durations.LONG,
           position: Toast.positions.BOTTOM,
@@ -157,7 +157,7 @@ const SignupScreenUptd = ({ navigation }) => {
       await AsyncStorage.setItem("user", jsonValue);
     } catch (e) {
       // saving error
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -207,7 +207,7 @@ const SignupScreenUptd = ({ navigation }) => {
             flexDirection: "row",
             //justifyContent: "space-between",
             justifyContent: "center",
-            marginBottom: 30,
+            //marginBottom: 30,
           }}
         >
           <Image
@@ -227,6 +227,26 @@ const SignupScreenUptd = ({ navigation }) => {
             source={require("../assets/images/emojis/emoji_wink.png")}
             style={{ width: 130, height: 130 }}
           />
+          <View
+            style={{ marginTop: 20, paddingBottom: 10, paddingHorizontal: 25 }}
+          >
+            <TextMedium
+              text="¡Casi listo!"
+              style={{
+                fontSize: 20,
+                color: "#fffc00",
+                textAlign: "center",
+              }}
+            />
+            <TextMedium
+              text="Regístrate para que puedas comenzar a recargar y pruebes tu ACHÉ."
+              style={{
+                fontSize: 20,
+                color: "#fffc00",
+                textAlign: "center",
+              }}
+            />
+          </View>
         </View>
         <KeyboardAwareScrollView
           extraScrollHeight={Platform.OS === "ios" ? -30 : 0}
@@ -236,12 +256,12 @@ const SignupScreenUptd = ({ navigation }) => {
             style={{
               flex: 2,
               alignItems: "center",
-              marginTop: 40,
+              marginTop: 30, //40
               paddingBottom: Platform.OS === "android" ? 50 : 0,
             }}
           >
-            <View style={{ marginTop: 30 }}>
-              <View style={{ marginBottom: 5 }}>
+            <View style={{ marginTop: 40 }}>
+              <View style={{ marginBottom: 0 }}>
                 <NeuInput
                   textStyle={{
                     color: "#fff",
@@ -268,10 +288,12 @@ const SignupScreenUptd = ({ navigation }) => {
                   }}
                   text={nameError}
                 />
-              ) : null}
+              ) : (
+                <View style={{ height: 16 }}></View>
+              )}
             </View>
-            <View style={{ marginTop: 30 }}>
-              <View style={{ marginBottom: 5 }}>
+            <View style={{ marginTop: 40 }}>
+              <View style={{ marginBottom: 0 }}>
                 <NeuInput
                   textStyle={{
                     color: "#fff",
@@ -301,9 +323,11 @@ const SignupScreenUptd = ({ navigation }) => {
                   }}
                   text={emailError}
                 />
-              ) : null}
+              ) : (
+                <View style={{ height: 16 }}></View>
+              )}
             </View>
-            <View style={{ marginTop: 30 }}>
+            <View style={{ marginTop: 40 }}>
               <View style={{}}>
                 <NeuInput
                   textStyle={{
@@ -343,11 +367,12 @@ const SignupScreenUptd = ({ navigation }) => {
             zIndex: 0,
             flex: 1,
             alignItems: "center",
+            marginTop: -20,
             //marginTop: -120,
           }}
         >
           <NeuButton
-            color="#521e4c"
+            color="#58184d"
             width={(4 / 5) * width}
             height={width / 7.5}
             borderRadius={width / 7.5}
@@ -358,16 +383,15 @@ const SignupScreenUptd = ({ navigation }) => {
             {loading ? (
               <ActivityIndicator size="large" color="#01f9d2" />
             ) : (
-              <Text
+              <TextBold
+                text="enviar"
                 style={{
                   color: "#fff800",
-                  fontWeight: "bold",
+                  //fontWeight: "bold",
                   fontSize: 20,
                   textTransform: "uppercase",
                 }}
-              >
-                enviar
-              </Text>
+              />
             )}
           </NeuButton>
         </View>

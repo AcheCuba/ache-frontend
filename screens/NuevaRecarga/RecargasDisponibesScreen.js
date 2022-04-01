@@ -106,7 +106,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           );
         })
         .catch((e) => {
-          console.log(e.message);
+          //console.log(e.message);
           Toast.show("Los premios no pudieron liberarse", {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
@@ -213,7 +213,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         setLoadingPromotions(false);
       })
       .catch((err) => {
-        console.log(err.message);
+        //console.log(err.message);
         setLoadingPromotions(false);
       });
   };
@@ -240,7 +240,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         setLoadingProducts(false);
       })
       .catch((err) => {
-        console.log(err.message);
+        //console.log(err.message);
         setLoadingProducts(false);
       });
   };
@@ -248,8 +248,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const create_transaction = (contacto, productId) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/create-transaction`;
-    console.log("socket id pasado al endpoint");
-    console.log(socketId);
+    //console.log("socket id pasado al endpoint");
+    //console.log(socketId);
     let config;
     if (contacto.prize != null) {
       config = {
@@ -304,8 +304,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       .then((response) => {
         response.forEach((transactions_array) => {
           const _transactions_array = transactions_array.data;
-          console.log("is array?", Array.isArray(_transactions_array));
-          console.log(_transactions_array.length);
+          //console.log("is array?", Array.isArray(_transactions_array));
+          //console.log(_transactions_array.length);
           //console.log(_transactions_array);
 
           //console.log(transaction.data);
@@ -320,7 +320,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
           // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
           _transactions_array.map((transaction) => {
-            console.log("transaction id", transaction.id);
+            //console.log("transaction id", transaction.id);
             transaction_id_array.push(transaction.id);
             transacciones_esperadas.push({
               mobile_number: transaction.credit_party_identifier.mobile_number,
@@ -330,10 +330,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         });
         setLoadingContinuar(false);
 
-        console.log(
+        /*  console.log(
           "esperadas en recargas disponibles screen",
           transacciones_esperadas
-        );
+        ); */
         socketDispatch(setTransaccionesEsperadas(transacciones_esperadas));
 
         navigation.navigate("PrePagoScreen", {
@@ -342,7 +342,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         });
       })
       .catch((err) => {
-        console.log(err.message);
+        //const err_data = err.response.data;
+        //console.log(err_data.message);
         setLoadingContinuar(false);
         Toast.show("No se pudo crear la transacción", {
           duaration: Toast.durations.LONG,
@@ -422,7 +423,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                       onPressProduct(product.id, product.price_usd);
                     }}
                     width={width / 1.3}
-                    height={height / 6}
+                    height={height / 5}
                     borderRadius={10}
                     color="#701c57"
                     style={{
@@ -441,6 +442,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         justifyContent: "space-around",
                         alignItems: "center",
                         width: width / 1.3,
+                        padding: 20,
                       }}
                     >
                       <View>

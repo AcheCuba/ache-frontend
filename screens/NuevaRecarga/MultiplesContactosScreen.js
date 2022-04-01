@@ -24,6 +24,7 @@ import Toast from "react-native-root-toast";
 
 import { OptimizedFlatList } from "react-native-optimized-flatlist";
 import { ScrollView } from "react-native-gesture-handler";
+import { Image } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -46,6 +47,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
   // si tiene premio
   // almacenar el premio del contacto actual y ponerselo al contacto seleccionado, en lugar de null
   useEffect(() => {
+    //console.log(contacts.length);
     const existente = contactosSeleccionados.find((contacto) => {
       return contacto.fieldInputId === fieldInputId;
     });
@@ -253,7 +255,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       setLoading(true);
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
-        //sconsole.log(Contacts.Fields);
+        //console.log(Contacts.Fields);
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.PhoneNumbers],
         });
@@ -310,26 +312,29 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         <NeuButton
           color="#701c57"
           width={width / 7}
-          height={width / 7}
-          borderRadius={width / 14}
+          height={width / 7 - 20}
+          borderRadius={5}
           onPress={() => {
             navigation.navigate("NuevaRecargaScreen");
           }}
           style={{ marginLeft: marginGlobal, marginTop: 10 }}
         >
-          <Ionicons name="chevron-back" size={30} color="#01f9d2" />
+          <Image
+            source={require("../../assets/images/iconos/atras.png")}
+            style={{ width: 15, height: 15 }}
+          />
         </NeuButton>
         <NeuButton
           color="#701c57"
           width={width / 7}
-          height={width / 7}
-          borderRadius={width / 14}
+          height={width / 7 - 20}
+          borderRadius={5}
           onPress={() => {
             onPressCheckmark();
           }}
           style={{ marginRight: marginGlobal, marginTop: 10 }}
         >
-          <Ionicons name="checkmark" size={30} color="#01f9d2" />
+          <Ionicons name="checkmark" size={30} color="rgb(255,251,00)" />
         </NeuButton>
       </View>
       <View

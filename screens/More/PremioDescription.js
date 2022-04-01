@@ -40,7 +40,7 @@ const PremioDescription = ({ navigation, route }) => {
               style={{
                 fontSize: 20,
                 color: "#01f9d2",
-                textAlign: "center",
+                textAlign: "left",
               }}
               text={description}
             />
@@ -50,6 +50,7 @@ const PremioDescription = ({ navigation, route }) => {
             style={{
               flexDirection: "row",
               justifyContent: "space-around",
+              //position: "absolute",
               marginTop: 50,
             }}
           >
@@ -57,7 +58,7 @@ const PremioDescription = ({ navigation, route }) => {
               text="Jugar"
               screenWidth={width}
               width={width / 3}
-              color="#612352"
+              color={type === "calavera" ? "#6b1b54" : "#611951"}
               onPress={() => {
                 navigation.navigate("Juego");
               }}
@@ -66,7 +67,7 @@ const PremioDescription = ({ navigation, route }) => {
               text="atrás"
               width={width / 3}
               screenWidth={width}
-              color="#612352"
+              color={type === "calavera" ? "#6b1b54" : "#611951"}
               onPress={() => {
                 navigation.navigate("PremioScreen");
               }}

@@ -62,7 +62,7 @@ export default function MainApp() {
     //console.log("transacciones_resultado", transacciones_resultado);
 
     async function schedulePushNotif() {
-      console.log("transacciones_resultado final", transacciones_resultado);
+      //console.log("transacciones_resultado final", transacciones_resultado);
       // crear arreglo de declinadas
       // cerrar socket
       socketDispatch(closeSocket());
@@ -98,15 +98,15 @@ export default function MainApp() {
         return transaction.isTopUpBonus === true;
       });
 
-      const clearRecargaConPremio = recargaConPremio.map((rec) => {
+      const recargaConPremio_clean = recargaConPremio.map((rec) => {
         return { uuid: rec.uuid, status: rec.status };
       });
 
-      /*  const clearRecargaConPremio = transacciones_resultado.map((rec) => {
+      /*  const recargaConPremio_clean = transacciones_resultado.map((rec) => {
         return { uuid: rec.uuid, status: rec.status };
       }); */
 
-      nuevaRecargaDispatch(setPremiosConfirmadosSocket(clearRecargaConPremio));
+      nuevaRecargaDispatch(setPremiosConfirmadosSocket(recargaConPremio_clean));
 
       /*   nuevaRecargaDispatch(
         setPremiosConfirmadosSocket(recargaConPremio)
@@ -117,8 +117,10 @@ export default function MainApp() {
 
       //================================================================
 
+      // ==== Enviar PUSH NOTIFICATION =====
+
       const declinadas = resultadoConNumeros.filter((elemento) => {
-        return elemento.status !== "ACCEPTED";
+        return elemento.status !== "COMPLETED";
       });
 
       if (declinadas.length !== 0) {
@@ -138,6 +140,10 @@ export default function MainApp() {
           1
         );
       }
+      // ==== Enviar PUSH NOTIFICATION =====
+
+      // reiniciar estado
+      socketDispatch(setTransaccionesResultado([]));
     }
 
     if (
@@ -165,7 +171,7 @@ export default function MainApp() {
       // cerrar socket
       socket.disconnect();
       setSocketCurrentlyOpen(false);
-      console.log("client disconnect");
+      //console.log("client disconnect");
     }
 
     socket.on("transaction-update", (msg) => {
@@ -177,7 +183,7 @@ export default function MainApp() {
 
       setTimeout(() => {
         socketDispatch(setTransaccionesResultado(transaction_result_arr));
-        transaction_result = [];
+        transaction_result = null;
       }, 5000);
     });
   }, [socketOpen]);
@@ -190,7 +196,7 @@ export default function MainApp() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        //console.log(response);
       });
 
     return () => {

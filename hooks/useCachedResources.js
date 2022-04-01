@@ -19,16 +19,15 @@ export default function useCachedResources() {
     require("../assets/images/home/bisel.png"),
     require("../assets/images/home/casillas2.png"),
     require("../assets/images/home/fondo.png"),
-    require("../assets/images/home/premios/capa102Copia.png"),
-    require("../assets/images/home/premios/diamanteCopia.png"),
-    require("../assets/images/home/premios/Nada2.png"),
+    require("../assets/images/home/centro.png"),
+    require("../assets/images/home/sombra.png"),
+    require("../assets/images/home/trofeo.png"),
+    require("../assets/images/home/trofeo_lleno.png"),
+    require("../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png"),
+    require("../assets/images/home/premios_finales/Monedas_250_CUP.png"),
+    require("../assets/images/home/premios_finales/Monedas_500_CUP.png"),
+    require("../assets/images/home/premios_finales/calavera_roja.png"),
     require("../assets/images/more/asset3.png"),
-    /*     require("../assets/images/nueva_recarga/diez.png"),
-    require("../assets/images/nueva_recarga/jackpot.png"),
-    require("../assets/images/nueva_recarga/Nada2.png"),
-    require("../assets/images/onboarding_test/circle.png"),
-    require("../assets/images/onboarding_test/square.png"),
-    require("../assets/images/onboarding_test/triangle.png"), */
   ]);
 
   const [loaded] = useFonts({
@@ -83,7 +82,7 @@ export default function useCachedResources() {
             const currentTime = moment();
             const prizeEndTime = moment(currentPrizeState.prizeEndTime);
             const minutos_restantes = prizeEndTime.diff(currentTime, "minutes");
-            console.log(minutos_restantes);
+            //console.log(minutos_restantes);
             if (minutos_restantes < 0) {
               // premio expirado
               storeData("user", {
@@ -118,7 +117,7 @@ export default function useCachedResources() {
         // Load fonts
         // api calls
         // etc, etc ...
-        console.log("async loading");
+        //console.log("async loading");
         /*  await Font.loadAsync({
           //...Ionicons.font,
           "space-mono": require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -129,7 +128,7 @@ export default function useCachedResources() {
         }); */
       } catch (e) {
         // We might want to provide this error information to an error reporting service
-        console.warn(e);
+        //console.warn(e);
       } finally {
         setLoadingComplete(true);
         SplashScreen.hideAsync();
