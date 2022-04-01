@@ -537,7 +537,7 @@ const GameScreen = ({ navigation }) => {
 
       // +++++++++++++++ fake para test
 
-      const fakePrize = { type: "TopUpBonus", amount: 250 };
+      /*     const fakePrize = { type: "TopUpBonus", amount: 250 };
 
       if (current_prize === null) {
         setCasilla(fakePrize);
@@ -570,11 +570,11 @@ const GameScreen = ({ navigation }) => {
           setHorasRestantes(horas_restantes);
           setPremioAcumulado(true);
         }, animationTime);
-      }
+      } */
 
       // ++++++++++++++++ fake para test
 
-      /*   if (current_prize === null) {
+      if (current_prize === null) {
         axios(config)
           .then((response) => {
             //console.log("data", response.data);
@@ -677,7 +677,7 @@ const GameScreen = ({ navigation }) => {
           setHorasRestantes(horas_restantes);
           setPremioAcumulado(true);
         }, animationTime);
-      } */
+      }
     }
   };
 
