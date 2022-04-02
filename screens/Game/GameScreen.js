@@ -1,8 +1,6 @@
 import * as React from "react";
 import {
-  Button,
   StyleSheet,
-  Text,
   View,
   Dimensions,
   ImageBackground,
@@ -11,14 +9,11 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import CobrarPremioModal from "./components/CobrarPremioModal";
 import { NeuButton } from "react-native-neu-element";
 import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import {
-  closeSocket,
-  openSocket,
   resetNuevaRecargaState,
   setPrizeForUser,
 } from "../../context/Actions/actions";
@@ -43,10 +38,8 @@ import CobrarPremioContent from "./components/CobrarPremioContent";
 import {
   GameScreenTextEnglish,
   GameScreenTextSpanish,
-  NuevaRecargaTextEnglish,
-  NuevaRecargaTextSpanish,
 } from "../../constants/Texts";
-import { TextBold, TextItalic, TextMedium } from "../../components/CommonText";
+import { TextBold, TextItalic } from "../../components/CommonText";
 import { LinearGradient } from "expo-linear-gradient";
 import NadaDescriptionContentModal from "./components/NadaDescriptionContentModal";
 import MediaBolsaWonContentModal from "./components/MediaBolsaWonContentModal";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Image } from "react-native";
-import { Text, View, Dimensions, ImageBackground } from "react-native";
+import { View, Dimensions, ImageBackground } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold } from "../../components/CommonText";
 import {

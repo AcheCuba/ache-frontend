@@ -3,36 +3,25 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigationState } from "@react-navigation/native";
 import * as React from "react";
-import { useState } from "react";
-
-import Colors from "../constants/Colors";
-import useColorScheme from "../hooks/useColorScheme";
 
 // screens
 
 import GameScreen from "../screens/Game/GameScreen";
-//import CobrarPremioScreen from "../screens/Game/CobrarPremioScreen";
-
 import NuevaRecargaScreen from "../screens/NuevaRecarga/NuevaRecargaScreen";
 import RecargasDisponiblesScreen from "../screens/NuevaRecarga/RecargasDisponibesScreen";
 import PagoScreen from "../screens/NuevaRecarga/PagoScreen";
 import PrePagoScreen from "../screens/NuevaRecarga/PrePagoScreen";
 import PagoCompletadoScreen from "../screens/NuevaRecarga/PagoCompletadoScreen";
 import PagoErrorScreen from "../screens/NuevaRecarga/PagoErrorScreen";
-
 import MoreScreen from "../screens/More/MoreScreen";
 import AboutUsScreen from "../screens/More/AboutUsScreen";
 import ModoUsoScreen from "../screens/More/ModoUsoScreen";
 import PremioScreen from "../screens/More/PremioScreen";
 import PrivacidadScreen from "../screens/More/PrivacidadScreen";
 import TermUsoScreen from "../screens/More/TermUsoScreen";
-
 import LanguageScreen from "../screens/LanguageScreen";
-
-import { BottomTabParamList, TabOneParamList, TabTwoParamList } from "../types";
 import MultiplesContactosScreen from "../screens/NuevaRecarga/MultiplesContactosScreen";
 import { forHorizontal } from "./forHorizontal";
-
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import TabButtonNeo from "./TabButtonNeo";
 import { GlobalContext } from "../context/GlobalProvider";
@@ -41,8 +30,6 @@ import { storeData } from "../libs/asyncStorage.lib";
 import { View } from "react-native";
 import { NeuButton } from "react-native-neu-element";
 import { Text } from "react-native";
-import { Image } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import PremioDescription from "../screens/More/PremioDescription";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();

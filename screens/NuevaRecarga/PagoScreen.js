@@ -1,4 +1,4 @@
-import React, { useContext, memo } from "react";
+import React, { memo } from "react";
 import { StyleSheet, View, ActivityIndicator, Dimensions } from "react-native";
 import { WebView } from "react-native-webview";
 import { GlobalContext } from "../../context/GlobalProvider";

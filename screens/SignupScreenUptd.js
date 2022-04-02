@@ -1,16 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import axios from "axios";
 import React, { useContext, useState } from "react";
 import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
 import Toast from "react-native-root-toast";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  Image,
-  Platform,
-} from "react-native";
+import { StyleSheet, View, Dimensions, Image, Platform } from "react-native";
 import { NeuButton, NeuInput } from "react-native-neu-element";
 import { BASE_URL } from "../constants/domain";
 import { signup } from "../context/Actions/actions";
@@ -19,7 +10,6 @@ import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Keyboard } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 

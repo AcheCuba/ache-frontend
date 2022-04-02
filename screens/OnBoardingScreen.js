@@ -1,11 +1,10 @@
 import React from "react";
 import Onboarding from "react-native-onboarding-swiper";
-import { Image, Dimensions, Animated } from "react-native";
+import { Image, Dimensions } from "react-native";
 import { View } from "react-native";
 import { ImageBackground } from "react-native";
 import { TextBold, TextMedium } from "../components/CommonText";
 import { NeuButton } from "react-native-neu-element";
-import { Modal } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("screen");

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ImageBackground } from "react-native";
 import { Image } from "react-native";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 
 const { width, height } = Dimensions.get("screen");

@@ -29,6 +29,7 @@
     "expo-constants": "~9.3.0",
     "expo-contacts": "~8.6.0",
     "expo-font": "~8.4.0",
+    "expo-linear-gradient": "~8.4.0",
     "expo-linking": "~2.0.0",
     "expo-notifications": "~0.8.2",
     "expo-payments-stripe": "~8.4.0",
@@ -48,7 +49,6 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.4",
     "react-native-neu-element": "git+https://github.com/EliasGxA/react-native-neu-element.git",
     "react-native-onboarding-swiper": "^1.1.4",
-    "react-native-optimized-flatlist": "^1.0.4",
     "react-native-reanimated": "1.13.0",
     "react-native-root-siblings": "^4.1.1",
     "react-native-root-toast": "^3.2.1",
@@ -60,8 +60,7 @@
     "recompose": "^0.30.0",
     "redux": "^4.0.5",
     "socket.io-client": "^4.2.0",
-    "yup": "^0.32.9",
-    "expo-linear-gradient": "~8.4.0"
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

@@ -1,37 +1,30 @@
 import React, { useContext } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   Dimensions,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 
 import NuevoContactoInput from "./components/NuevoContactoInput";
 import { GlobalContext } from "../../context/GlobalProvider";
 import {
   updatePrizeForContact,
-  deletePrize,
   deletePrizeByFieldId,
   setFields,
   setPrize,
   toggleValidateInProcess,
   toogleAddContactAvaiable,
   updatePrize,
-  deleteAllValidatedPrizes,
-  resetNuevaRecargaState,
   openSocket,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import { NeuButton, NeuView } from "react-native-neu-element";
-import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
 import { TextBold } from "../../components/CommonText";

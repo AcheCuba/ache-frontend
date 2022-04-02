@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
-import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Platform } from "react-native";
-
 import useCachedResources from "../hooks/useCachedResources";
 import Navigation from "../navigation";
-
 import io from "socket.io-client";
 import { GlobalContext } from "../context/GlobalProvider";
 import {
@@ -18,7 +15,6 @@ import {
   setTransaccionesResultado,
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
-import { writeContactToFileAsync } from "expo-contacts";
 import { scheduleNotificationAtSecondsFromNow } from "../libs/expoPushNotification.lib";
 
 if (Platform.OS === "android") {

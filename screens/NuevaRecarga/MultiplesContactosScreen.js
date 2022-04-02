@@ -9,21 +9,15 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Contact from "./components/Contact";
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import { GlobalContext } from "../../context/GlobalProvider";
 import {
   selectContact,
   deleteContact,
   toogleAddContactAvaiable,
 } from "../../context/Actions/actions";
-
 import { Ionicons } from "@expo/vector-icons";
-import { NeuButton, NeuInput, NeuSpinner } from "react-native-neu-element";
+import { NeuButton, NeuInput } from "react-native-neu-element";
 import Toast from "react-native-root-toast";
-
-import { OptimizedFlatList } from "react-native-optimized-flatlist";
-import { ScrollView } from "react-native-gesture-handler";
 import { Image } from "react-native";
 
 const { width, height } = Dimensions.get("screen");

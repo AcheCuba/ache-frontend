@@ -2,7 +2,6 @@ import * as React from "react";
 import {
   ScrollView,
   StyleSheet,
-  Text,
   View,
   Dimensions,
   Alert,
@@ -22,7 +21,6 @@ import {
   setTransaccionesEsperadas,
   setTransaccionesResultado,
 } from "../../context/Actions/actions";
-import { Ionicons } from "@expo/vector-icons";
 import { TextBold, TextMedium } from "../../components/CommonText";
 import { ImageBackground } from "react-native";
 import { Image } from "react-native";

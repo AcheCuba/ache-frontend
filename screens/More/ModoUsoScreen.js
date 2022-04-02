@@ -1,7 +1,7 @@
 import React from "react";
 import { Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
-import { Linking, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
 import { TextBold, TextItalic } from "../../components/CommonText";
