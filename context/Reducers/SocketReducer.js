@@ -7,18 +7,19 @@ const SET_SOCKET_ID = actionTypes.SET_SOCKET_ID;
 const SET_TRANSACCIONES_ESPERADAS = actionTypes.SET_TRANSACCIONES_ESPERADAS;
 const SET_UPDATE_COMPLETED = actionTypes.SET_UPDATE_COMPLETED;
 const SET_TRANSACCIONES_RESULTADO = actionTypes.SET_TRANSACCIONES_RESULTADO;
+const SET_NEW_TRANSACCION_RESULTADO = actionTypes.SET_NEW_TRANSACCION_RESULTADO;
 
 const SocketReducer = (state = socketInitialState, action) => {
   switch (action.type) {
     case OPEN_SOCKET:
       return {
         ...state,
-        socketOpen: true,
+        socketIsOpen: true,
       };
     case CLOSE_SOCKET:
       return {
         ...state,
-        socketOpen: false,
+        socketIsOpen: false,
       };
     case SET_SOCKET_ID:
       return {
@@ -30,6 +31,16 @@ const SocketReducer = (state = socketInitialState, action) => {
         ...state,
         transacciones_esperadas: action.transactions,
       };
+
+    case SET_NEW_TRANSACCION_RESULTADO:
+      return {
+        ...state,
+        transacciones_resultado: [
+          ...state.transacciones_resultado,
+          action.newTransaction,
+        ],
+      };
+
     case SET_UPDATE_COMPLETED:
       return {
         ...state,

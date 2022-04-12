@@ -170,6 +170,13 @@ export const setTransaccionesResultado = (transactions) => {
   };
 };
 
+export const setNewTransaccionResultado = (newTransaction) => {
+  return {
+    type: actionTypes.SET_NEW_TRANSACCION_RESULTADO,
+    newTransaction,
+  };
+};
+
 export const SetUpdateCompleted = (completed) => {
   //espera boolean
   return {

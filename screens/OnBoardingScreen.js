@@ -224,28 +224,11 @@ const OnBoardingScreen = ({ navigation }) => {
                     active={false}
                     onPress={() => {}}
                   >
-                    {/* <Image
-                      source={require("../assets/animaciones/TROFEO.gif")}
-                      //resizeMode="center"
-                      style={{
-                        width: 95, //width / 3,
-                        height: 115, //width / 3,
-                      }}
-                    /> */}
-                    {/*  <Image
-                      source={require("../assets/images/home/trofeo_lleno.png")}
-                      //resizeMode="center"
+                    <Image
+                      source={require("../assets/images/home/logo_para_boton.png")}
                       style={{
                         width: 60,
-                        height: 92,
-                      }}
-                    /> */}
-                    <Image
-                      source={require("../assets/animaciones/trofeo_lleno.gif")}
-                      //resizeMode="center"
-                      style={{
-                        width: 80, //width: 60,
-                        height: 115, //height: 92,
+                        height: 60,
                       }}
                     />
                   </NeuButton>
@@ -334,20 +317,11 @@ const OnBoardingScreen = ({ navigation }) => {
                   active={false}
                   onPress={() => {}}
                 >
-                  {/*   <Image
-                    source={require("../assets/animaciones/TROFEO.gif")}
-                    //resizeMode="center"
-                    style={{
-                      width: 95, //width / 3,
-                      height: 115, //width / 3,
-                    }}
-                  /> */}
                   <Image
-                    source={require("../assets/images/home/trofeo_lleno.png")}
-                    //resizeMode="center"
+                    source={require("../assets/images/home/logo_para_boton.png")}
                     style={{
                       width: 60,
-                      height: 92,
+                      height: 60,
                     }}
                   />
                 </NeuButton>

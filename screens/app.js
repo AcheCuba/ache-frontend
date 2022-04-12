@@ -9,9 +9,11 @@ import io from "socket.io-client";
 import { GlobalContext } from "../context/GlobalProvider";
 import {
   closeSocket,
+  setNewTransaccionResultado,
   setPremiosConfirmadosSocket,
   setRecargasConfirmadasSocket,
   setSocketId,
+  setTransaccionesEsperadas,
   setTransaccionesResultado,
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
@@ -34,37 +36,43 @@ export default function MainApp() {
 
   // for socket communication
 
-  const [transactionResultsArray, setTransactionResultsArray] = React.useState(
-    []
-  );
   let transaction_result_arr = [];
 
   //const colorScheme = useColorScheme();
 
-  const {
-    socketDispatch,
-    socketState,
-    nuevaRecargaState,
-    nuevaRecargaDispatch,
-  } = useContext(GlobalContext);
-  const { socketOpen, transacciones_esperadas, transacciones_resultado } =
+  const { socketDispatch, socketState, nuevaRecargaDispatch } =
+    useContext(GlobalContext);
+  const { socketIsOpen, transacciones_esperadas, transacciones_resultado } =
     socketState;
 
-  const [socketCurrentlyOpen, setSocketCurrentlyOpen] = useState(false);
+  //const [socketCurrentlyOpen, setSocketCurrentlyOpen] = useState(false);
 
+  //const [newUpdate, setNewUpdate] = React.useState()
+
+  const [transaction_arr_state, set_transaction_arr_state] = React.useState([]);
   let socket = io.connect(`${BASE_URL}`);
 
   useEffect(() => {
-    //console.log("transacciones_resultado", transacciones_resultado);
+    //console.log("transacciones_resultado", transacciones_resultado.length);
+    //console.log("transacciones esperadas", transacciones_esperadas.length);
 
-    async function schedulePushNotif() {
+    async function updateCompleted() {
+      // en esta funcion
+      // se programa la notificacion con los numeros fallidos
+      // se actualiza el estado de la informacion recibida por socket
+      // en el Screen de Pago se utiliza esa info para:
+      // - devolver el dinero
+      // - cancelar los premios cobrados y dejar los no cobrados
+
       //console.log("transacciones_resultado final", transacciones_resultado);
       // crear arreglo de declinadas
       // cerrar socket
-      socketDispatch(closeSocket());
+      // console.log("close socket - update completed - app.js");
+      socketDispatch(closeSocket()); // socketIsOpen: false
+
       // crear push notification
 
-      let resultadoConNumeros = [];
+      let resultadosConNumeros = [];
 
       transacciones_resultado.forEach((e) => {
         const id = e.transactionId;
@@ -80,42 +88,37 @@ export default function MainApp() {
         if (elementWithId != undefined) {
           const numb = elementWithId.mobile_number;
           const newObjectResultado = { ...e, mobile_number: numb };
-          resultadoConNumeros.push(newObjectResultado);
+          resultadosConNumeros.push(newObjectResultado);
         }
       });
 
-      //console.log("resultados con nums", resultadoConNumeros);
-      nuevaRecargaDispatch(setRecargasConfirmadasSocket(resultadoConNumeros));
+      /* console.log(
+        "recargas confirmadas con y sin premio - app.js",
+        resultadosConNumeros
+      ); */
+      nuevaRecargaDispatch(setRecargasConfirmadasSocket(resultadosConNumeros));
 
       //================================================================
 
       //recordar: el bono (premio) se considera una recarga independiente
-      const recargaConPremio = resultadoConNumeros.filter((transaction) => {
+      const recargasConPremio = resultadosConNumeros.filter((transaction) => {
         return transaction.isTopUpBonus === true;
       });
 
-      const recargaConPremio_clean = recargaConPremio.map((rec) => {
+      const recargasConPremio_clean = recargasConPremio.map((rec) => {
         return { uuid: rec.uuid, status: rec.status };
       });
 
-      /*  const recargaConPremio_clean = transacciones_resultado.map((rec) => {
-        return { uuid: rec.uuid, status: rec.status };
-      }); */
-
-      nuevaRecargaDispatch(setPremiosConfirmadosSocket(recargaConPremio_clean));
-
-      /*   nuevaRecargaDispatch(
-        setPremiosConfirmadosSocket(recargaConPremio)
+      //console.log("premios confirmados - app.js", recargasConPremio_clean);
+      nuevaRecargaDispatch(
+        setPremiosConfirmadosSocket(recargasConPremio_clean)
       );
- */
-
-      //console.log(recargaConPremio);
 
       //================================================================
 
       // ==== Enviar PUSH NOTIFICATION =====
 
-      const declinadas = resultadoConNumeros.filter((elemento) => {
+      const declinadas = resultadosConNumeros.filter((elemento) => {
         return elemento.status !== "COMPLETED";
       });
 
@@ -140,49 +143,83 @@ export default function MainApp() {
 
       // reiniciar estado
       socketDispatch(setTransaccionesResultado([]));
+      socketDispatch(setTransaccionesEsperadas([]));
+      transaction_result_arr = [];
     }
 
     if (
       transacciones_resultado.length === transacciones_esperadas.length &&
       transacciones_resultado.length !== 0
     ) {
-      schedulePushNotif();
+      updateCompleted();
     }
-  }, [transacciones_resultado]);
+  }, [transacciones_resultado, transacciones_esperadas]);
 
   useEffect(() => {
-    if (socketOpen && !socketCurrentlyOpen) {
+    //if (socketIsOpen && !socketCurrentlyOpen) {
+    //console.log("socket open", socketIsOpen);
+
+    if (socketIsOpen) {
       //abrir socket
-      setSocketCurrentlyOpen(true);
+      //setSocketCurrentlyOpen(true);
 
       socket.on("socketid", (sid) => {
         // guardar id
-        //console.log("socket id below");
-        //console.log(sid);
+        // console.log("socket id - app.js", sid);
         socketDispatch(setSocketId(sid));
       });
     }
 
-    if (!socketOpen) {
+    if (!socketIsOpen) {
       // cerrar socket
       socket.disconnect();
-      setSocketCurrentlyOpen(false);
+      //setSocketCurrentlyOpen(false);
       //console.log("client disconnect");
     }
 
     socket.on("transaction-update", (msg) => {
+      //console.log("transaction result variable array ", transaction_result_arr);
+
       let transaction_result;
+
+      // declined o completed
+      let isCompleted = false;
+      let isDeclined = false;
       //console.info(msg);
       transaction_result = msg;
-      //console.log("un resultadomaaas", transaction_result);
-      transaction_result_arr.push(transaction_result);
+      // comprobar que el status es definitivo
+      const status = transaction_result.status.split("-")[0];
+      if (status === "COMPLETED") {
+        isCompleted = true;
+      } else if (status === "DECLINED") {
+        isDeclined = true;
+      }
 
-      setTimeout(() => {
-        socketDispatch(setTransaccionesResultado(transaction_result_arr));
-        transaction_result = null;
-      }, 5000);
+      //console.log("status - app.js", status);
+
+      if (isCompleted || isDeclined) {
+        // es resultado final, verificar que no esta repetido
+        const transIdActual = transaction_result.transactionId;
+        const alreadyExistentTransId = transaction_result_arr.find(
+          (t) => t.transactionId === transIdActual
+        );
+
+        //console.log("alreadyExistentTransId - app.js", alreadyExistentTransId);
+
+        if (alreadyExistentTransId == undefined) {
+          // no existe
+          transaction_result_arr.push(transaction_result);
+          socketDispatch(setNewTransaccionResultado(transaction_result));
+        }
+      }
+
+      /* setTimeout(() => {
+          socketDispatch(setTransaccionesResultado(transaction_result_arr));
+          transaction_result_arr = [];
+          transaction_result = null;
+        }, 5000); */
     });
-  }, [socketOpen]);
+  }, [socketIsOpen]);
 
   useEffect(() => {
     notificationListener.current =

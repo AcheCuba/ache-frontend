@@ -114,6 +114,8 @@ const CobrarPremioContent = ({
           const prizeResultUpdated = response.data; // exchanged true
           const prizeCode = currentPrize.uuid;
 
+          //console.log(userState);
+
           // actualizar persistencia
           //storeData({ ...userState, prize: prizeResultUpdated });
           storeData("user", { ...userState, prize: null });

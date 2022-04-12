@@ -24,7 +24,6 @@ const frontend_url = "https://react-paymentsite.herokuapp.com/";
 // const server_url = "http://48e33416ac70.ngrok.io";
 
 const PagoScreen = ({ navigation, route }) => {
-  const [srceen, setScreen] = React.useState("payment");
   const [loading, setLoading] = React.useState(true);
   const [initUrl, setinitUrl] = React.useState(frontend_url);
   const [url, setUrl] = React.useState(frontend_url + "payment-init");
@@ -56,23 +55,24 @@ const PagoScreen = ({ navigation, route }) => {
 
       // finish checkout de los premios (true para ACCEPTED y false pra DECLINED)
       finish_checkout_all_prizes();
-      nuevaRecargaDispatch(deleteAllPremiosSocket());
+      // nuevaRecargaDispatch(deleteAllPremiosSocket());
     }
 
     if (recargasConfirmadasSocket.length !== 0) {
+      // eliminar la nada de la app (si al menos una recarga sin premio salio bien)
+      liberaCalaveraApp(recargasConfirmadasSocket);
+      // devolver el dinero de las recargas que salieron mal
       refund();
-      nuevaRecargaDispatch(deleteAllRecargasSocket());
+      //nuevaRecargaDispatch(deleteAllRecargasSocket()); // hecho en refound
     }
-
-    return () => {
-      //cleanup
-      //cleanSocketArrays();
-    };
   }, [premiosConfirmadosSocket, recargasConfirmadasSocket]);
 
   const refund = () => {
     //console.log("se inicia refund si es necesaria");
-    console.log("recargasConfirmadasSocket refound", recargasConfirmadasSocket);
+    /*  console.log(
+      "recargasConfirmadasSocket - refund",
+      recargasConfirmadasSocket
+    ); */
 
     const user_token = userState.token;
     const _url = `${BASE_URL}/payments/refund/${paymentIntentId}`;
@@ -94,6 +94,8 @@ const PagoScreen = ({ navigation, route }) => {
     //console.log(typeof amount_refund);
     //console.log("amount refund", amount_refund);
 
+    //console.log("refound amount", amount_refund);
+
     let config = {
       method: "post",
       url: _url,
@@ -105,10 +107,30 @@ const PagoScreen = ({ navigation, route }) => {
 
     axios(config)
       .then((response) => {
-        //console.log("refund", response.data);
+        nuevaRecargaDispatch(deleteAllRecargasSocket());
+        //console.log("==== refund response =====");
+        //console.log("refund status", response.status);
+        //console.log("request", response.request);
       })
-      .catch((e) => {
-        //console.log("refund", e.message)
+      .catch((error) => {
+        nuevaRecargaDispatch(deleteAllRecargasSocket());
+        //console.log("=== refund error ===");
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          //console.log(error.response.data);
+          //console.log(error.response.status);
+          //console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          //console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          //console.log("Error", error.message);
+        }
+        //console.log(error.config);
       });
   };
 
@@ -235,18 +257,11 @@ const PagoScreen = ({ navigation, route }) => {
 
     Promise.all(promisesForFinish)
       .then(() => {
-        Toast.show("Los premios podrán cobrarse en otro momento", {
-          duaration: Toast.durations.LONG,
-          position: Toast.positions.BOTTOM,
-          shadow: true,
-          animation: true,
-          hideOnPress: true,
-          delay: 0,
-        });
-      })
-      .catch((e) => {
-        console.log(e.message);
-        /* Toast.show("Error al finalizar checkout del premio", {
+        // eliminar premios del estado
+
+        nuevaRecargaDispatch(deleteAllPremiosSocket());
+
+        /*   Toast.show("Los premios podrán cobrarse en otro momento", {
           duaration: Toast.durations.LONG,
           position: Toast.positions.BOTTOM,
           shadow: true,
@@ -254,15 +269,23 @@ const PagoScreen = ({ navigation, route }) => {
           hideOnPress: true,
           delay: 0,
         }); */
+      })
+      .catch((e) => {
+        // eliminar premios del estado
+        nuevaRecargaDispatch(deleteAllPremiosSocket());
+
+        //console.log(e.message);
       });
   };
 
   const prizeAppManage = (premiosSocket) => {
-    // eliminar o no
+    // eliminar si se cobró correctamente, no si hubo algun problema
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
     //console.log("prize in app", prizeInApp);
     if (prizeInApp != null && prizeType != "Nada") {
+      //console.log("se entro a eliminar premio");
+
       // hay premio en la app
 
       // recarga del premio bien? -> considerar cobrado: finish checkout true y eliminar de app
@@ -276,21 +299,16 @@ const PagoScreen = ({ navigation, route }) => {
         return premio.uuid === prizeInApp.uuid;
       });
 
-      const isCompleted = currentPrizeSocket.status === "COMPLETED";
+      if (currentPrizeSocket != undefined) {
+        const isCompleted = currentPrizeSocket.status === "COMPLETED";
 
-      //console.log("isCompleted", isCompleted);
+        //console.log("isCompleted", isCompleted);
 
-      if (isCompleted) {
-        // si esta es que esta aceptado: eliminar, viceversa
-        storeData("user", {
-          id: userState.id,
-          name: userState.name,
-          email: userState.email,
-          phone: userState.phone,
-          prize: null,
-        });
-
-        userDispatch(setPrizeForUser(null));
+        if (isCompleted) {
+          // si esta es que esta completado: eliminar
+          storeData("user", { ...userState, prize: null });
+          userDispatch(setPrizeForUser(null));
+        }
       }
 
       // ====== =================
@@ -298,6 +316,32 @@ const PagoScreen = ({ navigation, route }) => {
       // setPremiosConfirmados(premiosConfirmados.concat({ uuid: prizeInApp.uuid }))
 
       // ====== =================
+    }
+  };
+
+  const liberaCalaveraApp = (recargasConfirmadasSocket) => {
+    const prizeInApp = userState.prize;
+    const prizeType = userState.prize?.type;
+
+    if (prizeInApp != null && prizeType === "Nada") {
+      //console.log("se entro a eliminar la nada");
+
+      // busca recargas que no sean premios
+      const recargasNoPremio = recargasConfirmadasSocket.filter((recarga) => {
+        return recarga.isTopUpBonus === false;
+      });
+
+      // busca recargas que se completaron exitosamente
+      const recargasCompletadas = recargasNoPremio.find(
+        (r) => r.status === "COMPLETED"
+      );
+
+      // si alguna se completo exitosamente...
+      if (recargasCompletadas != undefined) {
+        // elimina la Nada de la app
+        storeData("user", { ...userState, prize: null });
+        userDispatch(setPrizeForUser(null));
+      }
     }
   };
 
@@ -309,8 +353,7 @@ const PagoScreen = ({ navigation, route }) => {
     if (webViewState.url === initUrl + "payment-success") {
       let confirmTransactionPromisesArray = [];
       //const prizeInApp = userState.prize;
-      const prizeType = userState.prize?.type;
-
+      //const prizeType = userState.prize?.type;
       //console.log(transaction_id_array);
 
       transaction_id_array.forEach((transaction_id) => {
@@ -327,26 +370,8 @@ const PagoScreen = ({ navigation, route }) => {
           //console.log("Error en confirm transaction:", err.message)
         });
 
-      // setear premio a null SI LA RECARGA ES CON PREMIO
-
-      if (prizeType === "Nada") {
-        // no hay premio para cobrar,
-        // 2 opciones: es "Nada" o no tiene premio
-        // elimina el premio de la app solo si tiene "Nada"
-
-        storeData("user", {
-          id: userState.id,
-          name: userState.name,
-          email: userState.email,
-          phone: userState.phone,
-          prize: null,
-        });
-
-        userDispatch(setPrizeForUser(null));
-
-        //finish_checkout_all_prizes(true);
-      }
-      // si estoy aqui es que el pago fue bien
+      // condiciones iniciales para los estados de la recarga
+      // excepto las relacionadas con el socket
       nuevaRecargaDispatch(resetNuevaRecargaState());
 
       navigation.navigate("PagoCompletadoScreen");

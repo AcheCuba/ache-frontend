@@ -61,7 +61,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   } = nuevaRecargaState;
   const { userState } = React.useContext(GlobalContext);
 
-  const { socketDispatch } = React.useContext(GlobalContext);
+  const { socketState, socketDispatch } = React.useContext(GlobalContext);
 
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -386,10 +386,14 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         });
         setLoadingContinuar(false);
       } else {
-        // open socket
-        // guardar id
-        //console.log("se ha llamado a open socket");
-        socketDispatch(openSocket());
+        /*   console.log(
+          "socket state - nueva recarga screen",
+          socketState.socketOpen
+        ); */
+
+        if (!socketState.socketIsOpen) {
+          socketDispatch(openSocket());
+        }
 
         // init checkout de los premios validados
         // si un premio está asociado a un contacto, es que está en checkout
@@ -490,8 +494,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           }}
           style={{ marginLeft: marginGlobal, marginTop: 10 }}
         >
-          {/*           <Ionicons name="chevron-back" size={30} color="#01f9d2" />
-           */}
           <Image
             source={require("../../assets/images/iconos/atras.png")}
             style={{ width: 15, height: 15 }}
@@ -505,13 +507,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           onPress={() => onPressAddContact()}
           style={{ marginRight: marginGlobal, marginTop: 10 }}
         >
-          {/*    <Ionicons name="person-outline" size={30} color="gray" /> */}
-          {/* <Ionicons
-            name="add-circle-sharp"
-            size={30}
-            color="#01f9d2"
-            style={{ position: "absolute", right: -2, bottom: -5 }}
-          /> */}
           <Image
             source={require("../../assets/images/iconos/Añadir_usuario.png")}
             style={{ width: 31, height: 21 }}

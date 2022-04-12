@@ -111,9 +111,9 @@ const GameScreen = ({ navigation }) => {
 
   const animationTime = 12000; // ms (movimiento de ruleta)
 
-  /* React.useEffect(() => {
-    //console.log(userState);
-    console.log(JoyaWon);
+  /*  React.useEffect(() => {
+    console.log(userState);
+    //console.log(JoyaWon);
   }); */
 
   React.useEffect(() => {
@@ -350,12 +350,9 @@ const GameScreen = ({ navigation }) => {
           <View>
             <Image
               source={require("../../assets/images/home/logo_para_boton.png")}
-              //resizeMode="center"
               style={{
-                width: 60, //width / 3.5,
-                height: 60, //width / 2.9,
-                //marginTop: 15,
-                //marginBottom: 30,
+                width: 60,
+                height: 60,
               }}
             />
           </View>
@@ -665,7 +662,7 @@ const GameScreen = ({ navigation }) => {
         setTimeout(() => {
           thereIsPrizeResult.current = true;
           const currentTime = moment();
-          const { prizeEndTime } = userState.prize;
+          const prizeEndTime = moment(userState.prize?.prizeEndTime);
           const horas_restantes = prizeEndTime.diff(currentTime, "hours");
           setHorasRestantes(horas_restantes);
           setPremioAcumulado(true);
@@ -1256,7 +1253,7 @@ const GameScreen = ({ navigation }) => {
                 // actualizar horas restantes
                 // tanto para nada como para los premios drntro del modal
                 const currentTime = moment();
-                const { prizeEndTime } = userState.prize;
+                const prizeEndTime = moment(userState.prize?.prizeEndTime);
                 const horas_restantes = prizeEndTime.diff(currentTime, "hours");
                 setHorasRestantes(horas_restantes);
                 if (userState.prize.type === "Nada") {

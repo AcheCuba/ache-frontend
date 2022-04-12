@@ -1,5 +1,5 @@
 export default {
-  socketOpen: false,
+  socketIsOpen: false,
   socketId: undefined,
   transacciones_esperadas: [],
   transacciones_resultado: [],

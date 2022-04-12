@@ -165,7 +165,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         selectContact({
           id: undefined,
           contactName: undefined,
-          contactNumber: text,
+          contactNumber: cleanText,
           fieldInputId: fieldInputId,
           prize: prizeForCurrentField,
         })

@@ -21,8 +21,6 @@ export default function useCachedResources() {
     require("../assets/images/home/fondo.png"),
     require("../assets/images/home/centro.png"),
     require("../assets/images/home/sombra.png"),
-    require("../assets/images/home/trofeo.png"),
-    require("../assets/images/home/trofeo_lleno.png"),
     require("../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png"),
     require("../assets/images/home/premios_finales/Monedas_250_CUP.png"),
     require("../assets/images/home/premios_finales/Monedas_500_CUP.png"),

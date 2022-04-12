@@ -16,7 +16,6 @@ import Toast from "react-native-root-toast";
 import axios from "axios";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import {
-  closeSocket,
   resetNuevaRecargaState,
   setTransaccionesEsperadas,
   setTransaccionesResultado,
@@ -51,12 +50,12 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
   //const [price_usd, setPrice_usd] = React.useState("");
 
-  React.useEffect(() => {
+  /* React.useEffect(() => {
     //console.log("pressedProductId", pressedProductId);
     //console.log("price_usd", price_usd);
     //console.log(esDirecta);
     //console.log("rec disp", validated_prizes);
-  });
+  }); */
 
   const prize_finish_checkout = (uuid) => {
     const user_token = userState.token;
@@ -135,7 +134,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const onPressCancelarRecarga = () => {
     //console.log(nuevaRecargaState);
 
-    socketDispatch(closeSocket());
+    //socketDispatch(closeSocket());
+
     finish_checkout_all_prizes();
     nuevaRecargaDispatch(resetNuevaRecargaState());
     navigation.navigate("NuevaRecargaScreen");
@@ -239,6 +239,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       })
       .catch((err) => {
         //console.log(err.message);
+        /* if (err.response) {
+          console.log(err.response.message);
+        } */
+
         setLoadingProducts(false);
       });
   };
@@ -246,8 +250,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const create_transaction = (contacto, productId) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/create-transaction`;
-    //console.log("socket id pasado al endpoint");
-    //console.log(socketId);
+    //console.log("socket id pasado al endpoint", socketId);
+
     let config;
     if (contacto.prize != null) {
       config = {
@@ -264,6 +268,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         },
       };
     } else {
+      //console.log("contacto", contacto);
+      //console.log("productId", productId);
       config = {
         method: "post",
         url,
@@ -278,7 +284,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         },
       };
     }
-    //console.log(config);
     return axios(config);
   };
 
@@ -302,19 +307,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       .then((response) => {
         response.forEach((transactions_array) => {
           const _transactions_array = transactions_array.data;
-          //console.log("is array?", Array.isArray(_transactions_array));
-          //console.log(_transactions_array.length);
-          //console.log(_transactions_array);
-
-          //console.log(transaction.data);
-          //console.log(transaction.data.id);
-
-          /* transaction_id_array.push(transaction.data.id);
-          transacciones_esperadas.push({
-            mobile_number:
-              transaction.data.credit_party_identifier.mobile_number,
-            transaction_id: transaction.data.id,
-          }); */
 
           // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
           _transactions_array.map((transaction) => {
@@ -328,7 +320,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         });
         setLoadingContinuar(false);
 
-        /*  console.log(
+        /* console.log(
           "esperadas en recargas disponibles screen",
           transacciones_esperadas
         ); */
@@ -340,8 +332,19 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         });
       })
       .catch((err) => {
-        //const err_data = err.response.data;
-        //console.log(err_data.message);
+        if (err.response) {
+          const err_data = err.response.data;
+          //const err_headers = err.response.headers;
+          console.log(err_data);
+          //console.log(err_headers);
+        }
+
+        if (err.request) {
+          console.log("Error");
+
+          //console.log(err.request);
+        }
+
         setLoadingContinuar(false);
         Toast.show("No se pudo crear la transacción", {
           duaration: Toast.durations.LONG,
@@ -353,6 +356,81 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         });
       });
   };
+
+  /*  const onPressProduct = (productId, productPriceUsd) => {
+    // por cada contacto, se crea una transaccion
+    // endpoint: create-transacition
+
+    let transaction_id_array = [];
+    setLoadingContinuar(true);
+
+     let promisesForTransaction = [];
+    contactosSeleccionados.forEach((contacto) => {
+      promisesForTransaction.push(create_transaction(contacto, productId));
+    }); 
+
+    const contacto = contactosSeleccionados[0];
+
+    // para comunicacion socket
+    let transacciones_esperadas = []; // [{mobile_number, transaction_id}, ...]
+    socketDispatch(setTransaccionesResultado([]));
+
+    create_transaction(contacto, productId)
+      .then((response) => {
+        response.forEach((transactions_array) => {
+          const _transactions_array = transactions_array.data;
+
+          // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
+          _transactions_array.map((transaction) => {
+            //console.log("transaction id", transaction.id);
+            transaction_id_array.push(transaction.id);
+            transacciones_esperadas.push({
+              mobile_number: transaction.credit_party_identifier.mobile_number,
+              transaction_id: transaction.id,
+            });
+          });
+        });
+
+        setLoadingContinuar(false);
+
+        console.log(
+          "esperadas en recargas disponibles screen",
+          transacciones_esperadas
+        );
+        socketDispatch(setTransaccionesEsperadas(transacciones_esperadas));
+
+        // abrir nuevo socket
+        socketDispatch(openSocket());
+
+        navigation.navigate("PrePagoScreen", {
+          productPriceUsd,
+          transaction_id_array,
+        });
+      })
+      .catch((err) => {
+        if (err.response) {
+          const err_data = err.response.data;
+          //const err_headers = err.response.headers;
+
+          console.log(err_data);
+          //console.log(err_headers);
+        }
+
+        if (err.request) {
+          //console.log(err.request);
+        }
+
+        setLoadingContinuar(false);
+        Toast.show("No se pudo crear la transacción", {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        });
+      });
+  }; */
 
   return (
     <ImageBackground
