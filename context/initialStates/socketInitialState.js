@@ -1,7 +1,9 @@
 export default {
   socketIsOpen: false,
   socketId: undefined,
-  transacciones_esperadas: [],
-  transacciones_resultado: [],
+  transacciones_normales_esperadas: [],
+  transacciones_premio_esperadas: [],
+  transacciones_normales_resultado: [],
+  transacciones_premio_resultado: [],
   updateCompleted: false,
 };

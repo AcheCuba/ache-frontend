@@ -4,7 +4,6 @@ export const GameScreenTextSpanish = () => {
     nadaWonTitle: "calavera",
     nadaWonBody:
       "Te faltó ACHÉ en el giro. Intenta otra vez en 24 horas o envía una recarga para que desaparezca y puedas probar nuevamente.",
-
     MediaBolsaWonTitle: "media bolsa",
     MediaBolsaWonBody:
       "Has ganado 250 pesos. Para jugar otra vez agrega tu premio ¡ya! en una recarga, o envíalo como un código. Si no, te guardamos tu ACHÉ por 72 horas.",

@@ -16,12 +16,17 @@ const RESTORE_NUEVA_RECARGA_INITIAL_STATE =
   actionTypes.RESTORE_NUEVA_RECARGA_INITIAL_STATE;
 const DELETE_FIELD = actionTypes.DELETE_FIELD;
 const DELETE_ALL_VALIDATED_PRIZES = actionTypes.DELETE_ALL_VALIDATED_PRIZES;
-const SET_PREMIOS_CONFIRMADOS_SOCKET =
-  actionTypes.SET_PREMIOS_CONFIRMADOS_SOCKET;
-const SET_RECARGAS_CONFIRMADAS_SOCKET =
-  actionTypes.SET_RECARGAS_CONFIRMADAS_SOCKET;
-const DELETE_ALL_PREMIOS_SOCKET = actionTypes.DELETE_ALL_PREMIOS_SOCKET;
-const DELETE_ALL_RECARGAS_SOCKET = actionTypes.DELETE_ALL_RECARGAS_SOCKET;
+
+//socket
+const SET_TRANSACCIONES_NORMALES_CONFIRMADAS =
+  actionTypes.SET_TRANSACCIONES_NORMALES_CONFIRMADAS;
+const SET_TRANSACCIONES_PREMIO_CONFIRMADAS =
+  actionTypes.SET_TRANSACCIONES_PREMIO_CONFIRMADAS;
+
+const DELETE_ALL_TRANSACCIONES_NORMALES =
+  actionTypes.DELETE_ALL_TRANSACCIONES_NORMALES;
+const DELETE_ALL_TRANSACCIONES_PREMIO =
+  actionTypes.DELETE_ALL_TRANSACCIONES_PREMIO;
 
 const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
   switch (action.type) {
@@ -149,34 +154,33 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         ],
       };
 
-    // SOCKETS
-    case SET_PREMIOS_CONFIRMADOS_SOCKET:
+    // resultados de las transacciones por socket
+
+    case SET_TRANSACCIONES_NORMALES_CONFIRMADAS:
+      return {
+        ...state,
+        transacciones_normales_confirmadas: action.transaccionesNormales,
+      };
+
+    case SET_TRANSACCIONES_PREMIO_CONFIRMADAS:
       return {
         ...state,
         //premiosConfirmadosSocket: action.premiosConfirmados,
-        premiosConfirmadosSocket: state.premiosConfirmadosSocket.concat(
-          action.premiosConfirmados
-        ),
+        transacciones_premio_confirmadas: action.transaccionesPremio,
       };
 
-    case SET_RECARGAS_CONFIRMADAS_SOCKET:
-      return {
-        ...state,
-        recargasConfirmadasSocket: action.recargasConfirmadas,
-      };
-
-    case DELETE_ALL_PREMIOS_SOCKET:
+    case DELETE_ALL_TRANSACCIONES_NORMALES:
       return {
         ...state,
         //premiosConfirmadosSocket: action.premiosConfirmados,
-        premiosConfirmadosSocket: [],
+        transacciones_normales_confirmadas: [],
       };
 
-    case DELETE_ALL_RECARGAS_SOCKET:
+    case DELETE_ALL_TRANSACCIONES_PREMIO:
       return {
         ...state,
         //premiosConfirmadosSocket: action.premiosConfirmados,
-        recargasConfirmadasSocket: [],
+        transacciones_premio_confirmadas: [],
       };
 
     default:

@@ -17,8 +17,10 @@ import axios from "axios";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import {
   resetNuevaRecargaState,
-  setTransaccionesEsperadas,
-  setTransaccionesResultado,
+  setTransaccionesNormalesEsperadas,
+  setTransaccionesNormalesResultado,
+  setTransaccionesPremioEsperadas,
+  setTransaccionesPremioResultado,
 } from "../../context/Actions/actions";
 import { TextBold, TextMedium } from "../../components/CommonText";
 import { ImageBackground } from "react-native";
@@ -32,7 +34,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const { userState } = React.useContext(GlobalContext);
   const { nuevaRecargaState, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
-  const { contactosSeleccionados, validated_prizes } = nuevaRecargaState;
+  const { contactosSeleccionados } = nuevaRecargaState;
 
   const [products, setProducts] = React.useState([]);
   const [productsWithPromo, setProductsWithPromo] = React.useState([]);
@@ -45,7 +47,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const [loadingProducts, setLoadingProducts] = React.useState(false);
   const [loadingPromotions, setLoadingPromotions] = React.useState(false);
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
-
   const [pressedProductId, setPressed] = React.useState(0);
 
   //const [price_usd, setPrice_usd] = React.useState("");
@@ -291,6 +292,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     // por cada contacto, se crea una transaccion
     // endpoint: create-transacition
 
+    /*  console.log(
+      "========================== Nueva Recarga =========================="
+    ); */
+
     let transaction_id_array = [];
     setLoadingContinuar(true);
 
@@ -300,8 +305,11 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     });
 
     // para comunicacion socket
-    let transacciones_esperadas = []; // [{mobile_number, transaction_id}, ...]
-    socketDispatch(setTransaccionesResultado([]));
+    let transacciones_normales_esperadas = []; // [{mobile_number, transaction_id}, ...]
+    let transacciones_premio_esperadas = [];
+
+    socketDispatch(setTransaccionesNormalesResultado([]));
+    socketDispatch(setTransaccionesPremioResultado([]));
 
     Promise.all(promisesForTransaction)
       .then((response) => {
@@ -309,14 +317,59 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           const _transactions_array = transactions_array.data;
 
           // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
-          _transactions_array.map((transaction) => {
+          // se crea un object por cada uno de estas 2 (o 1) transacciones
+          if (_transactions_array.length === 1) {
+            transaction_id_array.push({
+              topUpId: _transactions_array[0].id,
+              prizeId: undefined,
+            });
+
+            // normales esperadas
+            transacciones_normales_esperadas.push({
+              mobile_number:
+                _transactions_array[0].credit_party_identifier.mobile_number,
+              transaction_id: _transactions_array[0].id,
+            });
+          }
+
+          if (_transactions_array.length === 2) {
+            transaction_id_array.push({
+              topUpId: _transactions_array[0].id,
+              prizeId: _transactions_array[1].id,
+            });
+
+            // normales esperadas
+            transacciones_normales_esperadas.push({
+              mobile_number:
+                _transactions_array[0].credit_party_identifier.mobile_number,
+              transaction_id: _transactions_array[0].id,
+            });
+
+            //con premio esperadas
+            transacciones_premio_esperadas.push({
+              mobile_number:
+                _transactions_array[1].credit_party_identifier.mobile_number,
+              transaction_id: _transactions_array[1].id,
+            });
+
+            /*    _transactions_array.map((transaction) => {
+              transacciones_esperadas.push({
+                mobile_number:
+                  transaction.credit_party_identifier.mobile_number,
+                transaction_id: transaction.id,
+              });
+            }); */
+          }
+
+          // codigo anterior
+          /* _transactions_array.map((transaction) => {
             //console.log("transaction id", transaction.id);
             transaction_id_array.push(transaction.id);
             transacciones_esperadas.push({
               mobile_number: transaction.credit_party_identifier.mobile_number,
               transaction_id: transaction.id,
             });
-          });
+          }); */
         });
         setLoadingContinuar(false);
 
@@ -324,7 +377,13 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           "esperadas en recargas disponibles screen",
           transacciones_esperadas
         ); */
-        socketDispatch(setTransaccionesEsperadas(transacciones_esperadas));
+
+        socketDispatch(
+          setTransaccionesNormalesEsperadas(transacciones_normales_esperadas)
+        );
+        socketDispatch(
+          setTransaccionesPremioEsperadas(transacciones_premio_esperadas)
+        );
 
         navigation.navigate("PrePagoScreen", {
           productPriceUsd,

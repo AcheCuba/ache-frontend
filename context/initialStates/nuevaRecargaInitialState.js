@@ -4,6 +4,8 @@ export default {
   validated_prizes: [], // UI
   fields: [],
   validatetInProcess: false,
-  premiosConfirmadosSocket: [],
-  recargasConfirmadasSocket: [],
+  //premiosConfirmadosSocket: [],
+  //recargasConfirmadasSocket: [],
+  transacciones_normales_confirmadas: [],
+  transacciones_premio_confirmadas: [],
 };

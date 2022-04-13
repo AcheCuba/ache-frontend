@@ -136,7 +136,33 @@ export const setFields = (isFirstField, fieldId) => {
   };
 };
 
-// ================================= ACTIONS FOR sockt STATE ===========================
+export const setTransaccionesNormalesConfirmadas = (transaccionesNormales) => {
+  return {
+    type: actionTypes.SET_TRANSACCIONES_NORMALES_CONFIRMADAS,
+    transaccionesNormales,
+  };
+};
+
+export const setTransaccionesPremioConfirmadas = (transaccionesPremio) => {
+  return {
+    type: actionTypes.SET_TRANSACCIONES_PREMIO_CONFIRMADAS,
+    transaccionesPremio,
+  };
+};
+
+export const deleteAllTransaccionesNormales = () => {
+  return {
+    type: actionTypes.DELETE_ALL_TRANSACCIONES_NORMALES,
+  };
+};
+
+export const deleteAllTransaccionesPremio = () => {
+  return {
+    type: actionTypes.DELETE_ALL_TRANSACCIONES_PREMIO,
+  };
+};
+
+// ================================= ACTIONS for socket STATE ===========================
 
 export const openSocket = () => {
   return {
@@ -156,57 +182,53 @@ export const setSocketId = (socketId) => {
   };
 };
 
-export const setTransaccionesEsperadas = (transactions) => {
+export const setTransaccionesNormalesEsperadas = (transactions) => {
   return {
-    type: actionTypes.SET_TRANSACCIONES_ESPERADAS,
+    type: actionTypes.SET_TRANSACCIONES_NORMALES_ESPERADAS,
     transactions,
   };
 };
 
-export const setTransaccionesResultado = (transactions) => {
+export const setTransaccionesPremioEsperadas = (transactions) => {
   return {
-    type: actionTypes.SET_TRANSACCIONES_RESULTADO,
+    type: actionTypes.SET_TRANSACCIONES_PREMIO_ESPERADAS,
     transactions,
   };
 };
 
-export const setNewTransaccionResultado = (newTransaction) => {
+export const setTransaccionesNormalesResultado = (transactions) => {
   return {
-    type: actionTypes.SET_NEW_TRANSACCION_RESULTADO,
+    type: actionTypes.SET_TRANSACCIONES_NORMALES_RESULTADO,
+    transactions,
+  };
+};
+
+export const setTransaccionesPremioResultado = (transactions) => {
+  return {
+    type: actionTypes.SET_TRANSACCIONES_PREMIO_RESULTADO,
+    transactions,
+  };
+};
+
+export const setNewTransaccionNormalResultado = (newTransaction) => {
+  return {
+    type: actionTypes.SET_NEW_TRANSACCION_NORMAL_RESULTADO,
     newTransaction,
   };
 };
 
-export const SetUpdateCompleted = (completed) => {
+export const setNewTransaccionPremioResultado = (newTransaction) => {
+  return {
+    type: actionTypes.SET_NEW_TRANSACCION_PREMIO_RESULTADO,
+    newTransaction,
+  };
+};
+
+/* export const SetUpdateCompleted = (completed) => {
   //espera boolean
   return {
     type: actionTypes.SET_UPDATE_COMPLETED,
     completed,
   };
 };
-
-export const setPremiosConfirmadosSocket = (premiosConfirmados) => {
-  return {
-    type: actionTypes.SET_PREMIOS_CONFIRMADOS_SOCKET,
-    premiosConfirmados,
-  };
-};
-
-export const deleteAllPremiosSocket = () => {
-  return {
-    type: actionTypes.DELETE_ALL_PREMIOS_SOCKET,
-  };
-};
-
-export const setRecargasConfirmadasSocket = (recargasConfirmadas) => {
-  return {
-    type: actionTypes.SET_RECARGAS_CONFIRMADAS_SOCKET,
-    recargasConfirmadas,
-  };
-};
-
-export const deleteAllRecargasSocket = () => {
-  return {
-    type: actionTypes.DELETE_ALL_RECARGAS_SOCKET,
-  };
-};
+ */

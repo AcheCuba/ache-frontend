@@ -9,12 +9,15 @@ import io from "socket.io-client";
 import { GlobalContext } from "../context/GlobalProvider";
 import {
   closeSocket,
-  setNewTransaccionResultado,
-  setPremiosConfirmadosSocket,
-  setRecargasConfirmadasSocket,
+  setNewTransaccionNormalResultado,
+  setNewTransaccionPremioResultado,
   setSocketId,
-  setTransaccionesEsperadas,
-  setTransaccionesResultado,
+  setTransaccionesNormalesConfirmadas,
+  setTransaccionesPremioConfirmadas,
+  setTransaccionesNormalesEsperadas,
+  setTransaccionesNormalesResultado,
+  setTransaccionesPremioEsperadas,
+  setTransaccionesPremioResultado,
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
 import { scheduleNotificationAtSecondsFromNow } from "../libs/expoPushNotification.lib";
@@ -38,25 +41,100 @@ export default function MainApp() {
 
   let transaction_result_arr = [];
 
+  const [updateNormalesCompleted, setUpdateNormalesCompleted] = useState(false);
+  const [updatePremiosCompleted, setUpdatePremiosCompleted] = useState(false);
+  const [updateCompleted, setUpdateCompleted] = useState(false);
+
   //const colorScheme = useColorScheme();
 
   const { socketDispatch, socketState, nuevaRecargaDispatch } =
     useContext(GlobalContext);
-  const { socketIsOpen, transacciones_esperadas, transacciones_resultado } =
-    socketState;
+  const {
+    socketIsOpen,
+    transacciones_normales_esperadas,
+    transacciones_premio_esperadas,
+    transacciones_normales_resultado,
+    transacciones_premio_resultado,
+  } = socketState;
 
   //const [socketCurrentlyOpen, setSocketCurrentlyOpen] = useState(false);
 
   //const [newUpdate, setNewUpdate] = React.useState()
 
-  const [transaction_arr_state, set_transaction_arr_state] = React.useState([]);
   let socket = io.connect(`${BASE_URL}`);
 
-  useEffect(() => {
-    //console.log("transacciones_resultado", transacciones_resultado.length);
-    //console.log("transacciones esperadas", transacciones_esperadas.length);
+  /* const confirmTransactionRequest = (transaction_id) => {
+    const user_token = userState.token;
+    const url = `${BASE_URL}/topup/confirm-transaction/${transaction_id}`;
+    const config = {
+      method: "post",
+      url,
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+    console.log("confirm trans config - app.js", config);
 
-    async function updateCompleted() {
+    axios(config)
+      .then((response) => {
+        //console.log(response.status)
+      })
+      .catch((error) => {
+        //console.log(error.response.status)
+      });
+  }; */
+
+  useEffect(() => {
+    if (updateCompleted) {
+      setTimeout(() => {
+        transaction_result_arr = [];
+        socketDispatch(closeSocket()); // socketIsOpen: false
+        setUpdateCompleted(false);
+      }, 3000);
+    }
+  }, [updateCompleted]);
+
+  useEffect(() => {
+    if (updatePremiosCompleted && updateNormalesCompleted) {
+      setUpdateCompleted(true);
+    }
+  }, [updateNormalesCompleted, updatePremiosCompleted]);
+
+  useEffect(() => {
+    /* console.log("de premio esperadas - app.js", transacciones_premio_esperadas);
+    console.log(
+      "normales esperadas - app.js",
+      transacciones_normales_esperadas
+    );
+    console.log(
+      "normales resultado - app.js",
+      transacciones_normales_resultado
+    );
+    console.log("de premio resultado - app.js", transacciones_premio_resultado); */
+
+    async function updateTransaccionesPremioCompleted() {
+      //recordar: el bono (premio) se considera una recarga independiente
+      nuevaRecargaDispatch(
+        setTransaccionesPremioConfirmadas(transacciones_premio_resultado)
+      );
+
+      nuevaRecargaDispatch(setTransaccionesPremioEsperadas([]));
+      nuevaRecargaDispatch(setTransaccionesPremioResultado([]));
+
+      /*   const recargasConPremio = resultadosConNumeros.filter((transaction) => {
+        return transaction.isTopUpBonus === true;
+      }); 
+
+      const recargasConPremio_clean = recargasConPremio.map((rec) => {
+        return {
+          transactionId: rec.transactionId,
+          uuid: rec.uuid,
+          status: rec.status,
+        };
+      }); */
+    }
+
+    async function updateTransaccionesNormalesCompleted() {
       // en esta funcion
       // se programa la notificacion con los numeros fallidos
       // se actualiza el estado de la informacion recibida por socket
@@ -68,15 +146,16 @@ export default function MainApp() {
       // crear arreglo de declinadas
       // cerrar socket
       // console.log("close socket - update completed - app.js");
-      socketDispatch(closeSocket()); // socketIsOpen: false
 
-      // crear push notification
+      // cerrar socket
+      //socketDispatch(closeSocket()); // socketIsOpen: false
 
+      // acotejar resultados (agregar numeros) para enviar push notification
       let resultadosConNumeros = [];
 
-      transacciones_resultado.forEach((e) => {
+      transacciones_normales_resultado.forEach((e) => {
         const id = e.transactionId;
-        const elementWithId = transacciones_esperadas.find(
+        const elementWithId = transacciones_normales_esperadas.find(
           (elem) => {
             //console.log("elem", elem);
             //console.log("id", id);
@@ -92,32 +171,12 @@ export default function MainApp() {
         }
       });
 
-      /* console.log(
-        "recargas confirmadas con y sin premio - app.js",
-        resultadosConNumeros
-      ); */
-      nuevaRecargaDispatch(setRecargasConfirmadasSocket(resultadosConNumeros));
-
-      //================================================================
-
-      //recordar: el bono (premio) se considera una recarga independiente
-      const recargasConPremio = resultadosConNumeros.filter((transaction) => {
-        return transaction.isTopUpBonus === true;
-      });
-
-      const recargasConPremio_clean = recargasConPremio.map((rec) => {
-        return { uuid: rec.uuid, status: rec.status };
-      });
-
-      //console.log("premios confirmados - app.js", recargasConPremio_clean);
+      // actualizar estado de Nueva recarga para accionar segun resultados en Pantalla de Pago
       nuevaRecargaDispatch(
-        setPremiosConfirmadosSocket(recargasConPremio_clean)
+        setTransaccionesNormalesConfirmadas(transacciones_normales_resultado)
       );
 
-      //================================================================
-
-      // ==== Enviar PUSH NOTIFICATION =====
-
+      // =================== Enviar PUSH NOTIFICATION ===================
       const declinadas = resultadosConNumeros.filter((elemento) => {
         return elemento.status !== "COMPLETED";
       });
@@ -139,21 +198,44 @@ export default function MainApp() {
           1
         );
       }
-      // ==== Enviar PUSH NOTIFICATION =====
+      // =================== Enviar PUSH NOTIFICATION ===================
 
       // reiniciar estado
-      socketDispatch(setTransaccionesResultado([]));
-      socketDispatch(setTransaccionesEsperadas([]));
-      transaction_result_arr = [];
+      socketDispatch(setTransaccionesNormalesEsperadas([]));
+      socketDispatch(setTransaccionesNormalesResultado([]));
+      //transaction_result_arr = [];
     }
 
     if (
-      transacciones_resultado.length === transacciones_esperadas.length &&
-      transacciones_resultado.length !== 0
+      transacciones_normales_resultado.length ===
+      transacciones_normales_esperadas.length
     ) {
-      updateCompleted();
+      setUpdateNormalesCompleted(true);
+
+      if (transacciones_normales_resultado.length !== 0) {
+        updateTransaccionesNormalesCompleted();
+      }
+    } else {
+      setTimeout(() => {
+        socketDispatch(closeSocket()); // socketIsOpen: false
+      }, 5000);
     }
-  }, [transacciones_resultado, transacciones_esperadas]);
+
+    if (
+      transacciones_premio_resultado.length ===
+      transacciones_premio_esperadas.length
+    ) {
+      setUpdatePremiosCompleted(true);
+      if (transacciones_premio_resultado.length != 0) {
+        updateTransaccionesPremioCompleted();
+      }
+    }
+  }, [
+    transacciones_normales_resultado,
+    transacciones_normales_esperadas,
+    transacciones_premio_esperadas,
+    transacciones_premio_resultado,
+  ]);
 
   useEffect(() => {
     //if (socketIsOpen && !socketCurrentlyOpen) {
@@ -209,7 +291,16 @@ export default function MainApp() {
         if (alreadyExistentTransId == undefined) {
           // no existe
           transaction_result_arr.push(transaction_result);
-          socketDispatch(setNewTransaccionResultado(transaction_result));
+
+          if (!transaction_result.isTopUpBonus) {
+            socketDispatch(
+              setNewTransaccionNormalResultado(transaction_result)
+            );
+          } else {
+            socketDispatch(
+              setNewTransaccionPremioResultado(transaction_result)
+            );
+          }
         }
       }
 

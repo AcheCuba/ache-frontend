@@ -6,6 +6,7 @@ import { ImageBackground } from "react-native";
 import { TextBold, TextMedium } from "../components/CommonText";
 import { NeuButton } from "react-native-neu-element";
 import { LinearGradient } from "expo-linear-gradient";
+import { Text } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -74,7 +75,7 @@ const OnBoardingScreen = ({ navigation }) => {
                   }}
                 />
                 <TextMedium
-                  text="¡Ya tienes ACHÉ! En breve podrás recargar y probar suerte jugando. Solo debes seguir los pasos. Gracias por ser miembro de nuestra comunidad."
+                  text="¡Ya tienes ACHÉ! En breve podrás recargar, jugar y ganar premios. Gracias por ser miembro de nuestra comunidad."
                   style={{
                     marginTop: 20,
                     fontSize: 20,
@@ -118,7 +119,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     }}
                   />
                   <TextBold
-                    text="Ruleta de la Fortuna!"
+                    text="Ruleta de las Recargas!"
                     style={{
                       fontSize: 20,
                       textAlign: "center",
@@ -128,7 +129,16 @@ const OnBoardingScreen = ({ navigation }) => {
                 </View>
 
                 <TextMedium
-                  text="Gana bonos, regálalos o agrégalos a tus recargas. Con buen ACHÉ te caerá"
+                  text="Prueba tu suerte y gana premios."
+                  style={{
+                    //marginTop: 100,
+                    fontSize: 20,
+                    textAlign: "center",
+                    color: "#fffc00",
+                  }}
+                />
+                <TextMedium
+                  text="Con buen ACHÉ te caerá"
                   style={{
                     //marginTop: 100,
                     fontSize: 20,
@@ -244,36 +254,32 @@ const OnBoardingScreen = ({ navigation }) => {
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
                     >
-                      <TextMedium
-                        text="El "
-                        style={{
-                          fontSize: 20,
-                          color: "#fffc00",
-                        }}
-                      />
                       <TextBold
-                        text="Trofeo"
+                        text="El Aché"
                         style={{
                           fontSize: 20,
                           color: "#fffc00",
-                        }}
-                      />
-                      <TextMedium
-                        text=" guarda tu ACHÉ."
-                        style={{
-                          fontSize: 20,
-                          color: "#fffc00",
+                          textTransform: "uppercase",
                         }}
                       />
                     </View>
-                    <TextMedium
-                      text="Cada premio que ganes lo encontrarás aquí. También podrás regalarlo como un código o añadirlo a una recarga directamente."
-                      style={{
-                        fontSize: 20,
-                        color: "#fffc00",
-                        textAlign: "center",
-                      }}
-                    />
+                    <Text>
+                      <TextMedium
+                        text="Cada premio que ganes lo encontrarás aquí. Cuando tengas un premio pendiente envíalo para poder obtener otro al girar la"
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                          textAlign: "center",
+                        }}
+                      />
+                      <TextBold
+                        text=" Ruleta."
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                        }}
+                      />
+                    </Text>
                   </View>
                 </View>
               </LinearGradient>
@@ -381,25 +387,12 @@ const OnBoardingScreen = ({ navigation }) => {
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
                     >
-                      <TextMedium
-                        text="La "
-                        style={{
-                          fontSize: 20,
-                          color: "#fffc00",
-                        }}
-                      />
                       <TextBold
-                        text="Moneda"
+                        text="El Rayo."
                         style={{
                           fontSize: 20,
                           color: "#fffc00",
-                        }}
-                      />
-                      <TextMedium
-                        text=" será tu ACHÉ rápido."
-                        style={{
-                          fontSize: 20,
-                          color: "#fffc00",
+                          textTransform: "uppercase",
                         }}
                       />
                     </View>

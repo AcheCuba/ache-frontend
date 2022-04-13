@@ -5,11 +5,10 @@ import { GlobalContext } from "../../context/GlobalProvider";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
 import {
-  deleteAllPremiosSocket,
-  deleteAllRecargasSocket,
+  deleteAllTransaccionesPremio,
   resetNuevaRecargaState,
-  setPremiosConfirmadosSocket,
   setPrizeForUser,
+  setTransaccionesNormalesConfirmadas,
 } from "../../context/Actions/actions";
 import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
 import { cancelNotification } from "../../libs/expoPushNotification.lib";
@@ -26,6 +25,7 @@ const frontend_url = "https://react-paymentsite.herokuapp.com/";
 const PagoScreen = ({ navigation, route }) => {
   const [loading, setLoading] = React.useState(true);
   const [initUrl, setinitUrl] = React.useState(frontend_url);
+  const [paymentSucceded, setPaymentSucceded] = React.useState(false);
   const [url, setUrl] = React.useState(frontend_url + "payment-init");
   const [sessionId, setSessionId] = React.useState("empty");
   const [paymentIntentId, setPaymentIntentId] = React.useState("");
@@ -38,41 +38,124 @@ const PagoScreen = ({ navigation, route }) => {
   const { userState, userDispatch, nuevaRecargaState, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
   const { name, email } = userState;
-  const { premiosConfirmadosSocket, recargasConfirmadasSocket } =
-    nuevaRecargaState;
+  const {
+    transacciones_premio_confirmadas,
+    transacciones_normales_confirmadas,
+    validated_prizes,
+  } = nuevaRecargaState;
 
   React.useEffect(() => {
     //console.log(typeof amount);
     //console.log(amount);
     //console.log("esDirecta", esDirecta);
-    if (premiosConfirmadosSocket.length !== 0) {
-      //console.log("premiosConfirmadosSocket", premiosConfirmadosSocket);
-      //console.log("recargasConfirmadasSocket", recargasConfirmadasSocket);
+    if (transacciones_premio_confirmadas.length !== 0) {
+      /*  console.log(
+        "transacciones_premio_confirmadas - pago",
+        transacciones_premio_confirmadas
+      ); */
 
       // elimiar premio de la app si se cobro bien ()
-
-      prizeAppManage(premiosConfirmadosSocket);
+      prizeAppManage(transacciones_premio_confirmadas);
 
       // finish checkout de los premios (true para ACCEPTED y false pra DECLINED)
-      finish_checkout_all_prizes();
+      finish_checkout_all_prizes_confirmados();
       // nuevaRecargaDispatch(deleteAllPremiosSocket());
     }
 
-    if (recargasConfirmadasSocket.length !== 0) {
+    if (transacciones_normales_confirmadas.length !== 0) {
+      /* console.log(
+        "transacciones_normales_confirmadas - pago",
+        transacciones_normales_confirmadas
+      ); */
+      // confirm transaction de los premios que tienen recargas completadas
+      confirmTransactionPrizes();
       // eliminar la nada de la app (si al menos una recarga sin premio salio bien)
-      liberaCalaveraApp(recargasConfirmadasSocket);
+      liberaCalaveraApp(transacciones_normales_confirmadas);
       // devolver el dinero de las recargas que salieron mal
       refund();
       //nuevaRecargaDispatch(deleteAllRecargasSocket()); // hecho en refound
+      setTimeout(() => {
+        nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
+      }, 5000);
     }
-  }, [premiosConfirmadosSocket, recargasConfirmadasSocket]);
+
+    return () => {
+      //console.log("============== clean up Pago screen ===============");
+    };
+  }, [transacciones_premio_confirmadas, transacciones_normales_confirmadas]);
+
+  React.useEffect(() => {
+    //console.log("paymentSucceded - pago", paymentSucceded);
+    if (paymentSucceded) {
+      let confirmTransactionPromisesArray = [];
+      //console.log("transaction id array - pago screen", transaction_id_array);
+
+      transaction_id_array.forEach((transaction) => {
+        confirmTransactionPromisesArray.push(
+          confirmTransactionRequest(transaction.topUpId)
+        );
+      });
+
+      //console.log("confirm transaction normales - pago screen");
+      Promise.all(confirmTransactionPromisesArray)
+        .then((response) => {
+          //console.log("==== confirm transaction response - PagoScreen =====");
+          //console.log("confirm transaction status", response.status);
+          //console.log("request", response.request);
+        })
+        .catch((err) => {
+          //console.log("confirm transaction error status", err.response.status);
+          //console.log(error.response.headers);
+        });
+
+      // condiciones iniciales para los estados de la recarga
+      // excepto las relacionadas con el socket
+      setTimeout(() => {
+        setPaymentSucceded(false);
+      }, 10000);
+      nuevaRecargaDispatch(resetNuevaRecargaState());
+      navigation.navigate("PagoCompletadoScreen");
+      cancelNotificationAsync();
+    }
+  }, [paymentSucceded]);
+
+  const confirmTransactionPrizes = () => {
+    // filtrar las transacciones completadas en $transacciones_normales_confirmadas
+    // recorrer ese array
+    // buscar cada transaccion en transaction_id_array
+    // verificar si en esa transaccion prizeId es o no undefinded
+    // si no es undefinded: hacer confirm transaction con ese prizeId
+
+    const transaccionesNormalesCompletadas =
+      transacciones_normales_confirmadas.filter((recarga) => {
+        return recarga.status === "COMPLETED";
+      });
+
+    // for testing
+    //const transaccionesNormalesCompletadas = transacciones_normales_confirmadas;
+
+    transaccionesNormalesCompletadas.forEach((transaccionNormalCompletada) => {
+      const transaccionDePremio = transaction_id_array.find((transaccion) => {
+        return (
+          transaccion.topUpId === transaccionNormalCompletada.transactionId &&
+          transaccion.prizeId != undefined
+        );
+      });
+      if (transaccionDePremio != undefined) {
+        //console.log("confirm transaction premio - pago screen");
+        confirmTransactionRequest(transaccionDePremio.prizeId)
+          .then((response) => {
+            console.log(response.status);
+          })
+          .catch((err) => {
+            console.log(err.response.status);
+          });
+      }
+    });
+  };
 
   const refund = () => {
-    //console.log("se inicia refund si es necesaria");
-    /*  console.log(
-      "recargasConfirmadasSocket - refund",
-      recargasConfirmadasSocket
-    ); */
+    //console.log("se inicia refund si es necesario");
 
     const user_token = userState.token;
     const _url = `${BASE_URL}/payments/refund/${paymentIntentId}`;
@@ -80,21 +163,16 @@ const PagoScreen = ({ navigation, route }) => {
     let amount_refund = 0;
     const productPrice = parseFloat(productPriceUsd);
 
-    for (let i = 0; i < recargasConfirmadasSocket.length; i++) {
+    for (let i = 0; i < transacciones_normales_confirmadas.length; i++) {
       //const element = array[index];
-      if (
-        recargasConfirmadasSocket[i].status !== "COMPLETED" &&
-        recargasConfirmadasSocket[i].isTopUpBonus === false
-      ) {
+      if (transacciones_normales_confirmadas[i].status !== "COMPLETED") {
         amount_refund = amount_refund + productPrice;
       }
     }
     //console.log(typeof productPrice);
     //console.log(typeof productPriceUsd);
     //console.log(typeof amount_refund);
-    //console.log("amount refund", amount_refund);
-
-    //console.log("refound amount", amount_refund);
+    //console.log("amount refund - pago screen", amount_refund);
 
     let config = {
       method: "post",
@@ -107,13 +185,11 @@ const PagoScreen = ({ navigation, route }) => {
 
     axios(config)
       .then((response) => {
-        nuevaRecargaDispatch(deleteAllRecargasSocket());
         //console.log("==== refund response =====");
         //console.log("refund status", response.status);
         //console.log("request", response.request);
       })
       .catch((error) => {
-        nuevaRecargaDispatch(deleteAllRecargasSocket());
         //console.log("=== refund error ===");
         if (error.response) {
           // The request was made and the server responded with a status code
@@ -199,7 +275,7 @@ const PagoScreen = ({ navigation, route }) => {
         Authorization: `Bearer ${user_token}`,
       },
     };
-    //console.log(config);
+    //console.log("url llamada en confirm transaction", config.url);
     return axios(config);
   };
 
@@ -225,26 +301,29 @@ const PagoScreen = ({ navigation, route }) => {
     return axios(config);
   };
 
-  const finish_checkout_all_prizes = () => {
+  const finish_checkout_all_prizes_noCobrados = () => {
+    //setPrize({ fieldId, uuid, type, loading: true })
+
+    let primisesForFinish = [];
+
+    validated_prizes.forEach((prize) => {
+      primisesForFinish.push(prize_finish_checkout(prize.uuid, false));
+    });
+
+    Promise.all(primisesForFinish)
+      .then(() => {})
+      .catch((e) => {
+        //console.log(e.message);
+      });
+  };
+
+  const finish_checkout_all_prizes_confirmados = () => {
     // recibir premiosConfirmadosSocket co su uuid
-    // finalizar checkout con true si fue aceotado, de lo contrario con false
-    // actualmete se finaliza el checkout siempre con true
+    // finalizar checkout con true si fue COMPLETED, de lo contrario con false
 
-    /*   console.log(
-      "premiosConfirmadosSocket finish checkout",
-      premiosConfirmadosSocket
-    ); */
-
-    /*  let primisesForFinish = [];
-    const prizesInCheckout = contactosSeleccionados.map(
-      (contacto) => contacto.prize
-    );
-    const prizesInCheckout_clean = prizesInCheckout.filter(
-      (prize) => prize != null
-    ); */
     let promisesForFinish = [];
 
-    premiosConfirmadosSocket.forEach((prize) => {
+    transacciones_premio_confirmadas.forEach((prize) => {
       //primisesForFinish.push(prize_finish_checkout(prize.uuid, true));
       if (prize.status !== "COMPLETED") {
         promisesForFinish.push(prize_finish_checkout(prize.uuid, false));
@@ -258,8 +337,7 @@ const PagoScreen = ({ navigation, route }) => {
     Promise.all(promisesForFinish)
       .then(() => {
         // eliminar premios del estado
-
-        nuevaRecargaDispatch(deleteAllPremiosSocket());
+        nuevaRecargaDispatch(deleteAllTransaccionesPremio());
 
         /*   Toast.show("Los premios podrán cobrarse en otro momento", {
           duaration: Toast.durations.LONG,
@@ -272,13 +350,13 @@ const PagoScreen = ({ navigation, route }) => {
       })
       .catch((e) => {
         // eliminar premios del estado
-        nuevaRecargaDispatch(deleteAllPremiosSocket());
+        nuevaRecargaDispatch(deleteAllTransaccionesPremio());
 
         //console.log(e.message);
       });
   };
 
-  const prizeAppManage = (premiosSocket) => {
+  const prizeAppManage = (transacciones_premio_confirmadas) => {
     // eliminar si se cobró correctamente, no si hubo algun problema
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
@@ -287,20 +365,21 @@ const PagoScreen = ({ navigation, route }) => {
       //console.log("se entro a eliminar premio");
 
       // hay premio en la app
-
-      // recarga del premio bien? -> considerar cobrado: finish checkout true y eliminar de app
-      // buscar prize en array de socket
-      // si es aceptado eliminar de la app
+      // si es completado eliminar de la app
+      // recordar: completado implica que se llamo a confirmTransaction de esa transaccion-premio
+      // por tanto la recarga asociada salio bien
 
       // racarga del premio mal? -> considerar no cobrado
       // si no es aceptado no eliminar
 
-      const currentPrizeSocket = premiosSocket.find((premio) => {
-        return premio.uuid === prizeInApp.uuid;
-      });
+      const currentPrizeConfirmado = transacciones_premio_confirmadas.find(
+        (premio) => {
+          return premio.uuid === prizeInApp.uuid;
+        }
+      );
 
-      if (currentPrizeSocket != undefined) {
-        const isCompleted = currentPrizeSocket.status === "COMPLETED";
+      if (currentPrizeConfirmado != undefined) {
+        const isCompleted = currentPrizeConfirmado.status === "COMPLETED";
 
         //console.log("isCompleted", isCompleted);
 
@@ -319,25 +398,21 @@ const PagoScreen = ({ navigation, route }) => {
     }
   };
 
-  const liberaCalaveraApp = (recargasConfirmadasSocket) => {
+  const liberaCalaveraApp = (transacciones_normales_confirmadas) => {
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
 
     if (prizeInApp != null && prizeType === "Nada") {
-      //console.log("se entro a eliminar la nada");
-
-      // busca recargas que no sean premios
-      const recargasNoPremio = recargasConfirmadasSocket.filter((recarga) => {
-        return recarga.isTopUpBonus === false;
-      });
+      console.log("se entro a eliminar la nada");
 
       // busca recargas que se completaron exitosamente
-      const recargasCompletadas = recargasNoPremio.find(
-        (r) => r.status === "COMPLETED"
-      );
+      const transaccionesNormalesCompletadas =
+        transacciones_normales_confirmadas.find(
+          (transaccion) => transaccion.status === "COMPLETED"
+        );
 
       // si alguna se completo exitosamente...
-      if (recargasCompletadas != undefined) {
+      if (transaccionesNormalesCompletadas != undefined) {
         // elimina la Nada de la app
         storeData("user", { ...userState, prize: null });
         userDispatch(setPrizeForUser(null));
@@ -351,41 +426,16 @@ const PagoScreen = ({ navigation, route }) => {
     }
 
     if (webViewState.url === initUrl + "payment-success") {
-      let confirmTransactionPromisesArray = [];
-      //const prizeInApp = userState.prize;
-      //const prizeType = userState.prize?.type;
-      //console.log(transaction_id_array);
-
-      transaction_id_array.forEach((transaction_id) => {
-        confirmTransactionPromisesArray.push(
-          confirmTransactionRequest(transaction_id)
-        );
-      });
-
-      Promise.all(confirmTransactionPromisesArray)
-        .then(() => {
-          //console.log("Transaccion confirmada (Pago Screen)")
-        })
-        .catch((err) => {
-          //console.log("Error en confirm transaction:", err.message)
-        });
-
-      // condiciones iniciales para los estados de la recarga
-      // excepto las relacionadas con el socket
-      nuevaRecargaDispatch(resetNuevaRecargaState());
-
-      navigation.navigate("PagoCompletadoScreen");
-
-      cancelNotificationAsync();
+      setPaymentSucceded(true);
     }
 
     if (webViewState.url === initUrl + "payment-failure") {
-      finish_checkout_all_prizes(false);
+      finish_checkout_all_prizes_noCobrados();
       let cancelTransactionPromisesArray = [];
 
-      transaction_id_array.forEach((transaction_id) => {
+      transaction_id_array.forEach((transaction) => {
         cancelTransactionPromisesArray.push(
-          cancelTransactionRequest(transaction_id)
+          cancelTransactionRequest(transaction.topUpId)
         );
       });
 

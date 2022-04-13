@@ -46,6 +46,10 @@ const PrePagoScreen = ({ navigation, route }) => {
     };
   }); */
 
+  /* React.useEffect(() => {
+    console.log("transaction array - Pre Pago Screen", transaction_id_array);
+  }, [transaction_id_array]); */
+
   useAndroidBackHandler(() => {
     /*
      *   Returning `true` denotes that we have handled the event,
