@@ -8,7 +8,6 @@ import {
   deleteAllTransaccionesPremio,
   resetNuevaRecargaState,
   setPrizeForUser,
-  setTransaccionesNormalesConfirmadas,
 } from "../../context/Actions/actions";
 import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
 import { cancelNotification } from "../../libs/expoPushNotification.lib";
@@ -45,38 +44,34 @@ const PagoScreen = ({ navigation, route }) => {
   } = nuevaRecargaState;
 
   React.useEffect(() => {
-    //console.log(typeof amount);
-    //console.log(amount);
-    //console.log("esDirecta", esDirecta);
-    if (transacciones_premio_confirmadas.length !== 0) {
-      /*  console.log(
-        "transacciones_premio_confirmadas - pago",
-        transacciones_premio_confirmadas
-      ); */
+    /*  console.log(
+      "transacciones_normales_confirmadas - pago",
+      transacciones_normales_confirmadas
+    );
+    console.log(
+      "transacciones_premio_confirmadas - pago",
+      transacciones_premio_confirmadas
+    ); */
 
+    if (transacciones_premio_confirmadas.length !== 0) {
       // elimiar premio de la app si se cobro bien ()
       prizeAppManage(transacciones_premio_confirmadas);
 
-      // finish checkout de los premios (true para ACCEPTED y false pra DECLINED)
+      // finish checkout de los premios (true para COMPLETED y false para DECLINED)
       finish_checkout_all_prizes_confirmados();
-      // nuevaRecargaDispatch(deleteAllPremiosSocket());
     }
 
     if (transacciones_normales_confirmadas.length !== 0) {
-      /* console.log(
-        "transacciones_normales_confirmadas - pago",
-        transacciones_normales_confirmadas
-      ); */
       // confirm transaction de los premios que tienen recargas completadas
-      confirmTransactionPrizes();
+      // finish checkout de premios cuyas recargas fallaron
       // eliminar la nada de la app (si al menos una recarga sin premio salio bien)
-      liberaCalaveraApp(transacciones_normales_confirmadas);
+      managePrizes();
+
       // devolver el dinero de las recargas que salieron mal
       refund();
-      //nuevaRecargaDispatch(deleteAllRecargasSocket()); // hecho en refound
-      setTimeout(() => {
+      /* setTimeout(() => {
         nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
-      }, 5000);
+      }, 5000); */
     }
 
     return () => {
@@ -108,50 +103,95 @@ const PagoScreen = ({ navigation, route }) => {
           //console.log(error.response.headers);
         });
 
-      // condiciones iniciales para los estados de la recarga
-      // excepto las relacionadas con el socket
       setTimeout(() => {
         setPaymentSucceded(false);
       }, 10000);
-      nuevaRecargaDispatch(resetNuevaRecargaState());
+
       navigation.navigate("PagoCompletadoScreen");
       cancelNotificationAsync();
     }
   }, [paymentSucceded]);
 
-  const confirmTransactionPrizes = () => {
+  const managePrizes = () => {
+    // confrim transaction de premios si las recargas normales fueron completed
+    // FINISH CHECKOUT de los premios asociados si no fueron completed
+    // se elimina la NADA si alguna recarga salio bien
+
     // filtrar las transacciones completadas en $transacciones_normales_confirmadas
     // recorrer ese array
     // buscar cada transaccion en transaction_id_array
     // verificar si en esa transaccion prizeId es o no undefinded
     // si no es undefinded: hacer confirm transaction con ese prizeId
 
+    const prizeInApp = userState.prize;
+    const prizeType = userState.prize?.type;
+
     const transaccionesNormalesCompletadas =
       transacciones_normales_confirmadas.filter((recarga) => {
         return recarga.status === "COMPLETED";
       });
 
-    // for testing
-    //const transaccionesNormalesCompletadas = transacciones_normales_confirmadas;
-
-    transaccionesNormalesCompletadas.forEach((transaccionNormalCompletada) => {
-      const transaccionDePremio = transaction_id_array.find((transaccion) => {
-        return (
-          transaccion.topUpId === transaccionNormalCompletada.transactionId &&
-          transaccion.prizeId != undefined
-        );
+    const transaccionesNormalesNoCompletadas =
+      transacciones_normales_confirmadas.filter((recarga) => {
+        return recarga.status !== "COMPLETED";
       });
-      if (transaccionDePremio != undefined) {
-        //console.log("confirm transaction premio - pago screen");
-        confirmTransactionRequest(transaccionDePremio.prizeId)
-          .then((response) => {
-            console.log(response.status);
-          })
-          .catch((err) => {
-            console.log(err.response.status);
-          });
+
+    if (transaccionesNormalesCompletadas.length != 0) {
+      // alguna se completo exitosamente
+      if (prizeInApp != null && prizeType === "Nada") {
+        //console.log("se entro a eliminar la nada");
+        // elimina la Nada de la app
+        storeData("user", { ...userState, prize: null });
+        userDispatch(setPrizeForUser(null));
       }
-    });
+      transaccionesNormalesCompletadas.forEach(
+        (transaccionNormalCompletada) => {
+          const transaccionDePremio = transaction_id_array.find(
+            (transaccion) => {
+              return (
+                transaccion.topUpId ===
+                  transaccionNormalCompletada.transactionId &&
+                transaccion.prizeId != undefined
+              );
+            }
+          );
+          if (transaccionDePremio != undefined) {
+            //console.log("confirm transaction premio - pago screen");
+            confirmTransactionRequest(transaccionDePremio.prizeId)
+              .then((response) => {
+                console.log(response.status);
+              })
+              .catch((err) => {
+                console.log(
+                  "confirm transaction request error",
+                  err.response.status
+                );
+              });
+          }
+        }
+      );
+    }
+    if (transaccionesNormalesNoCompletadas.length != 0) {
+      transaccionesNormalesNoCompletadas.forEach(
+        (transaccionNormalNoCompletada) => {
+          const transaccionDePremio = transaction_id_array.find(
+            (transaccion) => {
+              return (
+                transaccion.topUpId ===
+                  transaccionNormalNoCompletada.transactionId &&
+                transaccion.prizeId != undefined
+              );
+            }
+          );
+          if (transaccionDePremio != undefined) {
+            console.log(
+              "prize finish checkout de premio cuya recarga no se completo"
+            );
+            prize_finish_checkout(transaccionDePremio.prize_uuid, false);
+          }
+        }
+      );
+    }
   };
 
   const refund = () => {
@@ -293,11 +333,13 @@ const PagoScreen = ({ navigation, route }) => {
     let config = {
       method: "post",
       url: url,
-      params: { success },
+      params: { success: success },
       headers: {
         Authorization: `Bearer ${user_token}`,
       },
     };
+    //console.log("finish checkout url - pago screen", config.url);
+    //console.log("finish checkout params - pago screen", config.params);
     return axios(config);
   };
 
@@ -338,21 +380,12 @@ const PagoScreen = ({ navigation, route }) => {
       .then(() => {
         // eliminar premios del estado
         nuevaRecargaDispatch(deleteAllTransaccionesPremio());
-
-        /*   Toast.show("Los premios podrán cobrarse en otro momento", {
-          duaration: Toast.durations.LONG,
-          position: Toast.positions.BOTTOM,
-          shadow: true,
-          animation: true,
-          hideOnPress: true,
-          delay: 0,
-        }); */
+        console.log("finish checkout ok");
       })
       .catch((e) => {
         // eliminar premios del estado
         nuevaRecargaDispatch(deleteAllTransaccionesPremio());
-
-        //console.log(e.message);
+        console.log("finish checkout error: ", e.message);
       });
   };
 
@@ -370,7 +403,7 @@ const PagoScreen = ({ navigation, route }) => {
       // por tanto la recarga asociada salio bien
 
       // racarga del premio mal? -> considerar no cobrado
-      // si no es aceptado no eliminar
+      // si no es completado no eliminar
 
       const currentPrizeConfirmado = transacciones_premio_confirmadas.find(
         (premio) => {
@@ -398,7 +431,7 @@ const PagoScreen = ({ navigation, route }) => {
     }
   };
 
-  const liberaCalaveraApp = (transacciones_normales_confirmadas) => {
+  /* const liberaCalaveraApp = (transacciones_normales_confirmadas) => {
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
 
@@ -418,7 +451,7 @@ const PagoScreen = ({ navigation, route }) => {
         userDispatch(setPrizeForUser(null));
       }
     }
-  };
+  }; */
 
   const _onNavigationStateChange = (webViewState) => {
     if (webViewState.url === initUrl + "payment-init") {
@@ -449,7 +482,7 @@ const PagoScreen = ({ navigation, route }) => {
 
       nuevaRecargaDispatch(resetNuevaRecargaState());
       // se pasa amount y payment intent id pa refound en caso de fallo
-      navigation.navigate("PagoErrorScreen", { paymentIntentId, amount });
+      navigation.navigate("PagoErrorScreen");
     }
   };
 

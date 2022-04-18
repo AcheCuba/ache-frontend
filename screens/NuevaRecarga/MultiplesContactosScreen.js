@@ -157,8 +157,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       matchOfficialNumber !== null && cleanText.length === 11;
     const isNumberMatched = matchNumber !== null && cleanText.length === 8;
 
-    /* const regexp =
-      /\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/; */
+    //const regexp = /\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/;
     if (isOfficialNumberMatched || isNumberMatched) {
       nuevaRecargaDispatch(deleteContact(fieldInputId));
       nuevaRecargaDispatch(
@@ -182,6 +181,20 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         delay: 0,
       });
     }
+
+    //for testing
+    /*  nuevaRecargaDispatch(deleteContact(fieldInputId));
+    nuevaRecargaDispatch(
+      selectContact({
+        id: undefined,
+        contactName: undefined,
+        contactNumber: text,
+        fieldInputId: fieldInputId,
+        prize: prizeForCurrentField,
+      })
+    );
+    nuevaRecargaDispatch(toogleAddContactAvaiable(true));
+    navigation.navigate("NuevaRecargaScreen"); */
   };
 
   const onChangeText = (value) => {

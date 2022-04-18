@@ -30,6 +30,7 @@ const SocketReducer = (state = socketInitialState, action) => {
         socketIsOpen: true,
       };
     case CLOSE_SOCKET:
+      //console.log("close socket - reducer");
       return {
         ...state,
         socketIsOpen: false,
@@ -78,11 +79,11 @@ const SocketReducer = (state = socketInitialState, action) => {
         ],
       };
 
-    /*    case SET_UPDATE_COMPLETED:
+    case SET_UPDATE_COMPLETED:
       return {
         ...state,
-        updateCompleted: action.updateCompleted,
-      }; */
+        globalUpdateCompleted: action.globalUpdateCompleted,
+      };
   }
 };
 

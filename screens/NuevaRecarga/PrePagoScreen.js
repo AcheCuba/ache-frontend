@@ -46,7 +46,7 @@ const PrePagoScreen = ({ navigation, route }) => {
     };
   }); */
 
-  /* React.useEffect(() => {
+  /*  React.useEffect(() => {
     console.log("transaction array - Pre Pago Screen", transaction_id_array);
   }, [transaction_id_array]); */
 

@@ -47,24 +47,24 @@ const CobrarPremioContent = ({
     //console.log(currentPrize?.type);
   }, []);
 
-  React.useEffect(() => {
+  /* React.useEffect(() => {
+    const getData_ = async () => {
+      const userData = await getData("user");
+      console.log("user data en storage", userData);
+    };
+
+    getData_();
+  }); */
+
+  /*   React.useEffect(() => {
     //console.log("codigo generado", codigoGenerado);
     //console.log(currentPrize?.type);
-  }, [codigoGenerado]);
+    console.log("userState cobrar premio", userState);
+  }, [userState]); */
 
   const copyToClipboard = (code) => {
     Clipboard.setString(code);
   };
-
-  /* const storeData = async (value) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("user", jsonValue);
-    } catch (e) {
-      // saving error
-      console.log(e);
-    }
-  }; */
 
   const EncriptarCodigo = (codigo) => {
     const codigoEncriptado =
@@ -147,8 +147,10 @@ const CobrarPremioContent = ({
 
   const cleanNotification = async () => {
     const notId = await getData("notification-prize-expire");
-    cancelNotification(notId);
-    removeItem(notId);
+    if (notId != null) {
+      cancelNotification(notId);
+      removeItem(notId);
+    }
   };
 
   const copiarCode = (code) => {
@@ -200,10 +202,12 @@ const CobrarPremioContent = ({
     switch (prizeType) {
       case "Jackpot":
         if (idioma === "spa") {
-          title = "Joyita";
-          desc = `Tienes 500 dólares por cobrar durante las próximas ${horasRestantes} horas. Revisa tu email.`;
+          title = "Las Gemas";
+          desc =
+            "Tienes 500 dólares por cobrar. Envía una recarga para reclamar tu premio, o compártelo con el contacto que elijas para que lo haga por ti. ";
+          //desc = `Tienes 500 dólares por cobrar durante las próximas ${horasRestantes} horas. Revisa tu email.`;
         } else if (idioma === "eng") {
-          title = "Joyita";
+          title = "Las Gemas";
           desc = `Tienes 500 dólares por cobrar durante las próximas ${horasRestantes} horas. Revisa tu email.`;
         }
         break;
@@ -211,10 +215,14 @@ const CobrarPremioContent = ({
         if (prizeAmount === 250) {
           if (idioma === "spa") {
             title = "Media Bolsa";
-            desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
+            desc =
+              "Tienes 250 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.";
+            //desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
           } else if (idioma === "eng") {
             title = "Media Bolsa";
-            desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
+            //desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
+            desc =
+              "Tienes 250 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.";
           }
           break;
         }
@@ -222,13 +230,16 @@ const CobrarPremioContent = ({
         if (prizeAmount === 500) {
           if (idioma === "spa") {
             title = "bolsa llena";
-            desc = `Tienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas`;
+            desc =
+              "Tienes 500 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.";
+            //desc = `Tienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas`;
           } else if (idioma === "eng") {
             title = "bolsa llena";
-            desc = `ienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
+            desc =
+              "Tienes 500 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.";
+            //desc = `ienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
           }
         }
-
       default:
         break;
     }
@@ -389,7 +400,7 @@ const CobrarPremioContent = ({
             </NeuButton>
           )}
 
-          <View style={{ height: 100, width: width / 1.3 }}>
+          <View style={{ height: 50, width: width / 1.3 }}>
             {codigoGenerado ? (
               <TextItalic
                 style={{

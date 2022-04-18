@@ -162,6 +162,13 @@ export const deleteAllTransaccionesPremio = () => {
   };
 };
 
+export const setTransactionsIdArray = (transactionsIdArray) => {
+  return {
+    type: actionTypes.SET_TRANSACTIONS_ID_ARRAY,
+    transactionsIdArray,
+  };
+};
+
 // ================================= ACTIONS for socket STATE ===========================
 
 export const openSocket = () => {
@@ -224,11 +231,10 @@ export const setNewTransaccionPremioResultado = (newTransaction) => {
   };
 };
 
-/* export const SetUpdateCompleted = (completed) => {
+export const SetGlobalUpdateCompleted = (globalUpdateCompleted) => {
   //espera boolean
   return {
     type: actionTypes.SET_UPDATE_COMPLETED,
-    completed,
+    globalUpdateCompleted,
   };
 };
- */

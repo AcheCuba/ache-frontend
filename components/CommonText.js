@@ -43,3 +43,16 @@ export const TextItalic = ({ text, style }) => {
     </Text>
   );
 };
+
+export const TextBoldItalic = ({ text, style }) => {
+  return (
+    <Text
+      style={{
+        fontFamily: "bs-bold-italic",
+        ...style,
+      }}
+    >
+      {text}
+    </Text>
+  );
+};

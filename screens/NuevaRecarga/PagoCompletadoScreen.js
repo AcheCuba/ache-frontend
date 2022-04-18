@@ -1,4 +1,5 @@
 import React from "react";
+import { ActivityIndicator } from "react-native";
 import { Image } from "react-native";
 import { View, Dimensions, ImageBackground } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
@@ -7,12 +8,23 @@ import {
   ResultadoPagoTextEnglish,
   ResultadoPagoTextSpanish,
 } from "../../constants/Texts";
+import {
+  resetNuevaRecargaState,
+  SetGlobalUpdateCompleted,
+} from "../../context/Actions/actions";
 import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width } = Dimensions.get("screen");
 
 const PagoCompletadoScreen = ({ navigation }) => {
   const { userState } = React.useContext(GlobalContext);
+  const { socketState, socketDispatch, nuevaRecargaDispatch } =
+    React.useContext(GlobalContext);
+  const { globalUpdateCompleted } = socketState;
+
+  /* React.useEffect(() => {
+    console.log(globalUpdateCompleted);
+  }, [globalUpdateCompleted]); */
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
@@ -81,25 +93,19 @@ const PagoCompletadoScreen = ({ navigation }) => {
 
         <View style={{ width: "100%", alignItems: "center" }}>
           <View style={{ marginTop: 50 }}>
-            <CommonNeuButton
-              text={ResolveText("jugar")}
-              onPress={() => {
-                navigation.navigate("Juego");
-              }}
-              screenWidth={width}
-            />
-          </View>
-          <View style={{ marginTop: 40 }}>
-            <CommonNeuButton
-              text={ResolveText("atras")}
-              onPress={() => {
-                navigation.jumpTo("Nueva Recarga", {
-                  screen: "NuevaRecargaScreen",
-                  params: { inOrderToCobrarPremio: false },
-                });
-              }}
-              screenWidth={width}
-            />
+            {globalUpdateCompleted ? (
+              <CommonNeuButton
+                text={ResolveText("jugar")}
+                onPress={() => {
+                  navigation.navigate("Juego");
+                  nuevaRecargaDispatch(resetNuevaRecargaState());
+                  socketDispatch(SetGlobalUpdateCompleted(false));
+                }}
+                screenWidth={width}
+              />
+            ) : (
+              <ActivityIndicator size="large" color="#01f9d2" />
+            )}
           </View>
         </View>
       </View>

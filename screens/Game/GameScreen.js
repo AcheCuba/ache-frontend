@@ -39,12 +39,19 @@ import {
   GameScreenTextEnglish,
   GameScreenTextSpanish,
 } from "../../constants/Texts";
-import { TextBold, TextItalic } from "../../components/CommonText";
+import {
+  TextBold,
+  TextBoldItalic,
+  TextItalic,
+  TextMedium,
+  TextNormal,
+} from "../../components/CommonText";
 import { LinearGradient } from "expo-linear-gradient";
 import NadaDescriptionContentModal from "./components/NadaDescriptionContentModal";
 import MediaBolsaWonContentModal from "./components/MediaBolsaWonContentModal";
 import BolsaLlenaWonContentModal from "./components/BolsaLlenaWonContentModal";
 import JoyaWonContentModal from "./components/JoyaWonContentModal";
+import { Text } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -111,8 +118,9 @@ const GameScreen = ({ navigation }) => {
 
   const animationTime = 12000; // ms (movimiento de ruleta)
 
-  /*  React.useEffect(() => {
-    console.log(userState);
+  /*   React.useEffect(() => {
+    //console.log(width);
+    //console.log(height);
     //console.log(JoyaWon);
   }); */
 
@@ -983,8 +991,8 @@ const GameScreen = ({ navigation }) => {
                       <TextBold
                         text={
                           userState?.idioma === "spa"
-                            ? "Premio Acumulado"
-                            : "Premio Acumulado"
+                            ? "Premio Pendiente"
+                            : "Premio Pendiente"
                         }
                         style={{
                           fontSize: 26,
@@ -1000,8 +1008,8 @@ const GameScreen = ({ navigation }) => {
                       <TextItalic
                         text={
                           userState?.idioma === "spa"
-                            ? `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes} horas. O envía una recarga y vuelve a jugar ¡ya!`
-                            : `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes}  horas. O envía una recarga y vuelve a jugar ¡ya!`
+                            ? `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes} horas. O envía una recarga y vuelve a jugar.`
+                            : `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes}  horas. O envía una recarga y vuelve a jugar.`
                         }
                         style={{
                           fontSize: 20,
@@ -1014,8 +1022,8 @@ const GameScreen = ({ navigation }) => {
                       <TextItalic
                         text={
                           userState?.idioma === "spa"
-                            ? `El Trofeo está lleno. ¡Reclama tu ACHÉ! Para cobrar tus Joyitas y volver a jugar envía una recarga, revisa el email y ¡sigue los pasos!`
-                            : `El Trofeo está lleno. ¡Reclama tu ACHÉ! Para cobrar tus Joyitas y volver a jugar envía una recarga, revisa el email y ¡sigue los pasos!`
+                            ? `El ACHÉ está lleno. Para ganar otro premio en la Ruleta, agrega tu premio pendiente a una recarga, o compártelo usando el botón ubicado en la esquina superior derecha de tu pantalla.`
+                            : `El ACHÉ está lleno. Para ganar otro premio en la Ruleta, agrega tu premio pendiente a una recarga, o compártelo usando el botón ubicado en la esquina superior derecha de tu pantalla.`
                         }
                         style={{
                           fontSize: 20,
@@ -1110,23 +1118,45 @@ const GameScreen = ({ navigation }) => {
               }}
             >
               <TextBold
-                text={ResolveText("nadaWonTitle")}
+                text={userState?.idioma === "spa" ? "Calavera" : "Calavera"}
+                //text={ResolveText("nadaWonTitle")}
                 style={{
                   fontSize: 30,
                   color: "#01f9d2",
                   textTransform: "uppercase",
                   textAlign: "center",
+                  //fontStyle: "italic",
                 }}
               />
-              <TextItalic
-                text={ResolveText("nadaWonBody")}
-                style={{
-                  marginTop: 30,
-                  fontSize: 18,
-                  color: "#01f9d2",
-                  textAlign: "center",
-                }}
-              />
+              <Text style={{ marginTop: 30 }}>
+                <TextItalic
+                  text="Oh…lo sentimos, pero te faltó ACHÉ en el giro. Intenta otra vez en 24 horas o envía una recarga rápida con  para que desaparezca al instante. ¡Sigue probando!"
+                  style={{
+                    fontSize: 18,
+                    color: "#01f9d2",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                />
+                <TextBoldItalic
+                  text=" El Rayo "
+                  style={{
+                    fontSize: 18,
+                    color: "#01f9d2",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                />
+                <TextItalic
+                  text="para que desaparezca al instante. ¡Sigue probando!"
+                  style={{
+                    fontSize: 18,
+                    color: "#01f9d2",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                />
+              </Text>
             </View>
 
             <View style={{ marginTop: 30 }}>

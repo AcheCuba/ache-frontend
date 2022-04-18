@@ -1,7 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
-import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
 import { GlobalContext } from "../context/GlobalProvider";
@@ -33,12 +30,14 @@ export default function useCachedResources() {
     "bs-medium": require("../assets/fonts/bloggerSans/BloggerSans-Medium.ttf"),
     "bs-bold": require("../assets/fonts/bloggerSans/BloggerSans-Bold.ttf"),
     "bs-italic": require("../assets/fonts/bloggerSans/BloggerSans-MediumItalic.ttf"),
+    "bs-bold-italic": require("../assets/fonts/bloggerSans/BloggerSans-BoldItalic.ttf"),
   });
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
+        //SplashScreen.show();
         SplashScreen.preventAutoHideAsync();
 
         let token;
@@ -51,7 +50,7 @@ export default function useCachedResources() {
 
         //===================== solo para eliminar premio en app ===========================
 
-        /* storeData("user", {
+        /*     storeData("user", {
           ...user,
           prize: null,
         });

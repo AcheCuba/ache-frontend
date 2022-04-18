@@ -16,6 +16,7 @@ const RESTORE_NUEVA_RECARGA_INITIAL_STATE =
   actionTypes.RESTORE_NUEVA_RECARGA_INITIAL_STATE;
 const DELETE_FIELD = actionTypes.DELETE_FIELD;
 const DELETE_ALL_VALIDATED_PRIZES = actionTypes.DELETE_ALL_VALIDATED_PRIZES;
+const SET_TRANSACTIONS_ID_ARRAY = actionTypes.SET_TRANSACTIONS_ID_ARRAY;
 
 //socket
 const SET_TRANSACCIONES_NORMALES_CONFIRMADAS =
@@ -41,11 +42,6 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         addContactAvaiable: false,
         contactosSeleccionados: [],
         validated_prizes: [],
-        /* validated_prizes:
-          state.validated_prizes.length !== 0
-            ? [state.validated_prizes[0]]
-            : [], */
-        // fields: [state.fields[0]],
         fields: [],
         validatetInProcess: false,
       };
@@ -181,6 +177,12 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         ...state,
         //premiosConfirmadosSocket: action.premiosConfirmados,
         transacciones_premio_confirmadas: [],
+      };
+
+    case SET_TRANSACTIONS_ID_ARRAY:
+      return {
+        ...state,
+        transactions_id_array: action.transactionsIdArray,
       };
 
     default:

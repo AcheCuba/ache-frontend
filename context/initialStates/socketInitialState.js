@@ -5,5 +5,5 @@ export default {
   transacciones_premio_esperadas: [],
   transacciones_normales_resultado: [],
   transacciones_premio_resultado: [],
-  updateCompleted: false,
+  globalUpdateCompleted: false,
 };
