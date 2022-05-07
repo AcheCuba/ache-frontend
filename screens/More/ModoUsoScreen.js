@@ -54,8 +54,15 @@ const ModoUsoScreen = ({ navigation }) => {
         }}
       >
         <View style={styles.container}>
-          <View style={{ flex: 1, marginVertical: 10, marginHorizontal: 20 }}>
-            <ScrollView>
+          <View
+            style={{
+              flex: 1,
+              marginTop: 10,
+              marginBottom: 105,
+              marginHorizontal: 20,
+            }}
+          >
+            <ScrollView showsVerticalScrollIndicator={false}>
               <View style={{ marginBottom: 20 }}>
                 <TextBold
                   style={{

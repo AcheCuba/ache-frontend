@@ -399,14 +399,14 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         // si un premio está asociado a un contacto, es que está en checkout
 
         if (validated_prizes.length === 0) {
-          Toast.show("No hay premios válidos por cobrar", {
+          /*  Toast.show("No hay premios válidos por cobrar", {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
             shadow: true,
             animation: true,
             hideOnPress: true,
             delay: 0,
-          });
+          }); */
           setLoadingContinuar(false);
           navigation.navigate("RecargasDisponiblesScreen", { esDirecta: true });
         } else {

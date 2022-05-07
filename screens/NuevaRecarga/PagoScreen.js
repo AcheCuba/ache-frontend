@@ -8,10 +8,12 @@ import {
   deleteAllTransaccionesPremio,
   resetNuevaRecargaState,
   setPrizeForUser,
+  setTransaccionesNormalesResultado,
 } from "../../context/Actions/actions";
 import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
 import { cancelNotification } from "../../libs/expoPushNotification.lib";
 import Toast from "react-native-root-toast";
+import { StatusBar } from "react-native";
 
 const frontend_url = "https://react-paymentsite.herokuapp.com/";
 
@@ -34,8 +36,13 @@ const PagoScreen = ({ navigation, route }) => {
   const transaction_id_array = route.params?.transaction_id_array;
   const productPriceUsd = route.params?.productPriceUsd;
 
-  const { userState, userDispatch, nuevaRecargaState, nuevaRecargaDispatch } =
-    React.useContext(GlobalContext);
+  const {
+    userState,
+    userDispatch,
+    nuevaRecargaState,
+    nuevaRecargaDispatch,
+    socketDispatch,
+  } = React.useContext(GlobalContext);
   const { name, email } = userState;
   const {
     transacciones_premio_confirmadas,
@@ -44,24 +51,11 @@ const PagoScreen = ({ navigation, route }) => {
   } = nuevaRecargaState;
 
   React.useEffect(() => {
-    /*  console.log(
-      "transacciones_normales_confirmadas - pago",
-      transacciones_normales_confirmadas
-    );
-    console.log(
-      "transacciones_premio_confirmadas - pago",
-      transacciones_premio_confirmadas
-    ); */
-
-    if (transacciones_premio_confirmadas.length !== 0) {
-      // elimiar premio de la app si se cobro bien ()
-      prizeAppManage(transacciones_premio_confirmadas);
-
-      // finish checkout de los premios (true para COMPLETED y false para DECLINED)
-      finish_checkout_all_prizes_confirmados();
-    }
-
     if (transacciones_normales_confirmadas.length !== 0) {
+      /* console.log(
+        "transacciones_normales_confirmadas - pago",
+        transacciones_normales_confirmadas
+      ); */
       // confirm transaction de los premios que tienen recargas completadas
       // finish checkout de premios cuyas recargas fallaron
       // eliminar la nada de la app (si al menos una recarga sin premio salio bien)
@@ -73,11 +67,22 @@ const PagoScreen = ({ navigation, route }) => {
         nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
       }, 5000); */
     }
+  }, [transacciones_normales_confirmadas]);
 
-    return () => {
-      //console.log("============== clean up Pago screen ===============");
-    };
-  }, [transacciones_premio_confirmadas, transacciones_normales_confirmadas]);
+  React.useEffect(() => {
+    if (transacciones_premio_confirmadas.length !== 0) {
+      /*  console.log(
+        "transacciones_premio_confirmadas - pago",
+        transacciones_premio_confirmadas
+      ); */
+
+      // elimiar premio de la app si se cobro bien ()
+      prizeAppManage(transacciones_premio_confirmadas);
+
+      // finish checkout de los premios (true para COMPLETED y false para DECLINED)
+      finish_checkout_all_prizes_confirmados();
+    }
+  }, [transacciones_premio_confirmadas]);
 
   React.useEffect(() => {
     //console.log("paymentSucceded - pago", paymentSucceded);
@@ -87,7 +92,7 @@ const PagoScreen = ({ navigation, route }) => {
 
       transaction_id_array.forEach((transaction) => {
         confirmTransactionPromisesArray.push(
-          confirmTransactionRequest(transaction.topUpId)
+          confirmTransactionRequest(transaction.topUpId, false)
         );
       });
 
@@ -113,15 +118,16 @@ const PagoScreen = ({ navigation, route }) => {
   }, [paymentSucceded]);
 
   const managePrizes = () => {
-    // confrim transaction de premios si las recargas normales fueron completed
+    // CREATE TRANSACTION y CONFIRM TRANSACTION de premios si las recargas normales fueron completed
     // FINISH CHECKOUT de los premios asociados si no fueron completed
     // se elimina la NADA si alguna recarga salio bien
 
+    // === logica ===
     // filtrar las transacciones completadas en $transacciones_normales_confirmadas
     // recorrer ese array
     // buscar cada transaccion en transaction_id_array
-    // verificar si en esa transaccion prizeId es o no undefinded
-    // si no es undefinded: hacer confirm transaction con ese prizeId
+    // verificar si en esa transaccion prize_uuid es o no undefinded
+    // si no es "undefined": crear transaccion, tomar el transactionId de la transaction y automaticamente confirmarla
 
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
@@ -151,22 +157,45 @@ const PagoScreen = ({ navigation, route }) => {
               return (
                 transaccion.topUpId ===
                   transaccionNormalCompletada.transactionId &&
-                transaccion.prizeId != undefined
+                transaccion.prize_uuid != undefined
               );
             }
           );
           if (transaccionDePremio != undefined) {
             //console.log("confirm transaction premio - pago screen");
-            confirmTransactionRequest(transaccionDePremio.prizeId)
+
+            // create transaction
+            create_transaction_prizes(
+              transaccionDePremio.beneficiary,
+              transaccionDePremio.prize_uuid,
+              transaccionDePremio.dtoneProductId,
+              transaccionDePremio.socketId
+            )
               .then((response) => {
-                console.log(response.status);
-              })
-              .catch((err) => {
+                const transaction_data = response.data;
                 console.log(
-                  "confirm transaction request error",
-                  err.response.status
+                  "create transaction response status: ",
+                  response.status
                 );
-              });
+
+                //confirm transaction
+                confirmTransactionRequest(transaction_data.id, true)
+                  .then((response) => {
+                    console.log(
+                      "confirm transaction response status",
+                      response.status
+                    );
+                  })
+                  .catch((err) => {
+                    console.log(
+                      "confirm transaction request error",
+                      err.response.status
+                    );
+                  });
+              })
+              .catch((err) =>
+                console.log("create transaction error", err.response.status)
+              );
           }
         }
       );
@@ -179,7 +208,7 @@ const PagoScreen = ({ navigation, route }) => {
               return (
                 transaccion.topUpId ===
                   transaccionNormalNoCompletada.transactionId &&
-                transaccion.prizeId != undefined
+                transaccion.prize_uuid != undefined
               );
             }
           );
@@ -192,6 +221,38 @@ const PagoScreen = ({ navigation, route }) => {
         }
       );
     }
+  };
+
+  const create_transaction_prizes = async (
+    beneficiary,
+    prizeCode,
+    dtoneProductId,
+    socketId
+  ) => {
+    const user_token = userState.token;
+    const url = `${BASE_URL}/topup/create-transaction`;
+    //console.log("socket id pasado al endpoint", socketId);
+
+    let config;
+
+    config = {
+      method: "post",
+      url,
+      data: {
+        beneficiary,
+        prizeCode,
+        dtoneProductId,
+        socketId,
+      },
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    //console.log("create transaction prizes", config);
+    console.log("create trnasaction prizes prize code", prizeCode);
+
+    return axios(config);
   };
 
   const refund = () => {
@@ -212,7 +273,7 @@ const PagoScreen = ({ navigation, route }) => {
     //console.log(typeof productPrice);
     //console.log(typeof productPriceUsd);
     //console.log(typeof amount_refund);
-    //console.log("amount refund - pago screen", amount_refund);
+    console.log("amount refund - pago screen", amount_refund);
 
     let config = {
       method: "post",
@@ -288,7 +349,7 @@ const PagoScreen = ({ navigation, route }) => {
         setLoading(false);
       })
       .catch((e) => {
-        //console.log(e.message)
+        console.log("error", e.message);
       });
   };
 
@@ -305,17 +366,18 @@ const PagoScreen = ({ navigation, route }) => {
     return axios(config);
   };
 
-  const confirmTransactionRequest = (transaction_id) => {
+  const confirmTransactionRequest = (transaction_id, isTopUpBonus) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/confirm-transaction/${transaction_id}`;
     const config = {
       method: "post",
       url,
+      params: { isTopUpBonus },
       headers: {
         Authorization: `Bearer ${user_token}`,
       },
     };
-    //console.log("url llamada en confirm transaction", config.url);
+    console.log("url llamada en confirm transaction", config.url);
     return axios(config);
   };
 
@@ -339,7 +401,7 @@ const PagoScreen = ({ navigation, route }) => {
       },
     };
     //console.log("finish checkout url - pago screen", config.url);
-    //console.log("finish checkout params - pago screen", config.params);
+    console.log("finish checkout - pago screen", uuid);
     return axios(config);
   };
 
@@ -380,7 +442,6 @@ const PagoScreen = ({ navigation, route }) => {
       .then(() => {
         // eliminar premios del estado
         nuevaRecargaDispatch(deleteAllTransaccionesPremio());
-        console.log("finish checkout ok");
       })
       .catch((e) => {
         // eliminar premios del estado
@@ -490,8 +551,9 @@ const PagoScreen = ({ navigation, route }) => {
   //- start payment -> webview
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 2 }}>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar hidden />
+      <View style={{ flex: 2, marginTop: 18, marginBottom: 0 }}>
         {loading && (
           <View style={[styles.loader, styles.horizontal]}>
             <ActivityIndicator animating={true} size="large" color="#701c57" />
@@ -501,7 +563,7 @@ const PagoScreen = ({ navigation, route }) => {
           style={{
             position: "absolute",
             backgroundColor: "#fff",
-            height: 70,
+            //height: 70,
             width: Dimensions.get("window").width,
             zIndex: 200,
           }}

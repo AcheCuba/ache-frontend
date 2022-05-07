@@ -29,21 +29,21 @@ import { setIdioma } from "../context/Actions/actions";
 import { storeData } from "../libs/asyncStorage.lib";
 import { View } from "react-native";
 import { NeuButton } from "react-native-neu-element";
-import { Text } from "react-native";
 import PremioDescription from "../screens/More/PremioDescription";
+import { Audio } from "expo-av";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 const BottomTab = createBottomTabNavigator();
 
-const isTabBarVisible = (route) => {
+/* const isTabBarVisible = (route) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? "";
   if (routeName === "Juego") {
     return false;
   }
 
   return true;
-};
+}; */
 
 export default function BottomTabNavigator({ navigation, route }) {
   //const colorScheme = useColorScheme();
@@ -51,60 +51,25 @@ export default function BottomTabNavigator({ navigation, route }) {
   //const [spa, setSpanish] = useState(true);
   const { userState, userDispatch } = React.useContext(GlobalContext);
   const idioma_definido = userState?.idioma;
+  const [soundTabNav, setSoundTabNav] = React.useState();
 
-  function MyTabBar({ state, descriptors, navigation }) {
-    return (
-      <View style={{ flexDirection: "row" }}>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
-              : options.title !== undefined
-              ? options.title
-              : route.name;
+  React.useEffect(() => {
+    return soundTabNav
+      ? () => {
+          soundTabNav.unloadAsync();
+        }
+      : undefined;
+  }, [soundTabNav]);
 
-          const isFocused = state.index === index;
-
-          const onPress = () => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!isFocused && !event.defaultPrevented) {
-              // The `merge: true` option makes sure that the params inside the tab screen are preserved
-              navigation.navigate({ name: route.name, merge: true });
-            }
-          };
-
-          const onLongPress = () => {
-            navigation.emit({
-              type: "tabLongPress",
-              target: route.key,
-            });
-          };
-
-          return (
-            <NeuButton
-              color="#701c57"
-              width={60}
-              height={60}
-              borderRadius={30}
-              style={{ position: "absolute" }}
-            >
-              <Text style={{ color: isFocused ? "#673ab7" : "#222" }}>
-                {label}
-              </Text>
-            </NeuButton>
-          );
-        })}
-      </View>
-    );
+  async function playSoundTabNav() {
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(require("../assets/Sonidos/tab_nav.wav"), {
+      shouldPlay: true,
+    });
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    setSoundTabNav(_sound);
   }
-
-  //Ej: activeTintColor: Colors[colorScheme].tint => dice a la app qué esquema de coloresusar según la conf del usuario
 
   return (
     <BottomTab.Navigator
@@ -112,6 +77,7 @@ export default function BottomTabNavigator({ navigation, route }) {
       initialRouteName="Juego"
       tabBarOptions={{
         //activeTintColor: Colors.light.tint,
+
         activeTintColor: "rgb(255, 248, 0)",
         inactiveTintColor: "rgba(255,255,255,0.3)",
         keyboardHidesTabBar: true,
@@ -176,6 +142,11 @@ export default function BottomTabNavigator({ navigation, route }) {
       <BottomTab.Screen
         name="Juego"
         component={GameNavigator}
+        listeners={{
+          tabPress: (e) => {
+            playSoundTabNav();
+          },
+        }}
         options={{
           /*  tabBarIcon: ({ color }) => (
             <TabBarIcon name="game-controller" color={color} />
@@ -203,7 +174,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           },
 
           tabBarLabel: idioma_definido === "spa" ? "JUEGA" : "PLAY",
-          tabBarVisible: ((route) => {
+          /*  tabBarVisible: ((route) => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? "Juego"; // trampilla
             //console.log("route name", routeName);
             //const routeName = getFocusedRouteNameFromRoute(route);
@@ -213,12 +184,17 @@ export default function BottomTabNavigator({ navigation, route }) {
             }
 
             return true;
-          })(route),
+          })(route), */
         }}
       />
       <BottomTab.Screen
         name="Nueva Recarga"
         component={NuevaRecargaNavigator}
+        listeners={{
+          tabPress: (e) => {
+            playSoundTabNav();
+          },
+        }}
         options={{
           tabBarIcon: () => <TabButtonNeo iconName="Recarga" />,
           tabBarButton: (props) => {
@@ -272,6 +248,11 @@ export default function BottomTabNavigator({ navigation, route }) {
       <BottomTab.Screen
         name="Más"
         component={MoreNavigator}
+        listeners={{
+          tabPress: (e) => {
+            playSoundTabNav();
+          },
+        }}
         options={{
           tabBarIcon: () => <TabButtonNeo iconName="Settings" />,
           tabBarButton: (props) => {
@@ -323,7 +304,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           tabPress: (e) => {
             // Prevent default action
             e.preventDefault();
-            //setSpanish(!spa);
+            playSoundTabNav();
             if (idioma_definido === "spa") {
               userDispatch(setIdioma("eng"));
 

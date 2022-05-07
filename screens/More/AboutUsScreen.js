@@ -56,7 +56,14 @@ const AboutUsScreen = ({ navigation }) => {
           _onPress={() => navigation.navigate("MoreScreen")}
         />
         <View style={styles.container}>
-          <View style={{ flex: 1, marginVertical: 10, marginHorizontal: 20 }}>
+          <View
+            style={{
+              flex: 1,
+              marginTop: 10,
+              marginBottom: 105,
+              marginHorizontal: 20,
+            }}
+          >
             <ScrollView>
               <View style={{ marginBottom: 20 }}>
                 <TextBold

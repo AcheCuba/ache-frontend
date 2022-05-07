@@ -28,6 +28,12 @@ import {
 import { TextBold, TextMedium } from "../../components/CommonText";
 import { ImageBackground } from "react-native";
 import { Image } from "react-native";
+import { getNetworkState } from "../../libs/networkState.lib";
+import {
+  GameScreenTextEnglish,
+  GameScreenTextSpanish,
+} from "../../constants/Texts";
+import { Audio } from "expo-av";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -51,6 +57,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const [loadingPromotions, setLoadingPromotions] = React.useState(false);
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
   const [pressedProductId, setPressed] = React.useState(0);
+  const [soundError, setSoundError] = React.useState();
 
   //const [price_usd, setPrice_usd] = React.useState("");
 
@@ -60,6 +67,41 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     //console.log(esDirecta);
     console.log("validated prizes rec disp", validated_prizes);
   }, [validated_prizes]); */
+
+  React.useEffect(() => {
+    return soundError
+      ? () => {
+          //console.log("Unloading Sound");
+          soundError.unloadAsync();
+        }
+      : undefined;
+  }, [soundError]);
+
+  async function playSoundError() {
+    //console.log("Loading Sound");
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(require("../../assets/Sonidos/error.wav"), {
+      shouldPlay: true,
+    });
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    setSoundError(_sound);
+    //console.log("Playing Sound");
+  }
+
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = GameScreenTextSpanish();
+    const textEng = GameScreenTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
 
   const prize_finish_checkout = (uuid) => {
     const user_token = userState.token;
@@ -220,35 +262,62 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       });
   };
 
-  const getProducts = (cancelToken) => {
+  const getProducts = async (cancelToken) => {
     setLoadingProducts(true);
-    const user_token = userState.token;
-    const url = `${BASE_URL}/topup/products`;
-
-    const config = {
-      method: "get",
-      cancelToken,
-      url,
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
-
-    axios(config)
-      .then((response) => {
-        setProducts(response.data);
-        //console.log("products");
-        //console.log(response.data);
+    const networkState = await getNetworkState();
+    if (!networkState.isConnected || !networkState.isInternetReachable) {
+      setTimeout(() => {
+        let toast = Toast.show(ResolveText("errorConexion"), {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        });
         setLoadingProducts(false);
-      })
-      .catch((err) => {
-        //console.log(err.message);
-        /* if (err.response) {
-          console.log(err.response.message);
-        } */
+        playSoundError();
+        onPressCancelarRecarga();
+      }, 1500);
+    } else {
+      const user_token = userState.token;
+      const url = `${BASE_URL}/topup/products`;
 
-        setLoadingProducts(false);
-      });
+      const config = {
+        method: "get",
+        cancelToken,
+        url,
+        headers: {
+          Authorization: `Bearer ${user_token}`,
+        },
+      };
+
+      axios(config)
+        .then((response) => {
+          setProducts(response.data);
+          //console.log("products");
+          //console.log(response.data);
+          setLoadingProducts(false);
+        })
+        .catch((err) => {
+          //console.log(err.message);
+          /* if (err.response) {
+            console.log(err.response.message);
+          } */
+          setLoadingProducts(false);
+
+          /*      playSoundError();
+          let toast = Toast.show(ResolveText("errorDesconocido"), {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+          });
+          onPressCancelarRecarga(); */
+        });
+    }
   };
 
   const create_transaction = async (contacto, productId) => {
@@ -257,7 +326,22 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     //console.log("socket id pasado al endpoint", socketId);
 
     let config;
-    if (contacto.prize != null) {
+
+    config = {
+      method: "post",
+      url,
+      data: {
+        beneficiary: contacto.contactNumber,
+        prizeCode: "",
+        dtoneProductId: productId,
+        socketId: socketId,
+      },
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    /*     if (contacto.prize != null) {
       config = {
         method: "post",
         url,
@@ -271,26 +355,13 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           Authorization: `Bearer ${user_token}`,
         },
       };
-    } else {
-      //console.log("contacto", contacto);
-      //console.log("productId", productId);
-      config = {
-        method: "post",
-        url,
-        data: {
-          beneficiary: contacto.contactNumber,
-          prizeCode: "",
-          dtoneProductId: productId,
-          socketId: socketId,
-        },
-        headers: {
-          Authorization: `Bearer ${user_token}`,
-        },
-      };
-    }
+    } else { */
+    //console.log("contacto", contacto);
+    //console.log("productId", productId);
+
     return axios(config);
   };
-  const onPressProduct = async (productId, productPriceUsd) => {
+  const onPressProduct = async (productId, productPriceUsd, amount_cup) => {
     // por cada contacto, se crea una transaccion
     // endpoint: create-transacition
 
@@ -308,7 +379,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     socketDispatch(setTransaccionesNormalesResultado([]));
     socketDispatch(setTransaccionesPremioResultado([]));
 
-    let contador_premios = 0;
+    let contador_contactos = 0;
     let transaction_error = false;
 
     let promisesForTransaction = [];
@@ -319,11 +390,43 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     for (const promise of promisesForTransaction) {
       await promise
         .then((response) => {
-          const transaction_data_arr = response.data;
+          //const transaction_data_arr = response.data;
+          const transaction_data = response.data;
 
           // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
           // se crea un object por cada uno de estas 2 (o 1) transacciones
-          if (transaction_data_arr.length === 1) {
+
+          // update 3 de mayo
+          // se mandan las transacciones normales aqui
+          // se recibe un object
+
+          transaction_id_array.push({
+            topUpId: transaction_data.id,
+            //prizeId: undefined, //transactionId
+            dtoneProductId: productId,
+            beneficiary:
+              contactosSeleccionados[contador_contactos].contactNumber,
+            socketId: socketId,
+            prize_uuid:
+              contactosSeleccionados[contador_contactos].prize != null
+                ? contactosSeleccionados[contador_contactos].prize.uuid
+                : undefined,
+          });
+
+          // normales esperadas
+          transacciones_normales_esperadas.push({
+            mobile_number:
+              transaction_data.credit_party_identifier.mobile_number,
+            transaction_id: transaction_data.id,
+          });
+
+          if (contactosSeleccionados[contador_contactos].prize != null) {
+            transacciones_premio_esperadas.push(1); //solo uso la cantidad
+          }
+
+          contador_contactos += 1;
+
+          /*   if (transaction_data_arr.length === 1) {
             transaction_id_array.push({
               topUpId: transaction_data_arr[0].id,
               prizeId: undefined, //transactionId
@@ -336,9 +439,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                 transaction_data_arr[0].credit_party_identifier.mobile_number,
               transaction_id: transaction_data_arr[0].id,
             });
-          }
+          } */
 
-          if (transaction_data_arr.length === 2) {
+          /*   if (transaction_data_arr.length === 2) {
             transaction_id_array.push({
               topUpId: transaction_data_arr[0].id,
               prizeId: transaction_data_arr[1].id,
@@ -360,7 +463,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
             });
 
             contador_premios += 1;
-          }
+          } */
         })
         .catch((err) => {
           if (err.response) {
@@ -368,6 +471,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
             //const err_headers = err.response.headers;
             //console.log(err_data);
             //console.log(err_headers);
+            console.log(err_data);
           }
 
           if (err.request) {
@@ -375,6 +479,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           }
           setLoadingContinuar(false);
 
+          playSoundError();
           Toast.show("No se pudo crear la transacción", {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
@@ -406,6 +511,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       navigation.navigate("PrePagoScreen", {
         productPriceUsd,
         transaction_id_array,
+        amount_cup,
       });
     }
   };
@@ -598,7 +704,11 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                     onPress={() => {
                       //console.log(product);
                       setPressed(product.id); // para el loading
-                      onPressProduct(product.id, product.price_usd);
+                      onPressProduct(
+                        product.id,
+                        product.price_usd,
+                        product.amount_cup
+                      );
                     }}
                     width={width / 1.3}
                     height={height / 5}

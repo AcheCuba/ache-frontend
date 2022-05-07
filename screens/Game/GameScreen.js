@@ -52,6 +52,8 @@ import MediaBolsaWonContentModal from "./components/MediaBolsaWonContentModal";
 import BolsaLlenaWonContentModal from "./components/BolsaLlenaWonContentModal";
 import JoyaWonContentModal from "./components/JoyaWonContentModal";
 import { Text } from "react-native";
+import { getNetworkState } from "../../libs/networkState.lib";
+import { Audio } from "expo-av";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -107,6 +109,13 @@ const GameScreen = ({ navigation }) => {
   const [nadaDescriptionModalVisible, setNadaDescriptionModalVisible] =
     React.useState(false);
 
+  //sonidos
+  const [soundError, setSoundError] = React.useState();
+  const [soundGanasCalavera, setSoundGanasCalavera] = React.useState();
+  const [soundGanasPremioDigital, setSoundGanasPremioDigital] =
+    React.useState();
+  const [soundGanasGranPremio, setSoundGanasGranPremio] = React.useState();
+
   const [casillaFinal, setCasillaFinal] = React.useState("7200deg");
   const thereIsPrizeResult = React.useRef(false);
   const { userState, userDispatch, nuevaRecargaDispatch } =
@@ -118,11 +127,91 @@ const GameScreen = ({ navigation }) => {
 
   const animationTime = 12000; // ms (movimiento de ruleta)
 
-  /*   React.useEffect(() => {
+  /*  React.useEffect(() => {
     //console.log(width);
     //console.log(height);
     //console.log(JoyaWon);
+    //console.log(userState);
+    //console.log(width / 3);
   }); */
+
+  async function playSoundError() {
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(require("../../assets/Sonidos/error.wav"), {
+      shouldPlay: true,
+    });
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    setSoundError(_sound);
+  }
+
+  async function playSoundGanasCalavera() {
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(require("../../assets/Sonidos/ganas_calavera.wav"), {
+      shouldPlay: true,
+    });
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    setSoundGanasCalavera(_sound);
+  }
+
+  async function playSoundGranPremio() {
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(
+      require("../../assets/Sonidos/ganas_gran_premio.wav"),
+      {
+        shouldPlay: true,
+      }
+    );
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    setSoundGanasGranPremio(_sound);
+  }
+
+  async function playSoundGanasPremioDigital() {
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(
+      require("../../assets/Sonidos/ganas_premio_dig.wav"),
+      {
+        shouldPlay: true,
+      }
+    );
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    setSoundGanasPremioDigital(_sound);
+  }
+
+  React.useEffect(() => {
+    return soundError
+      ? () => {
+          soundError.unloadAsync();
+        }
+      : undefined;
+  }, [soundError]);
+
+  React.useEffect(() => {
+    return soundGanasCalavera
+      ? () => {
+          soundGanasCalavera.unloadAsync();
+        }
+      : undefined;
+  }, [soundGanasCalavera]);
+
+  React.useEffect(() => {
+    return soundGanasGranPremio
+      ? () => {
+          soundGanasGranPremio.unloadAsync();
+        }
+      : undefined;
+  }, [soundGanasGranPremio]);
+
+  React.useEffect(() => {
+    return soundGanasPremioDigital
+      ? () => {
+          soundGanasPremioDigital.unloadAsync();
+        }
+      : undefined;
+  }, [soundGanasPremioDigital]);
 
   React.useEffect(() => {
     async function expoTokenAsync() {
@@ -423,6 +512,7 @@ const GameScreen = ({ navigation }) => {
       case "Nada":
         setTimeout(() => {
           setNadaWon(true);
+          playSoundGanasCalavera();
         }, animationTime);
 
         // pa que se vaya solo
@@ -456,6 +546,7 @@ const GameScreen = ({ navigation }) => {
 
         setTimeout(() => {
           setJoyaWon(true);
+          playSoundGranPremio();
         }, animationTime + 6000);
 
         //setCasillaFinal("1823deg");
@@ -467,6 +558,7 @@ const GameScreen = ({ navigation }) => {
           //console.log("sellama");
           setTimeout(() => {
             setMediaBolsaWon(true);
+            playSoundGanasPremioDigital();
           }, animationTime);
           //setCasillaFinal("1823deg");
           const random_seed = Math.random();
@@ -484,6 +576,7 @@ const GameScreen = ({ navigation }) => {
         if (prize.amount === 20 || prize.amount === 500) {
           setTimeout(() => {
             setBolsaLlenaWon(true);
+            playSoundGanasPremioDigital();
           }, animationTime);
           //setCasillaFinal("1778deg");
           const random_seed = Math.random();
@@ -510,171 +603,186 @@ const GameScreen = ({ navigation }) => {
   };
 
   const onPressWheel = async () => {
-    if (enMovimiento.current) {
-      Toast.show("La ruleta ya está en movimiento. \n Por favor, espere.", {
-        duaration: Toast.durations.SHORT,
+    const networkState = await getNetworkState();
+    if (!networkState.isConnected || !networkState.isInternetReachable) {
+      playSoundError();
+      let toast = Toast.show(ResolveText("errorConexion"), {
+        duaration: Toast.durations.LONG,
         position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
       });
     } else {
-      setCasillaFinal("7200deg");
+      if (enMovimiento.current) {
+        Toast.show("La ruleta ya está en movimiento. \n Por favor, espere.", {
+          duaration: Toast.durations.SHORT,
+          position: Toast.positions.BOTTOM,
+        });
+      } else {
+        setCasillaFinal("7200deg");
 
-      wheelRotateLoop();
+        wheelRotateLoop();
 
-      const current_prize = userState.prize;
+        const current_prize = userState.prize;
 
-      const user_token = userState.token;
-      const url = `${BASE_URL}/prize/play`;
+        const user_token = userState.token;
+        const url = `${BASE_URL}/prize/play`;
 
-      const config = {
-        method: "post",
-        url: url,
-        headers: {
-          Authorization: `Bearer ${user_token}`,
-        },
-      };
+        const config = {
+          method: "post",
+          url: url,
+          headers: {
+            Authorization: `Bearer ${user_token}`,
+          },
+        };
 
-      // +++++++++++++++ fake para test
+        // +++++++++++++++ fake para test
 
-      /*     const fakePrize = { type: "TopUpBonus", amount: 250 };
+        /*  const fakePrize = { type: "Jackpot", amount: 250 };
 
-      if (current_prize === null) {
-        setCasilla(fakePrize);
-        setTimeout(() => {
-          // demora del server simulacion
+        if (current_prize === null) {
+          setCasilla(fakePrize);
           thereIsPrizeResult.current = true;
 
-          const prizeStartTime = moment();
-          const prizeEndTime = moment().add(3, "days");
-          //const horas_restantes = prizeEndTime.diff(prizeStartTime, "hours");
+          setTimeout(() => {
+            // demora del server simulacion
 
-          userDispatch(
-            setPrizeForUser({
-              type: "TopUpBonus",
-              exchanged: false, // no se puede cambiar
-              amount: 250,
-              prizeStartTime,
-              prizeEndTime,
-              //minutos_restantes,
+            const prizeStartTime = moment();
+            const prizeEndTime = moment().add(3, "days");
+            //const horas_restantes = prizeEndTime.diff(prizeStartTime, "hours");
+
+            userDispatch(
+              setPrizeForUser({
+                type: "Jackpot",
+                exchanged: false, // no se puede cambiar
+                amount: 250,
+                prizeStartTime,
+                prizeEndTime,
+                //minutos_restantes,
+              })
+            );
+          }, animationTime);
+        } else {
+          setCasillaRandom();
+          setTimeout(() => {
+            thereIsPrizeResult.current = true;
+            const currentTime = moment();
+            const { prizeEndTime } = userState.prize;
+            const horas_restantes = prizeEndTime.diff(currentTime, "hours");
+            setHorasRestantes(horas_restantes);
+            setPremioAcumulado(true);
+          }, animationTime);
+        } */
+
+        // ++++++++++++++++ fake para test
+
+        if (current_prize === null) {
+          axios(config)
+            .then((response) => {
+              //console.log("data", response.data);
+              //console.log(response.status, typeof response.status);
+              const prize_result = response.data;
+              thereIsPrizeResult.current = true;
+              //console.log("prize", prize_result);
+              //console.log(prize === ""); // true
+              //console.log(JSON.stringify(response.data)); // ""
+
+              if (prize_result === "" || prize_result === undefined) {
+                setCasilla({ type: "Nada" });
+                // time
+                const prizeStartTime = moment();
+                const prizeEndTime = moment().add(1, "days");
+                const minutos_restantes = prizeEndTime.diff(
+                  prizeStartTime,
+                  "minutes"
+                );
+
+                //console.log(minutos_restantes);
+
+                nuevaRecargaDispatch(resetNuevaRecargaState());
+
+                setTimeout(() => {
+                  //storeData({ ...userState, prize: null });
+                  //userDispatch(set_prize(null));
+                  storeData("user", {
+                    ...userState,
+                    prize: {
+                      type: "Nada",
+                      exchanged: false, // no se puede cambiar
+                      prizeStartTime,
+                      prizeEndTime,
+                      minutos_restantes,
+                    },
+                  });
+                  userDispatch(
+                    setPrizeForUser({
+                      type: "Nada",
+                      exchanged: false, // no se puede cambiar
+                      prizeStartTime,
+                      prizeEndTime,
+                      minutos_restantes,
+                    })
+                  );
+                }, animationTime);
+              } else {
+                setCasilla(prize_result);
+
+                // time
+                const prizeStartTime = moment();
+                const prizeEndTime = moment().add(3, "days");
+                const minutos_restantes = prizeEndTime.diff(
+                  prizeStartTime,
+                  "minutes"
+                );
+
+                // console.log(minutos_restantes);
+                nuevaRecargaDispatch(resetNuevaRecargaState());
+
+                setTimeout(() => {
+                  setPremioCercanoAExpirarNotification();
+
+                  storeData("user", {
+                    ...userState,
+                    prize: {
+                      ...prize_result,
+                      prizeStartTime,
+                      prizeEndTime,
+                      minutos_restantes,
+                    },
+                  });
+                  userDispatch(
+                    setPrizeForUser({
+                      ...prize_result,
+                      prizeStartTime,
+                      prizeEndTime,
+                      minutos_restantes,
+                    })
+                  );
+                }, animationTime);
+              }
             })
-          );
-        }, animationTime);
-      } else {
-        setCasillaRandom();
-        setTimeout(() => {
-          thereIsPrizeResult.current = true;
-          const currentTime = moment();
-          const { prizeEndTime } = userState.prize;
-          const horas_restantes = prizeEndTime.diff(currentTime, "hours");
-          setHorasRestantes(horas_restantes);
-          setPremioAcumulado(true);
-        }, animationTime);
-      } */
-
-      // ++++++++++++++++ fake para test
-
-      if (current_prize === null) {
-        axios(config)
-          .then((response) => {
-            //console.log("data", response.data);
-            //console.log(response.status, typeof response.status);
-            const prize_result = response.data;
-            thereIsPrizeResult.current = true;
-            //console.log("prize", prize_result);
-            //console.log(prize === ""); // true
-            //console.log(JSON.stringify(response.data)); // ""
-
-            if (prize_result === "" || prize_result === undefined) {
-              setCasilla({ type: "Nada" });
-              // time
-              const prizeStartTime = moment();
-              const prizeEndTime = moment().add(1, "days");
-              const minutos_restantes = prizeEndTime.diff(
-                prizeStartTime,
-                "minutes"
-              );
-
-              //console.log(minutos_restantes);
-
-              nuevaRecargaDispatch(resetNuevaRecargaState());
-
-              setTimeout(() => {
-                //storeData({ ...userState, prize: null });
-                //userDispatch(set_prize(null));
-                storeData("user", {
-                  ...userState,
-                  prize: {
-                    type: "Nada",
-                    exchanged: false, // no se puede cambiar
-                    prizeStartTime,
-                    prizeEndTime,
-                    minutos_restantes,
-                  },
-                });
-                userDispatch(
-                  setPrizeForUser({
-                    type: "Nada",
-                    exchanged: false, // no se puede cambiar
-                    prizeStartTime,
-                    prizeEndTime,
-                    minutos_restantes,
-                  })
-                );
-              }, animationTime);
-            } else {
-              setCasilla(prize_result);
-
-              // time
-              const prizeStartTime = moment();
-              const prizeEndTime = moment().add(3, "days");
-              const minutos_restantes = prizeEndTime.diff(
-                prizeStartTime,
-                "minutes"
-              );
-
-              // console.log(minutos_restantes);
-              nuevaRecargaDispatch(resetNuevaRecargaState());
-
-              setTimeout(() => {
-                setPremioCercanoAExpirarNotification();
-
-                storeData("user", {
-                  ...userState,
-                  prize: {
-                    ...prize_result,
-                    prizeStartTime,
-                    prizeEndTime,
-                    minutos_restantes,
-                  },
-                });
-                userDispatch(
-                  setPrizeForUser({
-                    ...prize_result,
-                    prizeStartTime,
-                    prizeEndTime,
-                    minutos_restantes,
-                  })
-                );
-              }, animationTime);
-            }
-          })
-          .catch((error) => {
-            //console.log(error);
-            thereIsPrizeResult.current = true;
-            Toast.show(error.message, {
-              duaration: Toast.durations.SHORT,
-              position: Toast.positions.BOTTOM,
+            .catch((error) => {
+              console.log(error.response);
+              console.log("catch");
+              thereIsPrizeResult.current = false;
+              Toast.show(error.message, {
+                duaration: Toast.durations.SHORT,
+                position: Toast.positions.BOTTOM,
+              });
             });
-          });
-      } else {
-        setCasillaRandom();
-        setTimeout(() => {
+        } else {
+          setCasillaRandom();
           thereIsPrizeResult.current = true;
-          const currentTime = moment();
-          const prizeEndTime = moment(userState.prize?.prizeEndTime);
-          const horas_restantes = prizeEndTime.diff(currentTime, "hours");
-          setHorasRestantes(horas_restantes);
-          setPremioAcumulado(true);
-        }, animationTime);
+          setTimeout(() => {
+            const currentTime = moment();
+            const prizeEndTime = moment(userState.prize?.prizeEndTime);
+            const horas_restantes = prizeEndTime.diff(currentTime, "hours");
+            setHorasRestantes(horas_restantes);
+            setPremioAcumulado(true);
+          }, animationTime);
+        }
       }
     }
   };
@@ -712,7 +820,7 @@ const GameScreen = ({ navigation }) => {
       if (complete.finished) {
         if (!thereIsPrizeResult.current) {
           enMovimiento.current = false;
-          let toast = Toast.show(ResolveText("errorConexion"), {
+          let toast = Toast.show(ResolveText("errorDesconocido"), {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
             shadow: true,
@@ -1008,8 +1116,8 @@ const GameScreen = ({ navigation }) => {
                       <TextItalic
                         text={
                           userState?.idioma === "spa"
-                            ? `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes} horas. O envía una recarga y vuelve a jugar.`
-                            : `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes}  horas. O envía una recarga y vuelve a jugar.`
+                            ? `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes} horas, o envía una recarga y vuelve a jugar.`
+                            : `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes}  horas, o envía una recarga y vuelve a jugar.`
                         }
                         style={{
                           fontSize: 20,
@@ -1130,7 +1238,7 @@ const GameScreen = ({ navigation }) => {
               />
               <Text style={{ marginTop: 30 }}>
                 <TextItalic
-                  text="Oh…lo sentimos, pero te faltó ACHÉ en el giro. Intenta otra vez en 24 horas o envía una recarga rápida con  para que desaparezca al instante. ¡Sigue probando!"
+                  text="Oh…lo sentimos, pero te faltó ACHÉ en el giro. Intenta otra vez en 24 horas o envía una recarga rápida con"
                   style={{
                     fontSize: 18,
                     color: "#01f9d2",
@@ -1265,8 +1373,10 @@ const GameScreen = ({ navigation }) => {
             justifyContent: "flex-end",
             width: "80%",
             //backgroundColor: "red",
-            marginBottom: height / 5,
+            //marginTop: -height / 15,
             zIndex: 1,
+            position: "absolute",
+            top: 90,
 
             //marginRight: width / 10,
           }}
@@ -1462,10 +1572,12 @@ const GameScreen = ({ navigation }) => {
           style={{
             flexDirection: "row",
             justifyContent: "flex-end",
-            marginTop: height / 5,
+            //marginBottom: -height / 15,
             zIndex: 10,
             width: "80%",
             //backgroundColor: "pink",
+            position: "absolute",
+            bottom: 130,
           }}
         >
           <NeuButton

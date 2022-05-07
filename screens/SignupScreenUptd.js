@@ -61,16 +61,18 @@ const SignupScreenUptd = ({ navigation }) => {
   };
 
   const checkPhone = () => {
+    const cleanPhone = phone.replace(/-/g, "").replace(/ /g, "");
+    //console.log(cleanPhone);
     const phoneRegexp =
       /\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/;
-    return phoneRegexp.test(phone);
+    return phoneRegexp.test(cleanPhone);
   };
 
   const fetchRegister = async (name, email, phone) => {
     let data = {
       name: name,
       email: email.trim(),
-      phone: phone.trim(),
+      phone: phone.replace(/-/g, "").replace(/ /g, ""),
     };
 
     //console.log(data);
@@ -88,8 +90,8 @@ const SignupScreenUptd = ({ navigation }) => {
         if (response.ok) {
           return response.json();
         } else {
-          //throw Error(`Request rejected with status ${response.status}`);
-          throw Error("No se pudo registrar a este usuario");
+          throw Error(`Request rejected with status ${response.status}`);
+          //throw Error("No se pudo registrar a este usuario");
         }
       })
       .then((result) => {
@@ -326,7 +328,7 @@ const SignupScreenUptd = ({ navigation }) => {
                     fontFamily: "bs-italic",
                     fontSize: 18,
                   }}
-                  placeholder="Phone"
+                  placeholder="Ej. +5350000000"
                   width={(4 / 5) * width}
                   height={40}
                   borderRadius={20}
@@ -357,7 +359,7 @@ const SignupScreenUptd = ({ navigation }) => {
             zIndex: 0,
             flex: 1,
             alignItems: "center",
-            marginTop: -20,
+            marginTop: -40,
             //marginTop: -120,
           }}
         >
@@ -374,7 +376,7 @@ const SignupScreenUptd = ({ navigation }) => {
               <ActivityIndicator size="large" color="#01f9d2" />
             ) : (
               <TextBold
-                text="enviar"
+                text="registrarse"
                 style={{
                   color: "#fff800",
                   //fontWeight: "bold",

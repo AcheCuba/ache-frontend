@@ -112,7 +112,7 @@ export default function MainApp() {
   useEffect(() => {
     //console.log("updateNormalesCompleted", updateNormalesCompleted);
 
-    /*console.log("de premio esperadas - app.js", transacciones_premio_esperadas);
+    /* console.log("de premio esperadas - app.js", transacciones_premio_esperadas);
     console.log(
       "normales esperadas - app.js",
       transacciones_normales_esperadas
@@ -233,8 +233,11 @@ export default function MainApp() {
       if (transacciones_normales_resultado.length !== 0) {
         updateTransaccionesNormalesCompleted();
 
+        //console.log("transacciones NORM dist de cero");
+
         if (transacciones_premio_esperadas.length !== 0) {
           // si se espera alguna y ya tengo los resultados de las normales
+          //console.log("transacciones PREMIO dist de cero");
 
           //codigo nuevo
           const transaccionesNormalesCompletadas =
@@ -251,11 +254,12 @@ export default function MainApp() {
                   return (
                     transaccion.topUpId ===
                       transaccionNormalCompletada.transactionId &&
-                    transaccion.prizeId != undefined
+                    transaccion.prize_uuid != undefined
                   );
                 }
               );
               if (transaccionDePremio != undefined) {
+                //console.log("transaccionDePremio", transaccionDePremio);
                 transaccionesDePremioArray.push(transaccionDePremio);
               }
             }

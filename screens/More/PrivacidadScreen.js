@@ -33,8 +33,15 @@ const PrivacidadScreen = ({ navigation }) => {
         }}
       >
         <View style={styles.container}>
-          <View style={{ flex: 1, marginVertical: 10, marginHorizontal: 20 }}>
-            <ScrollView>
+          <View
+            style={{
+              flex: 1,
+              marginTop: 10,
+              marginBottom: 105,
+              marginHorizontal: 20,
+            }}
+          >
+            <ScrollView showsVerticalScrollIndicator={false}>
               <Text style={styles.title}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut

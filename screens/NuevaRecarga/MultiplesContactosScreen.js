@@ -229,7 +229,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
   };
 
   const renderEmptyList = () => {
-    return (
+    /*  return (
       <View style={{ flex: 1, alignItems: "center", marginTop: 30 }}>
         <Text
           style={{
@@ -239,10 +239,11 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
             fontFamily: "bs-italic",
           }}
         >
-          No se encontraron coincidencias{" "}
+          No se encontraron coincidencias
         </Text>
       </View>
-    );
+    ); */
+    return null;
   };
 
   const getItemLayout = (data, index) => ({
@@ -261,15 +262,13 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     (async () => {
       setLoading(true);
       const { status } = await Contacts.requestPermissionsAsync();
+      //const status = "denied";
       if (status === "granted") {
         //console.log(Contacts.Fields);
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.PhoneNumbers],
         });
-
         if (data.length > 0) {
-          // console.log("==============================00");
-
           let _data = data.filter((cont) => {
             if (cont.phoneNumbers != undefined && cont.firstName != undefined) {
               // console.log(cont.phoneNumbers[0].number);
@@ -300,6 +299,8 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           //console.log(contacts[10]);
           // console.log(contacts.length);
         }
+      } else {
+        setLoading(false);
       }
     })();
   }, []);
@@ -358,7 +359,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
             fontFamily: "bs-italic",
             fontSize: 18,
           }}
-          placeholder="Buscar por nombre o  teléfono"
+          placeholder="Escribe el teléfono o el nombre"
           onChangeText={(value) => onChangeText(value)}
           value={text}
           placeholderTextColor="gray"

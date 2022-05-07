@@ -16,14 +16,15 @@ import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
 import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
 import { cancelNotification } from "../../libs/expoPushNotification.lib";
-import { TextBold } from "../../components/CommonText";
+import { TextBold, TextMedium } from "../../components/CommonText";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { ImageBackground } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("screen");
 
 const PrePagoScreen = ({ navigation, route }) => {
-  const { productPriceUsd, transaction_id_array } = route.params;
+  const { productPriceUsd, transaction_id_array, amount_cup } = route.params;
 
   const { userState, userDispatch } = React.useContext(GlobalContext);
   const { nuevaRecargaState, nuevaRecargaDispatch } = useContext(GlobalContext);
@@ -34,19 +35,23 @@ const PrePagoScreen = ({ navigation, route }) => {
   //const [precioRecarga, setPrecioRecarga] = React.useState("20");
 
   React.useEffect(() => {
-    setAmount(quantity * productPriceUsd);
+    const _amount = parseFloat((quantity * productPriceUsd).toFixed(2));
+    //console.log(typeof _amount);
+
+    setAmount(_amount);
     //console.log(esDirecta);
   }, []);
 
-  /* React.useEffect(() => {
-    console.log(typeof amount);
-    console.log(amount);
+  /*   React.useEffect(() => {
+    /console.log(typeof amount);
+    console.log(amount); 
+    console.log(contactosSeleccionados);
     return () => {
       //cleanup
     };
   }); */
 
-  /*  React.useEffect(() => {
+  /* React.useEffect(() => {
     console.log("transaction array - Pre Pago Screen", transaction_id_array);
   }, [transaction_id_array]); */
 
@@ -63,6 +68,44 @@ const PrePagoScreen = ({ navigation, route }) => {
 
   const onPressBackButton = () => {
     popUpAlert();
+  };
+
+  const renderItemContact = ({ item }) => {
+    return (
+      <View style={{ height: 30, alignItems: "center" }}>
+        <TextMedium
+          text={
+            item.contactName != undefined
+              ? item.contactName
+              : item.contactNumber
+          }
+          style={{
+            fontSize: 26,
+            //textTransform: "uppercase",
+            color: "#01f9d2",
+            //marginBottom: 6,
+            //marginTop: 5,
+          }}
+        />
+      </View>
+    );
+  };
+
+  const renderEmptyList = () => {
+    return (
+      <View style={{ alignItems: "center", marginTop: 10 }}>
+        <Text
+          style={{
+            color: "gray",
+            fontSize: 20,
+            fontWeight: "bold",
+            fontFamily: "bs-italic",
+          }}
+        >
+          No se agregaron contactos
+        </Text>
+      </View>
+    );
   };
 
   const prize_finish_checkout = (uuid) => {
@@ -249,12 +292,12 @@ const PrePagoScreen = ({ navigation, route }) => {
         style={{
           //backgroundColor: "blue",
           alignItems: "center",
-          justifyContent: "center",
+          //justifyContent: "center",
           flex: 1,
-          marginBottom: 90,
+          marginTop: 30,
         }}
       >
-        <View style={{ marginBottom: 20 }}>
+        <View style={{ marginBottom: 15 }}>
           <TextBold
             text="TOTAL"
             style={{
@@ -292,6 +335,80 @@ const PrePagoScreen = ({ navigation, route }) => {
               });
             }}
           />
+        </View>
+
+        <View
+          style={{
+            alignItems: "center",
+            marginTop: 50,
+          }}
+        >
+          <TextBold
+            text={`Valor de la recarga:`}
+            style={{
+              fontSize: 26,
+              textTransform: "uppercase",
+              color: "#fffb00",
+              //marginBottom: 6,
+              //marginTop: 5,
+            }}
+          />
+          <TextBold
+            text={`${amount_cup} CUP`}
+            style={{
+              fontSize: 26,
+              textTransform: "uppercase",
+              color: "#01f9d2",
+              //marginBottom: 6,
+              marginTop: 5,
+            }}
+          />
+        </View>
+        <View
+          style={{
+            alignItems: "center",
+            marginTop: 20,
+          }}
+        >
+          <TextBold
+            text={`Beneficiaros:`}
+            style={{
+              fontSize: 26,
+              textTransform: "uppercase",
+              color: "#fffb00",
+              //marginBottom: 6,
+              //marginTop: 5,
+            }}
+          />
+          <View
+            style={{
+              marginTop: 5,
+              height: 250,
+              paddingBottom: 20,
+              width: width / 1.3,
+              alignItems: "center",
+              //backgroundColor: "red",
+            }}
+          >
+            <FlatList
+              keyExtractor={(item) => item.fieldInputId}
+              data={contactosSeleccionados}
+              renderItem={renderItemContact}
+              ListEmptyComponent={renderEmptyList}
+              //performance
+              //getItemLayout={getItemLayout} // esto traba el final del scroll
+              //removeClippedSubviews={true}
+              //maxToRenderPerBatch={45}
+              //initialNumToRender={50}
+              //updateCellsBatchingPeriod={0.01}
+              //windowSize={41} //default
+              //onEndReachedThreshold={0.5}
+              //disableVirtualization={false}
+              //scrollIndicatorInsets={{ right: 1 }}
+              showsVerticalScrollIndicator={false}
+              style={{}}
+            />
+          </View>
         </View>
       </View>
     </ImageBackground>

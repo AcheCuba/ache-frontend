@@ -13,6 +13,7 @@ import {
   SetGlobalUpdateCompleted,
 } from "../../context/Actions/actions";
 import { GlobalContext } from "../../context/GlobalProvider";
+import { Audio } from "expo-av";
 
 const { width } = Dimensions.get("screen");
 
@@ -22,9 +23,39 @@ const PagoCompletadoScreen = ({ navigation }) => {
     React.useContext(GlobalContext);
   const { globalUpdateCompleted } = socketState;
 
+  const [soundPagoConfirmado, setSoundPagoConfirmado] = React.useState();
+
   /* React.useEffect(() => {
     console.log(globalUpdateCompleted);
   }, [globalUpdateCompleted]); */
+
+  React.useEffect(() => {
+    playSoundPagoConfirmado();
+  }, []);
+
+  React.useEffect(() => {
+    return soundPagoConfirmado
+      ? () => {
+          //console.log("Unloading Sound");
+          soundPagoConfirmado.unloadAsync();
+        }
+      : undefined;
+  }, [soundPagoConfirmado]);
+
+  async function playSoundPagoConfirmado() {
+    //console.log("Loading Sound");
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(
+      require("../../assets/Sonidos/pago_confirmado.wav"),
+      {
+        shouldPlay: true,
+      }
+    );
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    setSoundPagoConfirmado(_sound);
+    //console.log("Playing Sound");
+  }
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;

@@ -344,7 +344,7 @@ const NuevoContactoInput = ({
                   fontFamily: "bs-italic",
                   fontSize: 18,
                 }}
-                placeholder="Phone Number"
+                placeholder="Añadir Contacto"
                 width={inputWidth}
                 height={40}
                 borderRadius={20}

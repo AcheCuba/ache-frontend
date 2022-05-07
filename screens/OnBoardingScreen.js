@@ -66,7 +66,7 @@ const OnBoardingScreen = ({ navigation }) => {
                 />
 
                 <TextBold
-                  text="Bienvenida/o"
+                  text="Bienvenid@"
                   style={{
                     marginTop: 60,
                     fontSize: 40,
@@ -159,7 +159,7 @@ const OnBoardingScreen = ({ navigation }) => {
 
               <View style={{ position: "absolute", left: 0, top: height / 6 }}>
                 <Image
-                  source={require("../assets/animaciones/media_ruleta_.gif")}
+                  source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
                   style={{ width: height / 2.4, height: height / 1.5 }}
                 />
               </View>
@@ -207,13 +207,13 @@ const OnBoardingScreen = ({ navigation }) => {
             >
               <View style={{ position: "absolute", left: 0, top: height / 6 }}>
                 <Image
-                  source={require("../assets/animaciones/media_ruleta_.gif")}
+                  source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
                   style={{ width: height / 2.4, height: height / 1.5 }}
                 />
               </View>
 
               <LinearGradient
-                colors={["rgba(227, 123, 104,0.7)", "rgba(45,22,56,1)"]}
+                colors={["rgba(227, 123, 104,0.9)", "rgba(40,20,50,1)"]}
                 style={{ flex: 1, width: width }}
               >
                 <View
@@ -301,7 +301,7 @@ const OnBoardingScreen = ({ navigation }) => {
             >
               <View style={{ position: "absolute", left: 0, top: height / 6 }}>
                 <Image
-                  source={require("../assets/animaciones/media_ruleta_.gif")}
+                  source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
                   style={{ width: height / 2.4, height: height / 1.5 }}
                 />
               </View>
@@ -334,7 +334,7 @@ const OnBoardingScreen = ({ navigation }) => {
               </View>
 
               <LinearGradient
-                colors={["rgba(227, 123, 104,1)", "rgba(45,22,56,0.7)"]}
+                colors={["rgba(227, 123, 104,0.9)", "rgba(40,20,50,1)"]}
                 style={{ flex: 1, width: width }}
               >
                 <View

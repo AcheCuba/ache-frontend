@@ -60,7 +60,9 @@
     "recompose": "^0.30.0",
     "redux": "^4.0.5",
     "socket.io-client": "^4.2.0",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "expo-av": "~8.7.0",
+    "expo-network": "~2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

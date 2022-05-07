@@ -50,7 +50,7 @@ export default function useCachedResources() {
 
         //===================== solo para eliminar premio en app ===========================
 
-        /*     storeData("user", {
+        /* storeData("user", {
           ...user,
           prize: null,
         });
