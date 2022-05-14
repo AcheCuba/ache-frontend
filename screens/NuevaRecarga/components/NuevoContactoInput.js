@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   StyleSheet,
   View,
@@ -9,6 +8,7 @@ import {
   Modal,
   Platform,
   Easing,
+  Animated,
 } from "react-native";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import {
@@ -21,7 +21,7 @@ import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import DeletePrizeModal from "./DeletePrizeModal";
-import Animated from "react-native-reanimated";
+//import Animated from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("screen");
 

@@ -261,8 +261,9 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { status } = await Contacts.requestPermissionsAsync();
-      //const status = "denied";
+
+      let { status } = await Contacts.requestPermissionsAsync();
+
       if (status === "granted") {
         //console.log(Contacts.Fields);
         const { data } = await Contacts.getContactsAsync({
