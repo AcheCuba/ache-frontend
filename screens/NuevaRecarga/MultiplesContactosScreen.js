@@ -34,7 +34,9 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 
   const [prizeForCurrentField, setPrizeForCurrentField] = useState(null);
 
-  const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
+  const { nuevaRecargaDispatch, nuevaRecargaState, userState } =
+    useContext(GlobalContext);
+
   const { contactosSeleccionados } = nuevaRecargaState;
 
   // verificar si el contacto actual existe
@@ -360,7 +362,11 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
             fontFamily: "bs-italic",
             fontSize: 18,
           }}
-          placeholder="Escribe el teléfono o el nombre"
+          placeholder={
+            userState?.idioma === "spa"
+              ? "Escribe el teléfono o el nombre"
+              : "Type phone number or name"
+          }
           onChangeText={(value) => onChangeText(value)}
           value={text}
           placeholderTextColor="gray"

@@ -94,7 +94,7 @@ const MediaBolsaWonContentModal = ({
           // style={{ marginTop: 80 }}
         >
           <TextBold
-            text={ResolveText("PremioWonButtonObtenerPremio")}
+            text={ResolveText("obtenerPremio")}
             style={{
               color: "#fff800", //"#01f9d2",
               fontWeight: "bold",
@@ -118,7 +118,7 @@ const MediaBolsaWonContentModal = ({
           //style={{ marginTop: 25 }}
         >
           <TextBold
-            text={ResolveText("PremioWonButtonSalir")}
+            text={ResolveText("salir")}
             style={{
               color: "#fff800", //"#01f9d2",
               fontWeight: "bold",

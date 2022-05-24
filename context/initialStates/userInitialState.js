@@ -5,7 +5,7 @@ export default {
   email: undefined,
   phone: undefined,
   prize: null,
-  idioma: "spa",
+  idioma: "eng",
 };
 
 // actions que lo modifican:

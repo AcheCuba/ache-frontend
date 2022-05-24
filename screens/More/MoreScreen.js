@@ -3,11 +3,13 @@ import { ImageBackground } from "react-native";
 import { Image } from "react-native";
 import { StyleSheet, View, Dimensions } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
+import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
 //const marginGlobal = width / 10;
 
 const MoreScreen = ({ navigation }) => {
+  const { userState } = React.useContext(GlobalContext);
   return (
     <ImageBackground
       source={require("../../assets/images/degradado_general.png")}
@@ -30,7 +32,7 @@ const MoreScreen = ({ navigation }) => {
         }}
       >
         <Image
-          source={require("../../assets/images/more/asset3.png")}
+          source={require("../../assets/images/logo.png")}
           //resizeMode="center"
           style={{
             marginLeft: width / 10,
@@ -42,35 +44,41 @@ const MoreScreen = ({ navigation }) => {
       <View style={styles.containerButtons}>
         <View style={styles.buttons}>
           <CommonNeuButton
-            text="Sobre Nosotros"
+            text={userState?.idioma === "spa" ? "Sobre Nosotros" : "About Us"}
             screenWidth={width}
             onPress={() => navigation.navigate("AboutUsScreen")}
           />
         </View>
         <View style={styles.buttons}>
           <CommonNeuButton
-            text="Premios"
+            text={userState?.idioma === "spa" ? "Premios" : "Prizes"}
             screenWidth={width}
             onPress={() => navigation.navigate("PremioScreen")}
           />
         </View>
         <View style={styles.buttons}>
           <CommonNeuButton
-            text="Política de privacidad"
+            text={
+              userState?.idioma === "spa"
+                ? "Política de privacidad"
+                : "Privacy Policy"
+            }
             screenWidth={width}
             onPress={() => navigation.navigate("PrivacidadScreen")}
           />
         </View>
         <View style={styles.buttons}>
           <CommonNeuButton
-            text="Términos de uso"
+            text={
+              userState?.idioma === "spa" ? "Términos de uso" : "Terms of Use"
+            }
             screenWidth={width}
             onPress={() => navigation.navigate("TermUsoScreen")}
           />
         </View>
         <View style={styles.buttons}>
           <CommonNeuButton
-            text="Modo de uso"
+            text={userState?.idioma === "spa" ? "Modo de uso" : "Mode of Use"}
             screenWidth={width}
             onPress={() => navigation.navigate("ModoUsoScreen")}
           />

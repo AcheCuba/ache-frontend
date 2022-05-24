@@ -508,7 +508,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           style={{ marginRight: marginGlobal, marginTop: 10 }}
         >
           <Image
-            source={require("../../assets/images/iconos/Añadir_usuario.png")}
+            source={require("../../assets/images/iconos/add_user.png")}
             style={{ width: 31, height: 21 }}
           />
         </NeuButton>

@@ -61,7 +61,7 @@ const NadaDescriptionContentModal = ({
             fontSize: 20,
             textTransform: "uppercase",
           }}
-          text={userState?.idioma === "spa" ? "Calavera" : "Calavera"}
+          text={userState?.idioma === "spa" ? "Calavera" : "the skull"}
         />
 
         <TextItalic
@@ -75,7 +75,7 @@ const NadaDescriptionContentModal = ({
           text={
             userState?.idioma === "spa"
               ? `Sin ACHÉ. Espera ${horasRestantes} horas, o recarga.`
-              : `Sin ACHÉ. Espera ${horasRestantes} horas, o recarga.`
+              : `No ACHÉ found. Wait ${horasRestantes} hours or send a recharge. `
           }
         />
         <View

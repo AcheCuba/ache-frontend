@@ -208,21 +208,19 @@ const CobrarPremioContent = ({
           //desc = `Tienes 500 dólares por cobrar durante las próximas ${horasRestantes} horas. Revisa tu email.`;
         } else if (idioma === "eng") {
           title = "Las Gemas";
-          desc = `Tienes 500 dólares por cobrar durante las próximas ${horasRestantes} horas. Revisa tu email.`;
+          desc = `GEMS. You have 500 dollars to cash. Send a recharge to redeem your prize or share it with anyone you want to. We’ll keep it safe for ${horasRestantes} hours.`;
         }
         break;
       case "TopUpBonus":
         if (prizeAmount === 250) {
           if (idioma === "spa") {
             title = "Media Bolsa";
-            desc =
-              "Tienes 250 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.";
+            desc = `Tienes 250 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.`;
             //desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
           } else if (idioma === "eng") {
-            title = "Media Bolsa";
+            title = "HALF BAG";
             //desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
-            desc =
-              "Tienes 250 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.";
+            desc = `You have a 250 pesos’ gift to add it to any recharge. If you don’t want to send a recharge now, you could also share the prize with anyone you want to.  We’ll keep it safe for ${horasRestantes} hours.`;
           }
           break;
         }
@@ -234,9 +232,8 @@ const CobrarPremioContent = ({
               "Tienes 500 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.";
             //desc = `Tienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas`;
           } else if (idioma === "eng") {
-            title = "bolsa llena";
-            desc =
-              "Tienes 500 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.";
+            title = "FULL BAG";
+            desc = `You have a 500 pesos’ gift to add it to any recharge. If you don’t want to send a recharge now, you could also share the prize with anyone you want to. We’ll keep it safe for ${horasRestantes} hours.`;
             //desc = `ienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
           }
         }

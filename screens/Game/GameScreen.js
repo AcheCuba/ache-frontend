@@ -135,6 +135,15 @@ const GameScreen = ({ navigation }) => {
     //console.log(width / 3);
   }); */
 
+  /*  React.useEffect(() => {
+    //setPremioAcumuladoType("Jackpot");
+    userDispatch(
+      setPrizeForUser({
+        type: "Jackpot",
+      })
+    );
+  }, []); */
+
   async function playSoundError() {
     const _sound = new Audio.Sound();
     await _sound.loadAsync(require("../../assets/Sonidos/error.wav"), {
@@ -1087,7 +1096,7 @@ const GameScreen = ({ navigation }) => {
                         text={
                           userState?.idioma === "spa"
                             ? "Ruleta Bloqueada"
-                            : "Ruleta Bloqueada"
+                            : "WHEEL BLOCKED"
                         }
                         style={{
                           fontSize: 26,
@@ -1100,7 +1109,7 @@ const GameScreen = ({ navigation }) => {
                         text={
                           userState?.idioma === "spa"
                             ? "Premio Pendiente"
-                            : "Premio Pendiente"
+                            : "PRIZE ON HOLD"
                         }
                         style={{
                           fontSize: 26,
@@ -1117,7 +1126,7 @@ const GameScreen = ({ navigation }) => {
                         text={
                           userState?.idioma === "spa"
                             ? `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes} horas, o envía una recarga y vuelve a jugar.`
-                            : `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes}  horas, o envía una recarga y vuelve a jugar.`
+                            : `Sorry… you have The Skull. Get back your ACHÉ in ${horasRestantes} hours, or …send a recharge now to play again.`
                         }
                         style={{
                           fontSize: 20,
@@ -1130,8 +1139,12 @@ const GameScreen = ({ navigation }) => {
                       <TextItalic
                         text={
                           userState?.idioma === "spa"
-                            ? `El ACHÉ está lleno. Para ganar otro premio en la Ruleta, agrega tu premio pendiente a una recarga, o compártelo usando el botón ubicado en la esquina superior derecha de tu pantalla.`
-                            : `El ACHÉ está lleno. Para ganar otro premio en la Ruleta, agrega tu premio pendiente a una recarga, o compártelo usando el botón ubicado en la esquina superior derecha de tu pantalla.`
+                            ? premioAcumuladoType === "Jackpot"
+                              ? `¡Reclama tu súper premio de 500 USD! Para cobrarlo envía una recarga, revisa el email y sigue las instrucciones. Te guardaremos LAS GEMAS por 72 horas.`
+                              : `El ACHÉ está lleno. Para ganar otro premio en la Ruleta, agrega tu premio pendiente a una recarga, o compártelo usando el botón ubicado en la esquina superior derecha de tu pantalla.`
+                            : premioAcumuladoType === "Jackpot"
+                            ? `Redeem your super 500 dollars’ jackpot! To cash your GEMS, send a recharge, check your email and follow the instructions. We’ll keep the GEMS safe for 72 hours.`
+                            : `The Ache Button is full. To win another prize in the Wheel, first add your prize on hold to a recharge, or share it by using the button on your home screen’s top right corner. We’ll keep the prize safe for 72 hours.`
                         }
                         style={{
                           fontSize: 20,
@@ -1226,7 +1239,7 @@ const GameScreen = ({ navigation }) => {
               }}
             >
               <TextBold
-                text={userState?.idioma === "spa" ? "Calavera" : "Calavera"}
+                text={userState?.idioma === "spa" ? "Calavera" : "The Skull"}
                 //text={ResolveText("nadaWonTitle")}
                 style={{
                   fontSize: 30,
@@ -1238,7 +1251,11 @@ const GameScreen = ({ navigation }) => {
               />
               <Text style={{ marginTop: 30 }}>
                 <TextItalic
-                  text="Oh…lo sentimos, pero te faltó ACHÉ en el giro. Intenta otra vez en 24 horas o envía una recarga rápida con"
+                  text={
+                    userState?.idioma === "spa"
+                      ? "Oh…lo sentimos, pero te faltó ACHÉ en el giro. Intenta otra vez en 24 horas o envía una recarga rápida con"
+                      : "Sorry…you need more ACHE in the spin. Try again in 24 hours, or send a fast recharge with"
+                  }
                   style={{
                     fontSize: 18,
                     color: "#01f9d2",
@@ -1247,7 +1264,9 @@ const GameScreen = ({ navigation }) => {
                   }}
                 />
                 <TextBoldItalic
-                  text=" El Rayo "
+                  text={
+                    userState?.idioma === "spa" ? " El Rayo " : " The Flash "
+                  }
                   style={{
                     fontSize: 18,
                     color: "#01f9d2",
@@ -1256,7 +1275,11 @@ const GameScreen = ({ navigation }) => {
                   }}
                 />
                 <TextItalic
-                  text="para que desaparezca al instante. ¡Sigue probando!"
+                  text={
+                    userState?.idioma === "spa"
+                      ? "para que desaparezca al instante. ¡Sigue probando!"
+                      : "so it vanishes instantly. Keep trying!"
+                  }
                   style={{
                     fontSize: 18,
                     color: "#01f9d2",

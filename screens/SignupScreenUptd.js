@@ -16,7 +16,9 @@ import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 const { width, height } = Dimensions.get("screen");
 
 const SignupScreenUptd = ({ navigation }) => {
-  const { userDispatch } = useContext(GlobalContext);
+  const { userState, userDispatch } = useContext(GlobalContext);
+
+  const { idioma } = userState;
 
   const [loading, setLoading] = React.useState(false);
   const [name, setName] = React.useState("");
@@ -118,7 +120,7 @@ const SignupScreenUptd = ({ navigation }) => {
               email: newUser.email,
               phone: newUser.phone,
               prize: null,
-              idioma: "spa",
+              idioma: "eng",
             })
           );
         }
@@ -219,26 +221,58 @@ const SignupScreenUptd = ({ navigation }) => {
             source={require("../assets/images/emojis/emoji_wink.png")}
             style={{ width: 130, height: 130 }}
           />
-          <View
-            style={{ marginTop: 20, paddingBottom: 10, paddingHorizontal: 25 }}
-          >
-            <TextMedium
-              text="¡Casi listo!"
+
+          {idioma === "spa" ? (
+            <View
               style={{
-                fontSize: 20,
-                color: "#fffc00",
-                textAlign: "center",
+                marginTop: 20,
+                paddingBottom: 10,
+                paddingHorizontal: 25,
               }}
-            />
-            <TextMedium
-              text="Regístrate para que puedas comenzar a recargar y pruebes tu ACHÉ."
+            >
+              <TextMedium
+                text="¡Casi listo!"
+                style={{
+                  fontSize: 20,
+                  color: "#fffc00",
+                  textAlign: "center",
+                }}
+              />
+              <TextMedium
+                text="Regístrate para que puedas comenzar a recargar y pruebes tu ACHÉ."
+                style={{
+                  fontSize: 20,
+                  color: "#fffc00",
+                  textAlign: "center",
+                }}
+              />
+            </View>
+          ) : (
+            <View
               style={{
-                fontSize: 20,
-                color: "#fffc00",
-                textAlign: "center",
+                marginTop: 20,
+                paddingBottom: 10,
+                paddingHorizontal: 25,
               }}
-            />
-          </View>
+            >
+              <TextMedium
+                text="Almost done!"
+                style={{
+                  fontSize: 20,
+                  color: "#fffc00",
+                  textAlign: "center",
+                }}
+              />
+              <TextMedium
+                text="Sign up to start sending recharges and try your ACHÉ!"
+                style={{
+                  fontSize: 20,
+                  color: "#fffc00",
+                  textAlign: "center",
+                }}
+              />
+            </View>
+          )}
         </View>
         <KeyboardAwareScrollView
           extraScrollHeight={Platform.OS === "ios" ? -30 : 0}
@@ -261,7 +295,7 @@ const SignupScreenUptd = ({ navigation }) => {
                     fontFamily: "bs-italic",
                     fontSize: 18,
                   }}
-                  placeholder="Name"
+                  placeholder={idioma === "spa" ? "Nombre" : "Name"}
                   width={(4 / 5) * width}
                   height={40}
                   borderRadius={20}
@@ -328,7 +362,9 @@ const SignupScreenUptd = ({ navigation }) => {
                     fontFamily: "bs-italic",
                     fontSize: 18,
                   }}
-                  placeholder="Ej. +5350000000"
+                  placeholder={
+                    idioma === "spa" ? "Ej. +5350000000" : "Ex. +5350000000"
+                  }
                   width={(4 / 5) * width}
                   height={40}
                   borderRadius={20}
@@ -376,7 +412,7 @@ const SignupScreenUptd = ({ navigation }) => {
               <ActivityIndicator size="large" color="#01f9d2" />
             ) : (
               <TextBold
-                text="registrarse"
+                text={idioma === "spa" ? "registrarse" : "sign up"}
                 style={{
                   color: "#fff800",
                   //fontWeight: "bold",

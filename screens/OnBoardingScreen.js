@@ -7,12 +7,17 @@ import { TextBold, TextMedium } from "../components/CommonText";
 import { NeuButton } from "react-native-neu-element";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "react-native";
+import { GlobalContext } from "../context/GlobalProvider";
+import { Etildada } from "../constants/accents";
 
 const { width, height } = Dimensions.get("screen");
 
 const OnBoardingScreen = ({ navigation }) => {
   const [pageIndex, setPageIndex] = React.useState(0);
   const [showSkip, setShowSkip] = React.useState(false);
+
+  const { userState } = React.useContext(GlobalContext);
+  const { idioma } = userState;
 
   const getPageIndex = (newIndex) => {
     setTimeout(() => {
@@ -65,27 +70,55 @@ const OnBoardingScreen = ({ navigation }) => {
                   style={{ width: 150, height: 150, marginTop: 60 }}
                 />
 
-                <TextBold
-                  text="Bienvenid@"
-                  style={{
-                    marginTop: 60,
-                    fontSize: 40,
-                    color: "#fffb00",
-                    textTransform: "uppercase",
-                  }}
-                />
-                <TextMedium
-                  text="¡Ya tienes ACHÉ! En breve podrás recargar, jugar y ganar premios. Gracias por ser miembro de nuestra comunidad."
-                  style={{
-                    marginTop: 20,
-                    fontSize: 20,
-                    textAlign: "center",
-                    color: "#fffb00",
-                    marginHorizontal: 80,
+                {idioma == "spa" ? (
+                  <>
+                    <TextBold
+                      text="Bienvenid@"
+                      style={{
+                        marginTop: 60,
+                        fontSize: 40,
+                        color: "#fffb00",
+                        textTransform: "uppercase",
+                      }}
+                    />
+                    <TextMedium
+                      text="¡Ya tienes ACHÉ! En breve podrás recargar, jugar y ganar premios. Gracias por ser miembro de nuestra comunidad."
+                      style={{
+                        marginTop: 20,
+                        fontSize: 20,
+                        textAlign: "center",
+                        color: "#fffb00",
+                        marginHorizontal: 80,
 
-                    //textTransform: "uppercase",
-                  }}
-                />
+                        //textTransform: "uppercase",
+                      }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <TextBold
+                      text="Welcome"
+                      style={{
+                        marginTop: 60,
+                        fontSize: 40,
+                        color: "#fffb00",
+                        textTransform: "uppercase",
+                      }}
+                    />
+                    <TextMedium
+                      text={`You now have ACHE! ACHÉ is an Afro-Cuban word for good luck, and that is the positive energy we wish you while connecting with  your friends and family in Cuba. You’re now only one spin away from playing, winning prizes or sending recharges. Thanks you being a member of our community.`}
+                      style={{
+                        marginTop: 20,
+                        fontSize: 20,
+                        textAlign: "center",
+                        color: "#fffb00",
+                        marginHorizontal: 45,
+
+                        //textTransform: "uppercase",
+                      }}
+                    />
+                  </>
+                )}
               </ImageBackground>
             </View>
           ),
@@ -103,91 +136,171 @@ const OnBoardingScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <View
-                style={{ position: "absolute", top: 80, paddingHorizontal: 10 }}
-              >
-                <View
-                  style={{ flexDirection: "row", justifyContent: "center" }}
-                >
-                  <TextMedium
-                    text="¡Esta es nuestra "
+              {idioma === "spa" ? (
+                <>
+                  <View
                     style={{
-                      //marginTop: 100,
-                      fontSize: 20,
-                      textAlign: "center",
-                      color: "#fffc00",
+                      position: "absolute",
+                      top: 80,
+                      paddingHorizontal: 10,
                     }}
-                  />
-                  <TextBold
-                    text="Ruleta de las Recargas!"
+                  >
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <TextMedium
+                        text="¡Esta es nuestra "
+                        style={{
+                          //marginTop: 100,
+                          fontSize: 20,
+                          textAlign: "center",
+                          color: "#fffc00",
+                        }}
+                      />
+                      <TextBold
+                        text="Ruleta de las Recargas!"
+                        style={{
+                          fontSize: 20,
+                          textAlign: "center",
+                          color: "#fffc00",
+                        }}
+                      />
+                    </View>
+
+                    <TextMedium
+                      text="Prueba tu suerte y gana premios."
+                      style={{
+                        //marginTop: 100,
+                        fontSize: 20,
+                        textAlign: "center",
+                        color: "#fffc00",
+                      }}
+                    />
+                    <TextMedium
+                      text="Con buen ACHÉ te caerá"
+                      style={{
+                        //marginTop: 100,
+                        fontSize: 20,
+                        textAlign: "center",
+                        color: "#fffc00",
+                      }}
+                    />
+                    <TextMedium
+                      text="¡el súper premio!"
+                      style={{
+                        //marginTop: 100,
+                        fontSize: 20,
+                        textAlign: "center",
+                        color: "#fffc00",
+                      }}
+                    />
+                  </View>
+
+                  <View
+                    style={{ position: "absolute", left: 0, top: height / 6 }}
+                  >
+                    <Image
+                      source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
+                      style={{ width: height / 2.4, height: height / 1.5 }}
+                    />
+                  </View>
+                  <View
                     style={{
-                      fontSize: 20,
-                      textAlign: "center",
-                      color: "#fffc00",
+                      marginTop: 100,
+                      position: "absolute",
+                      bottom: 80,
+                      paddingHorizontal: 10,
                     }}
-                  />
-                </View>
+                  >
+                    <TextMedium
+                      text="Gira la Ruleta y gana. Juega y comparte."
+                      style={{
+                        fontSize: 20,
+                        textAlign: "center",
+                        color: "#fffc00",
+                      }}
+                    />
+                    <TextMedium
+                      text="Con ACHÉ, tus recargas serán divertidas."
+                      style={{
+                        fontSize: 20,
+                        textAlign: "center",
+                        color: "#fffc00",
+                      }}
+                    />
+                  </View>
+                </>
+              ) : (
+                <>
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: 80,
+                      paddingHorizontal: 10,
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <TextMedium
+                        text="Play our "
+                        style={{
+                          //marginTop: 100,
+                          fontSize: 20,
+                          textAlign: "center",
+                          color: "#fffc00",
+                        }}
+                      />
+                      <TextBold
+                        text="Recharge Roulette!"
+                        style={{
+                          fontSize: 20,
+                          textAlign: "center",
+                          color: "#fffc00",
+                        }}
+                      />
+                    </View>
+                    <View>
+                      <TextMedium
+                        text="Try your luck and win prizes. With a really good ACHÉ you could get the jackpot!"
+                        style={{
+                          //marginTop: 100,
+                          fontSize: 20,
+                          textAlign: "center",
+                          color: "#fffc00",
+                        }}
+                      />
+                    </View>
+                  </View>
 
-                <TextMedium
-                  text="Prueba tu suerte y gana premios."
-                  style={{
-                    //marginTop: 100,
-                    fontSize: 20,
-                    textAlign: "center",
-                    color: "#fffc00",
-                  }}
-                />
-                <TextMedium
-                  text="Con buen ACHÉ te caerá"
-                  style={{
-                    //marginTop: 100,
-                    fontSize: 20,
-                    textAlign: "center",
-                    color: "#fffc00",
-                  }}
-                />
-                <TextMedium
-                  text="¡el súper premio!"
-                  style={{
-                    //marginTop: 100,
-                    fontSize: 20,
-                    textAlign: "center",
-                    color: "#fffc00",
-                  }}
-                />
-              </View>
-
-              <View style={{ position: "absolute", left: 0, top: height / 6 }}>
-                <Image
-                  source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
-                  style={{ width: height / 2.4, height: height / 1.5 }}
-                />
-              </View>
-              <View
-                style={{
-                  marginTop: 100,
-                  position: "absolute",
-                  bottom: 80,
-                  paddingHorizontal: 10,
-                }}
-              >
-                <TextMedium
-                  text="Gira la Ruleta y gana. Juega y comparte."
-                  style={{
-                    fontSize: 20,
-                    textAlign: "center",
-                    color: "#fffc00",
-                  }}
-                />
-                <TextMedium
-                  text="Con ACHÉ, tus recargas serán divertidas."
-                  style={{
-                    fontSize: 20,
-                    textAlign: "center",
-                    color: "#fffc00",
-                  }}
-                />
-              </View>
+                  <View
+                    style={{ position: "absolute", left: 0, top: height / 6 }}
+                  >
+                    <Image
+                      source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
+                      style={{ width: height / 2.4, height: height / 1.5 }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      marginTop: 100,
+                      position: "absolute",
+                      bottom: 80,
+                      paddingHorizontal: 10,
+                    }}
+                  >
+                    <TextMedium
+                      text="Spin the Wheel and win. Play and share. Your recharges will be way more fun with ACHÉ."
+                      style={{
+                        //marginTop: 100,
+                        fontSize: 20,
+                        textAlign: "center",
+                        color: "#fffc00",
+                      }}
+                    />
+                  </View>
+                </>
+              )}
             </ImageBackground>
           ),
           title: "",
@@ -243,45 +356,93 @@ const OnBoardingScreen = ({ navigation }) => {
                     />
                   </NeuButton>
                 </View>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <View style={{ paddingHorizontal: 25 }}>
-                    <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
-                    >
-                      <TextBold
-                        text="El Aché"
+                {idioma === "spa" ? (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View style={{ paddingHorizontal: 25 }}>
+                      <View
                         style={{
-                          fontSize: 20,
-                          color: "#fffc00",
-                          textTransform: "uppercase",
+                          flexDirection: "row",
+                          justifyContent: "center",
                         }}
-                      />
+                      >
+                        <TextBold
+                          text="El Aché"
+                          style={{
+                            fontSize: 20,
+                            color: "#fffc00",
+                            textTransform: "uppercase",
+                          }}
+                        />
+                      </View>
+                      <Text>
+                        <TextMedium
+                          text="Cada premio que ganes lo encontrarás aquí. Cuando tengas un premio pendiente envíalo para poder obtener otro al girar la"
+                          style={{
+                            fontSize: 20,
+                            color: "#fffc00",
+                            textAlign: "center",
+                          }}
+                        />
+                        <TextBold
+                          text=" Ruleta."
+                          style={{
+                            fontSize: 20,
+                            color: "#fffc00",
+                          }}
+                        />
+                      </Text>
                     </View>
-                    <Text>
-                      <TextMedium
-                        text="Cada premio que ganes lo encontrarás aquí. Cuando tengas un premio pendiente envíalo para poder obtener otro al girar la"
-                        style={{
-                          fontSize: 20,
-                          color: "#fffc00",
-                          textAlign: "center",
-                        }}
-                      />
-                      <TextBold
-                        text=" Ruleta."
-                        style={{
-                          fontSize: 20,
-                          color: "#fffc00",
-                        }}
-                      />
-                    </Text>
                   </View>
-                </View>
+                ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View style={{ paddingHorizontal: 25 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <TextBold
+                          text="ACHÉ Button"
+                          style={{
+                            fontSize: 20,
+                            color: "#fffc00",
+                            textTransform: "uppercase",
+                          }}
+                        />
+                      </View>
+                      <Text>
+                        <TextMedium
+                          text="Here’s where you’ll find the amount you win. Whenever you have a prize on hold send it to win another by spinning the "
+                          style={{
+                            fontSize: 20,
+                            color: "#fffc00",
+                            textAlign: "center",
+                          }}
+                        />
+                        <TextBold
+                          text="Wheel."
+                          style={{
+                            fontSize: 20,
+                            color: "#fffc00",
+                          }}
+                        />
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </LinearGradient>
             </ImageBackground>
           ),
@@ -376,36 +537,75 @@ const OnBoardingScreen = ({ navigation }) => {
                     />
                   </NeuButton>
                 </View>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <View style={{ paddingHorizontal: 25 }}>
-                    <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
-                    >
-                      <TextBold
-                        text="El Rayo."
+                {idioma === "spa" ? (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View style={{ paddingHorizontal: 25 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <TextBold
+                          text="El Rayo."
+                          style={{
+                            fontSize: 20,
+                            color: "#fffc00",
+                            textTransform: "uppercase",
+                          }}
+                        />
+                      </View>
+                      <TextMedium
+                        text="Si tienes poco tiempo, aquí encontrarás la recarga instantánea. Podrás incluir varios contactos y decidir a quién envías el premio."
                         style={{
                           fontSize: 20,
                           color: "#fffc00",
-                          textTransform: "uppercase",
+                          textAlign: "center",
                         }}
                       />
                     </View>
-                    <TextMedium
-                      text="Si tienes poco tiempo, aquí encontrarás la recarga instantánea. Podrás incluir varios contactos y decidir a quién envías el premio."
-                      style={{
-                        fontSize: 20,
-                        color: "#fffc00",
-                        textAlign: "center",
-                      }}
-                    />
                   </View>
-                </View>
+                ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View style={{ paddingHorizontal: 25 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <TextBold
+                          text="The Lighting or The Flash"
+                          style={{
+                            fontSize: 20,
+                            color: "#fffc00",
+                            textTransform: "uppercase",
+                          }}
+                        />
+                      </View>
+                      <TextMedium
+                        text="If you’re in a rush here you’ll find the instant recharge. You could include several contacts and even decide who you’re going to send your prize to."
+                        style={{
+                          fontSize: 20,
+                          color: "#fffc00",
+                          textAlign: "center",
+                        }}
+                      />
+                    </View>
+                  </View>
+                )}
               </LinearGradient>
             </ImageBackground>
           ),

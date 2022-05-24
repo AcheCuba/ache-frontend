@@ -344,7 +344,11 @@ const NuevoContactoInput = ({
                   fontFamily: "bs-italic",
                   fontSize: 18,
                 }}
-                placeholder="Añadir Contacto"
+                placeholder={
+                  userState?.idioma === "spa"
+                    ? "Añadir Contacto"
+                    : "Add Contact"
+                }
                 width={inputWidth}
                 height={40}
                 borderRadius={20}
