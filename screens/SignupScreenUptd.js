@@ -275,18 +275,18 @@ const SignupScreenUptd = ({ navigation }) => {
           )}
         </View>
         <KeyboardAwareScrollView
-          extraScrollHeight={Platform.OS === "ios" ? -30 : 0}
+          extraScrollHeight={Platform.OS === "ios" ? 5 : 0} //-30:0
           //behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <View
             style={{
               flex: 2,
               alignItems: "center",
-              marginTop: 30, //40
+              marginTop: height / 40, //30
               paddingBottom: Platform.OS === "android" ? 50 : 0,
             }}
           >
-            <View style={{ marginTop: 40 }}>
+            <View style={{ marginTop: height / 45 }}>
               <View style={{ marginBottom: 0 }}>
                 <NeuInput
                   textStyle={{
@@ -311,14 +311,15 @@ const SignupScreenUptd = ({ navigation }) => {
                     color: "#ddd",
                     fontSize: 16,
                     marginLeft: 12,
+                    marginTop: 4,
                   }}
                   text={nameError}
                 />
               ) : (
-                <View style={{ height: 16 }}></View>
+                <View style={{ height: 20 }}></View>
               )}
             </View>
-            <View style={{ marginTop: 40 }}>
+            <View style={{ marginTop: height / 45 }}>
               <View style={{ marginBottom: 0 }}>
                 <NeuInput
                   textStyle={{
@@ -346,14 +347,15 @@ const SignupScreenUptd = ({ navigation }) => {
                     color: "#ddd",
                     fontSize: 16,
                     marginLeft: 12,
+                    marginTop: 4,
                   }}
                   text={emailError}
                 />
               ) : (
-                <View style={{ height: 16 }}></View>
+                <View style={{ height: 20 }}></View>
               )}
             </View>
-            <View style={{ marginTop: 40 }}>
+            <View style={{ marginTop: height / 45 }}>
               <View style={{}}>
                 <NeuInput
                   textStyle={{

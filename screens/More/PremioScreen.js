@@ -141,6 +141,7 @@ const PremioScreen = ({ navigation }) => {
         style={{
           flex: 1,
           alignItems: "center",
+          marginBottom: 105,
           //backgroundColor: "rgba(112, 28, 87, 1)",
         }}
       >

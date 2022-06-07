@@ -14,7 +14,6 @@ export default function useCachedResources() {
   const [assets] = useAssets([
     require("../assets/images/home/fondoOscuro.png"),
     require("../assets/images/home/bisel.png"),
-    require("../assets/images/home/casillas2.png"),
     require("../assets/images/home/fondo.png"),
     require("../assets/images/home/centro.png"),
     require("../assets/images/home/sombra.png"),
@@ -22,7 +21,6 @@ export default function useCachedResources() {
     require("../assets/images/home/premios_finales/Monedas_250_CUP.png"),
     require("../assets/images/home/premios_finales/Monedas_500_CUP.png"),
     require("../assets/images/home/premios_finales/calavera_roja.png"),
-    require("../assets/images/more/asset3.png"),
   ]);
 
   const [loaded] = useFonts({

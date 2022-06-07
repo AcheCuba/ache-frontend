@@ -97,7 +97,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         style: {
           justifyContent: "center",
           alignItems: "center",
-          height: 100,
+          height: 90,
           //paddingTop: 3,
           allowFontScaling: true,
           backgroundColor: "rgba(112, 28, 87, 1)",
@@ -106,7 +106,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           paddingHorizontal: 20,
           borderTopLeftRadius: 35,
           borderTopRightRadius: 35,
-          paddingBottom: Platform.OS === "android" ? 10 : 15,
+          paddingBottom: Platform.OS === "android" ? 10 : 7,
           //borderTopColor:
           //  Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
           shadowColor: Platform.OS === "android" ? null : "#1f0918",

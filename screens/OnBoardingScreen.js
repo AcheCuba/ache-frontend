@@ -99,7 +99,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     <TextBold
                       text="Welcome"
                       style={{
-                        marginTop: 60,
+                        marginTop: 15,
                         fontSize: 40,
                         color: "#fffb00",
                         textTransform: "uppercase",
@@ -108,7 +108,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     <TextMedium
                       text={`You now have ACHE! ACHÉ is an Afro-Cuban word for good luck, and that is the positive energy we wish you while connecting with  your friends and family in Cuba. You’re now only one spin away from playing, winning prizes or sending recharges. Thanks you being a member of our community.`}
                       style={{
-                        marginTop: 20,
+                        marginTop: 10,
                         fontSize: 20,
                         textAlign: "center",
                         color: "#fffb00",
