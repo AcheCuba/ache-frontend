@@ -8,7 +8,6 @@ import { NeuButton } from "react-native-neu-element";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "react-native";
 import { GlobalContext } from "../context/GlobalProvider";
-import { Etildada } from "../constants/accents";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -235,7 +234,7 @@ const OnBoardingScreen = ({ navigation }) => {
                   <View
                     style={{
                       position: "absolute",
-                      top: 80,
+                      top: 60,
                       paddingHorizontal: 10,
                     }}
                   >
@@ -285,7 +284,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       marginTop: 100,
                       position: "absolute",
-                      bottom: 80,
+                      bottom: 60,
                       paddingHorizontal: 10,
                     }}
                   >
