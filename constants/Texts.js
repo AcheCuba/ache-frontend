@@ -30,13 +30,13 @@ export const GameScreenTextEnglish = () => {
   return {
     MediaBolsaWonTitle: "HALF BAG",
     MediaBolsaWonBody:
-      "ACHE! You’ve win 250 pesos! To cash your prize, add the HALF BAG to a recharge or share it with anyone you want to. You have 72 hours.",
+      "ACHE! You’ve won 250 pesos! To cash your prize, add the HALF BAG to a recharge or share it with anyone you want to. You have 72 hours.",
     BolsaLlenaWonTitle: "FULL BAG",
     BolsaLlenaWonBody:
-      "ACHE! You’ve win 500 pesos! To cash your prize, add the FULL BAG to a recharge or share it with anyone you want to. You have 72 hours",
+      "ACHE! You’ve won 500 pesos! To cash your prize, add the FULL BAG to a recharge or share it with anyone you want to. You have 72 hours",
     JoyaWonTitle: "GEMS",
     JoyaWonBody:
-      "Your ACHÉ is on fire! You’ve win our super 500 dollars’ jackpot! To claim your GEMS, send a fast recharge The Flash, check your email and follow the instructions. You have 72 hours.",
+      "Your ACHÉ is on fire! You’ve won our super 500 dollars’ jackpot! To claim your GEMS, send a fast recharge The Flash, check your email and follow the instructions. You have 72 hours.",
     cancelar: "cancel",
     obtenerPremio: "get prize",
     volverAJugar: "play again",
@@ -71,6 +71,9 @@ export const NuevaRecargaTextSpanish = () => {
     continuar: "Continuar",
     codigoValido: "Premio aceptado",
     codigoInvalido: "Premio inválido",
+    ofertas: "ofertas disponibles",
+    precio: "precio",
+    monto: "monto",
   };
 };
 
@@ -79,6 +82,25 @@ export const NuevaRecargaTextEnglish = () => {
     continuar: "Continue",
     codigoValido: "Code accepted",
     codigoInvalido: "Invalid code",
+    ofertas: "top-ups available",
+    precio: "price",
+    monto: "amount",
+  };
+};
+
+export const PrePagoTextSpanish = () => {
+  return {
+    pagar: "pagar",
+    valor: "Valor de la recarga:",
+    beneficiarios: "beneficiarios:",
+  };
+};
+
+export const PrePagoTextEnglish = () => {
+  return {
+    pagar: "pay",
+    valor: "recharge value:",
+    beneficiarios: "beneficiaries:",
   };
 };
 
@@ -123,7 +145,7 @@ export const MoreNosotrosTextEnglish = () => {
     quienesSomosTitle: "WHO ARE WE?",
     quienesSomosBody:
       "We are a community of entrepreneurs and our goal is to make the recharge process not only easier but actually fun.",
-    queNosDistingueTitle: "WHAT MAKE US UNIQUE? ",
+    queNosDistingueTitle: "WHAT MAKES US UNIQUE? ",
     queNosDistingueBody:
       "We are not the only business offering online recharge services, but we are the only one with a game! Users can send safe recharges and at the same time win prizes challenging their ACHÉ.",
     acheTitle: "ACHÉ",
@@ -187,7 +209,7 @@ export const ModoDeUsoTextSpanish = () => {
 
 export const ModoDeUsoTextEnglish = () => {
   return {
-    juega: "playh",
+    juega: "play",
     juegaDesc:
       "You just have to spin de Recharge Wheel, from anywhere in the world even if you haven’t recharged yet. If you win a prize you’ll find it in the Ache Button at the top right corner of your home screen. In order to cash every prize you get in the Wheel, first you must send any prize on hold located in the Ache Button.",
     recarga: "Recharge",

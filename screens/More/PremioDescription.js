@@ -4,12 +4,15 @@ import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold, TextItalic } from "../../components/CommonText";
+import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const PremioDescription = ({ navigation, route }) => {
   const { type, description } = route.params;
+  const { userState } = React.useContext(GlobalContext);
+  const idioma = userState?.idioma;
 
   return (
     <ImageBackground
@@ -55,7 +58,7 @@ const PremioDescription = ({ navigation, route }) => {
             }}
           >
             <CommonNeuButton
-              text="Jugar"
+              text={idioma === "spa" ? "Jugar" : "Play"}
               screenWidth={width}
               width={width / 3}
               color={type === "calavera" ? "#6b1b54" : "#611951"}
@@ -64,7 +67,7 @@ const PremioDescription = ({ navigation, route }) => {
               }}
             />
             <CommonNeuButton
-              text="atrás"
+              text={idioma === "spa" ? "Atrás" : "Back"}
               width={width / 3}
               screenWidth={width}
               color={type === "calavera" ? "#6b1b54" : "#611951"}

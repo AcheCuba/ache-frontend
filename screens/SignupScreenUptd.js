@@ -120,7 +120,7 @@ const SignupScreenUptd = ({ navigation }) => {
               email: newUser.email,
               phone: newUser.phone,
               prize: null,
-              idioma: "eng",
+              idioma: idioma,
             })
           );
         }

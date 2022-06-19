@@ -1,43 +1,39 @@
 import React, { useContext } from "react";
 import { Alert } from "react-native";
 import { Dimensions, View, Text, Platform } from "react-native";
-import { NeuButton } from "react-native-neu-element";
 import CommonHeader from "../../components/CommonHeader";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
-import {
-  resetNuevaRecargaState,
-  restoreNuevaRecargaInitialState,
-  setPrizeForUser,
-} from "../../context/Actions/actions";
-
+import { resetNuevaRecargaState } from "../../context/Actions/actions";
 import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
-import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
-import { cancelNotification } from "../../libs/expoPushNotification.lib";
+
 import { TextBold, TextMedium } from "../../components/CommonText";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { ImageBackground } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+import { fontScale } from "../../libs/normalizeSize";
+import { TouchableOpacity } from "react-native";
+import { PrePagoTextEnglish, PrePagoTextSpanish } from "../../constants/Texts";
 
 const { width, height } = Dimensions.get("screen");
 
 const PrePagoScreen = ({ navigation, route }) => {
   const { productPriceUsd, transaction_id_array, amount_cup } = route.params;
 
-  const { userState, userDispatch } = React.useContext(GlobalContext);
+  const { userState } = React.useContext(GlobalContext);
   const { nuevaRecargaState, nuevaRecargaDispatch } = useContext(GlobalContext);
   const { contactosSeleccionados } = nuevaRecargaState;
 
   const quantity = contactosSeleccionados.length;
   const [amount, setAmount] = React.useState(0);
   //const [precioRecarga, setPrecioRecarga] = React.useState("20");
+  const flatRef = React.useRef(null);
 
   React.useEffect(() => {
     const _amount = parseFloat((quantity * productPriceUsd).toFixed(2));
     //console.log(typeof _amount);
-
     setAmount(_amount);
     //console.log(esDirecta);
   }, []);
@@ -70,6 +66,20 @@ const PrePagoScreen = ({ navigation, route }) => {
     popUpAlert();
   };
 
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = PrePagoTextSpanish();
+    const textEng = PrePagoTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
+
   const renderItemContact = ({ item }) => {
     return (
       <View style={{ height: 30, alignItems: "center" }}>
@@ -80,7 +90,7 @@ const PrePagoScreen = ({ navigation, route }) => {
               : item.contactNumber
           }
           style={{
-            fontSize: 26,
+            fontSize: 26 / fontScale(),
             //textTransform: "uppercase",
             color: "#01f9d2",
             //marginBottom: 6,
@@ -174,100 +184,27 @@ const PrePagoScreen = ({ navigation, route }) => {
 
   const popUpAlert = () => {
     Alert.alert(
-      "¿Desea salir?",
-      "Si abandona la pantalla, se perderá el progreso de la recarga actual",
-      [
-        { text: "Atrás", style: "cancel", onPress: () => {} },
-        {
-          text: "Salir",
-          style: "destructive",
+      userState?.idioma === "spa"
+        ? "¿Desea abandonar la recarga?"
+        : "Do you want to exit?",
+      userState?.idioma === "spa"
+        ? "Si abandona la pantalla, se perderá el progreso de la recarga actual"
+        : "If you leave the screen, the progress of the current recharge will be lost",
 
+      [
+        {
+          text: userState?.idioma === "spa" ? "Cancelar" : "Cancel",
+          style: "cancel",
+          onPress: () => {},
+        },
+        {
+          text: userState?.idioma === "spa" ? "Abortar" : "Abort",
+          style: "destructive",
           onPress: () => onPressCancelarRecargaOnAlert(),
         },
       ]
     );
   };
-
-  /*   const confirmTransactionRequest = (transaction_id) => {
-    const user_token = userState.token;
-    const url = `${BASE_URL}/topup/confirm-transaction/${transaction_id}`;
-    const config = {
-      method: "post",
-      url,
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
-    //console.log(config);
-    return axios(config);
-  }; */
-
-  /*  const cancelTransactionRequest = (transaction_id) => {
-    const user_token = userState.token;
-    const url = `${BASE_URL}/topup/cancel-transaction/${transaction_id}`;
-    const config = {
-      method: "post",
-      url,
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
-    return axios(config);
-  }; */
-
-  /*   const onPressCancelarPorError = () => {
-    finish_checkout_all_prizes();
-    let cancelTransactionPromisesArray = [];
-
-    transaction_id_array.forEach((transaction_id) => {
-      cancelTransactionPromisesArray.push(
-        cancelTransactionRequest(transaction_id)
-      );
-    });
-
-    Promise.all(cancelTransactionPromisesArray)
-      .then(() => console.log("ok"))
-      .catch((err) => console.log(err.message));
-
-    nuevaRecargaDispatch(resetNuevaRecargaState());
-    navigation.navigate("PagoErrorScreen");
-  }; */
-
-  /*   const onPressConfirmarPago = async () => {
-    let confirmTransactionPromisesArray = [];
-
-    //console.log(transaction_id_array);
-
-    transaction_id_array.forEach((transaction_id) => {
-      confirmTransactionPromisesArray.push(
-        confirmTransactionRequest(transaction_id)
-      );
-    });
-
-    Promise.all(confirmTransactionPromisesArray)
-      .then(() => console.log("ok"))
-      .catch((err) => console.log(err.message));
-
-    nuevaRecargaDispatch(resetNuevaRecargaState());
-    // setear premio a null
-
-    storeData("user", {
-      id: userState.id,
-      name: userState.name,
-      email: userState.email,
-      phone: userState.phone,
-      prize: null,
-    });
-
-    userDispatch(setPrizeForUser(null));
-    navigation.navigate("PagoCompletadoScreen");
-
-    const notId = await getData("notification-prize-expire");
-    if (notId != null) {
-      await cancelNotification(notId);
-      await removeItem("notification-prize-expire");
-    }
-  }; */
 
   return (
     <ImageBackground
@@ -314,7 +251,8 @@ const PrePagoScreen = ({ navigation, route }) => {
           <TextBold
             text={`$${amount}`}
             style={{
-              fontSize: 100,
+              //fontSize: 100,
+              fontSize: 100 / fontScale(),
               textTransform: "uppercase",
               color: "#01f9d2",
               //marginBottom: 6,
@@ -325,7 +263,7 @@ const PrePagoScreen = ({ navigation, route }) => {
 
         <View style={{ marginTop: 20 }}>
           <CommonNeuButton
-            text="Pagar"
+            text={ResolveText("pagar")}
             screenWidth={width}
             onPress={() => {
               navigation.navigate("PagoScreen", {
@@ -344,7 +282,7 @@ const PrePagoScreen = ({ navigation, route }) => {
           }}
         >
           <TextBold
-            text={`Valor de la recarga:`}
+            text={ResolveText("valor")}
             style={{
               fontSize: 26,
               textTransform: "uppercase",
@@ -371,7 +309,7 @@ const PrePagoScreen = ({ navigation, route }) => {
           }}
         >
           <TextBold
-            text={`Beneficiaros:`}
+            text={ResolveText("beneficiarios")}
             style={{
               fontSize: 26,
               textTransform: "uppercase",
@@ -383,14 +321,15 @@ const PrePagoScreen = ({ navigation, route }) => {
           <View
             style={{
               marginTop: 5,
-              height: 250,
+              height: height / 3.7,
               paddingBottom: 20,
               width: width / 1.3,
               alignItems: "center",
-              //backgroundColor: "red",
+              //backgroundColor: "gray",
             }}
           >
             <FlatList
+              ref={flatRef}
               keyExtractor={(item) => item.fieldInputId}
               data={contactosSeleccionados}
               renderItem={renderItemContact}
@@ -405,10 +344,26 @@ const PrePagoScreen = ({ navigation, route }) => {
               //onEndReachedThreshold={0.5}
               //disableVirtualization={false}
               //scrollIndicatorInsets={{ right: 1 }}
-              showsVerticalScrollIndicator={false}
-              style={{}}
+              showsVerticalScrollIndicator={true}
+              style={{ width: width / 1.5 }}
             />
           </View>
+          {contactosSeleccionados.length > Math.trunc(height / 3.7 / 30) ? (
+            <TouchableOpacity
+              onPress={() => {
+                flatRef.current.scrollToEnd();
+              }}
+            >
+              <TextBold
+                text={`...`}
+                style={{
+                  fontSize: 40,
+                  color: "#01f9d2",
+                  marginTop: -20,
+                }}
+              />
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     </ImageBackground>

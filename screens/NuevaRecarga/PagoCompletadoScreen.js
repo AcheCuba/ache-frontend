@@ -91,10 +91,6 @@ const PagoCompletadoScreen = ({ navigation }) => {
             marginTop: 100,
           }}
         >
-          {/*  <Image
-            source={require("../../assets/images/recarga_check.png")}
-            style={{ width: 148, height: 152 }}
-          /> */}
           <Image
             source={require("../../assets/animaciones/moneda-check.gif")}
             style={{ width: 250, height: 260 }}

@@ -43,8 +43,6 @@ import {
   TextBold,
   TextBoldItalic,
   TextItalic,
-  TextMedium,
-  TextNormal,
 } from "../../components/CommonText";
 import { LinearGradient } from "expo-linear-gradient";
 import NadaDescriptionContentModal from "./components/NadaDescriptionContentModal";
@@ -87,6 +85,7 @@ async function registerForPushNotificationsAsync() {
 
 const GameScreen = ({ navigation }) => {
   //const expoPushToken = useExpoPushToken();
+
   const [animate, SetAnimate] = React.useState(false);
   const [clickEvent, SetClickEvent] = React.useState(false);
 

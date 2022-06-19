@@ -30,8 +30,8 @@ import { ImageBackground } from "react-native";
 import { Image } from "react-native";
 import { getNetworkState } from "../../libs/networkState.lib";
 import {
-  GameScreenTextEnglish,
-  GameScreenTextSpanish,
+  NuevaRecargaTextEnglish,
+  NuevaRecargaTextSpanish,
 } from "../../constants/Texts";
 import { Audio } from "expo-av";
 
@@ -91,8 +91,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
-    const textSpa = GameScreenTextSpanish();
-    const textEng = GameScreenTextEnglish();
+    const textSpa = NuevaRecargaTextSpanish();
+    const textEng = NuevaRecargaTextEnglish();
 
     if (idioma === "spa") {
       return textSpa[site];
@@ -189,12 +189,21 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
   const popUpAlert = () => {
     Alert.alert(
-      "¿Desea salir?",
-      "Si abandona la pantalla, se perderá el progreso de la recarga actual",
+      userState?.idioma === "spa"
+        ? "¿Desea abandonar la recarga?"
+        : "Do you want to exit?",
+      userState?.idioma === "spa"
+        ? "Si abandona la pantalla, se perderá el progreso de la recarga actual"
+        : "If you leave the screen, the progress of the current recharge will be lost",
+
       [
-        { text: "Atrás", style: "cancel", onPress: () => {} },
         {
-          text: "Salir",
+          text: userState?.idioma === "spa" ? "Cancelar" : "Cancel",
+          style: "cancel",
+          onPress: () => {},
+        },
+        {
+          text: userState?.idioma === "spa" ? "Abortar" : "Abort",
           style: "destructive",
 
           onPress: () => onPressCancelarRecarga(),
@@ -425,45 +434,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           }
 
           contador_contactos += 1;
-
-          /*   if (transaction_data_arr.length === 1) {
-            transaction_id_array.push({
-              topUpId: transaction_data_arr[0].id,
-              prizeId: undefined, //transactionId
-              prize_uuid: undefined,
-            });
-
-            // normales esperadas
-            transacciones_normales_esperadas.push({
-              mobile_number:
-                transaction_data_arr[0].credit_party_identifier.mobile_number,
-              transaction_id: transaction_data_arr[0].id,
-            });
-          } */
-
-          /*   if (transaction_data_arr.length === 2) {
-            transaction_id_array.push({
-              topUpId: transaction_data_arr[0].id,
-              prizeId: transaction_data_arr[1].id,
-              prize_uuid: validated_prizes[contador_premios]?.uuid,
-            });
-
-            // normales esperadas
-            transacciones_normales_esperadas.push({
-              mobile_number:
-                transaction_data_arr[0].credit_party_identifier.mobile_number,
-              transaction_id: transaction_data_arr[0].id,
-            });
-
-            //con premio esperadas
-            transacciones_premio_esperadas.push({
-              mobile_number:
-                transaction_data_arr[1].credit_party_identifier.mobile_number,
-              transaction_id: transaction_data_arr[1].id,
-            });
-
-            contador_premios += 1;
-          } */
         })
         .catch((err) => {
           if (err.response) {
@@ -516,130 +486,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     }
   };
 
-  /*   const _onPressProduct = (productId, productPriceUsd) => {
-    // por cada contacto, se crea una transaccion
-    // endpoint: create-transacition
-
-
-    let transaction_id_array = [];
-    setLoadingContinuar(true);
-
-    let promisesForTransaction = [];
-    contactosSeleccionados.forEach((contacto) => {
-      promisesForTransaction.push(create_transaction(contacto, productId));
-    });
-
-    // para comunicacion socket
-    let transacciones_normales_esperadas = []; // [{mobile_number, transaction_id}, ...]
-    let transacciones_premio_esperadas = [];
-
-    socketDispatch(setTransaccionesNormalesResultado([]));
-    socketDispatch(setTransaccionesPremioResultado([]));
-
-    let contador_premios = 0;
-
-    Promise.all(promisesForTransaction)
-      .then((response) => {
-        //console.log(response);
-
-        response.forEach((transactions_array) => {
-          //console.log(validated_prizes[contador_premios]?.uuid);
-
-          const _transactions_array = transactions_array.data;
-          //console.log(_transactions_array[0].credit_party_identifier);
-
-          // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
-          // se crea un object por cada uno de estas 2 (o 1) transacciones
-          if (_transactions_array.length === 1) {
-            transaction_id_array.push({
-              topUpId: _transactions_array[0].id,
-              prizeId: undefined, //transactionId
-              prize_uuid: undefined,
-              
-            });
-
-            // normales esperadas
-            transacciones_normales_esperadas.push({
-              mobile_number:
-                _transactions_array[0].credit_party_identifier.mobile_number,
-              transaction_id: _transactions_array[0].id,
-            });
-          }
-
-          if (_transactions_array.length === 2) {
-            
-            transaction_id_array.push({
-              topUpId: _transactions_array[0].id,
-              prizeId: _transactions_array[1].id,
-              prize_uuid: validated_prizes[contador_premios]?.uuid,
-            });
-
-            // normales esperadas
-            transacciones_normales_esperadas.push({
-              mobile_number:
-                _transactions_array[0].credit_party_identifier.mobile_number,
-              transaction_id: _transactions_array[0].id,
-            });
-
-            //con premio esperadas
-            transacciones_premio_esperadas.push({
-              mobile_number:
-                _transactions_array[1].credit_party_identifier.mobile_number,
-              transaction_id: _transactions_array[1].id,
-            });
-
-            contador_premios += 1;
-          }
-
-        
-        });
-        setLoadingContinuar(false);
-
-      
-
-        socketDispatch(
-          setTransaccionesNormalesEsperadas(transacciones_normales_esperadas)
-        );
-        socketDispatch(
-          setTransaccionesPremioEsperadas(transacciones_premio_esperadas)
-        );
-       
-
-        nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
-        nuevaRecargaDispatch(setTransaccionesPremioConfirmadas([]));
-        nuevaRecargaDispatch(setTransactionsIdArray(transaction_id_array));
-
-        navigation.navigate("PrePagoScreen", {
-          productPriceUsd,
-          transaction_id_array,
-        });
-      })
-      .catch((err) => {
-        if (err.response) {
-          const err_data = err.response.data;
-          //const err_headers = err.response.headers;
-          console.log(err_data);
-          //console.log(err_headers);
-        }
-
-        if (err.request) {
-          console.log("Error");
-
-          //console.log(err.request);
-        }
-
-        setLoadingContinuar(false);
-        Toast.show("No se pudo crear la transacción", {
-          duaration: Toast.durations.LONG,
-          position: Toast.positions.BOTTOM,
-          shadow: true,
-          animation: true,
-          hideOnPress: true,
-          delay: 0,
-        });
-      });
-  }; */
-
   return (
     <ImageBackground
       source={require("../../assets/images/degradado_general.png")}
@@ -656,8 +502,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         height={height}
         _onPress={() => onPressBackButton()}
       />
-      {/*       <View style={styles.container}>
-       */}
+
       <View
         style={{
           alignItems: "center",
@@ -666,7 +511,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         }}
       >
         <TextBold
-          text="Ofertas Disponibles"
+          text={ResolveText("ofertas")}
           style={{
             fontSize: 30,
             color: "#fffb00",
@@ -746,7 +591,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         />
 
                         <TextMedium
-                          text={`monto: ${product.amount_cup} CUP`}
+                          text={`${ResolveText("monto")}: ${
+                            product.amount_cup
+                          } CUP`}
                           style={{
                             fontSize: 20,
                             color: "rgba(255,255,255,0.6)",
@@ -756,7 +603,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         />
 
                         <TextMedium
-                          text={`precio: ${product.price_usd} USD`}
+                          text={`${ResolveText("precio")}: ${
+                            product.price_usd
+                          } USD`}
                           style={{
                             fontSize: 20,
                             color: "rgba(255,255,255,0.6)",
@@ -787,12 +636,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         {loadingContinuar && product.id === pressedProductId ? (
                           <ActivityIndicator size="small" color="#fffb00" />
                         ) : (
-                          /*     <Ionicons
-                            name="chevron-forward-outline"
-                            size={25}
-                            color="#fffb00"
-                          /> */
-
                           <Image
                             source={require("../../assets/images/iconos/atras.png")}
                             style={{
@@ -826,24 +669,3 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 };
 
 export default RecargasDisponiblesScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    //backgroundColor: "#701c57",
-    //alignItems: "center",
-    //justifyContent: "flex-start",
-  },
-  innerContainer: {
-    //backgroundColor: "#701c57",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  button: {
-    width: "90%",
-    marginTop: 10,
-  },
-});

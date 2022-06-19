@@ -8,14 +8,32 @@ import { NeuButton } from "react-native-neu-element";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "react-native";
 import { GlobalContext } from "../context/GlobalProvider";
+import { TouchableOpacity } from "react-native";
+import { duration } from "moment";
+import { setIdioma } from "../context/Actions/actions";
 
 const { width, height } = Dimensions.get("screen");
 
 const OnBoardingScreen = ({ navigation }) => {
   const [pageIndex, setPageIndex] = React.useState(0);
   const [showSkip, setShowSkip] = React.useState(false);
+  const [selectedIdiom, setSelectedIdiom] = React.useState("eng");
 
-  const { userState } = React.useContext(GlobalContext);
+  /*  const colorTextSpanishAnimation = {
+    color: colorSpanishValue.current.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["rgb(99,71,255)", "rgb(255,99,71)"],
+    }),
+  }; */
+
+  /* const colorTextEnglishAnimation = {
+    color: colorEnglishValue.current.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["rgb(99,71,255)", "rgb(255,99,71)"],
+    }),
+  }; */
+
+  const { userState, userDispatch } = React.useContext(GlobalContext);
   const { idioma } = userState;
 
   const getPageIndex = (newIndex) => {
@@ -39,12 +57,70 @@ const OnBoardingScreen = ({ navigation }) => {
       onSkip={() => navigation.navigate("Signup")}
       showNext={false}
       showSkip={showSkip}
+      skipLabel={idioma == "eng" ? "skip" : "omitir"}
       imageContainerStyles={{ paddingBottom: 0 }}
       containerStyles={{}}
       pageIndexCallback={getPageIndex}
       bottomBarHighlight={true}
       bottomBarHeight={50}
       pages={[
+        {
+          backgroundColor: "rgb(45,22,56)",
+          image: (
+            <ImageBackground
+              source={require("../assets/images/degradado_home.png")}
+              style={{
+                width: width,
+                height: height,
+                alignItems: "center",
+                justifyContent: "center",
+                //marginTop: 100,
+                zIndex: 10,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  userDispatch(setIdioma("eng"));
+                  setSelectedIdiom("eng");
+                }}
+              >
+                <TextBold
+                  text="English"
+                  style={{
+                    marginTop: 60,
+                    fontSize: 40,
+                    color:
+                      selectedIdiom == "eng"
+                        ? "rgba(255, 251, 0, 1)"
+                        : "rgba(255, 251, 0, 0.3)",
+                    textTransform: "uppercase",
+                  }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  userDispatch(setIdioma("spa"));
+                  setSelectedIdiom("spa");
+                }}
+              >
+                <TextBold
+                  text="Spanish"
+                  style={{
+                    marginTop: 60,
+                    fontSize: 40,
+                    color:
+                      selectedIdiom === "spa"
+                        ? "rgba(255, 251, 0, 1)"
+                        : "rgba(255, 251, 0, 0.3)",
+                    textTransform: "uppercase",
+                  }}
+                />
+              </TouchableOpacity>
+            </ImageBackground>
+          ),
+          title: "",
+          subtitle: "",
+        },
         {
           backgroundColor: "rgb(45,22,56)",
           image: (
