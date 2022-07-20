@@ -130,9 +130,9 @@ const GameScreen = ({ navigation }) => {
     //console.log(width);
     //console.log(height);
     //console.log(JoyaWon);
-    //console.log(userState);
+    console.log(userState);
     //console.log(width / 3);
-  }); */
+  }, [userState]); */
 
   /*  React.useEffect(() => {
     //setPremioAcumuladoType("Jackpot");
@@ -702,6 +702,7 @@ const GameScreen = ({ navigation }) => {
                 // time
                 const prizeStartTime = moment();
                 const prizeEndTime = moment().add(1, "days");
+                //const prizeEndTime = moment().add(1, "minutes"); //test
                 const minutos_restantes = prizeEndTime.diff(
                   prizeStartTime,
                   "minutes"
@@ -740,6 +741,7 @@ const GameScreen = ({ navigation }) => {
                 // time
                 const prizeStartTime = moment();
                 const prizeEndTime = moment().add(3, "days");
+                //const prizeEndTime = moment().add(1, "minutes"); //test
                 const minutos_restantes = prizeEndTime.diff(
                   prizeStartTime,
                   "minutes"
@@ -1417,13 +1419,59 @@ const GameScreen = ({ navigation }) => {
                 const currentTime = moment();
                 const prizeEndTime = moment(userState.prize?.prizeEndTime);
                 const horas_restantes = prizeEndTime.diff(currentTime, "hours");
-                setHorasRestantes(horas_restantes);
-                if (userState.prize.type === "Nada") {
-                  setNadaDescriptionModalVisible(true);
-                } else {
-                  enMovimiento.current = false;
 
-                  setModalVisible(true);
+                /*   const segundos_restantes = prizeEndTime.diff(
+                  currentTime,
+                  "seconds"
+                ); */
+                const minutos_restantes = prizeEndTime.diff(
+                  currentTime,
+                  "minutes"
+                );
+
+                //console.log(segundos_restantes);
+                //console.log(minutos_restantes);
+
+                if (minutos_restantes < 0) {
+                  // el premio ha expirado
+
+                  // si es nada: Toast de que ya puedes jugar
+                  if (userState.prize.type === "Nada") {
+                    Toast.show(ResolveText("CalaveraExpirada"), {
+                      duaration: Toast.durations.LONG,
+                      position: Toast.positions.BOTTOM,
+                      shadow: true,
+                      animation: true,
+                      hideOnPress: true,
+                      delay: 0,
+                    });
+
+                    // si era un premio, Toast de que ha EXPIRADO
+                  } else {
+                    Toast.show(ResolveText("PremioExpirado"), {
+                      duaration: Toast.durations.LONG,
+                      position: Toast.positions.BOTTOM,
+                      shadow: true,
+                      animation: true,
+                      hideOnPress: true,
+                      delay: 0,
+                    });
+                  }
+
+                  storeData("user", {
+                    ...userState,
+                    prize: null,
+                  });
+                  userDispatch(setPrizeForUser(null));
+                } else {
+                  // flujo normal
+                  setHorasRestantes(horas_restantes);
+                  if (userState.prize.type === "Nada") {
+                    setNadaDescriptionModalVisible(true);
+                  } else {
+                    enMovimiento.current = false;
+                    setModalVisible(true);
+                  }
                 }
               } else {
                 let toast = Toast.show(ResolveText("premioVacio"), {

@@ -27,6 +27,7 @@
     "android": {
       "package": "com.achecuba.achev1",
       "versionCode": 1,
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive_icon_ache.png", 
         "backgroundColor": "#701c57"

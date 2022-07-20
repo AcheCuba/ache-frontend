@@ -61,7 +61,7 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
           action.payload,
         ],
       };
-    case UPDATE_PRIZE_FOR_CONTACT:
+    case UPDATE_PRIZE_FOR_CONTACT: //also add
       let newContactsArr = state.contactosSeleccionados.map((c) => {
         if (c.fieldInputId === action.fieldInputId) {
           return {

@@ -65,8 +65,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     //console.log("pressedProductId", pressedProductId);
     //console.log("price_usd", price_usd);
     //console.log(esDirecta);
-    console.log("validated prizes rec disp", validated_prizes);
-  }, [validated_prizes]); */
+    //console.log("validated prizes rec disp", validated_prizes);
+    console.log("CONTACTOS SELECCIONADOSS", contactosSeleccionados);
+  }, [contactosSeleccionados]); */
 
   React.useEffect(() => {
     return soundError
@@ -137,7 +138,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       Promise.all(primisesForFinish)
         .then(() => {
           Toast.show(
-            "Los premios están libres, y podrán cobrarse en otro momento",
+            userState?.idioma === "spa"
+              ? "Recarga cancelada, podrás cobrar tu premio en otro momento"
+              : "Recharge canceled, you can collect your prize at a later time.",
+
             {
               duaration: Toast.durations.LONG,
               position: Toast.positions.BOTTOM,
@@ -150,14 +154,19 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         })
         .catch((e) => {
           //console.log(e.message);
-          Toast.show("Los premios no pudieron liberarse", {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          });
+          Toast.show(
+            userState?.idioma === "spa"
+              ? "Error al finalizar el checkout del premio"
+              : "Error at prize checkout",
+            {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+            }
+          );
         });
     }
   };

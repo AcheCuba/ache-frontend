@@ -35,6 +35,7 @@ const PagoScreen = ({ navigation, route }) => {
   const amount = route.params?.amount;
   const transaction_id_array = route.params?.transaction_id_array;
   const productPriceUsd = route.params?.productPriceUsd;
+  const amount_cup_por_recarga = route.params?.amount_cup_por_recarga;
 
   const {
     userState,
@@ -48,6 +49,7 @@ const PagoScreen = ({ navigation, route }) => {
     transacciones_premio_confirmadas,
     transacciones_normales_confirmadas,
     validated_prizes,
+    contactosSeleccionados,
   } = nuevaRecargaState;
 
   React.useEffect(() => {
@@ -313,10 +315,37 @@ const PagoScreen = ({ navigation, route }) => {
 
   const createPaymentSession = async () => {
     const input = {
-      amount: amount,
-      name: name,
-      email: email,
+      amount: amount, // amount total
+      name: name, // nombre del usuario actual
+      email: email, // email del usuario actual
     };
+
+    const createPaymentDescArray = contactosSeleccionados.map((contacto) => {
+      const topups_array = [
+        {
+          amount: amount_cup_por_recarga,
+          price: parseFloat(productPriceUsd),
+          isPrize: false,
+        },
+      ]; // como mínimo tiene una recarga
+
+      if (contacto.prize != null) {
+        topups_array.push({
+          amount: contacto.prize.amount,
+          price: contacto.prize.price,
+          isPrize: true,
+        });
+      } // tiene 2 si tiene premio -> implica que puedan repetirse
+
+      return {
+        [contacto.contactNumber]: {
+          name: contacto.contactName,
+          topups: topups_array,
+        },
+      };
+    });
+
+    const description = Object.assign(...createPaymentDescArray);
 
     const user_token = userState.token;
     const _url = `${BASE_URL}/payments/create-payment`;
@@ -330,11 +359,14 @@ const PagoScreen = ({ navigation, route }) => {
         amount: input.amount,
         name: input.name,
         email: input.email,
+        description,
       },
       headers: {
         Authorization: `Bearer ${user_token}`,
       },
     };
+
+    //console.log("DATA CREATE PAYMENT", config.data);
 
     //console.log(config);
     //console.log("Se ha iniciado el pago");

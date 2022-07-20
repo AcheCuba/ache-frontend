@@ -13,7 +13,7 @@ import { TextBold, TextMedium } from "../../components/CommonText";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { ImageBackground } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { fontScale } from "../../libs/normalizeSize";
+import normalize from "react-native-normalize";
 import { TouchableOpacity } from "react-native";
 import { PrePagoTextEnglish, PrePagoTextSpanish } from "../../constants/Texts";
 
@@ -38,14 +38,45 @@ const PrePagoScreen = ({ navigation, route }) => {
     //console.log(esDirecta);
   }, []);
 
-  /*   React.useEffect(() => {
-    /console.log(typeof amount);
-    console.log(amount); 
-    console.log(contactosSeleccionados);
+  /*  React.useEffect(() => {
+    //console.log(typeof amount);
+    //console.log(amount);
+    //console.log("CONTACTOS SELECCIONADOS", contactosSeleccionados);
+
+    const createPaymentDescription = contactosSeleccionados.map((contacto) => {
+      const topups_array = [
+        {
+          amount: amount_cup,
+          price: parseFloat(productPriceUsd),
+          isPrize: false,
+        },
+      ]; // como mínimo tiene una recarga
+
+      if (contacto.prize != null) {
+        topups_array.push({
+          amount: contacto.prize.amount,
+          price: contacto.prize.price,
+          isPrize: true,
+        });
+      }
+
+      return {
+        [contacto.contactNumber]: {
+          name: contacto.contactName,
+          topups: topups_array,
+        },
+      };
+    });
+
+    //console.log("DESCRIPTION", createPaymentDescription);
+    const desc = Object.assign(...createPaymentDescription);
+
+    console.log("desc final", desc);
+
     return () => {
       //cleanup
     };
-  }); */
+  }, [contactosSeleccionados]); */
 
   /* React.useEffect(() => {
     console.log("transaction array - Pre Pago Screen", transaction_id_array);
@@ -90,7 +121,7 @@ const PrePagoScreen = ({ navigation, route }) => {
               : item.contactNumber
           }
           style={{
-            fontSize: 26 / fontScale(),
+            fontSize: normalize(26),
             //textTransform: "uppercase",
             color: "#01f9d2",
             //marginBottom: 6,
@@ -151,7 +182,10 @@ const PrePagoScreen = ({ navigation, route }) => {
       Promise.all(primisesForFinish)
         .then(() => {
           Toast.show(
-            "Los premios están libres, y podrán cobrarse en otro momento",
+            userState?.idioma === "spa"
+              ? "Recarga cancelada, podrás cobrar tu premio en otro momento"
+              : "Recharge canceled, you can collect your prize at a later time.",
+
             {
               duaration: Toast.durations.LONG,
               position: Toast.positions.BOTTOM,
@@ -164,14 +198,19 @@ const PrePagoScreen = ({ navigation, route }) => {
         })
         .catch((e) => {
           //console.log(e.message);
-          Toast.show("Los premios no pudieron liberarse", {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          });
+          Toast.show(
+            userState?.idioma === "spa"
+              ? "Error al finalizar el checkout del premio"
+              : "Error at prize checkout",
+            {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+            }
+          );
         });
     }
   };
@@ -252,7 +291,7 @@ const PrePagoScreen = ({ navigation, route }) => {
             text={`$${amount}`}
             style={{
               //fontSize: 100,
-              fontSize: 100 / fontScale(),
+              fontSize: normalize(100),
               textTransform: "uppercase",
               color: "#01f9d2",
               //marginBottom: 6,
@@ -270,6 +309,7 @@ const PrePagoScreen = ({ navigation, route }) => {
                 amount,
                 transaction_id_array,
                 productPriceUsd,
+                amount_cup_por_recarga: amount_cup,
               });
             }}
           />

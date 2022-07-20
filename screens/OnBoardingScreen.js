@@ -11,6 +11,7 @@ import { GlobalContext } from "../context/GlobalProvider";
 import { TouchableOpacity } from "react-native";
 import { duration } from "moment";
 import { setIdioma } from "../context/Actions/actions";
+import normalize from "react-native-normalize";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -88,7 +89,7 @@ const OnBoardingScreen = ({ navigation }) => {
                   text="English"
                   style={{
                     marginTop: 60,
-                    fontSize: 40,
+                    fontSize: normalize(32),
                     color:
                       selectedIdiom == "eng"
                         ? "rgba(255, 251, 0, 1)"
@@ -106,8 +107,8 @@ const OnBoardingScreen = ({ navigation }) => {
                 <TextBold
                   text="Spanish"
                   style={{
-                    marginTop: 60,
-                    fontSize: 40,
+                    marginTop: 20,
+                    fontSize: normalize(32),
                     color:
                       selectedIdiom === "spa"
                         ? "rgba(255, 251, 0, 1)"

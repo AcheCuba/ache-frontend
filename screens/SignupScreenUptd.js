@@ -12,8 +12,10 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Keyboard } from "react-native";
 import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
+import normalize from "react-native-normalize";
 
 const { width, height } = Dimensions.get("screen");
+//console.log(height / 7);
 
 const SignupScreenUptd = ({ navigation }) => {
   const { userState, userDispatch } = useContext(GlobalContext);
@@ -75,6 +77,7 @@ const SignupScreenUptd = ({ navigation }) => {
       name: name,
       email: email.trim(),
       phone: phone.replace(/-/g, "").replace(/ /g, ""),
+      lang: idioma,
     };
 
     //console.log(data);
@@ -178,8 +181,15 @@ const SignupScreenUptd = ({ navigation }) => {
       }
     }
   };
-  {
-  }
+
+  //const ScrollViewRef = useRef();
+
+  /* const _scrollToInput = (reactNode) => {
+    // Add a 'scroll' ref to your ScrollView
+    
+    //this.scroll.props.scrollToFocusedInput(reactNode)
+  } */
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ImageBackground
@@ -194,7 +204,7 @@ const SignupScreenUptd = ({ navigation }) => {
       >
         <View
           style={{
-            paddingTop: 50,
+            paddingTop: normalize(50),
             width: width,
             height: height / 6,
             backgroundColor: "rgba(112, 28, 87, 1)",
@@ -219,15 +229,18 @@ const SignupScreenUptd = ({ navigation }) => {
            */}
           <Image
             source={require("../assets/images/emojis/emoji_wink.png")}
-            style={{ width: 130, height: 130 }}
+            style={{
+              width: normalize(height / 7, "height"),
+              height: normalize(height / 7, "height"),
+            }}
           />
 
           {idioma === "spa" ? (
             <View
               style={{
-                marginTop: 20,
-                paddingBottom: 10,
-                paddingHorizontal: 25,
+                marginTop: normalize(20, "height"),
+                paddingBottom: normalize(10, "height"),
+                paddingHorizontal: normalize(25, "height"),
               }}
             >
               <TextMedium
@@ -250,9 +263,9 @@ const SignupScreenUptd = ({ navigation }) => {
           ) : (
             <View
               style={{
-                marginTop: 20,
-                paddingBottom: 10,
-                paddingHorizontal: 25,
+                marginTop: normalize(20, "height"),
+                paddingBottom: normalize(10, "height"),
+                paddingHorizontal: normalize(25, "height"),
               }}
             >
               <TextMedium
@@ -266,7 +279,7 @@ const SignupScreenUptd = ({ navigation }) => {
               <TextMedium
                 text="Sign up to start sending recharges and try your ACHÉ!"
                 style={{
-                  fontSize: 20,
+                  fontSize: normalize(20),
                   color: "#fffc00",
                   textAlign: "center",
                 }}
@@ -275,8 +288,10 @@ const SignupScreenUptd = ({ navigation }) => {
           )}
         </View>
         <KeyboardAwareScrollView
-          extraScrollHeight={Platform.OS === "ios" ? 5 : 0} //-30:0
+          extraHeight={Platform.OS === "ios" ? 0 : 24}
+          extraScrollHeight={Platform.OS === "ios" ? 5 : 24} //-30:0
           //behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enableOnAndroid
         >
           <View
             style={{
@@ -397,14 +412,14 @@ const SignupScreenUptd = ({ navigation }) => {
             zIndex: 0,
             flex: 1,
             alignItems: "center",
-            marginTop: -40,
+            marginTop: normalize(-40),
             //marginTop: -120,
           }}
         >
           <NeuButton
             color="#58184d"
             width={(4 / 5) * width}
-            height={width / 7.5}
+            height={height / 14}
             borderRadius={width / 7.5}
             onPress={() => onSubmit()}
             style={{}}
@@ -456,7 +471,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     width: "90%",
-    height: 50,
+    height: normalize(50),
     //marginTop: 30,
   },
 });

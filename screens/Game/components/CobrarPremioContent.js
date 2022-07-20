@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 
-import Clipboard from "expo-clipboard";
+import * as Clipboard from "expo-clipboard";
 import { NeuButton } from "react-native-neu-element";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import axios from "axios";
@@ -19,6 +19,7 @@ import {
   CobrarPremioTextEngish,
   CobrarPremioTextSpanish,
 } from "../../../constants/Texts";
+import normalize from "react-native-normalize";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -34,8 +35,6 @@ const CobrarPremioContent = ({
     React.useContext(GlobalContext);
 
   const currentPrize = userState.prize;
-
-  //console.log(userState);
 
   const [loading, setLoading] = useState(false);
   const [prizeType, setPrizeType] = useState("");
@@ -66,14 +65,14 @@ const CobrarPremioContent = ({
     Clipboard.setString(code);
   };
 
-  const EncriptarCodigo = (codigo) => {
+  /* const EncriptarCodigo = (codigo) => {
     const codigoEncriptado =
       codigo.slice(0, 13) +
       "***" +
       codigo.slice(codigo.length - 3, codigo.length);
 
     return codigoEncriptado;
-  };
+  }; */
 
   const onPressGenerarCodigo = () => {
     // setear codigo a la API
@@ -316,8 +315,8 @@ const CobrarPremioContent = ({
       <View
         style={{
           alignItems: "center",
-          justifyContent: "center",
-          marginTop: 150,
+          //justifyContent: "center",
+          marginTop: normalize(height / 10),
         }}
       >
         <RenderPrizeImage />
@@ -397,7 +396,7 @@ const CobrarPremioContent = ({
             </NeuButton>
           )}
 
-          <View style={{ height: 50, width: width / 1.3 }}>
+          <View style={{ height: normalize(50, "height"), width: width / 1.3 }}>
             {codigoGenerado ? (
               <TextItalic
                 style={{
@@ -420,7 +419,7 @@ const CobrarPremioContent = ({
             onPress={() => {
               loading ? null : Salir();
             }}
-            style={{ marginTop: 30 }}
+            style={{ marginTop: normalize(10, "height") }}
           >
             <TextBold
               text={ResolveText("cancelar")}

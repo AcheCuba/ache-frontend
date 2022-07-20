@@ -23,6 +23,8 @@ export const GameScreenTextSpanish = () => {
     errorConexion: "Ha ocurrido un fallo en la conexión. Revisa por favor.",
     premioVacio: "No hay premio por cobrar. \n ¡Gira la ruleta con ACHÉ!",
     errorDesconocido: "Error desconocido. Cierra la app e inténtalo de nuevo.",
+    CalaveraExpirada: "¡Ya puedes volver a jugar!",
+    PremioExpirado: "Lo sentimos, su premio ha expirado",
   };
 };
 
@@ -45,6 +47,8 @@ export const GameScreenTextEnglish = () => {
     errorConexion: "Connection fail. Please check.",
     premioVacio: "No price to redeem. \n Use your ACHÉ and spin the Wheel!",
     errorDesconocido: "Unknown error. Close the app and try again.",
+    CalaveraExpirada: "You can play again!",
+    PremioExpirado: "Sorry, your prize has expired",
   };
 };
 
@@ -91,16 +95,16 @@ export const NuevaRecargaTextEnglish = () => {
 export const PrePagoTextSpanish = () => {
   return {
     pagar: "pagar",
-    valor: "Valor de la recarga:",
-    beneficiarios: "beneficiarios:",
+    valor: "Valor de la recarga",
+    beneficiarios: "beneficiarios",
   };
 };
 
 export const PrePagoTextEnglish = () => {
   return {
     pagar: "pay",
-    valor: "recharge value:",
-    beneficiarios: "beneficiaries:",
+    valor: "recharge value",
+    beneficiarios: "beneficiaries",
   };
 };
 
@@ -111,7 +115,7 @@ export const ResultadoPagoTextSpanish = () => {
     errorEnPago:
       "Se ha detectado algún fallo. No se puedo completar la recarga, pero su dinero está seguro. Cierre la app e intente de nuevo más tarde.",
     reintentar: "Reintentar",
-    jugar: "Jugar",
+    inicio: "Inicio",
   };
 };
 
@@ -122,7 +126,7 @@ export const ResultadoPagoTextEnglish = () => {
     errorEnPago:
       "Something failed. Your transaction was not completed but your money is save. Close the app and try again later.",
     reintentar: "Retry",
-    jugar: "Play",
+    inicio: "Home",
   };
 };
 

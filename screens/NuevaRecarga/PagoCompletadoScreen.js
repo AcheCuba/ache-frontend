@@ -14,6 +14,7 @@ import {
 } from "../../context/Actions/actions";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { Audio } from "expo-av";
+import { CommonActions } from "@react-navigation/native";
 
 const { width } = Dimensions.get("screen");
 
@@ -122,9 +123,19 @@ const PagoCompletadoScreen = ({ navigation }) => {
           <View style={{ marginTop: 50 }}>
             {globalUpdateCompleted ? (
               <CommonNeuButton
-                text={ResolveText("jugar")}
+                text={ResolveText("inicio")}
                 onPress={() => {
                   navigation.navigate("Juego");
+                  /* navigation.dispatch(
+                    CommonActions.reset({
+                      index: 0,
+                      routes: [{ name: "Juego" }],
+                    })
+                  ); */
+                  /* navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Juego" }],
+                  }); */
                   nuevaRecargaDispatch(resetNuevaRecargaState());
                   socketDispatch(SetGlobalUpdateCompleted(false));
                 }}

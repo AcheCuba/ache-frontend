@@ -86,16 +86,23 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         if (inOrderToCobrarPremio === true) {
           const type = userState.prize.type;
           const uuid = userState.prize.uuid;
+          const amount = userState.prize.amount;
           const fieldId = firstFieldId;
 
           nuevaRecargaDispatch(
-            setPrize({ fieldId, uuid, type, loading: true })
+            setPrize({ fieldId, uuid, type, amount, loading: true })
           );
 
           validate_prize(uuid)
             .then(() => {
               nuevaRecargaDispatch(
-                updatePrize(uuid, { fieldId, uuid, type, loading: false })
+                updatePrize(uuid, {
+                  fieldId,
+                  uuid,
+                  type,
+                  amount,
+                  loading: false,
+                })
               );
               nuevaRecargaDispatch(toggleValidateInProcess(false));
             })
@@ -123,19 +130,27 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             // si hay un slot vacio, solo agregar
             const type = userState.prize.type;
             const uuid = userState.prize.uuid;
+            const amount = userState.prize.amount;
+
             //let fieldId;
 
             if (contactosSeleccionados.length < fields.length) {
               const fieldId = fields[fields.length - 1].fieldId;
 
               nuevaRecargaDispatch(
-                setPrize({ fieldId, uuid, type, loading: true })
+                setPrize({ fieldId, uuid, type, amount, loading: true })
               );
 
               validate_prize(uuid)
                 .then(() => {
                   nuevaRecargaDispatch(
-                    updatePrize(uuid, { fieldId, uuid, type, loading: false })
+                    updatePrize(uuid, {
+                      fieldId,
+                      uuid,
+                      type,
+                      amount,
+                      loading: false,
+                    })
                   );
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 })
@@ -151,13 +166,19 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               nuevaRecargaDispatch(setFields(true, fieldId));
 
               nuevaRecargaDispatch(
-                setPrize({ fieldId, uuid, type, loading: true })
+                setPrize({ fieldId, uuid, type, amount, loading: true })
               );
 
               validate_prize(uuid)
                 .then(() => {
                   nuevaRecargaDispatch(
-                    updatePrize(uuid, { fieldId, uuid, type, loading: false })
+                    updatePrize(uuid, {
+                      fieldId,
+                      uuid,
+                      type,
+                      amount,
+                      loading: false,
+                    })
                   );
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 })
@@ -254,13 +275,22 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     } else {
       // actualizar loading
       nuevaRecargaDispatch(
-        setPrize({ fieldId, uuid, type: undefined, loading: true })
+        setPrize({
+          fieldId,
+          uuid,
+          type: undefined,
+          amount: undefined,
+          loading: true,
+        })
       );
 
       validate_prize(uuid)
         .then((response) => {
           const currentPrize = response.data;
           const type = currentPrize.type;
+          const amount = currentPrize.amount;
+
+          //console.log("AMOUNT", amount);
 
           Toast.show(ResolveText("codigoValido"), {
             duaration: Toast.durations.LONG,
@@ -272,7 +302,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           });
           // actualizar lista de premios validados
           nuevaRecargaDispatch(
-            updatePrize(uuid, { fieldId, uuid, type, loading: false })
+            updatePrize(uuid, { fieldId, uuid, type, amount, loading: false })
           );
           nuevaRecargaDispatch(toggleValidateInProcess(false));
         })
@@ -399,6 +429,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         // si un premio está asociado a un contacto, es que está en checkout
 
         if (validated_prizes.length === 0) {
+          //console.log("VALIDATED PRIZES", validated_prizes);
           /*  Toast.show("No hay premios válidos por cobrar", {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
@@ -421,10 +452,18 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           Promise.all(prizesForInitCheckoutPromise)
             .then(() => {
               validated_prizes.forEach((prize) => {
+                let price;
+                if (prize.amount === 250) {
+                  price = 19.9;
+                } else if (prize.amount === 500) {
+                  price = 24.7;
+                }
                 nuevaRecargaDispatch(
                   updatePrizeForContact(prize.fieldId, {
                     uuid: prize.uuid,
                     type: prize.type,
+                    amount: prize.amount,
+                    price,
                   })
                 );
               });
