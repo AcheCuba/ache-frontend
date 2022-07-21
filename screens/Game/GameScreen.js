@@ -52,6 +52,7 @@ import JoyaWonContentModal from "./components/JoyaWonContentModal";
 import { Text } from "react-native";
 import { getNetworkState } from "../../libs/networkState.lib";
 import { Audio } from "expo-av";
+import PremioExpiradoContentModal from "./components/PremioExpiradoContentModal";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -102,6 +103,7 @@ const GameScreen = ({ navigation }) => {
   const [MediaBolsaWon, setMediaBolsaWon] = React.useState(false);
   const [BolsaLlenaWon, setBolsaLlenaWon] = React.useState(false);
   const [JoyaWon, setJoyaWon] = React.useState(false);
+  const [PremioExpirado, setPremioExpirado] = React.useState(false);
 
   const [horasRestantes, setHorasRestantes] = React.useState("24");
 
@@ -114,6 +116,7 @@ const GameScreen = ({ navigation }) => {
   const [soundGanasPremioDigital, setSoundGanasPremioDigital] =
     React.useState();
   const [soundGanasGranPremio, setSoundGanasGranPremio] = React.useState();
+  const [soundImpulsoRuleta, setSoundImpulsoRuleta] = React.useState();
 
   const [casillaFinal, setCasillaFinal] = React.useState("7200deg");
   const thereIsPrizeResult = React.useRef(false);
@@ -123,8 +126,10 @@ const GameScreen = ({ navigation }) => {
 
   const wheelValue = React.useRef(new Animated.Value(0));
   const enMovimiento = React.useRef(false);
+  const ruletaSensible = React.useRef(true);
 
-  const animationTime = 12000; // ms (movimiento de ruleta)
+  const animationTime = 18000; // ms (movimiento de ruleta)
+  const sensibilityTime = 5000; //mantener proporción con animationTime
 
   /*  React.useEffect(() => {
     //console.log(width);
@@ -142,6 +147,16 @@ const GameScreen = ({ navigation }) => {
       })
     );
   }, []); */
+
+  async function playSoundImpulsoRuleta() {
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(require("../../assets/Sonidos/impulso_ruleta.wav"), {
+      shouldPlay: true,
+    });
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    setSoundImpulsoRuleta(_sound);
+  }
 
   async function playSoundError() {
     const _sound = new Audio.Sound();
@@ -220,6 +235,14 @@ const GameScreen = ({ navigation }) => {
         }
       : undefined;
   }, [soundGanasPremioDigital]);
+
+  React.useEffect(() => {
+    return soundImpulsoRuleta
+      ? () => {
+          soundImpulsoRuleta.unloadAsync();
+        }
+      : undefined;
+  }, [soundImpulsoRuleta]);
 
   React.useEffect(() => {
     async function expoTokenAsync() {
@@ -610,7 +633,7 @@ const GameScreen = ({ navigation }) => {
     }
   };
 
-  const onPressWheel = async () => {
+  const onPressWheel = async (touchOn) => {
     const networkState = await getNetworkState();
     if (!networkState.isConnected || !networkState.isInternetReachable) {
       playSoundError();
@@ -623,11 +646,35 @@ const GameScreen = ({ navigation }) => {
         delay: 0,
       });
     } else {
+      if (!enMovimiento.current) {
+        setTimeout(() => {
+          ruletaSensible.current = false;
+          Toast.show(
+            userState.idioma == "spa"
+              ? "¡LA SUERTE ESTÁ ECHADA! ESPERE..."
+              : "THE DIE IS CAST! WAIT...",
+            {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.CENTER,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+            }
+          );
+        }, sensibilityTime);
+      }
+
       if (enMovimiento.current) {
-        Toast.show("La ruleta ya está en movimiento. \n Por favor, espere.", {
+        /* Toast.show("La ruleta ya está en movimiento. \n Por favor, espere.", {
           duaration: Toast.durations.SHORT,
           position: Toast.positions.BOTTOM,
-        });
+        }); */
+        if (ruletaSensible.current) {
+          if (touchOn === "slots") {
+            playSoundImpulsoRuleta();
+          }
+        }
       } else {
         setCasillaFinal("7200deg");
 
@@ -774,8 +821,8 @@ const GameScreen = ({ navigation }) => {
               }
             })
             .catch((error) => {
-              console.log(error.response);
-              console.log("catch");
+              //console.log(error.response);
+              //console.log("catch");
               thereIsPrizeResult.current = false;
               Toast.show(error.message, {
                 duaration: Toast.durations.SHORT,
@@ -783,12 +830,46 @@ const GameScreen = ({ navigation }) => {
               });
             });
         } else {
+          // premio distinto de null
+          /* if (userState.prize?.type === "Nada") {
+            const currentTime = moment();
+            const prizeEndTime = moment(userState.prize?.prizeEndTime);
+            const minutos_restantes = prizeEndTime.diff(currentTime, "minutes");
+
+            if (minutos_restantes < 0) {
+              //_calaveraExpirada = true;
+
+              // el premio ha expirado
+              // Tenias calavera: Toast de que ya puedes jugar
+              Toast.show(ResolveText("CalaveraExpirada"), {
+                duaration: Toast.durations.LONG,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+              });
+
+              storeData("user", {
+                ...userState,
+                prize: null,
+              });
+              userDispatch(setPrizeForUser(null));
+              onPressWheel();
+            }
+          } */
+
           setCasillaRandom();
           thereIsPrizeResult.current = true;
+
           setTimeout(() => {
             const currentTime = moment();
             const prizeEndTime = moment(userState.prize?.prizeEndTime);
             const horas_restantes = prizeEndTime.diff(currentTime, "hours");
+
+            // lo que tiene no es "calavera", o la "calavera" no ha expirado
+            // si no es calavera, simplemente saldrá el modal de premio acumulado
+            // si la "calavera no ha expirado", sale ruleta bloqueada
             setHorasRestantes(horas_restantes);
             setPremioAcumulado(true);
           }, animationTime);
@@ -797,77 +878,54 @@ const GameScreen = ({ navigation }) => {
     }
   };
 
-  /* const wheelRotateInit = () => {
-    console.log("init");
-    enMovimiento.current = true;
-    wheelValue.current.setValue(0);
-    //console.log("init");
-    Animated.timing(wheelValue.current, {
-      toValue: 1,
-      duration: 10000, //3000
-      easing: Easing.in(Easing.linear), //Easing.in(Easing.cubic)
-      useNativeDriver: true,
-    }).start((complete) => {
-      if (complete.finished) {
-        wheelRotateLoop();
-      }
-    });
-  }; */
-
   // 5 vueltas cada 3 segundos
   // para 12 segundos -> 20 vueltas
 
+  function drawRuleta(x) {
+    //console.log(x);
+    let magic_factor = 1.15;
+
+    /* if (x < 0.8) {
+      magic_factor = 0.9;
+    } else {
+      magic_factor = 1.1;
+    } */
+
+    return Easing.quad(magic_factor * x);
+  }
+
   const wheelRotateLoop = () => {
-    wheelValue.current.setValue(0);
-    enMovimiento.current = true;
-    Animated.timing(wheelValue.current, {
-      toValue: 20,
-      duration: animationTime,
-      easing: Easing.inOut(Easing.exp),
-      //easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start((complete) => {
-      if (complete.finished) {
-        if (!thereIsPrizeResult.current) {
-          enMovimiento.current = false;
-          let toast = Toast.show(ResolveText("errorDesconocido"), {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          });
-        } else {
-          //wheelRotateFinal();
-          enMovimiento.current = false;
-          thereIsPrizeResult.current = false;
+    if (!enMovimiento.current) {
+      wheelValue.current.setValue(0);
+      enMovimiento.current = true;
+      Animated.timing(wheelValue.current, {
+        toValue: 20,
+        duration: animationTime,
+        easing: Easing.out(drawRuleta),
+        //easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start((complete) => {
+        if (complete.finished) {
+          if (!thereIsPrizeResult.current) {
+            enMovimiento.current = false;
+            let toast = Toast.show(ResolveText("errorDesconocido"), {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+            });
+          } else {
+            //wheelRotateFinal();
+            enMovimiento.current = false;
+            thereIsPrizeResult.current = false;
+            ruletaSensible.current = true;
+          }
         }
-      }
-    });
+      });
+    }
   };
-
-  /* const wheelRotateFinal = () => {
-    console.log("finish");
-
-    //console.log(wheelValue);
-
-    wheelValue.current.setValue(0);
-
-    //centerValue.setValue(0);
-    //console.log("final");
-    Animated.timing(wheelValue.current, {
-      toValue: 1,
-      duration: 10000, //ultimo exitoso: 3200 //3000
-      easing: Easing.out(Easing.linear), //Easing.out(Easing.ease)
-      useNativeDriver: true,
-    }).start((complete) => {
-      if (complete.finished) {
-        thereIsPrizeResult.current = false;
-        enMovimiento.current = false;
-      }
-    });
-  }; */
 
   const wheelLoop = wheelValue.current.interpolate({
     inputRange: [
@@ -1389,6 +1447,35 @@ const GameScreen = ({ navigation }) => {
         </Modal>
       ) : null}
 
+      {PremioExpirado ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={PremioExpirado}
+          onRequestClose={() => setPremioExpirado(false)}
+        >
+          <LinearGradient
+            colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(112, 28, 87, 0.5)",
+              }}
+            >
+              <PremioExpiradoContentModal
+                navigation={navigation}
+                setModalVisible={setPremioExpirado}
+                userState={userState}
+              />
+            </View>
+          </LinearGradient>
+        </Modal>
+      ) : null}
+
       <View style={styles.containerGame}>
         <View
           key={1}
@@ -1420,10 +1507,6 @@ const GameScreen = ({ navigation }) => {
                 const prizeEndTime = moment(userState.prize?.prizeEndTime);
                 const horas_restantes = prizeEndTime.diff(currentTime, "hours");
 
-                /*   const segundos_restantes = prizeEndTime.diff(
-                  currentTime,
-                  "seconds"
-                ); */
                 const minutos_restantes = prizeEndTime.diff(
                   currentTime,
                   "minutes"
@@ -1446,16 +1529,9 @@ const GameScreen = ({ navigation }) => {
                       delay: 0,
                     });
 
-                    // si era un premio, Toast de que ha EXPIRADO
+                    // si era un premio, MODAL de que ha EXPIRADO
                   } else {
-                    Toast.show(ResolveText("PremioExpirado"), {
-                      duaration: Toast.durations.LONG,
-                      position: Toast.positions.BOTTOM,
-                      shadow: true,
-                      animation: true,
-                      hideOnPress: true,
-                      delay: 0,
-                    });
+                    setPremioExpirado(true);
                   }
 
                   storeData("user", {
@@ -1526,7 +1602,9 @@ const GameScreen = ({ navigation }) => {
                 //zIndex: 5
               }}
             >
-              <TouchableWithoutFeedback onPress={() => onPressWheel()}>
+              <TouchableWithoutFeedback
+                onPress={() => onPressWheel("selector")}
+              >
                 <Image
                   source={require("../../assets/images/home/selector.png")}
                   style={{ height: 95, width: 80 }}
@@ -1590,7 +1668,7 @@ const GameScreen = ({ navigation }) => {
               }}
               transition={false}
             >
-              <TouchableWithoutFeedback onPress={() => onPressWheel()}>
+              <TouchableWithoutFeedback onPress={() => onPressWheel("slots")}>
                 <Image
                   source={require("../../assets/images/home/sombra.png")}
                   style={{

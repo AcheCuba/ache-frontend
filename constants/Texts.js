@@ -24,7 +24,8 @@ export const GameScreenTextSpanish = () => {
     premioVacio: "No hay premio por cobrar. \n ¡Gira la ruleta con ACHÉ!",
     errorDesconocido: "Error desconocido. Cierra la app e inténtalo de nuevo.",
     CalaveraExpirada: "¡Ya puedes volver a jugar!",
-    PremioExpirado: "Lo sentimos, su premio ha expirado",
+    PremioExpiradoTitle: "Premio Expirado",
+    PremioExpiradoBody: "Lo sentimos, su premio ha expirado",
   };
 };
 
@@ -48,7 +49,8 @@ export const GameScreenTextEnglish = () => {
     premioVacio: "No price to redeem. \n Use your ACHÉ and spin the Wheel!",
     errorDesconocido: "Unknown error. Close the app and try again.",
     CalaveraExpirada: "You can play again!",
-    PremioExpirado: "Sorry, your prize has expired",
+    PremioExpiradoTitle: "Prize Expired",
+    PremioExpiradoBody: "Sorry, your prize has expired",
   };
 };
 

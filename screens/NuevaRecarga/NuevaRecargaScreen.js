@@ -452,18 +452,18 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           Promise.all(prizesForInitCheckoutPromise)
             .then(() => {
               validated_prizes.forEach((prize) => {
-                let price;
+                /*  let price;
                 if (prize.amount === 250) {
                   price = 19.9;
                 } else if (prize.amount === 500) {
                   price = 24.7;
-                }
+                } */
                 nuevaRecargaDispatch(
                   updatePrizeForContact(prize.fieldId, {
                     uuid: prize.uuid,
                     type: prize.type,
                     amount: prize.amount,
-                    price,
+                    price: 0,
                   })
                 );
               });

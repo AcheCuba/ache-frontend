@@ -25,10 +25,21 @@ const PagoCompletadoScreen = ({ navigation }) => {
   const { globalUpdateCompleted } = socketState;
 
   const [soundPagoConfirmado, setSoundPagoConfirmado] = React.useState();
+  const [soundFbPositivo, setSoundFbPositivo] = React.useState();
+  const [updateForzado, setUpdateForzado] = React.useState(false);
 
   /* React.useEffect(() => {
     console.log(globalUpdateCompleted);
   }, [globalUpdateCompleted]); */
+
+  React.useEffect(() => {
+    const timer_id = setTimeout(() => {
+      console.log("update forzado");
+      setUpdateForzado(true);
+    }, 10000);
+
+    return () => clearTimeout(timer_id);
+  }, []);
 
   React.useEffect(() => {
     playSoundPagoConfirmado();
@@ -43,6 +54,15 @@ const PagoCompletadoScreen = ({ navigation }) => {
       : undefined;
   }, [soundPagoConfirmado]);
 
+  React.useEffect(() => {
+    return soundFbPositivo
+      ? () => {
+          //console.log("Unloading Sound");
+          soundFbPositivo.unloadAsync();
+        }
+      : undefined;
+  }, [soundFbPositivo]);
+
   async function playSoundPagoConfirmado() {
     //console.log("Loading Sound");
     const _sound = new Audio.Sound();
@@ -55,7 +75,21 @@ const PagoCompletadoScreen = ({ navigation }) => {
     await _sound.setPositionAsync(0);
     await _sound.playAsync();
     setSoundPagoConfirmado(_sound);
+
     //console.log("Playing Sound");
+  }
+
+  async function playSoundFbPositivo() {
+    const _sound = new Audio.Sound();
+    await _sound.loadAsync(require("../../assets/Sonidos/fb_positivo.wav"), {
+      shouldPlay: true,
+    });
+    await _sound.setPositionAsync(0);
+    await _sound.playAsync();
+    //setSoundFbPositivo(_sound);
+    setTimeout(() => {
+      _sound.unloadAsync();
+    }, 1000);
   }
 
   const ResolveText = (site) => {
@@ -121,17 +155,18 @@ const PagoCompletadoScreen = ({ navigation }) => {
 
         <View style={{ width: "100%", alignItems: "center" }}>
           <View style={{ marginTop: 50 }}>
-            {globalUpdateCompleted ? (
+            {globalUpdateCompleted || updateForzado ? (
               <CommonNeuButton
                 text={ResolveText("inicio")}
-                onPress={() => {
-                  navigation.navigate("Juego");
-                  /* navigation.dispatch(
+                onPress={async () => {
+                  //navigation.navigate("Juego");
+                  await playSoundFbPositivo();
+                  navigation.dispatch(
                     CommonActions.reset({
                       index: 0,
                       routes: [{ name: "Juego" }],
                     })
-                  ); */
+                  );
                   /* navigation.reset({
                     index: 0,
                     routes: [{ name: "Juego" }],

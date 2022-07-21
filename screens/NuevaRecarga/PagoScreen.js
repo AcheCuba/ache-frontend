@@ -374,6 +374,7 @@ const PagoScreen = ({ navigation, route }) => {
     axios(config)
       .then((response) => {
         //console.log(response.data);
+        //console.log(response.status);
         const res = response.data;
         setSessionId(res.id);
         setPaymentIntentId(res.payment_intent);
@@ -548,14 +549,17 @@ const PagoScreen = ({ navigation, route }) => {
 
   const _onNavigationStateChange = (webViewState) => {
     if (webViewState.url === initUrl + "payment-init") {
+      //console.log("init");
       createPaymentSession();
     }
 
     if (webViewState.url === initUrl + "payment-success") {
+      //console.log("success");
       setPaymentSucceded(true);
     }
 
     if (webViewState.url === initUrl + "payment-failure") {
+      //console.log("failure");
       finish_checkout_all_prizes_noCobrados();
       let cancelTransactionPromisesArray = [];
 

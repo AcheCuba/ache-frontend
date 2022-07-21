@@ -9,6 +9,7 @@ import {
   ResultadoPagoTextSpanish,
 } from "../../constants/Texts";
 import { GlobalContext } from "../../context/GlobalProvider";
+import { CommonActions } from "@react-navigation/native";
 
 const { width } = Dimensions.get("screen");
 
@@ -96,7 +97,13 @@ const PagoErrorScreen = ({ navigation }) => {
             <CommonNeuButton
               text={ResolveText("reintentar")}
               onPress={() => {
-                navigation.navigate("Juego");
+                //navigation.navigate("Juego");
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "Juego" }],
+                  })
+                );
               }}
               screenWidth={width}
             />

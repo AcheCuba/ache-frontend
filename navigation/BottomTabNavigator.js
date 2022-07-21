@@ -62,6 +62,7 @@ export default function BottomTabNavigator({ navigation, route }) {
   }, [soundTabNav]);
 
   async function playSoundTabNav() {
+    //console.log("play sound");
     const _sound = new Audio.Sound();
     await _sound.loadAsync(require("../assets/Sonidos/tab_nav.wav"), {
       shouldPlay: true,
@@ -144,6 +145,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         component={GameNavigator}
         listeners={{
           tabPress: (e) => {
+            //console.log("press home");
             playSoundTabNav();
           },
         }}
@@ -281,7 +283,7 @@ export default function BottomTabNavigator({ navigation, route }) {
               getFocusedRouteNameFromRoute(route) ?? "MultiplesContactosScreen"; */
             let routeName;
 
-            const myRoutes = state?.routes[0]?.state?.routes[2].state?.routes;
+            const myRoutes = state?.routes[0]?.state?.routes[2]?.state?.routes;
             if (myRoutes) {
               routeName = myRoutes[myRoutes.length - 1]?.name;
             }
