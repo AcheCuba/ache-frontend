@@ -175,29 +175,29 @@ const PagoScreen = ({ navigation, route }) => {
             )
               .then((response) => {
                 const transaction_data = response.data;
-                console.log(
+                /* console.log(
                   "create transaction response status: ",
                   response.status
-                );
+                ); */
 
                 //confirm transaction
                 confirmTransactionRequest(transaction_data.id, true)
                   .then((response) => {
-                    console.log(
+                    /*   console.log(
                       "confirm transaction response status",
                       response.status
-                    );
+                    ); */
                   })
                   .catch((err) => {
-                    console.log(
+                    /*  console.log(
                       "confirm transaction request error",
                       err.response.status
-                    );
+                    ); */
                   });
               })
-              .catch((err) =>
-                console.log("create transaction error", err.response.status)
-              );
+              .catch((err) => {
+                //console.log("create transaction error", err.response.status)
+              });
           }
         }
       );
@@ -215,9 +215,9 @@ const PagoScreen = ({ navigation, route }) => {
             }
           );
           if (transaccionDePremio != undefined) {
-            console.log(
+            /* console.log(
               "prize finish checkout de premio cuya recarga no se completo"
-            );
+            ); */
             prize_finish_checkout(transaccionDePremio.prize_uuid, false);
           }
         }
@@ -252,7 +252,7 @@ const PagoScreen = ({ navigation, route }) => {
     };
 
     //console.log("create transaction prizes", config);
-    console.log("create trnasaction prizes prize code", prizeCode);
+    //console.log("create trnasaction prizes prize code", prizeCode);
 
     return axios(config);
   };
@@ -275,7 +275,7 @@ const PagoScreen = ({ navigation, route }) => {
     //console.log(typeof productPrice);
     //console.log(typeof productPriceUsd);
     //console.log(typeof amount_refund);
-    console.log("amount refund - pago screen", amount_refund);
+    //console.log("amount refund - pago screen", amount_refund);
 
     let config = {
       method: "post",
@@ -382,7 +382,7 @@ const PagoScreen = ({ navigation, route }) => {
         setLoading(false);
       })
       .catch((e) => {
-        console.log("error", e.message);
+        //console.log("error", e.message);
       });
   };
 
@@ -410,7 +410,7 @@ const PagoScreen = ({ navigation, route }) => {
         Authorization: `Bearer ${user_token}`,
       },
     };
-    console.log("url llamada en confirm transaction", config.url);
+    //console.log("url llamada en confirm transaction", config.url);
     return axios(config);
   };
 
@@ -434,7 +434,7 @@ const PagoScreen = ({ navigation, route }) => {
       },
     };
     //console.log("finish checkout url - pago screen", config.url);
-    console.log("finish checkout - pago screen", uuid);
+    //console.log("finish checkout - pago screen", uuid);
     return axios(config);
   };
 
@@ -479,7 +479,7 @@ const PagoScreen = ({ navigation, route }) => {
       .catch((e) => {
         // eliminar premios del estado
         nuevaRecargaDispatch(deleteAllTransaccionesPremio());
-        console.log("finish checkout error: ", e.message);
+        //console.log("finish checkout error: ", e.message);
       });
   };
 

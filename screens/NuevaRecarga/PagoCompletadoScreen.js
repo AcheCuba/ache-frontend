@@ -34,7 +34,7 @@ const PagoCompletadoScreen = ({ navigation }) => {
 
   React.useEffect(() => {
     const timer_id = setTimeout(() => {
-      console.log("update forzado");
+      //console.log("update forzado");
       setUpdateForzado(true);
     }, 10000);
 
