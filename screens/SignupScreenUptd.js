@@ -202,97 +202,98 @@ const SignupScreenUptd = ({ navigation }) => {
         }}
         transition={false}
       >
-        <View
-          style={{
-            paddingTop: normalize(50),
-            width: width,
-            height: height / 6,
-            backgroundColor: "rgba(112, 28, 87, 1)",
-            flexDirection: "row",
-            //justifyContent: "space-between",
-            justifyContent: "center",
-            //marginBottom: 30,
-          }}
-        >
-          <Image
-            source={require("../assets/images/logo.png")}
-            //resizeMode="center"
-            style={{
-              //marginLeft: width / 10,
-              width: width / 4.5,
-              height: width / 8.6,
-            }}
-          />
-        </View>
-        <View style={{ alignItems: "center" }}>
-          {/*           <Ionicons name="person-sharp" size={130} color="#ddd" />
-           */}
-          <Image
-            source={require("../assets/images/emojis/emoji_wink.png")}
-            style={{
-              width: normalize(height / 7, "height"),
-              height: normalize(height / 7, "height"),
-            }}
-          />
-
-          {idioma === "spa" ? (
-            <View
-              style={{
-                marginTop: normalize(20, "height"),
-                paddingBottom: normalize(10, "height"),
-                paddingHorizontal: normalize(25, "height"),
-              }}
-            >
-              <TextMedium
-                text="¡Casi listo!"
-                style={{
-                  fontSize: 20,
-                  color: "#fffc00",
-                  textAlign: "center",
-                }}
-              />
-              <TextMedium
-                text="Regístrate para que puedas comenzar a recargar y pruebes tu ACHÉ."
-                style={{
-                  fontSize: 20,
-                  color: "#fffc00",
-                  textAlign: "center",
-                }}
-              />
-            </View>
-          ) : (
-            <View
-              style={{
-                marginTop: normalize(20, "height"),
-                paddingBottom: normalize(10, "height"),
-                paddingHorizontal: normalize(25, "height"),
-              }}
-            >
-              <TextMedium
-                text="Almost done!"
-                style={{
-                  fontSize: 20,
-                  color: "#fffc00",
-                  textAlign: "center",
-                }}
-              />
-              <TextMedium
-                text="Sign up to start sending recharges and try your ACHÉ!"
-                style={{
-                  fontSize: normalize(20),
-                  color: "#fffc00",
-                  textAlign: "center",
-                }}
-              />
-            </View>
-          )}
-        </View>
         <KeyboardAwareScrollView
-          extraHeight={Platform.OS === "ios" ? 0 : 24}
-          extraScrollHeight={Platform.OS === "ios" ? 5 : 24} //-30:0
+          extraHeight={Platform.OS === "ios" ? 10 : 32} //5:24 antes
+          extraScrollHeight={Platform.OS === "ios" ? 10 : 32} //5:24 antes
           //behavior={Platform.OS === "ios" ? "padding" : "height"}
           enableOnAndroid
         >
+          <View
+            style={{
+              paddingTop: normalize(50),
+              width: width,
+              height: height / 6,
+              backgroundColor: "rgba(112, 28, 87, 1)",
+              flexDirection: "row",
+              //justifyContent: "space-between",
+              justifyContent: "center",
+              //marginBottom: 30,
+            }}
+          >
+            <Image
+              source={require("../assets/images/logo.png")}
+              //resizeMode="center"
+              style={{
+                //marginLeft: width / 10,
+                width: width / 4.5,
+                height: width / 8.6,
+              }}
+            />
+          </View>
+          <View style={{ alignItems: "center" }}>
+            {/*           <Ionicons name="person-sharp" size={130} color="#ddd" />
+             */}
+            <Image
+              source={require("../assets/images/emojis/emoji_wink.png")}
+              style={{
+                width: normalize(height / 7, "height"),
+                height: normalize(height / 7, "height"),
+              }}
+            />
+
+            {idioma === "spa" ? (
+              <View
+                style={{
+                  marginTop: normalize(20, "height"),
+                  paddingBottom: normalize(10, "height"),
+                  paddingHorizontal: normalize(25, "height"),
+                }}
+              >
+                <TextMedium
+                  text="¡Casi listo!"
+                  style={{
+                    fontSize: 20,
+                    color: "#fffc00",
+                    textAlign: "center",
+                  }}
+                />
+                <TextMedium
+                  text="Regístrate para que puedas comenzar a recargar y pruebes tu ACHÉ."
+                  style={{
+                    fontSize: 20,
+                    color: "#fffc00",
+                    textAlign: "center",
+                  }}
+                />
+              </View>
+            ) : (
+              <View
+                style={{
+                  marginTop: normalize(20, "height"),
+                  paddingBottom: normalize(10, "height"),
+                  paddingHorizontal: normalize(25, "height"),
+                }}
+              >
+                <TextMedium
+                  text="Almost done!"
+                  style={{
+                    fontSize: 20,
+                    color: "#fffc00",
+                    textAlign: "center",
+                  }}
+                />
+                <TextMedium
+                  text="Sign up to start sending recharges and try your ACHÉ!"
+                  style={{
+                    fontSize: normalize(20),
+                    color: "#fffc00",
+                    textAlign: "center",
+                  }}
+                />
+              </View>
+            )}
+          </View>
+
           <View
             style={{
               flex: 2,

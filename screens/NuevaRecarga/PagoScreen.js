@@ -71,12 +71,10 @@ const PagoScreen = ({ navigation, route }) => {
     }
   }, [transacciones_normales_confirmadas]);
 
-  React.useEffect(() => {
+  /*  React.useEffect(() => {
     if (transacciones_premio_confirmadas.length !== 0) {
-      /*  console.log(
-        "transacciones_premio_confirmadas - pago",
-        transacciones_premio_confirmadas
-      ); */
+
+      
 
       // elimiar premio de la app si se cobro bien ()
       prizeAppManage(transacciones_premio_confirmadas);
@@ -84,7 +82,7 @@ const PagoScreen = ({ navigation, route }) => {
       // finish checkout de los premios (true para COMPLETED y false para DECLINED)
       finish_checkout_all_prizes_confirmados();
     }
-  }, [transacciones_premio_confirmadas]);
+  }, [transacciones_premio_confirmadas]); */
 
   React.useEffect(() => {
     //console.log("paymentSucceded - pago", paymentSucceded);
@@ -134,6 +132,8 @@ const PagoScreen = ({ navigation, route }) => {
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
 
+    console.log("TRNASACTION ID ARRAY", transaction_id_array);
+
     const transaccionesNormalesCompletadas =
       transacciones_normales_confirmadas.filter((recarga) => {
         return recarga.status === "COMPLETED";
@@ -147,7 +147,7 @@ const PagoScreen = ({ navigation, route }) => {
     if (transaccionesNormalesCompletadas.length != 0) {
       // alguna se completo exitosamente
       if (prizeInApp != null && prizeType === "Nada") {
-        //console.log("se entro a eliminar la nada");
+        // console.log("se entro a eliminar la nada");
         // elimina la Nada de la app
         storeData("user", { ...userState, prize: null });
         userDispatch(setPrizeForUser(null));
@@ -183,10 +183,34 @@ const PagoScreen = ({ navigation, route }) => {
                 //confirm transaction
                 confirmTransactionRequest(transaction_data.id, true)
                   .then((response) => {
-                    /*   console.log(
+                    /*  console.log(
                       "confirm transaction response status",
                       response.status
+                    );
+ */
+                    /* console.log(
+                      "UUID PRIZE ACTUAL",
+                      transaccionDePremio.prize_uuid
                     ); */
+
+                    // ================ UPDATE 23-07-22: =================
+                    // SI EL CONFIRM TRANSACTION FUNCIONA OK, FINALIZAR CHECKOUT DEL PREMIO CON TRUE (COMO COBRADO)
+                    // ESTE PREMIO YA TIENE GARANTIZADO QUE EL EL CONTACTO TUVO SU RECARGA NORMAL COMPLETADA
+                    prize_finish_checkout(transaccionDePremio.prize_uuid, true); // cobrado
+
+                    // ADEMÁS, SI TENÍA, SE ELIMINA PREMIO DE LA APP
+                    if (prizeInApp?.type != "Nada") {
+                      if (prizeInApp?.uuid === transaccionDePremio.prize_uuid) {
+                        // nada más puede coincidir una vez
+
+                        // console.log("SE ELIMINA PREMIO DE LA APP");
+
+                        storeData("user", { ...userState, prize: null });
+                        userDispatch(setPrizeForUser(null));
+                      }
+                    }
+
+                    // ================ UPDATE 23-07-22: =================
                   })
                   .catch((err) => {
                     /*  console.log(
@@ -434,7 +458,8 @@ const PagoScreen = ({ navigation, route }) => {
       },
     };
     //console.log("finish checkout url - pago screen", config.url);
-    //console.log("finish checkout - pago screen", uuid);
+    console.log("finish checkout - pago screen", uuid);
+    console.log("success finish checkout status", success);
     return axios(config);
   };
 
@@ -511,7 +536,7 @@ const PagoScreen = ({ navigation, route }) => {
         //console.log("isCompleted", isCompleted);
 
         if (isCompleted) {
-          // si esta es que esta completado: eliminar
+          // si esta es que esta completado: eliminar premio de la app
           storeData("user", { ...userState, prize: null });
           userDispatch(setPrizeForUser(null));
         }

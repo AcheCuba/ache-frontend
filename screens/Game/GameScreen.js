@@ -131,6 +131,10 @@ const GameScreen = ({ navigation }) => {
   const animationTime = 18000; // ms (movimiento de ruleta)
   const sensibilityTime = 5000; //mantener proporción con animationTime
 
+  /* React.useEffect(() => {
+    console.log(socketState);
+  }, [socketState]); */
+
   /*  React.useEffect(() => {
     //console.log(width);
     //console.log(height);
@@ -149,6 +153,7 @@ const GameScreen = ({ navigation }) => {
   }, []); */
 
   async function playSoundImpulsoRuleta() {
+    console.log("play sound impulso");
     const _sound = new Audio.Sound();
     await _sound.loadAsync(require("../../assets/Sonidos/impulso_ruleta.wav"), {
       shouldPlay: true,
@@ -647,6 +652,7 @@ const GameScreen = ({ navigation }) => {
       });
     } else {
       if (!enMovimiento.current) {
+        playSoundImpulsoRuleta(); // la primera vez
         setTimeout(() => {
           ruletaSensible.current = false;
           Toast.show(
@@ -883,7 +889,7 @@ const GameScreen = ({ navigation }) => {
 
   function drawRuleta(x) {
     //console.log(x);
-    let magic_factor = 1.15;
+    //let magic_factor = 1.15;
 
     /* if (x < 0.8) {
       magic_factor = 0.9;
@@ -891,7 +897,7 @@ const GameScreen = ({ navigation }) => {
       magic_factor = 1.1;
     } */
 
-    return Easing.quad(magic_factor * x);
+    return Easing.cubic(x);
   }
 
   const wheelRotateLoop = () => {
@@ -901,7 +907,7 @@ const GameScreen = ({ navigation }) => {
       Animated.timing(wheelValue.current, {
         toValue: 20,
         duration: animationTime,
-        easing: Easing.out(drawRuleta),
+        easing: Easing.out(Easing.cubic),
         //easing: Easing.inOut(Easing.ease),
         useNativeDriver: true,
       }).start((complete) => {
@@ -1217,34 +1223,24 @@ const GameScreen = ({ navigation }) => {
                 </View>
 
                 <View style={{ marginTop: 30 }}>
-                  <NeuButton
-                    color="#5a1549"
-                    width={(4 / 5) * width}
-                    height={width / 7.5}
-                    borderRadius={width / 7.5}
-                    onPress={() => {
-                      setPremioAcumulado(false);
+                  {userState.prize?.type !== "Nada" ? (
+                    <NeuButton
+                      color="#5a1549"
+                      width={(4 / 5) * width}
+                      height={width / 7.5}
+                      borderRadius={width / 7.5}
+                      onPress={() => {
+                        setPremioAcumulado(false);
 
-                      if (userState.prize?.type !== "Nada") {
-                        navigation.jumpTo("Nueva Recarga", {
-                          screen: "NuevaRecargaScreen",
-                          params: { inOrderToCobrarPremio: true },
-                        });
-                      }
-                    }}
-                    style={{}}
-                  >
-                    {userState.prize?.type === "Nada" ? (
-                      <TextBold
-                        text={ResolveText("cancelar")}
-                        style={{
-                          fontSize: 20,
-                          color: "#fffb00",
-                          textAlign: "center",
-                          textTransform: "uppercase",
-                        }}
-                      />
-                    ) : (
+                        if (userState.prize?.type !== "Nada") {
+                          navigation.jumpTo("Nueva Recarga", {
+                            screen: "NuevaRecargaScreen",
+                            params: { inOrderToCobrarPremio: true },
+                          });
+                        }
+                      }}
+                      style={{ marginBottom: 30 }}
+                    >
                       <TextBold
                         text={ResolveText("obtenerPremio")}
                         style={{
@@ -1254,7 +1250,28 @@ const GameScreen = ({ navigation }) => {
                           textTransform: "uppercase",
                         }}
                       />
-                    )}
+                    </NeuButton>
+                  ) : null}
+
+                  <NeuButton
+                    color="#5a1549"
+                    width={(4 / 5) * width}
+                    height={width / 7.5}
+                    borderRadius={width / 7.5}
+                    onPress={() => {
+                      setPremioAcumulado(false);
+                    }}
+                    style={{}}
+                  >
+                    <TextBold
+                      text={ResolveText("cancelar")}
+                      style={{
+                        fontSize: 20,
+                        color: "#fffb00",
+                        textAlign: "center",
+                        textTransform: "uppercase",
+                      }}
+                    />
                   </NeuButton>
                 </View>
               </View>

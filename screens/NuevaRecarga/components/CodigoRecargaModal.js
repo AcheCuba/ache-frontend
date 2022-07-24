@@ -32,7 +32,7 @@ const CodigoRecargaModal = ({
           backgroundColor: "rgba(112, 28, 87, .8)",
           justifyContent: "center",
           alignItems: "center",
-          marginBottom: 80,
+          //marginBottom: 80,
         }}
       >
         <NeuInput

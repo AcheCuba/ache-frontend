@@ -313,12 +313,21 @@ export default function MainApp() {
       });
     }
 
-    if (!socketIsOpen) {
+    /* socket.on("connect", function onConnect() {
+      console.log("This socket is now connected to the Aché server.");
+    });
+
+    socket.on("disconnect", function onDisconnect() {
+      console.log("This socket lost connection to the Aché server");
+    }); */
+
+    /* if (!socketIsOpen) {
       // cerrar socket
+      console.log("FUNCION DE CERRAR SOCKET");
       socket.disconnect();
       //setSocketCurrentlyOpen(false);
       //console.log("client disconnect");
-    }
+    } */
 
     socket.on("transaction-update", (msg) => {
       //console.log("transaction result variable array ", transaction_result_arr);
