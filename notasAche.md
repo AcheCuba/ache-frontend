@@ -13,3 +13,5 @@ textos en ingles - errores
 GEMS. Your ACHÉ is on fire! You’ve win our super 500 dollars’ jackpot! To claim your GEMS, send a fast recharge The Flash, check your email and follow the instructions. You have 72 hours.
 
 - Constants.isDevice is deprected Gamescreen
+
+https://drive.google.com/drive/folders/1EOfzfqV5PYbXQxKXLA9UgmNBey836bNN
