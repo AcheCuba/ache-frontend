@@ -217,7 +217,8 @@ const OnBoardingScreen = ({ navigation }) => {
                   <View
                     style={{
                       position: "absolute",
-                      top: 80,
+                      //top: 80,
+                      top: normalize(110),
                       paddingHorizontal: 10,
                     }}
                   >
@@ -273,11 +274,18 @@ const OnBoardingScreen = ({ navigation }) => {
                   </View>
 
                   <View
-                    style={{ position: "absolute", left: 0, top: height / 6 }}
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: normalize(height / 6, "height"),
+                    }}
                   >
                     <Image
                       source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
-                      style={{ width: height / 2.4, height: height / 1.5 }}
+                      style={{
+                        width: height / 2.4,
+                        height: height / 1.5,
+                      }}
                     />
                   </View>
                   <View
@@ -311,7 +319,8 @@ const OnBoardingScreen = ({ navigation }) => {
                   <View
                     style={{
                       position: "absolute",
-                      top: 60,
+                      //top: 60,
+                      top: normalize(110),
                       paddingHorizontal: 10,
                     }}
                   >
@@ -350,7 +359,11 @@ const OnBoardingScreen = ({ navigation }) => {
                   </View>
 
                   <View
-                    style={{ position: "absolute", left: 0, top: height / 6 }}
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: normalize(height / 6, "height"),
+                    }}
                   >
                     <Image
                       source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}

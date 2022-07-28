@@ -345,7 +345,13 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           }}
           style={{ marginRight: marginGlobal, marginTop: 10 }}
         >
-          <Ionicons name="checkmark" size={30} color="rgb(255,251,00)" />
+          <Image
+            source={require("../../assets/images/iconos/check_mark.png")}
+            style={{
+              width: 22,
+              height: 20,
+            }}
+          />
         </NeuButton>
       </View>
       <View
@@ -431,11 +437,3 @@ const styles = StyleSheet.create({
 });
 
 export default MultiplesContactosScreen;
-
-/*   <NeuSpinner
-            color="#701c57"
-            indicatorColor="#701c57"
-            width={50}
-            height={50}
-            size={50}
-          /> */

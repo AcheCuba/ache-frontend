@@ -3,6 +3,7 @@ import { Modal, StyleSheet, Text, TextInput, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { NeuButton, NeuInput, NeuView } from "react-native-neu-element";
 import CommonNeuButton from "../../../components/CommonNeuButton";
+import { GlobalContext } from "../../../context/GlobalProvider";
 
 const CodigoRecargaModal = ({
   modalVisible,
@@ -14,6 +15,8 @@ const CodigoRecargaModal = ({
   fieldIdMatched,
 }) => {
   const [text, setText] = useState("");
+  const { userState } = React.useContext(GlobalContext);
+  const idioma = userState?.idioma;
 
   React.useEffect(() => {
     setText("");
@@ -40,7 +43,7 @@ const CodigoRecargaModal = ({
           height={40}
           borderRadius={20}
           //style={styles.input}
-          placeholder="Introducir código"
+          placeholder={idioma === "spa" ? "Introducir código" : "Enter code"}
           onChangeText={(value) => setText(value)}
           value={text}
           placeholderTextColor="#bbb"
@@ -59,7 +62,7 @@ const CodigoRecargaModal = ({
           }}
         >
           <CommonNeuButton
-            text="Aceptar"
+            text={idioma === "spa" ? "Aceptar" : "Accept"}
             width={width / 1.6}
             screenWidth={width}
             //color="#672557"
@@ -75,7 +78,23 @@ const CodigoRecargaModal = ({
           }}
         >
           <CommonNeuButton
-            text="atrás"
+            text={idioma === "spa" ? "Añadir mi premio" : "Add my prize"}
+            width={width / 1.6}
+            screenWidth={width}
+            //color="#672557"
+            onPress={() => {
+              onPressOkModal(fieldIdMatched, userState?.prize?.uuid);
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            marginTop: 30,
+          }}
+        >
+          <CommonNeuButton
+            text={idioma === "spa" ? "Atrás" : "Back"}
             width={width / 1.6}
             screenWidth={width}
             //color="#672557"

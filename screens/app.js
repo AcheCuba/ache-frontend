@@ -26,6 +26,7 @@ import { scheduleNotificationAtSecondsFromNow } from "../libs/expoPushNotificati
 import { ImageBackground } from "react-native";
 import { Image } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
+import { View } from "react-native";
 
 if (Platform.OS === "android") {
   Notifications.setNotificationChannelAsync("default", {
@@ -405,14 +406,13 @@ export default function MainApp() {
 
   if (!isLoadingComplete) {
     return null;
-  } else {
-    //SplashScreen.hideAsync();
-
-    return (
-      <SafeAreaProvider>
-        <Navigation />
-        <StatusBar backgroundColor="transparent" style="light" />
-      </SafeAreaProvider>
-    );
   }
+  //SplashScreen.hideAsync();
+
+  return (
+    <SafeAreaProvider>
+      <Navigation />
+      <StatusBar backgroundColor="transparent" style="light" />
+    </SafeAreaProvider>
+  );
 }

@@ -257,11 +257,16 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
   const onPressOkModal = (fieldId, uuid) => {
     const repetido = comprobarUuidRepetido(uuid);
+    //console.log("fieldId", fieldId);
+    //console.log("uuid", uuid);
+
     if (repetido) {
       // el premio esta siendo usado
       // el premio ya esta validado para otro beneficiario, considere eliminarlo
       Toast.show(
-        "El premio ya esta validado para otro beneficiario, considere eliminarlo",
+        userState?.idioma === "spa"
+          ? "El premio ya esta validado para otro beneficiario, considere eliminarlo"
+          : "The prize is already validated for another beneficiary, consider removing it",
         {
           duaration: Toast.durations.LONG,
           position: Toast.positions.BOTTOM,
@@ -394,26 +399,36 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
   const onPressContinuar = () => {
     if (!addContactAvaiable) {
-      Toast.show("Selecciona al menos a un contacto para recargar", {
-        duaration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
-    } else {
-      setLoadingContinuar(true);
-
-      if (validatetInProcess) {
-        Toast.show("Se están validando tus premios", {
+      Toast.show(
+        userState?.idioma === "spa"
+          ? "Selecciona al menos a un contacto para recargar"
+          : "Select at least one contact to recharge",
+        {
           duaration: Toast.durations.LONG,
           position: Toast.positions.BOTTOM,
           shadow: true,
           animation: true,
           hideOnPress: true,
           delay: 0,
-        });
+        }
+      );
+    } else {
+      setLoadingContinuar(true);
+
+      if (validatetInProcess) {
+        Toast.show(
+          userState?.idioma === "spa"
+            ? "Se están validando tus premios"
+            : "Your prizes are being validated",
+          {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+          }
+        );
         setLoadingContinuar(false);
       } else {
         /*   console.log(

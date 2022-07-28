@@ -1,14 +1,12 @@
 import React, { useContext } from "react";
 import { Alert } from "react-native";
 import { Dimensions, View, Text, Platform } from "react-native";
-import CommonHeader from "../../components/CommonHeader";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { resetNuevaRecargaState } from "../../context/Actions/actions";
 import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
-
 import { TextBold, TextMedium } from "../../components/CommonText";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { ImageBackground } from "react-native";
@@ -16,8 +14,11 @@ import { FlatList } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
 import { TouchableOpacity } from "react-native";
 import { PrePagoTextEnglish, PrePagoTextSpanish } from "../../constants/Texts";
+import { NeuButton } from "react-native-neu-element";
+import { Image } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
+const marginGlobal = width / 10;
 
 const PrePagoScreen = ({ navigation, route }) => {
   const { productPriceUsd, transaction_id_array, amount_cup } = route.params;
@@ -256,14 +257,30 @@ const PrePagoScreen = ({ navigation, route }) => {
       }}
       transition={false}
     >
-      <CommonHeader
-        width={width}
-        height={height}
-        _onPress={
-          () => onPressBackButton()
-          //onPressBackTest()
-        }
-      />
+      <View
+        style={{
+          paddingTop: 50,
+          width: width,
+          height: height / 6,
+          backgroundColor: "rgba(112, 28, 87, 1)",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <NeuButton
+          color="#701c57"
+          width={width / 7}
+          height={width / 7 - 20}
+          borderRadius={5}
+          onPress={() => onPressBackButton()}
+          style={{ marginLeft: marginGlobal, marginTop: 10 }}
+        >
+          <Image
+            source={require("../../assets/images/iconos/equis.png")}
+            style={{ width: 16, height: 16 }}
+          />
+        </NeuButton>
+      </View>
       <View
         style={{
           //backgroundColor: "blue",
@@ -273,11 +290,11 @@ const PrePagoScreen = ({ navigation, route }) => {
           marginTop: 30,
         }}
       >
-        <View style={{ marginBottom: 15 }}>
+        <View style={{ marginBottom: normalize(15, "height") }}>
           <TextBold
             text="TOTAL"
             style={{
-              fontSize: 34,
+              fontSize: normalize(34),
               textTransform: "uppercase",
               color: "#fffb00",
               //marginBottom: 6,
@@ -300,7 +317,7 @@ const PrePagoScreen = ({ navigation, route }) => {
           />
         </View>
 
-        <View style={{ marginTop: 20 }}>
+        <View style={{ marginTop: normalize(20) }}>
           <CommonNeuButton
             text={ResolveText("pagar")}
             screenWidth={width}
@@ -361,7 +378,8 @@ const PrePagoScreen = ({ navigation, route }) => {
           <View
             style={{
               marginTop: 5,
-              height: height / 3.7,
+              //height: height / 3.7,
+              height: normalize(height / 4.5),
               paddingBottom: 20,
               width: width / 1.3,
               alignItems: "center",
@@ -388,21 +406,20 @@ const PrePagoScreen = ({ navigation, route }) => {
               style={{ width: width / 1.5 }}
             />
           </View>
-          {contactosSeleccionados.length > Math.trunc(height / 3.7 / 30) ? (
-            <TouchableOpacity
-              onPress={() => {
-                flatRef.current.scrollToEnd();
-              }}
-            >
-              <TextBold
-                text={`...`}
-                style={{
-                  fontSize: 40,
-                  color: "#01f9d2",
-                  marginTop: -20,
+          {contactosSeleccionados.length >
+          Math.trunc(normalize(height / 4.5) / 30) ? (
+            <View style={{ justifyContent: "center", marginTop: -5 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  flatRef.current.scrollToEnd();
                 }}
-              />
-            </TouchableOpacity>
+              >
+                <Image
+                  source={require("../../assets/images/iconos/abajo.png")}
+                  style={{ width: 21, height: 16 }}
+                />
+              </TouchableOpacity>
+            </View>
           ) : null}
         </View>
       </View>
@@ -411,60 +428,3 @@ const PrePagoScreen = ({ navigation, route }) => {
 };
 
 export default PrePagoScreen;
-
-/* codigo para probar recargas sin stripe
-  <View
-          style={{
-            flexDirection: "row",
-            paddingTop: 80,
-            justifyContent: "space-between",
-          }}
-        >
-          <NeuButton
-            style={{ marginRight: 30 }}
-            width={width / 3}
-            height={height / 7}
-            color="#701c57"
-            borderRadius={10}
-            onPress={() => navigation.navigate("PagoErrorScreen")}
-          >
-            <View style={{}}>
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  //color: "#f00000",
-                  color: "#f781a6",
-                  textTransform: "uppercase",
-                }}
-              >
-                Cancelar por Error
-              </Text>
-            </View>
-          </NeuButton>
-          <NeuButton
-            style={{ marginLeft: 30 }}
-            width={width / 3}
-            height={height / 7}
-            color="#701c57"
-            borderRadius={10}
-            onPress={() => navigation.navigate("PagoCompletadoScreen")}
-          >
-            <View style={{}}>
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  //color: "#00f000",
-                  color: "#1e9e69",
-                  textTransform: "uppercase",
-                }}
-              >
-                Confirmar Éxito
-              </Text>
-            </View>
-          </NeuButton>
-        </View>
-*/

@@ -128,12 +128,15 @@ const GameScreen = ({ navigation }) => {
   const enMovimiento = React.useRef(false);
   const ruletaSensible = React.useRef(true);
 
-  const animationTime = 18000; // ms (movimiento de ruleta)
-  const sensibilityTime = 5000; //mantener proporción con animationTime
+  //proporción que funciona  -> 7/4000 = 20/x -> x = aprox(12000)
+
+  const animationTime = 10500; // ms (movimiento de ruleta)
+  const sensibilityTime = 4000; //mantener proporción con animationTime
+  const TO_VALUE = 20;
 
   /* React.useEffect(() => {
-    console.log(socketState);
-  }, [socketState]); */
+    console.log(casillaFinal);
+  }, [casillaFinal]); */
 
   /*  React.useEffect(() => {
     //console.log(width);
@@ -153,7 +156,6 @@ const GameScreen = ({ navigation }) => {
   }, []); */
 
   async function playSoundImpulsoRuleta() {
-    console.log("play sound impulso");
     const _sound = new Audio.Sound();
     await _sound.loadAsync(require("../../assets/Sonidos/impulso_ruleta.wav"), {
       shouldPlay: true,
@@ -496,6 +498,7 @@ const GameScreen = ({ navigation }) => {
   const setCasillaRandom = () => {
     // Para premio Acumulado
     const random_seed = Math.random();
+    // const random_seed = 0.1;
 
     // menor que 0.25 - 3 posibles casillas (nada)
     if (random_seed < 0.08) {
@@ -544,6 +547,9 @@ const GameScreen = ({ navigation }) => {
 
   const setCasilla = (prize) => {
     //console.log("prize", prize);
+
+    //switch(prize.type)
+
     switch (prize.type) {
       case "Nada":
         setTimeout(() => {
@@ -560,7 +566,6 @@ const GameScreen = ({ navigation }) => {
         }, 8000); */
 
         const random_seed = Math.random();
-        //console.log(random_seed);
 
         if (random_seed < 0.33) {
           //setCasillaFinal("1913deg");
@@ -597,8 +602,8 @@ const GameScreen = ({ navigation }) => {
             playSoundGanasPremioDigital();
           }, animationTime);
           //setCasillaFinal("1823deg");
+
           const random_seed = Math.random();
-          //console.log(random_seed);
 
           if (random_seed < 0.5) {
             //setCasillaFinal("1868deg"); // ref 1800
@@ -616,8 +621,6 @@ const GameScreen = ({ navigation }) => {
           }, animationTime);
           //setCasillaFinal("1778deg");
           const random_seed = Math.random();
-          //console.log(random_seed);
-          //console.log(prize.amount);
 
           if (random_seed < 0.5) {
             //setCasillaFinal("1778deg");
@@ -632,8 +635,8 @@ const GameScreen = ({ navigation }) => {
 
       default:
         //setCasillaFinal("1800deg");
-        //setCasillaFinal("7200deg");
-        setCasillaFinal("0deg");
+        setCasillaFinal("7200deg");
+        //setCasillaFinal("0deg");
         break;
     }
   };
@@ -672,10 +675,6 @@ const GameScreen = ({ navigation }) => {
       }
 
       if (enMovimiento.current) {
-        /* Toast.show("La ruleta ya está en movimiento. \n Por favor, espere.", {
-          duaration: Toast.durations.SHORT,
-          position: Toast.positions.BOTTOM,
-        }); */
         if (ruletaSensible.current) {
           if (touchOn === "slots") {
             playSoundImpulsoRuleta();
@@ -683,7 +682,6 @@ const GameScreen = ({ navigation }) => {
         }
       } else {
         setCasillaFinal("7200deg");
-
         wheelRotateLoop();
 
         const current_prize = userState.prize;
@@ -897,7 +895,7 @@ const GameScreen = ({ navigation }) => {
       magic_factor = 1.1;
     } */
 
-    return Easing.cubic(x);
+    return Easing.cubic(0.91 * x);
   }
 
   const wheelRotateLoop = () => {
@@ -905,10 +903,10 @@ const GameScreen = ({ navigation }) => {
       wheelValue.current.setValue(0);
       enMovimiento.current = true;
       Animated.timing(wheelValue.current, {
-        toValue: 20,
+        toValue: TO_VALUE,
         duration: animationTime,
-        easing: Easing.out(Easing.cubic),
-        //easing: Easing.inOut(Easing.ease),
+        easing: Easing.out(drawRuleta),
+        //easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }).start((complete) => {
         if (complete.finished) {
@@ -937,6 +935,7 @@ const GameScreen = ({ navigation }) => {
     inputRange: [
       0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     ],
+
     outputRange: [
       "0deg",
       "360deg",
@@ -958,8 +957,14 @@ const GameScreen = ({ navigation }) => {
       "6120deg",
       "6480deg",
       "6840deg",
+      //"7200deg",
       casillaFinal,
     ],
+    //extrapolate: "extended",
+
+    /* inputRange: [0, 1],
+    outputRange: ["0deg", casillaFinal],
+    extrapolate: "clamp", */
 
     /* inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
     outputRange: [
@@ -1581,16 +1586,7 @@ const GameScreen = ({ navigation }) => {
             <ImageConditional typeOfPrize={userState?.prize?.type} />
           </NeuButton>
         </View>
-        {/*  <ImageBackground
-          source={require("../../assets/images/home/ruleta/bordeysombra_sinluz.png")}
-          style={{
-            width: height / 0.9,
-            height: height / 0.9,
-            position: "absolute",
-            left: -300,
-            top: height / 6.4,
-          }}
-        /> */}
+
         <View
           key={2}
           style={{

@@ -72,6 +72,12 @@ export default function BottomTabNavigator({ navigation, route }) {
     setSoundTabNav(_sound);
   }
 
+  const forFade = ({ current }) => ({
+    cardStyle: {
+      opacity: current.progress,
+    },
+  });
+
   return (
     <BottomTab.Navigator
       //tabBar={(props) => <MyTabBar {...props} />}
@@ -125,20 +131,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           
         }, */
       }}
-      screenOptions={{
-        /*  tabBarBackground: () => (
-          <Image
-            source={require("../assets/images/bg_nav.png")}
-            style={{ height: 220, width: 220 }}
-          />
-        ), */
-        //tabBarVisible: isTabBarVisible(route),
-
-        tabBarStyle: {
-          //position: "absolute",
-          //backgroundColor: "#000", //rgba(112, 28, 87, 1)",
-        },
-      }}
+      screenOptions={{}}
     >
       <BottomTab.Screen
         name="Juego"
@@ -150,9 +143,6 @@ export default function BottomTabNavigator({ navigation, route }) {
           },
         }}
         options={{
-          /*  tabBarIcon: ({ color }) => (
-            <TabBarIcon name="game-controller" color={color} />
-          ), */
           tabBarIcon: () => <TabButtonNeo iconName="Ruleta" />,
           tabBarButton: (props) => {
             return (

@@ -7,9 +7,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { NeuButton, NeuView } from "react-native-neu-element";
-import CommonHeader from "../../components/CommonHeader";
-
+import { NeuButton } from "react-native-neu-element";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import Toast from "react-native-root-toast";
@@ -36,6 +34,7 @@ import {
 import { Audio } from "expo-av";
 
 const { width, height } = Dimensions.get("screen");
+const marginGlobal = width / 10;
 
 const RecargasDisponiblesScreen = ({ navigation, route }) => {
   //const { esDirecta } = route?.params;
@@ -65,7 +64,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     //console.log("pressedProductId", pressedProductId);
     //console.log("price_usd", price_usd);
     //console.log(esDirecta);
-    //console.log("validated prizes rec disp", validated_prizes);
+    console.log("validated prizes rec disp", validated_prizes);
     console.log("CONTACTOS SELECCIONADOSS", contactosSeleccionados);
   }, [contactosSeleccionados]); */
 
@@ -140,7 +139,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           Toast.show(
             userState?.idioma === "spa"
               ? "Recarga cancelada, podrás cobrar tu premio en otro momento"
-              : "Recharge canceled, you can collect your prize at a later time.",
+              : "Recharge aborted, you can collect your prize at a later time.",
 
             {
               duaration: Toast.durations.LONG,
@@ -187,10 +186,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   };
 
   const onPressCancelarRecarga = () => {
-    //console.log(nuevaRecargaState);
-
-    //socketDispatch(closeSocket());
-
     finish_checkout_all_prizes();
     nuevaRecargaDispatch(resetNuevaRecargaState());
     navigation.navigate("NuevaRecargaScreen");
@@ -322,10 +317,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           /* if (err.response) {
             console.log(err.response.message);
           } */
+          playSoundError();
           setLoadingProducts(false);
-
-          /*      playSoundError();
-          let toast = Toast.show(ResolveText("errorDesconocido"), {
+          Toast.show(ResolveText("errorDesconocido"), {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
             shadow: true,
@@ -333,7 +327,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
             hideOnPress: true,
             delay: 0,
           });
-          onPressCancelarRecarga(); */
+          onPressCancelarRecarga();
         });
     }
   };
@@ -383,115 +377,137 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     // por cada contacto, se crea una transaccion
     // endpoint: create-transacition
 
-    /*  console.log(
-      "========================== Nueva Recarga =========================="
-    ); */
-
     let transaction_id_array = [];
     setLoadingContinuar(true);
 
-    // para comunicacion socket
-    let transacciones_normales_esperadas = []; // [{mobile_number, transaction_id}, ...]
-    let transacciones_premio_esperadas = [];
-
-    socketDispatch(setTransaccionesNormalesResultado([]));
-    socketDispatch(setTransaccionesPremioResultado([]));
-
-    let contador_contactos = 0;
-    let transaction_error = false;
-
-    let promisesForTransaction = [];
-    contactosSeleccionados.forEach((contacto) => {
-      promisesForTransaction.push(create_transaction(contacto, productId));
-    });
-
-    for (const promise of promisesForTransaction) {
-      await promise
-        .then((response) => {
-          //const transaction_data_arr = response.data;
-          const transaction_data = response.data;
-
-          // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
-          // se crea un object por cada uno de estas 2 (o 1) transacciones
-
-          // update 3 de mayo
-          // se mandan las transacciones normales aqui
-          // se recibe un object
-
-          transaction_id_array.push({
-            topUpId: transaction_data.id,
-            //prizeId: undefined, //transactionId
-            dtoneProductId: productId,
-            beneficiary:
-              contactosSeleccionados[contador_contactos].contactNumber,
-            socketId: socketId,
-            prize_uuid:
-              contactosSeleccionados[contador_contactos].prize != null
-                ? contactosSeleccionados[contador_contactos].prize.uuid
-                : undefined,
-          });
-
-          // normales esperadas
-          transacciones_normales_esperadas.push({
-            mobile_number:
-              transaction_data.credit_party_identifier.mobile_number,
-            transaction_id: transaction_data.id,
-          });
-
-          if (contactosSeleccionados[contador_contactos].prize != null) {
-            transacciones_premio_esperadas.push(1); //solo uso la cantidad
-          }
-
-          contador_contactos += 1;
-        })
-        .catch((err) => {
-          if (err.response) {
-            const err_data = err.response.data;
-            //const err_headers = err.response.headers;
-            //console.log(err_data);
-            //console.log(err_headers);
-            console.log(err_data);
-          }
-
-          if (err.request) {
-            //console.log("Error");
-          }
-          setLoadingContinuar(false);
-
-          playSoundError();
-          Toast.show("No se pudo crear la transacción", {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          });
-
-          transaction_error = true;
-        });
-    }
-    if (transaction_error) {
-      return;
-    } else {
-      setLoadingContinuar(false);
-
-      socketDispatch(
-        setTransaccionesNormalesEsperadas(transacciones_normales_esperadas)
-      );
-      socketDispatch(
-        setTransaccionesPremioEsperadas(transacciones_premio_esperadas)
-      );
-
-      nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
-      nuevaRecargaDispatch(setTransaccionesPremioConfirmadas([]));
-      nuevaRecargaDispatch(setTransactionsIdArray(transaction_id_array));
-
-      navigation.navigate("PrePagoScreen", {
-        productPriceUsd,
-        transaction_id_array,
-        amount_cup,
+    const networkState = await getNetworkState();
+    if (!networkState.isConnected || !networkState.isInternetReachable) {
+      Toast.show(ResolveText("errorConexion"), {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
       });
+      playSoundError();
+      onPressCancelarRecarga();
+    } else {
+      // para comunicacion socket
+      let transacciones_normales_esperadas = []; // [{mobile_number, transaction_id}, ...]
+      let transacciones_premio_esperadas = [];
+
+      socketDispatch(setTransaccionesNormalesResultado([]));
+      socketDispatch(setTransaccionesPremioResultado([]));
+
+      let contador_contactos = 0;
+      let transaction_error = false;
+
+      let promisesForTransaction = [];
+      contactosSeleccionados.forEach((contacto) => {
+        promisesForTransaction.push(create_transaction(contacto, productId));
+      });
+
+      for (const promise of promisesForTransaction) {
+        await promise
+          .then((response) => {
+            //const transaction_data_arr = response.data;
+
+            // es este
+            const transaction_data = response.data;
+
+            // test - bad request
+            // const transaction_data = response.data.lol;
+
+            // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
+            // se crea un object por cada uno de estas 2 (o 1) transacciones
+
+            // update 3 de mayo
+            // se mandan las transacciones normales aqui
+            // se recibe un object
+
+            transaction_id_array.push({
+              topUpId: transaction_data.id,
+              //prizeId: undefined, //transactionId
+              dtoneProductId: productId,
+              beneficiary:
+                contactosSeleccionados[contador_contactos].contactNumber,
+              socketId: socketId,
+              prize_uuid:
+                contactosSeleccionados[contador_contactos].prize != null
+                  ? contactosSeleccionados[contador_contactos].prize.uuid
+                  : undefined,
+            });
+
+            // normales esperadas
+            transacciones_normales_esperadas.push({
+              mobile_number:
+                transaction_data.credit_party_identifier.mobile_number,
+              transaction_id: transaction_data.id,
+            });
+
+            if (contactosSeleccionados[contador_contactos].prize != null) {
+              transacciones_premio_esperadas.push(1); //solo uso la cantidad
+            }
+
+            contador_contactos += 1;
+          })
+          .catch((err) => {
+            /*  if (err.response) {
+         const err_data = err.response.data;
+         console.log(err_data);
+       }
+
+       if (err.request) {
+         //console.log("Error");
+       } */
+
+            playSoundError();
+            setLoadingContinuar(false);
+            Toast.show(
+              userState?.idioma === "spa"
+                ? "No se pudo crear la transacción"
+                : "Transaction could not be created",
+              {
+                duaration: Toast.durations.LONG,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+              }
+            );
+
+            transaction_error = true;
+          });
+      }
+      if (transaction_error) {
+        //console.log("entra en return");
+        setTimeout(() => {
+          onPressCancelarRecarga();
+        }, 1000);
+
+        return;
+      } else {
+        setLoadingContinuar(false);
+
+        socketDispatch(
+          setTransaccionesNormalesEsperadas(transacciones_normales_esperadas)
+        );
+        socketDispatch(
+          setTransaccionesPremioEsperadas(transacciones_premio_esperadas)
+        );
+
+        nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
+        nuevaRecargaDispatch(setTransaccionesPremioConfirmadas([]));
+        nuevaRecargaDispatch(setTransactionsIdArray(transaction_id_array));
+
+        navigation.navigate("PrePagoScreen", {
+          productPriceUsd,
+          transaction_id_array,
+          amount_cup,
+        });
+      }
     }
   };
 
@@ -506,11 +522,30 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       }}
       transition={false}
     >
-      <CommonHeader
-        width={width}
-        height={height}
-        _onPress={() => onPressBackButton()}
-      />
+      <View
+        style={{
+          paddingTop: 50,
+          width: width,
+          height: height / 6,
+          backgroundColor: "rgba(112, 28, 87, 1)",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <NeuButton
+          color="#701c57"
+          width={width / 7}
+          height={width / 7 - 20}
+          borderRadius={5}
+          onPress={() => onPressBackButton()}
+          style={{ marginLeft: marginGlobal, marginTop: 10 }}
+        >
+          <Image
+            source={require("../../assets/images/iconos/equis.png")}
+            style={{ width: 16, height: 16 }}
+          />
+        </NeuButton>
+      </View>
 
       <View
         style={{
