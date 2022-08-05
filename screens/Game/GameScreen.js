@@ -130,9 +130,10 @@ const GameScreen = ({ navigation }) => {
 
   //proporción que funciona  -> 7/4000 = 20/x -> x = aprox(12000)
 
-  const animationTime = 10500; // ms (movimiento de ruleta)
-  const sensibilityTime = 4000; //mantener proporción con animationTime
+  const ANIMATION_TIME = 15000; // ms (movimiento de ruleta después del período sensible)
   const TO_VALUE = 20;
+
+  const SENSIBILITY_TIME = 6000;
 
   /* React.useEffect(() => {
     console.log(casillaFinal);
@@ -497,8 +498,8 @@ const GameScreen = ({ navigation }) => {
 
   const setCasillaRandom = () => {
     // Para premio Acumulado
-    const random_seed = Math.random();
-    // const random_seed = 0.1;
+    // const random_seed = Math.random();
+    const random_seed = 0.1;
 
     // menor que 0.25 - 3 posibles casillas (nada)
     if (random_seed < 0.08) {
@@ -555,7 +556,7 @@ const GameScreen = ({ navigation }) => {
         setTimeout(() => {
           setNadaWon(true);
           playSoundGanasCalavera();
-        }, animationTime);
+        }, ANIMATION_TIME);
 
         // pa que se vaya solo
         /*   setTimeout(() => {
@@ -583,12 +584,12 @@ const GameScreen = ({ navigation }) => {
       case "Jackpot":
         setTimeout(() => {
           startAnimation();
-        }, animationTime);
+        }, ANIMATION_TIME);
 
         setTimeout(() => {
           setJoyaWon(true);
           playSoundGranPremio();
-        }, animationTime + 6000);
+        }, ANIMATION_TIME + 6000);
 
         //setCasillaFinal("1823deg");
         setCasillaFinal("7223deg");
@@ -600,7 +601,7 @@ const GameScreen = ({ navigation }) => {
           setTimeout(() => {
             setMediaBolsaWon(true);
             playSoundGanasPremioDigital();
-          }, animationTime);
+          }, ANIMATION_TIME);
           //setCasillaFinal("1823deg");
 
           const random_seed = Math.random();
@@ -618,7 +619,7 @@ const GameScreen = ({ navigation }) => {
           setTimeout(() => {
             setBolsaLlenaWon(true);
             playSoundGanasPremioDigital();
-          }, animationTime);
+          }, ANIMATION_TIME);
           //setCasillaFinal("1778deg");
           const random_seed = Math.random();
 
@@ -671,7 +672,7 @@ const GameScreen = ({ navigation }) => {
               delay: 0,
             }
           );
-        }, sensibilityTime);
+        }, SENSIBILITY_TIME);
       }
 
       if (enMovimiento.current) {
@@ -682,7 +683,7 @@ const GameScreen = ({ navigation }) => {
         }
       } else {
         setCasillaFinal("7200deg");
-        wheelRotateLoop();
+        wheelRotateInicio();
 
         const current_prize = userState.prize;
 
@@ -722,7 +723,7 @@ const GameScreen = ({ navigation }) => {
                 //minutos_restantes,
               })
             );
-          }, animationTime);
+          }, ANIMATION_TIME);
         } else {
           setCasillaRandom();
           setTimeout(() => {
@@ -732,7 +733,7 @@ const GameScreen = ({ navigation }) => {
             const horas_restantes = prizeEndTime.diff(currentTime, "hours");
             setHorasRestantes(horas_restantes);
             setPremioAcumulado(true);
-          }, animationTime);
+          }, ANIMATION_TIME);
         } */
 
         // ++++++++++++++++ fake para test
@@ -785,7 +786,7 @@ const GameScreen = ({ navigation }) => {
                       minutos_restantes,
                     })
                   );
-                }, animationTime);
+                }, ANIMATION_TIME);
               } else {
                 setCasilla(prize_result);
 
@@ -821,7 +822,7 @@ const GameScreen = ({ navigation }) => {
                       minutos_restantes,
                     })
                   );
-                }, animationTime);
+                }, ANIMATION_TIME);
               }
             })
             .catch((error) => {
@@ -876,7 +877,7 @@ const GameScreen = ({ navigation }) => {
             // si la "calavera no ha expirado", sale ruleta bloqueada
             setHorasRestantes(horas_restantes);
             setPremioAcumulado(true);
-          }, animationTime);
+          }, ANIMATION_TIME);
         }
       }
     }
@@ -885,50 +886,63 @@ const GameScreen = ({ navigation }) => {
   // 5 vueltas cada 3 segundos
   // para 12 segundos -> 20 vueltas
 
-  function drawRuleta(x) {
-    //console.log(x);
-    //let magic_factor = 1.15;
-
-    /* if (x < 0.8) {
-      magic_factor = 0.9;
-    } else {
-      magic_factor = 1.1;
-    } */
-
-    return Easing.cubic(0.91 * x);
+  function drawPrettyRotationInicio(x) {
+    return Easing.quad(1.3 * x);
   }
 
-  const wheelRotateLoop = () => {
+  const wheelRotateInicio = () => {
     if (!enMovimiento.current) {
       wheelValue.current.setValue(0);
       enMovimiento.current = true;
       Animated.timing(wheelValue.current, {
-        toValue: TO_VALUE,
-        duration: animationTime,
-        easing: Easing.out(drawRuleta),
+        toValue: 8,
+        duration: SENSIBILITY_TIME,
+        easing: Easing.in(drawPrettyRotationInicio),
         //easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }).start((complete) => {
         if (complete.finished) {
-          if (!thereIsPrizeResult.current) {
-            enMovimiento.current = false;
-            let toast = Toast.show(ResolveText("errorDesconocido"), {
-              duaration: Toast.durations.LONG,
-              position: Toast.positions.BOTTOM,
-              shadow: true,
-              animation: true,
-              hideOnPress: true,
-              delay: 0,
-            });
-          } else {
-            //wheelRotateFinal();
-            enMovimiento.current = false;
-            thereIsPrizeResult.current = false;
-            ruletaSensible.current = true;
-          }
+          wheelRotateFin();
+          //console.log("INICIO TERMINADO");
         }
       });
     }
+  };
+
+  function drawPrettyRotationFin(x) {
+    return Easing.quad(0.9 * x);
+  }
+
+  const wheelRotateFin = () => {
+    wheelValue.current.setValue(0);
+    enMovimiento.current = true;
+    Animated.timing(wheelValue.current, {
+      toValue: TO_VALUE,
+      duration: ANIMATION_TIME - SENSIBILITY_TIME,
+      //easing: Easing.bezier(0.06, 0.45, 0, 1),
+      easing: Easing.out(drawPrettyRotationFin),
+      //easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    }).start((complete) => {
+      if (complete.finished) {
+        if (!thereIsPrizeResult.current) {
+          enMovimiento.current = false;
+          let toast = Toast.show(ResolveText("errorDesconocido"), {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+          });
+        } else {
+          //wheelRotateFinal();
+          enMovimiento.current = false;
+          thereIsPrizeResult.current = false;
+          ruletaSensible.current = true;
+        }
+      }
+    });
   };
 
   const wheelLoop = wheelValue.current.interpolate({
@@ -960,7 +974,7 @@ const GameScreen = ({ navigation }) => {
       //"7200deg",
       casillaFinal,
     ],
-    //extrapolate: "extended",
+    //extrapolate: "identity",
 
     /* inputRange: [0, 1],
     outputRange: ["0deg", casillaFinal],

@@ -1,6 +1,6 @@
 import React from "react";
 import Onboarding from "react-native-onboarding-swiper";
-import { Image, Dimensions } from "react-native";
+import { Image, Dimensions, Platform } from "react-native";
 import { View } from "react-native";
 import { ImageBackground } from "react-native";
 import { TextBold, TextMedium } from "../components/CommonText";
@@ -218,7 +218,10 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       position: "absolute",
                       //top: 80,
-                      top: normalize(110),
+                      top:
+                        Platform.OS === "android"
+                          ? normalize(110)
+                          : normalize(80),
                       paddingHorizontal: 10,
                     }}
                   >
@@ -320,7 +323,10 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       position: "absolute",
                       //top: 60,
-                      top: normalize(110),
+                      top:
+                        Platform.OS === "android"
+                          ? normalize(110)
+                          : normalize(80),
                       paddingHorizontal: 10,
                     }}
                   >

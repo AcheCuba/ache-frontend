@@ -348,8 +348,8 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           <Image
             source={require("../../assets/images/iconos/check_mark.png")}
             style={{
-              width: 22,
-              height: 20,
+              width: 18,
+              height: 16,
             }}
           />
         </NeuButton>

@@ -59,8 +59,8 @@ export default function useCachedResources() {
         //===================== solo para eliminar premio en app ===========================
 
         //===================== solo para eliminar user ===========================
-        //await AsyncStorage.removeItem("user");
-        //user = await getData("user");
+        // await AsyncStorage.removeItem("user");
+        // user = await getData("user");
         //===================== solo para eliminar user ===========================
 
         //===================== solo para eliminar token de expo push not ===========================
@@ -108,27 +108,11 @@ export default function useCachedResources() {
             userDispatch(restore_user({ ...user, token }));
           }
         }
-
-        // Load fonts
-        // api calls
-        // etc, etc ...
-        //console.log("async loading");
-        /*  await Font.loadAsync({
-          //...Ionicons.font,
-          "space-mono": require("../assets/fonts/SpaceMono-Regular.ttf"),
-          "bs-medium": require("../assets/fonts/BloggerSans-Medium.ttf"),
-          "bs-bold": require("../assets/fonts/BloggerSans-Bold.ttf"),
-          "bs-italic": require("../assets/fonts/BloggerSans-MediumItalic.ttf"),
-          //"bs-light": require("../assets/fonts/BloggerSans-Light.otf"),
-        }); */
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         //console.warn(e);
       } finally {
         setLoadingComplete(true);
-        setTimeout(() => {
-          SplashScreen.hideAsync();
-        }, 2000);
       }
     }
 
