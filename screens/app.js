@@ -410,7 +410,9 @@ export default function MainApp() {
       // loading its initial state and rendering its first pixels. So instead,
       // we hide the splash screen once we know the root view has already
       // performed layout.
-      await SplashScreen.hideAsync();
+      setTimeout(async () => {
+        await SplashScreen.hideAsync();
+      }, 5000);
     }
   }, [isLoadingComplete]);
 
