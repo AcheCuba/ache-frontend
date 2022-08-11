@@ -1552,7 +1552,7 @@ const GameScreen = ({ navigation }) => {
               }}
             >
               <TouchableWithoutFeedback
-                onPress={() => onPressWheel_("selector")}
+                onPress={() => onPressWheel("selector")}
               >
                 <Image
                   source={require("../../assets/images/home/selector.png")}
