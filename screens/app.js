@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import * as Notifications from "expo-notifications";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Platform } from "react-native";
+import { Alert, Platform } from "react-native";
 import useCachedResources from "../hooks/useCachedResources";
 import Navigation from "../navigation";
 import io from "socket.io-client";
@@ -412,6 +412,23 @@ export default function MainApp() {
       // performed layout.
       setTimeout(async () => {
         await SplashScreen.hideAsync();
+        Alert.alert(
+          "hide async splash screen",
+          "ejecutado dentro de timeout de 5 segundos",
+          [
+            {
+              text: "cancelar",
+              style: "cancel",
+              onPress: () => {},
+            },
+            {
+              text: "abortar",
+              style: "destructive",
+
+              onPress: () => {},
+            },
+          ]
+        );
       }, 5000);
     }
   }, [isLoadingComplete]);
@@ -421,11 +438,12 @@ export default function MainApp() {
   }
 
   return (
-    <SafeAreaProvider>
-      <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-        <Navigation />
-        <StatusBar backgroundColor="transparent" style="light" />
-      </View>
-    </SafeAreaProvider>
+    /*     <SafeAreaProvider>
+     */ <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+      <Navigation />
+      <StatusBar backgroundColor="transparent" style="light" />
+    </View>
+    /*     </SafeAreaProvider>
+     */
   );
 }

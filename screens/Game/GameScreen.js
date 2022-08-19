@@ -451,11 +451,15 @@ const GameScreen = ({ navigation }) => {
         return (
           <View>
             <Image
-              source={require("../../assets/animaciones/calavera-roja.gif")}
+              source={require("../../assets/images/home/premios_finales/calavera_roja.png")}
+              //source={require("../../assets/animaciones/calavera-roja.gif")}
               //resizeMode="center"
               style={{
-                width: 80,
-                height: 90,
+                width: 65,
+                height: 75,
+
+                //width: 80,
+                //height: 90,
               }}
             />
           </View>
@@ -478,7 +482,7 @@ const GameScreen = ({ navigation }) => {
   const setCasillaRandom = () => {
     // Para premio Acumulado
     const random_seed = Math.random();
-    // const random_seed = 0.9;
+    // const random_seed = 0.3;
 
     // menor que 0.25 - 3 posibles casillas (nada)
     if (random_seed < 0.08) {
@@ -505,6 +509,7 @@ const GameScreen = ({ navigation }) => {
     if (random_seed >= 0.25 && random_seed < 0.5) {
       setPremioAcumuladoType("Jackpot");
       const newValue = parseFloat((TO_VALUE + 23 / 360).toFixed(2));
+      //console.log(newValue);
       toValue_.current.setValue(newValue);
       setToValueState(newValue);
     }
@@ -853,33 +858,6 @@ const GameScreen = ({ navigation }) => {
             });
         } else {
           // premio distinto de null
-          /* if (userState.prize?.type === "Nada") {
-            const currentTime = moment();
-            const prizeEndTime = moment(userState.prize?.prizeEndTime);
-            const minutos_restantes = prizeEndTime.diff(currentTime, "minutes");
-
-            if (minutos_restantes < 0) {
-              //_calaveraExpirada = true;
-
-              // el premio ha expirado
-              // Tenias calavera: Toast de que ya puedes jugar
-              Toast.show(ResolveText("CalaveraExpirada"), {
-                duaration: Toast.durations.LONG,
-                position: Toast.positions.BOTTOM,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-              });
-
-              storeData("user", {
-                ...userState,
-                prize: null,
-              });
-              userDispatch(setPrizeForUser(null));
-              onPressWheel();
-            }
-          } */
 
           setCasillaRandom();
 
@@ -1690,15 +1668,14 @@ const GameScreen = ({ navigation }) => {
             }}
           >
             <Image
-              source={require("../../assets/animaciones/moneda-recarga-rapida.gif")}
-              //source={require("../../assets/images/home/recarga_directa.png")}
+              //source={require("../../assets/animaciones/moneda-recarga-rapida.gif")}
+              source={require("../../assets/images/home/recarga_directa.png")}
               //resizeMode="center"
               style={{
-                width: 90,
-                height: 110,
-
-                //width: 65,
-                //height: 67,
+                //width: 90,
+                //height: 110,
+                width: 70,
+                height: 72,
               }}
             />
           </NeuButton>
