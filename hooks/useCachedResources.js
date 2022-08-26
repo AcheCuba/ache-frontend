@@ -36,7 +36,7 @@ export default function useCachedResources() {
     async function loadResourcesAndDataAsync() {
       try {
         //SplashScreen.show();
-        SplashScreen.preventAutoHideAsync();
+        //SplashScreen.preventAutoHideAsync();
 
         let token;
         let user;

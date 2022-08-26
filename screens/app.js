@@ -35,6 +35,9 @@ if (Platform.OS === "android") {
   });
 }
 
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
+
 export default function MainApp() {
   const [not, setNot] = useState("");
   const isLoadingComplete = useCachedResources();
@@ -410,9 +413,8 @@ export default function MainApp() {
       // loading its initial state and rendering its first pixels. So instead,
       // we hide the splash screen once we know the root view has already
       // performed layout.
-      setTimeout(async () => {
-        await SplashScreen.hideAsync();
-        Alert.alert(
+
+      /* Alert.alert(
           "hide async splash screen",
           "ejecutado dentro de timeout de 5 segundos",
           [
@@ -428,8 +430,11 @@ export default function MainApp() {
               onPress: () => {},
             },
           ]
-        );
-      }, 5000);
+        ); */
+
+      setTimeout(async () => {
+        await SplashScreen.hideAsync();
+      }, 3000);
     }
   }, [isLoadingComplete]);
 

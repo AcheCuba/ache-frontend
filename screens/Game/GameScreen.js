@@ -118,6 +118,8 @@ const GameScreen = ({ navigation }) => {
   const [soundGanasGranPremio, setSoundGanasGranPremio] = React.useState();
   const [soundImpulsoRuleta, setSoundImpulsoRuleta] = React.useState();
 
+  const [casillaFinal, setCasillaFinal] = React.useState("7200deg");
+  const thereIsPrizeResult = React.useRef(false);
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
   //const { socketDispatch, socketState } = React.useContext(GlobalContext);
@@ -129,11 +131,29 @@ const GameScreen = ({ navigation }) => {
   //proporción que funciona  -> 7/4000 = 20/x -> x = aprox(12000)
 
   const ANIMATION_TIME = 10000; // ms (movimiento de ruleta)
-  const SENSIBILITY_TIME = 5000; //mantener proporción con ANIMATION_TIME
-  const TO_VALUE = 20; // jugar con este valor cambia la velocidad de la ruleta
+  const SENSIBILITY_TIME = 4000; //mantener proporción con ANIMATION_TIME
+  const TO_VALUE = 20;
 
-  const toValue_ = React.useRef(new Animated.Value(TO_VALUE));
-  const [toValueState, setToValueState] = React.useState(TO_VALUE);
+  /* React.useEffect(() => {
+    console.log(casillaFinal);
+  }, [casillaFinal]); */
+
+  /*  React.useEffect(() => {
+    //console.log(width);
+    //console.log(height);
+    //console.log(JoyaWon);
+    console.log(userState);
+    //console.log(width / 3);
+  }, [userState]); */
+
+  /*  React.useEffect(() => {
+    //setPremioAcumuladoType("Jackpot");
+    userDispatch(
+      setPrizeForUser({
+        type: "Jackpot",
+      })
+    );
+  }, []); */
 
   async function playSoundImpulsoRuleta() {
     const _sound = new Audio.Sound();
@@ -482,67 +502,50 @@ const GameScreen = ({ navigation }) => {
   const setCasillaRandom = () => {
     // Para premio Acumulado
     const random_seed = Math.random();
-    // const random_seed = 0.3;
+    // const random_seed = 0.1;
 
     // menor que 0.25 - 3 posibles casillas (nada)
     if (random_seed < 0.08) {
+      setCasillaFinal("7313deg");
       setPremioAcumuladoType("Nada");
-      const newValue = parseFloat((TO_VALUE + 113 / 360).toFixed(2));
-      toValue_.current.setValue(newValue);
-      setToValueState(newValue);
     }
     if (random_seed >= 0.08 && random_seed < 0.16) {
-      const newValue = parseFloat((TO_VALUE + 203 / 360).toFixed(2));
-      toValue_.current.setValue(newValue);
-      setToValueState(newValue);
+      setCasillaFinal("7403deg");
       setPremioAcumuladoType("Nada");
     }
 
     if (random_seed >= 0.16 && random_seed < 0.25) {
-      const newValue = parseFloat((TO_VALUE + 293 / 360).toFixed(2));
-      toValue_.current.setValue(newValue);
-      setToValueState(newValue);
+      setCasillaFinal("7493deg");
       setPremioAcumuladoType("Nada");
     }
 
     // entre 0.25 y 0.5 - una posibilidad (jackpot)
     if (random_seed >= 0.25 && random_seed < 0.5) {
+      setCasillaFinal("7223deg");
       setPremioAcumuladoType("Jackpot");
-      const newValue = parseFloat((TO_VALUE + 23 / 360).toFixed(2));
-      //console.log(newValue);
-      toValue_.current.setValue(newValue);
-      setToValueState(newValue);
     }
     // entre 0.5 y 0.75 - 2 posibilidades (250 pesos)
     if (random_seed >= 0.5 && random_seed < 0.62) {
+      setCasillaFinal("7268deg");
       setPremioAcumuladoType("TopUpBonus");
       setPremioAcumuladoAmount(250);
-      const newValue = parseFloat((TO_VALUE + 68 / 360).toFixed(2));
-      toValue_.current.setValue(newValue);
-      setToValueState(newValue);
     }
     if (random_seed >= 0.62 && random_seed < 0.75) {
+      setCasillaFinal("7358deg");
       setPremioAcumuladoType("TopUpBonus");
       setPremioAcumuladoAmount(250);
-      const newValue = parseFloat((TO_VALUE + 158 / 360).toFixed(2));
-      toValue_.current.setValue(newValue);
-      setToValueState(newValue);
     }
 
     // entre 0.75 y 1 - 2 posibilidades (500 pesos)
     if (random_seed >= 0.75 && random_seed < 0.87) {
+      setCasillaFinal("7178deg");
       setPremioAcumuladoType("TopUpBonus");
       setPremioAcumuladoAmount(500);
-      const newValue = parseFloat((TO_VALUE - 22 / 360).toFixed(2));
-      toValue_.current.setValue(newValue);
-      setToValueState(newValue);
     }
     if (random_seed >= 0.87 && random_seed <= 1) {
+      setCasillaFinal("7088deg");
       setPremioAcumuladoType("TopUpBonus");
       setPremioAcumuladoAmount(500);
-      const newValue = parseFloat((TO_VALUE - 112 / 360).toFixed(2));
-      toValue_.current.setValue(newValue);
-      setToValueState(newValue);
     }
   };
 
@@ -558,34 +561,27 @@ const GameScreen = ({ navigation }) => {
           playSoundGanasCalavera();
         }, ANIMATION_TIME);
 
-        // pa que se vaya solo - TEST
+        // pa que se vaya solo
         /*   setTimeout(() => {
           setNadaWon(true);
           setTimeout(() => {
             setNadaWon(false);
           }, 10000);
         }, 8000); */
-        // pa que se vaya solo - TEST
 
         const random_seed = Math.random();
 
         if (random_seed < 0.33) {
-          //setCasillaFinal("7313deg");
-          const newValue = parseFloat((TO_VALUE + 113 / 360).toFixed(2));
-          toValue_.current.setValue(newValue);
-          setToValueState(newValue);
+          //setCasillaFinal("1913deg");
+          setCasillaFinal("7313deg");
         }
         if (random_seed >= 0.33 && random_seed < 0.66) {
-          //setCasillaFinal("7403deg");
-          const newValue = parseFloat((TO_VALUE + 203 / 360).toFixed(2));
-          toValue_.current.setValue(newValue);
-          setToValueState(newValue);
+          //setCasillaFinal("2003deg");
+          setCasillaFinal("7403deg");
         }
         if (random_seed >= 0.66) {
-          //setCasillaFinal("7493deg");
-          const newValue = parseFloat((TO_VALUE + 293 / 360).toFixed(2));
-          toValue_.current.setValue(newValue);
-          setToValueState(newValue);
+          //setCasillaFinal("2093deg");
+          setCasillaFinal("7493deg");
         }
         break;
       case "Jackpot":
@@ -598,10 +594,8 @@ const GameScreen = ({ navigation }) => {
           playSoundGranPremio();
         }, ANIMATION_TIME + 6000);
 
-        //setCasillaFinal("7223deg");
-        const newValue = parseFloat((TO_VALUE + 23 / 360).toFixed(2));
-        toValue_.current.setValue(newValue);
-        setToValueState(newValue);
+        //setCasillaFinal("1823deg");
+        setCasillaFinal("7223deg");
 
         break;
       case "TopUpBonus":
@@ -611,20 +605,17 @@ const GameScreen = ({ navigation }) => {
             setMediaBolsaWon(true);
             playSoundGanasPremioDigital();
           }, ANIMATION_TIME);
+          //setCasillaFinal("1823deg");
 
           const random_seed = Math.random();
 
           if (random_seed < 0.5) {
-            //setCasillaFinal("7268deg");
-            const newValue = parseFloat((TO_VALUE + 68 / 360).toFixed(2));
-            toValue_.current.setValue(newValue);
-            setToValueState(newValue);
+            //setCasillaFinal("1868deg"); // ref 1800
+            setCasillaFinal("7268deg");
           }
           if (random_seed >= 0.5) {
-            //setCasillaFinal("7358deg");
-            const newValue = parseFloat((TO_VALUE + 158 / 360).toFixed(2));
-            toValue_.current.setValue(newValue);
-            setToValueState(newValue);
+            //setCasillaFinal("1958deg");
+            setCasillaFinal("7358deg");
           }
         }
         if (prize.amount === 20 || prize.amount === 500) {
@@ -632,27 +623,24 @@ const GameScreen = ({ navigation }) => {
             setBolsaLlenaWon(true);
             playSoundGanasPremioDigital();
           }, ANIMATION_TIME);
+          //setCasillaFinal("1778deg");
           const random_seed = Math.random();
 
           if (random_seed < 0.5) {
-            //setCasillaFinal("7178deg");
-            const newValue = parseFloat((TO_VALUE - 22 / 360).toFixed(2));
-            toValue_.current.setValue(newValue);
-            setToValueState(newValue);
+            //setCasillaFinal("1778deg");
+            setCasillaFinal("7178deg");
           }
           if (random_seed >= 0.5) {
-            //setCasillaFinal("7088deg");
-            const newValue = parseFloat((TO_VALUE - 112 / 360).toFixed(2));
-            toValue_.current.setValue(newValue);
-            setToValueState(newValue);
+            //setCasillaFinal("1688deg");
+            setCasillaFinal("7088deg");
           }
         }
         break;
 
-      default: //actual es 20
-        //setCasillaFinal("7200deg");
-        toValue_.current.setValue(TO_VALUE);
-        setToValueState(newValue);
+      default:
+        //setCasillaFinal("1800deg");
+        setCasillaFinal("7200deg");
+        //setCasillaFinal("0deg");
         break;
     }
   };
@@ -697,9 +685,8 @@ const GameScreen = ({ navigation }) => {
           }
         }
       } else {
-        //setCasillaFinal("7200deg");
-        setToValueState(20);
-        wheelRotate();
+        setCasillaFinal("7200deg");
+        wheelRotateLoop();
 
         const current_prize = userState.prize;
 
@@ -720,6 +707,7 @@ const GameScreen = ({ navigation }) => {
 
         if (current_prize === null) {
           setCasilla(fakePrize);
+          thereIsPrizeResult.current = true;
 
           setTimeout(() => {
             // demora del server simulacion
@@ -742,6 +730,7 @@ const GameScreen = ({ navigation }) => {
         } else {
           setCasillaRandom();
           setTimeout(() => {
+            thereIsPrizeResult.current = true;
             const currentTime = moment();
             const { prizeEndTime } = userState.prize;
             const horas_restantes = prizeEndTime.diff(currentTime, "hours");
@@ -758,6 +747,7 @@ const GameScreen = ({ navigation }) => {
               //console.log("data", response.data);
               //console.log(response.status, typeof response.status);
               const prize_result = response.data;
+              thereIsPrizeResult.current = true;
               //console.log("prize", prize_result);
               //console.log(prize === ""); // true
               //console.log(JSON.stringify(response.data)); // ""
@@ -839,27 +829,46 @@ const GameScreen = ({ navigation }) => {
               }
             })
             .catch((error) => {
+              //console.log(error.response);
+              //console.log("catch");
+              thereIsPrizeResult.current = false;
               Toast.show(error.message, {
                 duaration: Toast.durations.SHORT,
                 position: Toast.positions.BOTTOM,
               });
-
-              setTimeout(() => {
-                enMovimiento.current = false;
-                Toast.show(ResolveText("errorDesconocido"), {
-                  duaration: Toast.durations.LONG,
-                  position: Toast.positions.BOTTOM,
-                  shadow: true,
-                  animation: true,
-                  hideOnPress: true,
-                  delay: 0,
-                });
-              }, ANIMATION_TIME);
             });
         } else {
           // premio distinto de null
+          /* if (userState.prize?.type === "Nada") {
+            const currentTime = moment();
+            const prizeEndTime = moment(userState.prize?.prizeEndTime);
+            const minutos_restantes = prizeEndTime.diff(currentTime, "minutes");
+
+            if (minutos_restantes < 0) {
+              //_calaveraExpirada = true;
+
+              // el premio ha expirado
+              // Tenias calavera: Toast de que ya puedes jugar
+              Toast.show(ResolveText("CalaveraExpirada"), {
+                duaration: Toast.durations.LONG,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+              });
+
+              storeData("user", {
+                ...userState,
+                prize: null,
+              });
+              userDispatch(setPrizeForUser(null));
+              onPressWheel();
+            }
+          } */
 
           setCasillaRandom();
+          thereIsPrizeResult.current = true;
 
           setTimeout(() => {
             const currentTime = moment();
@@ -877,43 +886,125 @@ const GameScreen = ({ navigation }) => {
     }
   };
 
-  React.useEffect(() => {
-    wheelValue.current.addListener(({ value }) => {
-      if (value >= toValueState) {
-        wheelValue.current.stopAnimation(); //se puede sacar el valor por callback
-        enMovimiento.current = false;
-        ruletaSensible.current = true;
-      }
-    });
+  // 5 vueltas cada 3 segundos
+  // para 12 segundos -> 20 vueltas
 
-    return () => {
-      wheelValue.current.removeAllListeners;
-    };
-  }, [toValueState]);
+  /* function drawRuleta(x) {
+    //console.log(x);
+    //let magic_factor = 1.15;
 
-  const wheelRotate = () => {
+    if (x < 0.8) {
+      magic_factor = 0.9;
+    } else {
+      magic_factor = 1.1;
+    } 
+
+    return Easing.cubic(0.91 * x);
+  } */
+
+  const wheelRotateLoop = () => {
     if (!enMovimiento.current) {
       wheelValue.current.setValue(0);
       enMovimiento.current = true;
       Animated.timing(wheelValue.current, {
-        toValue: toValue_.current,
+        toValue: TO_VALUE,
         duration: ANIMATION_TIME,
-        easing: Easing.out(Easing.quad),
+        easing: Easing.out(Easing.cubic),
+        //easing: Easing.out(drawRuleta),
         //easing: Easing.out(Easing.quad),
         useNativeDriver: true,
-      }).start();
+      }).start((complete) => {
+        if (complete.finished) {
+          if (!thereIsPrizeResult.current) {
+            enMovimiento.current = false;
+            let toast = Toast.show(ResolveText("errorDesconocido"), {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+            });
+          } else {
+            //wheelRotateFinal();
+            enMovimiento.current = false;
+            thereIsPrizeResult.current = false;
+            ruletaSensible.current = true;
+          }
+        }
+      });
     }
   };
 
   const wheelLoop = wheelValue.current.interpolate({
-    inputRange: [-1, 0, 1],
-    outputRange: ["-360deg", "0deg", "360deg"],
+    inputRange: [
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+    ],
+
+    outputRange: [
+      "0deg",
+      "360deg",
+      "720deg",
+      "1080deg",
+      "1440deg",
+      "1800deg",
+      "2160deg",
+      "2520deg",
+      "2880deg",
+      "3240deg",
+      "3600deg",
+      "3960deg",
+      "4320deg",
+      "4680deg",
+      "5040deg",
+      "5400deg",
+      "5760deg",
+      "6120deg",
+      "6480deg",
+      "6840deg",
+      //"7200deg",
+      casillaFinal,
+    ],
+    //extrapolate: "extended",
+
+    /* inputRange: [0, 1],
+    outputRange: ["0deg", casillaFinal],
+    extrapolate: "clamp", */
+
+    /* inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
+    outputRange: [
+      "0deg",
+      "360deg",
+      "720deg",
+      "1080deg",
+      "1440deg",
+      casillaFinal,
+    ], */
   });
+
+  /* const wheel = wheelValue.current.interpolate({
+    // Next, interpolate beginning and end values (in this case 0 and 1)
+    
+    outputRange: [
+      "0deg",
+      "360deg",
+      "720deg",
+      "1080deg",
+      "1440deg",
+      casillaFinal,
+      //1800 complete
+    ],
+  }); */
 
   const Salir = () => {
     setCodigoGenerado(false);
     setModalVisible(false);
   };
+
+  /* React.useEffect(() => {
+    //console.log("codigo generado game screen", codigoGenerado);
+    //console.log(currentPrize?.type);
+  }, [codigoGenerado]); */
 
   React.useEffect(() => {
     //console.log("codigo generado game screen", codigoGenerado);
@@ -1556,34 +1647,6 @@ const GameScreen = ({ navigation }) => {
                 transition={false}
               />
             </View>
-            {/* <View
-              style={{
-                justifyContent: "center",
-                width: height / 1.6,
-                height: height / 1.6,
-                borderRadius: height / 3.2,
-                position: "absolute",
-                borderWidth: 3,
-                borderColor: "black",
-                zIndex: 1,
-                //top: -height / (1.6 * 10),
-              }}
-            > 
-            <TouchableWithoutFeedback onPress={() => onPressWheel()}>
-              <View
-                style={{
-                  width: height / 1.6,
-                  height: height / 1.6,
-                  borderRadius: height / 3.2,
-                  position: "absolute",
-                  //top: -5,
-                  //backgroundColor: "green",
-                  borderWidth: 3,
-                  //borderColor: "black",
-                }}
-              ></View>
-            </TouchableWithoutFeedback> 
-                  </View> */}
 
             <ImageBackground
               source={require("../../assets/images/home/bisel.png")}
@@ -1613,7 +1676,10 @@ const GameScreen = ({ navigation }) => {
 
               <Animated.View
                 style={{
-                  transform: [{ rotate: wheelLoop }],
+                  transform: [
+                    //{ rotate: !thereIsPrizeResult ? wheelLoop : wheel },
+                    { rotate: wheelLoop },
+                  ],
                 }}
               >
                 <ImageBackground
@@ -1633,6 +1699,12 @@ const GameScreen = ({ navigation }) => {
           </ImageBackground>
         </View>
 
+        {/*  <View style={{ height: 40, width: 100, backgroundColor: "pink" }}>
+              <Button
+                title="toggle socket"
+                onPress={() => onPressToggleSocket()}
+              />
+            </View> */}
         <View
           key={3}
           style={{
