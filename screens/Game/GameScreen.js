@@ -701,189 +701,137 @@ const GameScreen = ({ navigation }) => {
           },
         };
 
-        // +++++++++++++++ fake para test
-
-        /*  const fakePrize = { type: "Jackpot", amount: 250 };
-
         if (current_prize === null) {
-          setCasilla(fakePrize);
-          thereIsPrizeResult.current = true;
+          makePlayRequest(config);
+        } else {
+          // premio distinto de null
+
+          const currentTime = moment();
+          const prizeEndTime = moment(userState.prize?.prizeEndTime);
+
+          const minutos_restantes = prizeEndTime.diff(currentTime, "minutes"); // para determinar si ha expirado
+          const horas_restantes = prizeEndTime.diff(currentTime, "hours");
+
+          //console.log(minutos_restantes);
+
+          if (minutos_restantes < 0) {
+            // el OBJETO ha expirado
+            // se elimina la skull si era skull, y si tenia premio lo pierde
+
+            storeData("user", {
+              ...userState,
+              prize: null,
+            });
+            userDispatch(setPrizeForUser(null));
+
+            // luego de eliminado el objeto se trata la app como si el usuario no tuviese premio
+            makePlayRequest(config);
+          } else {
+            // EL OBJETO no ha expirado
+            setCasillaRandom();
+            thereIsPrizeResult.current = true;
+            console.log(horas_restantes);
+            setHorasRestantes(horas_restantes);
+            setTimeout(() => {
+              setPremioAcumulado(true);
+            }, ANIMATION_TIME);
+          }
+        }
+      }
+    }
+  };
+
+  const makePlayRequest = (config) => {
+    axios(config)
+      .then((response) => {
+        const prize_result = response.data;
+        thereIsPrizeResult.current = true;
+
+        if (prize_result === "" || prize_result === undefined) {
+          setCasilla({ type: "Nada" });
+          // time
+          const prizeStartTime = moment();
+          //const prizeEndTime = moment().add(1, "days");
+          const prizeEndTime = moment().add(3, "minutes"); //test
+          const minutos_restantes = prizeEndTime.diff(
+            prizeStartTime,
+            "minutes"
+          );
+
+          //console.log(minutos_restantes);
+
+          nuevaRecargaDispatch(resetNuevaRecargaState());
 
           setTimeout(() => {
-            // demora del server simulacion
-
-            const prizeStartTime = moment();
-            const prizeEndTime = moment().add(3, "days");
-            //const horas_restantes = prizeEndTime.diff(prizeStartTime, "hours");
-
-            userDispatch(
-              setPrizeForUser({
-                type: "Jackpot",
+            //storeData({ ...userState, prize: null });
+            //userDispatch(set_prize(null));
+            storeData("user", {
+              ...userState,
+              prize: {
+                type: "Nada",
                 exchanged: false, // no se puede cambiar
-                amount: 250,
                 prizeStartTime,
                 prizeEndTime,
-                //minutos_restantes,
+                minutos_restantes,
+              },
+            });
+            userDispatch(
+              setPrizeForUser({
+                type: "Nada",
+                exchanged: false, // no se puede cambiar
+                prizeStartTime,
+                prizeEndTime,
+                minutos_restantes,
               })
             );
           }, ANIMATION_TIME);
         } else {
-          setCasillaRandom();
+          setCasilla(prize_result);
+
+          // time
+          const prizeStartTime = moment();
+          //const prizeEndTime = moment().add(3, "days");
+          const prizeEndTime = moment().add(3, "minutes"); //test
+          const minutos_restantes = prizeEndTime.diff(
+            prizeStartTime,
+            "minutes"
+          );
+
+          // console.log(minutos_restantes);
+          nuevaRecargaDispatch(resetNuevaRecargaState());
+
           setTimeout(() => {
-            thereIsPrizeResult.current = true;
-            const currentTime = moment();
-            const { prizeEndTime } = userState.prize;
-            const horas_restantes = prizeEndTime.diff(currentTime, "hours");
-            setHorasRestantes(horas_restantes);
-            setPremioAcumulado(true);
-          }, ANIMATION_TIME);
-        } */
+            setPremioCercanoAExpirarNotification();
 
-        // ++++++++++++++++ fake para test
-
-        if (current_prize === null) {
-          axios(config)
-            .then((response) => {
-              //console.log("data", response.data);
-              //console.log(response.status, typeof response.status);
-              const prize_result = response.data;
-              thereIsPrizeResult.current = true;
-              //console.log("prize", prize_result);
-              //console.log(prize === ""); // true
-              //console.log(JSON.stringify(response.data)); // ""
-
-              if (prize_result === "" || prize_result === undefined) {
-                setCasilla({ type: "Nada" });
-                // time
-                const prizeStartTime = moment();
-                const prizeEndTime = moment().add(1, "days");
-                //const prizeEndTime = moment().add(1, "minutes"); //test
-                const minutos_restantes = prizeEndTime.diff(
-                  prizeStartTime,
-                  "minutes"
-                );
-
-                //console.log(minutos_restantes);
-
-                nuevaRecargaDispatch(resetNuevaRecargaState());
-
-                setTimeout(() => {
-                  //storeData({ ...userState, prize: null });
-                  //userDispatch(set_prize(null));
-                  storeData("user", {
-                    ...userState,
-                    prize: {
-                      type: "Nada",
-                      exchanged: false, // no se puede cambiar
-                      prizeStartTime,
-                      prizeEndTime,
-                      minutos_restantes,
-                    },
-                  });
-                  userDispatch(
-                    setPrizeForUser({
-                      type: "Nada",
-                      exchanged: false, // no se puede cambiar
-                      prizeStartTime,
-                      prizeEndTime,
-                      minutos_restantes,
-                    })
-                  );
-                }, ANIMATION_TIME);
-              } else {
-                setCasilla(prize_result);
-
-                // time
-                const prizeStartTime = moment();
-                const prizeEndTime = moment().add(3, "days");
-                //const prizeEndTime = moment().add(1, "minutes"); //test
-                const minutos_restantes = prizeEndTime.diff(
-                  prizeStartTime,
-                  "minutes"
-                );
-
-                // console.log(minutos_restantes);
-                nuevaRecargaDispatch(resetNuevaRecargaState());
-
-                setTimeout(() => {
-                  setPremioCercanoAExpirarNotification();
-
-                  storeData("user", {
-                    ...userState,
-                    prize: {
-                      ...prize_result,
-                      prizeStartTime,
-                      prizeEndTime,
-                      minutos_restantes,
-                    },
-                  });
-                  userDispatch(
-                    setPrizeForUser({
-                      ...prize_result,
-                      prizeStartTime,
-                      prizeEndTime,
-                      minutos_restantes,
-                    })
-                  );
-                }, ANIMATION_TIME);
-              }
-            })
-            .catch((error) => {
-              //console.log(error.response);
-              //console.log("catch");
-              thereIsPrizeResult.current = false;
-              Toast.show(error.message, {
-                duaration: Toast.durations.SHORT,
-                position: Toast.positions.BOTTOM,
-              });
+            storeData("user", {
+              ...userState,
+              prize: {
+                ...prize_result,
+                prizeStartTime,
+                prizeEndTime,
+                minutos_restantes,
+              },
             });
-        } else {
-          // premio distinto de null
-          /* if (userState.prize?.type === "Nada") {
-            const currentTime = moment();
-            const prizeEndTime = moment(userState.prize?.prizeEndTime);
-            const minutos_restantes = prizeEndTime.diff(currentTime, "minutes");
-
-            if (minutos_restantes < 0) {
-              //_calaveraExpirada = true;
-
-              // el premio ha expirado
-              // Tenias calavera: Toast de que ya puedes jugar
-              Toast.show(ResolveText("CalaveraExpirada"), {
-                duaration: Toast.durations.LONG,
-                position: Toast.positions.BOTTOM,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-              });
-
-              storeData("user", {
-                ...userState,
-                prize: null,
-              });
-              userDispatch(setPrizeForUser(null));
-              onPressWheel();
-            }
-          } */
-
-          setCasillaRandom();
-          thereIsPrizeResult.current = true;
-
-          setTimeout(() => {
-            const currentTime = moment();
-            const prizeEndTime = moment(userState.prize?.prizeEndTime);
-            const horas_restantes = prizeEndTime.diff(currentTime, "hours");
-
-            // lo que tiene no es "calavera", o la "calavera" no ha expirado
-            // si no es calavera, simplemente saldrá el modal de premio acumulado
-            // si la "calavera no ha expirado", sale ruleta bloqueada
-            setHorasRestantes(horas_restantes);
-            setPremioAcumulado(true);
+            userDispatch(
+              setPrizeForUser({
+                ...prize_result,
+                prizeStartTime,
+                prizeEndTime,
+                minutos_restantes,
+              })
+            );
           }, ANIMATION_TIME);
         }
-      }
-    }
+      })
+      .catch((error) => {
+        //console.log(error.response);
+        //console.log("catch");
+        thereIsPrizeResult.current = false;
+        Toast.show(error.message, {
+          duaration: Toast.durations.SHORT,
+          position: Toast.positions.BOTTOM,
+        });
+      });
   };
 
   // 5 vueltas cada 3 segundos
@@ -1784,3 +1732,41 @@ const styles = StyleSheet.create({
     //height: width / 3.5,
   },
 });
+
+// onPressWheel function - para testear
+
+/*  const fakePrize = { type: "Jackpot", amount: 250 };
+
+        if (current_prize === null) {
+          setCasilla(fakePrize);
+          thereIsPrizeResult.current = true;
+
+          setTimeout(() => {
+            // demora del server simulacion
+
+            const prizeStartTime = moment();
+            const prizeEndTime = moment().add(3, "days");
+            //const horas_restantes = prizeEndTime.diff(prizeStartTime, "hours");
+
+            userDispatch(
+              setPrizeForUser({
+                type: "Jackpot",
+                exchanged: false, // no se puede cambiar
+                amount: 250,
+                prizeStartTime,
+                prizeEndTime,
+                //minutos_restantes,
+              })
+            );
+          }, ANIMATION_TIME);
+        } else {
+          setCasillaRandom();
+          setTimeout(() => {
+            thereIsPrizeResult.current = true;
+            const currentTime = moment();
+            const { prizeEndTime } = userState.prize;
+            const horas_restantes = prizeEndTime.diff(currentTime, "hours");
+            setHorasRestantes(horas_restantes);
+            setPremioAcumulado(true);
+          }, ANIMATION_TIME);
+        } */
