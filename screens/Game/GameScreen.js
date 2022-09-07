@@ -751,8 +751,8 @@ const GameScreen = ({ navigation }) => {
           setCasilla({ type: "Nada" });
           // time
           const prizeStartTime = moment();
-          //const prizeEndTime = moment().add(1, "days");
-          const prizeEndTime = moment().add(3, "minutes"); //test
+          const prizeEndTime = moment().add(1, "days");
+          //const prizeEndTime = moment().add(3, "minutes"); //test
           const minutos_restantes = prizeEndTime.diff(
             prizeStartTime,
             "minutes"
@@ -790,8 +790,8 @@ const GameScreen = ({ navigation }) => {
 
           // time
           const prizeStartTime = moment();
-          //const prizeEndTime = moment().add(3, "days");
-          const prizeEndTime = moment().add(3, "minutes"); //test
+          const prizeEndTime = moment().add(3, "days");
+          //const prizeEndTime = moment().add(3, "minutes"); //test
           const minutos_restantes = prizeEndTime.diff(
             prizeStartTime,
             "minutes"
