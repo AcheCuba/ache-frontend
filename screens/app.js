@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
-import * as Notifications from "expo-notifications";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Alert, Platform } from "react-native";
 import useCachedResources from "../hooks/useCachedResources";
@@ -22,27 +21,14 @@ import {
   SetGlobalUpdateCompleted,
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
-import { scheduleNotificationAtSecondsFromNow } from "../libs/expoPushNotification.lib";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
-
-if (Platform.OS === "android") {
-  Notifications.setNotificationChannelAsync("default", {
-    name: "default",
-    importance: Notifications.AndroidImportance.MAX,
-    vibrationPattern: [0, 250, 250, 250],
-    lightColor: "#FF231F7C",
-  });
-}
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 export default function MainApp() {
-  const [not, setNot] = useState("");
   const isLoadingComplete = useCachedResources();
-  const notificationListener = useRef();
-  const responseListener = useRef();
 
   // for socket communication
 
@@ -167,8 +153,6 @@ export default function MainApp() {
       // cerrar socket
       //socketDispatch(closeSocket()); // socketIsOpen: false
 
-      // acotejar resultados (agregar numeros) para enviar push notification
-
       if (!updateNormalesCompleted) {
         //console.log("entra a updateTransaccionesNormalesCompleted");
         let resultadosConNumeros = [];
@@ -197,7 +181,7 @@ export default function MainApp() {
         );
 
         // =================== Enviar PUSH NOTIFICATION ===================
-        const declinadas = resultadosConNumeros.filter((elemento) => {
+        /* const declinadas = resultadosConNumeros.filter((elemento) => {
           return elemento.status !== "COMPLETED";
         });
 
@@ -211,13 +195,7 @@ export default function MainApp() {
             0,
             cadenaEnviar.length - 2
           );
-
-          const notId = await scheduleNotificationAtSecondsFromNow(
-            "Algunas recargas no se pudieron realizar",
-            `${cadenaEnviarClean}`,
-            1
-          );
-        }
+        } */
         // =================== Enviar PUSH NOTIFICATION ===================
 
         // reiniciar estado socket
@@ -386,27 +364,8 @@ export default function MainApp() {
     });
   }, [socketIsOpen]);
 
-  useEffect(() => {
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNot(notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        //console.log(response);
-      });
-
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
   const onLayoutRootView = React.useCallback(async () => {
-    console.log("onlayout function");
+    //console.log("onlayout function");
     if (isLoadingComplete) {
       // This tells the splash screen to hide immediately! If we call this after
       // `setAppIsReady`, then we may see a blank screen while the app is

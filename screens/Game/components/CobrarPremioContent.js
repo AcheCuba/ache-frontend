@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
-
 import * as Clipboard from "expo-clipboard";
 import { NeuButton } from "react-native-neu-element";
 import { GlobalContext } from "../../../context/GlobalProvider";
@@ -11,9 +10,7 @@ import {
   setPrizeForUser,
 } from "../../../context/Actions/actions";
 import { ActivityIndicator } from "react-native";
-import Toast from "react-native-root-toast";
-import { getData, removeItem, storeData } from "../../../libs/asyncStorage.lib";
-import { cancelNotification } from "../../../libs/expoPushNotification.lib";
+import { storeData } from "../../../libs/asyncStorage.lib";
 import { TextBold, TextItalic } from "../../../components/CommonText";
 import {
   CobrarPremioTextEngish,
@@ -125,7 +122,7 @@ const CobrarPremioContent = ({
           nuevaRecargaDispatch(resetNuevaRecargaState());
 
           // limpiar notificación
-          cleanNotification();
+          // cleanNotification();
 
           // actualizar estado local
           //setCodigo(prizeCode);
@@ -144,13 +141,13 @@ const CobrarPremioContent = ({
     //====================== comentar para trastear ============
   };
 
-  const cleanNotification = async () => {
+  /* const cleanNotification = async () => {
     const notId = await getData("notification-prize-expire");
     if (notId != null) {
       cancelNotification(notId);
       removeItem(notId);
     }
-  };
+  }; */
 
   const copiarCode = (code) => {
     copyToClipboard(code);

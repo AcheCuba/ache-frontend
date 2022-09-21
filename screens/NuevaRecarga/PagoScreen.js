@@ -8,11 +8,8 @@ import {
   deleteAllTransaccionesPremio,
   resetNuevaRecargaState,
   setPrizeForUser,
-  setTransaccionesNormalesResultado,
 } from "../../context/Actions/actions";
-import { getData, removeItem, storeData } from "../../libs/asyncStorage.lib";
-import { cancelNotification } from "../../libs/expoPushNotification.lib";
-import Toast from "react-native-root-toast";
+import { storeData } from "../../libs/asyncStorage.lib";
 import { StatusBar } from "react-native";
 
 const frontend_url = "https://react-paymentsite.herokuapp.com/";
@@ -113,7 +110,6 @@ const PagoScreen = ({ navigation, route }) => {
       }, 10000);
 
       navigation.navigate("PagoCompletadoScreen");
-      cancelNotificationAsync();
     }
   }, [paymentSucceded]);
 
@@ -132,7 +128,7 @@ const PagoScreen = ({ navigation, route }) => {
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
 
-    console.log("TRNASACTION ID ARRAY", transaction_id_array);
+    //console.log("TRNASACTION ID ARRAY", transaction_id_array);
 
     const transaccionesNormalesCompletadas =
       transacciones_normales_confirmadas.filter((recarga) => {
@@ -299,42 +295,45 @@ const PagoScreen = ({ navigation, route }) => {
     //console.log(typeof productPrice);
     //console.log(typeof productPriceUsd);
     //console.log(typeof amount_refund);
-    //console.log("amount refund - pago screen", amount_refund);
 
-    let config = {
-      method: "post",
-      url: _url,
-      params: { amount: amount_refund },
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
+    if (amount_refund != 0) {
+      //console.log("amount refund - pago screen", amount_refund);
 
-    axios(config)
-      .then((response) => {
-        //console.log("==== refund response =====");
-        //console.log("refund status", response.status);
-        //console.log("request", response.request);
-      })
-      .catch((error) => {
-        //console.log("=== refund error ===");
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          //console.log(error.response.data);
-          //console.log(error.response.status);
-          //console.log(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          //console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          //console.log("Error", error.message);
-        }
-        //console.log(error.config);
-      });
+      let config = {
+        method: "post",
+        url: _url,
+        params: { amount: amount_refund },
+        headers: {
+          Authorization: `Bearer ${user_token}`,
+        },
+      };
+
+      axios(config)
+        .then((response) => {
+          //console.log("==== refund response =====");
+          //console.log("refund status", response.status);
+          //console.log("request", response.request);
+        })
+        .catch((error) => {
+          //console.log("=== refund error ===");
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            //console.log(error.response.data);
+            //console.log(error.response.status);
+            //console.log(error.response.headers);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            //console.log(error.request);
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            //console.log("Error", error.message);
+          }
+          //console.log(error.config);
+        });
+    }
   };
 
   const createPaymentSession = async () => {
@@ -436,14 +435,6 @@ const PagoScreen = ({ navigation, route }) => {
     };
     //console.log("url llamada en confirm transaction", config.url);
     return axios(config);
-  };
-
-  const cancelNotificationAsync = async () => {
-    const notId = await getData("notification-prize-expire");
-    if (notId != null) {
-      await cancelNotification(notId);
-      await removeItem("notification-prize-expire");
-    }
   };
 
   const prize_finish_checkout = (uuid, success) => {
