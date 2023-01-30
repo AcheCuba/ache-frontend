@@ -38,11 +38,11 @@ export default function useCachedResources() {
         //SplashScreen.show();
         //SplashScreen.preventAutoHideAsync();
 
-        let token;
-        let user;
+        let token = null;
+        let user = null;
 
-        token = await SecureStore.getItemAsync("token");
-        user = await getData("user");
+        //token = await SecureStore.getItemAsync("token");
+        //user = await getData("user");
 
         //console.log(token);
 
@@ -80,19 +80,19 @@ export default function useCachedResources() {
             //console.log(minutos_restantes);
             if (minutos_restantes < 0) {
               // premio expirado
-              storeData("user", {
+              /* storeData("user", {
                 ...user,
                 prize: null,
-              });
+              }); */
               userDispatch(restore_user({ ...user, prize: null, token }));
             } else {
-              storeData("user", {
+              /* storeData("user", {
                 ...user,
                 prize: {
                   ...currentPrizeState,
                   minutos_restantes,
                 },
-              });
+              }); */
               userDispatch(
                 restore_user({
                   ...user,
