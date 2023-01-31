@@ -1,5 +1,4 @@
 import * as SecureStore from "expo-secure-store";
-import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
 import { GlobalContext } from "../context/GlobalProvider";
 import { restore_user } from "../context/Actions/actions";
@@ -41,8 +40,8 @@ export default function useCachedResources() {
         let token = null;
         let user = null;
 
-        //token = await SecureStore.getItemAsync("token");
-        //user = await getData("user");
+        token = await SecureStore.getItemAsync("token");
+        user = await getData("user");
 
         //console.log(token);
 
@@ -80,19 +79,19 @@ export default function useCachedResources() {
             //console.log(minutos_restantes);
             if (minutos_restantes < 0) {
               // premio expirado
-              /* storeData("user", {
+              storeData("user", {
                 ...user,
                 prize: null,
-              }); */
+              });
               userDispatch(restore_user({ ...user, prize: null, token }));
             } else {
-              /* storeData("user", {
+              storeData("user", {
                 ...user,
                 prize: {
                   ...currentPrizeState,
                   minutos_restantes,
                 },
-              }); */
+              });
               userDispatch(
                 restore_user({
                   ...user,

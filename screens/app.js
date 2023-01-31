@@ -29,6 +29,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function MainApp() {
   const isLoadingComplete = useCachedResources();
+  //const isLoadingComplete = true
 
   // for socket communication
 

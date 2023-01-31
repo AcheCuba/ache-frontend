@@ -2,9 +2,14 @@
   "build": {
     "preview": {
       "ios": {
-        "simulator": true
+        "simulator": true,
+        "resourceClass": "m1-medium"
       }
     },
-    "production": {}
+    "production": {
+      "ios": {
+        "resourceClass": "m1-medium"
+      }
+    }
   }
 }

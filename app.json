@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "achecuba",
     "name": "ache",
     "slug": "ache",
     "privacy": "unlisted",
@@ -29,14 +30,18 @@
       "versionCode": 1,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive_icon_ache.png", 
+        "foregroundImage": "./assets/images/adaptive_icon_ache.png",
         "backgroundColor": "#701c57"
       }
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "description": ""
+    "description": "",
+    "extra": {
+      "eas": {
+        "projectId": "52b4b6ce-aa56-494c-bba7-3e8d9d98445c"
+      }
+    }
   }
 }
-

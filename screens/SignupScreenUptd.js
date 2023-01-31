@@ -277,7 +277,7 @@ const SignupScreenUptd = ({ navigation }) => {
                 <TextMedium
                   text="Almost done!"
                   style={{
-                    fontSize: 20,
+                    fontSize: normalize(20),
                     color: "#fffc00",
                     textAlign: "center",
                   }}
