@@ -4,6 +4,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigationState } from "@react-navigation/native";
 import * as React from "react";
 
+import 'react-native-gesture-handler';
+
 // screens
 
 import GameScreen from "../screens/Game/GameScreen";

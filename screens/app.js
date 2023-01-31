@@ -403,12 +403,10 @@ export default function MainApp() {
   }
 
   return (
-    /*     <SafeAreaProvider>
-     */ <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+  <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
       <Navigation />
       <StatusBar backgroundColor="transparent" style="light" />
-    </View>
-    /*     </SafeAreaProvider>
-     */
+  </View>
+
   );
 }

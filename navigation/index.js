@@ -9,11 +9,8 @@ import SignupScreenUptd from "../screens/SignupScreenUptd";
 import BottomTabNavigator from "./BottomTabNavigator";
 import { GlobalContext } from "../context/GlobalProvider";
 
-//import { RootStackParamList } from "../types";
-//import LinkingConfiguration from "./LinkingConfiguration";
-//import { restore_user } from "../context/Actions/actions";
-//import AsyncStorage from "@react-native-async-storage/async-storage";
-//import { ColorSchemeName } from "react-native";
+import 'react-native-gesture-handler';
+import { Alert } from "react-native";
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
@@ -36,9 +33,12 @@ const Stack = createStackNavigator();
 //const onBoardingConsumed = true;
 
 function RootNavigator({ navigation, route }) {
-  const { userState, userDispacth } = React.useContext(GlobalContext);
+  const { userState } = React.useContext(GlobalContext);
+  console.log(userState)
   //console.log("userState index.js", userState);
   //console.log("token", userState.token);
+
+  Alert.alert(`token: ${userState.token}`)
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
