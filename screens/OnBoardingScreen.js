@@ -9,7 +9,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "react-native";
 import { GlobalContext } from "../context/GlobalProvider";
 import { TouchableOpacity } from "react-native";
-import { duration } from "moment";
 import { setIdioma } from "../context/Actions/actions";
 import normalize from "react-native-normalize";
 
