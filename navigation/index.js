@@ -34,7 +34,8 @@ const Stack = createStackNavigator();
 
 function RootNavigator({ navigation, route }) {
   const { userState } = React.useContext(GlobalContext);
-  console.log(userState)
+  
+  //console.log(userState)
   //console.log("userState index.js", userState);
   //console.log("token", userState.token);
 
