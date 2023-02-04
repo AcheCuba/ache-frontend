@@ -2,7 +2,10 @@ import React, { useContext, useState } from "react";
 import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
 import Toast from "react-native-root-toast";
 import { StyleSheet, View, Dimensions, Image, Platform } from "react-native";
-import { NeuButton, NeuInput } from "react-native-neu-element";
+//import { NeuButton, NeuInput } from "react-native-neu-element";
+import NeuButton from "../libs/neu_element/NeuButton";
+import NeuInput from "../libs/neu_element/NeuInput" 
+
 import { BASE_URL } from "../constants/domain";
 import { signup } from "../context/Actions/actions";
 import { GlobalContext } from "../context/GlobalProvider";
@@ -417,7 +420,7 @@ const SignupScreenUptd = ({ navigation }) => {
             //marginTop: -120,
           }}
         >
-          <NeuButton
+        <NeuButton
             color="#58184d"
             width={(4 / 5) * width}
             height={height / 14}
@@ -439,8 +442,8 @@ const SignupScreenUptd = ({ navigation }) => {
                 }}
               />
             )}
-          </NeuButton>
-        </View>
+          </NeuButton> 
+        </View>  
       </ImageBackground>
     </TouchableWithoutFeedback>
   );

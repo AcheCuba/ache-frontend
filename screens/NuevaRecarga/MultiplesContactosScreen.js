@@ -15,8 +15,10 @@ import {
   deleteContact,
   toogleAddContactAvaiable,
 } from "../../context/Actions/actions";
-import { Ionicons } from "@expo/vector-icons";
-import { NeuButton, NeuInput } from "react-native-neu-element";
+
+import NeuButton from "../../libs/neu_element/NeuButton"
+import NeuInput from "../../libs/neu_element/NeuInput"
+
 import Toast from "react-native-root-toast";
 import { Image } from "react-native";
 

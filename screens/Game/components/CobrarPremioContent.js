@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 import * as Clipboard from "expo-clipboard";
-import { NeuButton } from "react-native-neu-element";
+import NeuButton from "../../../libs/neu_element/NeuButton";
+
 import { GlobalContext } from "../../../context/GlobalProvider";
 import axios from "axios";
 import { BASE_URL } from "../../../constants/domain";

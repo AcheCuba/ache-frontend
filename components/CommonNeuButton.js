@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Image } from "react-native";
 import { Text } from "react-native";
-import { NeuButton } from "react-native-neu-element";
+import NeuButton from "../libs/neu_element/NeuButton"
 
 const CommonNeuButton = ({
   text,

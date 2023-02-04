@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
-  StyleSheet,
   View,
   Dimensions,
   Pressable,
@@ -16,7 +15,9 @@ import {
   deletePrizeByFieldId,
   toogleAddContactAvaiable,
 } from "../../../context/Actions/actions";
-import { NeuInput, NeuButton, NeuView } from "react-native-neu-element";
+import NeuButton from "../../../libs/neu_element/NeuButton"
+import NeuInput from "../../../libs/neu_element/NeuInput"
+
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
 import { TouchableOpacity } from "react-native-gesture-handler";

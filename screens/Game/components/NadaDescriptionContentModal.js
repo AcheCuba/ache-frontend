@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Image } from "react-native";
 import { View, Dimensions } from "react-native";
-import { NeuButton } from "react-native-neu-element";
+
+
+import NeuButton from "../../../libs/neu_element/NeuButton";
+
 import { TextBold, TextItalic } from "../../../components/CommonText";
 import {
   GameScreenTextEnglish,

@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { View } from "react-native";
+//import { StyleSheet } from "react-native";
+//import { View } from "react-native";
 import { Image, Dimensions, Platform } from "react-native";
-import { NeuView, NeuButton } from "react-native-neu-element";
+//import NeuButton from "../../libs/neu_element/NeuButton"
 
 const TabButtonNeo = ({ iconName }) => {
   const StyledCrossPlat = (shadowPosition) => {

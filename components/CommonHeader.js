@@ -1,8 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import { Image } from "react-native";
-import { View, Dimensions } from "react-native";
-import { NeuButton } from "react-native-neu-element";
+import { View } from "react-native";
+import NeuButton from "../libs/neu_element/NeuButton";
 
 const CommonHeader = ({ width, height, _onPress }) => {
   const marginGlobal = width / 10;

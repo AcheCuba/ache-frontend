@@ -20,7 +20,7 @@ import {
   openSocket,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
-import { NeuButton, NeuView } from "react-native-neu-element";
+import NeuButton from "../../libs/neu_element/NeuButton"
 import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";

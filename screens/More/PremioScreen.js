@@ -3,7 +3,7 @@ import { Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
 import { StyleSheet, View, Image } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { NeuButton } from "react-native-neu-element";
+import NeuButton from "../../libs/neu_element/NeuButton"
 import CommonHeader from "../../components/CommonHeader";
 import { TextBold } from "../../components/CommonText";
 import {

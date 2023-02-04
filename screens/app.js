@@ -42,7 +42,6 @@ export default function MainApp() {
   //const colorScheme = useColorScheme();
 
   const {
-    userState,
     socketDispatch,
     socketState,
     nuevaRecargaState,
@@ -64,11 +63,9 @@ export default function MainApp() {
 
   let socket = io.connect(`${BASE_URL}`);
 
-  /* useEffect(() => {
-    console.log(userState);
-  }, [userState]); */
 
-  useEffect(() => {
+
+useEffect(() => {
     //console.log("update completed? ", updateCompleted);
 
     if (updateCompleted) {
@@ -88,7 +85,7 @@ export default function MainApp() {
     }
   }, [updateCompleted]);
 
-  useEffect(() => {
+useEffect(() => {
     //console.log("update normales completed? ", updateNormalesCompleted);
     //console.log("update premios completed? ", updatePremiosCompleted);
 
@@ -96,21 +93,10 @@ export default function MainApp() {
       setUpdateCompleted(true);
       socketDispatch(SetGlobalUpdateCompleted(true));
     }
-  }, [updateNormalesCompleted, updatePremiosCompleted]);
+  }, [updateNormalesCompleted, updatePremiosCompleted]); 
 
   useEffect(() => {
     //console.log("updateNormalesCompleted", updateNormalesCompleted);
-
-    /* console.log("de premio esperadas - app.js", transacciones_premio_esperadas);
-    console.log(
-      "normales esperadas - app.js",
-      transacciones_normales_esperadas
-    );
-    console.log(
-      "normales resultado - app.js",
-      transacciones_normales_resultado
-    );
-    console.log("de premio resultado - app.js", transacciones_premio_resultado); */
 
     async function updateTransaccionesPremioCompleted() {
       //recordar: el bono (premio) se considera una recarga independiente
@@ -125,17 +111,7 @@ export default function MainApp() {
       }
       setUpdatePremiosCompleted(true);
 
-      /*   const recargasConPremio = resultadosConNumeros.filter((transaction) => {
-        return transaction.isTopUpBonus === true;
-      }); 
-
-      const recargasConPremio_clean = recargasConPremio.map((rec) => {
-        return {
-          transactionId: rec.transactionId,
-          uuid: rec.uuid,
-          status: rec.status,
-        };
-      }); */
+     
     }
 
     async function updateTransaccionesNormalesCompleted() {
@@ -180,24 +156,6 @@ export default function MainApp() {
         nuevaRecargaDispatch(
           setTransaccionesNormalesConfirmadas(transacciones_normales_resultado)
         );
-
-        // =================== Enviar PUSH NOTIFICATION ===================
-        /* const declinadas = resultadosConNumeros.filter((elemento) => {
-          return elemento.status !== "COMPLETED";
-        });
-
-        if (declinadas.length !== 0) {
-          let cadenaEnviar = "";
-          declinadas.map((elem) => {
-            cadenaEnviar = cadenaEnviar + elem.mobile_number + "; ";
-          });
-
-          const cadenaEnviarClean = cadenaEnviar.substring(
-            0,
-            cadenaEnviar.length - 2
-          );
-        } */
-        // =================== Enviar PUSH NOTIFICATION ===================
 
         // reiniciar estado socket
         //socketDispatch(setTransaccionesNormalesEsperadas([]));
@@ -261,14 +219,7 @@ export default function MainApp() {
       }
     }
 
-    /*  if (
-      transacciones_premio_resultado.length ===
-      transacciones_premio_esperadas.length
-    ) {
-      if (transacciones_premio_resultado.length != 0) {
-        updateTransaccionesPremioCompleted();
-      }
-    } */
+  
   }, [
     transacciones_normales_resultado,
     transacciones_normales_esperadas,
@@ -277,7 +228,7 @@ export default function MainApp() {
     transactions_id_array,
     updateNormalesCompleted,
     updatePremiosCompleted,
-  ]);
+  ]); 
 
   useEffect(() => {
     //if (socketIsOpen && !socketCurrentlyOpen) {
@@ -294,21 +245,7 @@ export default function MainApp() {
       });
     }
 
-    /* socket.on("connect", function onConnect() {
-      console.log("This socket is now connected to the Aché server.");
-    });
 
-    socket.on("disconnect", function onDisconnect() {
-      console.log("This socket lost connection to the Aché server");
-    }); */
-
-    /* if (!socketIsOpen) {
-      // cerrar socket
-      console.log("FUNCION DE CERRAR SOCKET");
-      socket.disconnect();
-      //setSocketCurrentlyOpen(false);
-      //console.log("client disconnect");
-    } */
 
     socket.on("transaction-update", (msg) => {
       //console.log("transaction result variable array ", transaction_result_arr);
@@ -357,14 +294,9 @@ export default function MainApp() {
         }
       }
 
-      /* setTimeout(() => {
-          socketDispatch(setTransaccionesResultado(transaction_result_arr));
-          transaction_result_arr = [];
-          transaction_result = null;
-        }, 5000); */
     });
   }, [socketIsOpen]);
-
+ 
   const onLayoutRootView = React.useCallback(async () => {
     //console.log("onlayout function");
     if (isLoadingComplete) {
@@ -373,7 +305,9 @@ export default function MainApp() {
       // loading its initial state and rendering its first pixels. So instead,
       // we hide the splash screen once we know the root view has already
       // performed layout.
-
+      
+      await SplashScreen.hideAsync();
+      
       /* Alert.alert(
           "hide async splash screen",
           "ejecutado dentro de timeout de 5 segundos",
@@ -391,10 +325,11 @@ export default function MainApp() {
             },
           ]
         ); */
-
-      setTimeout(async () => {
+        
+      /* setTimeout(async () => {
+        console.log("hide async")
         await SplashScreen.hideAsync();
-      }, 3000);
+      }, 3000); */
     }
   }, [isLoadingComplete]);
 

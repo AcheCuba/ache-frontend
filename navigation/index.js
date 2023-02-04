@@ -39,7 +39,7 @@ function RootNavigator({ navigation, route }) {
   //console.log("userState index.js", userState);
   //console.log("token", userState.token);
 
-  Alert.alert(`token: ${userState.token}`)
+  //Alert.alert(`token: ${userState.token}`)
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

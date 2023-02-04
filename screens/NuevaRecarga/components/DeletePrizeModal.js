@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
-import { NeuButton, NeuInput, NeuView } from "react-native-neu-element";
+
+import NeuButton from "../../../libs/neu_element/NeuButton";
+import NeuView from "../../../libs/neu_element/NeuView";
 
 const { width, height } = Dimensions.get("screen");
 

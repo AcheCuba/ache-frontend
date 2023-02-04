@@ -9,7 +9,7 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import { NeuButton } from "react-native-neu-element";
+import NeuButton from "../../libs/neu_element/NeuButton"
 import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";

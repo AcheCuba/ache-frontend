@@ -14,7 +14,7 @@ import { FlatList } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
 import { TouchableOpacity } from "react-native";
 import { PrePagoTextEnglish, PrePagoTextSpanish } from "../../constants/Texts";
-import { NeuButton } from "react-native-neu-element";
+import NeuButton from "../../libs/neu_element/NeuButton"
 import { Image } from "react-native";
 
 const { width, height } = Dimensions.get("screen");

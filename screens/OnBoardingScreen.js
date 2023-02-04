@@ -4,7 +4,7 @@ import { Image, Dimensions, Platform } from "react-native";
 import { View } from "react-native";
 import { ImageBackground } from "react-native";
 import { TextBold, TextMedium } from "../components/CommonText";
-import { NeuButton } from "react-native-neu-element";
+import NeuButton from "../libs/neu_element/NeuButton";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "react-native";
 import { GlobalContext } from "../context/GlobalProvider";
@@ -19,19 +19,6 @@ const OnBoardingScreen = ({ navigation }) => {
   const [showSkip, setShowSkip] = React.useState(false);
   const [selectedIdiom, setSelectedIdiom] = React.useState("eng");
 
-  /*  const colorTextSpanishAnimation = {
-    color: colorSpanishValue.current.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["rgb(99,71,255)", "rgb(255,99,71)"],
-    }),
-  }; */
-
-  /* const colorTextEnglishAnimation = {
-    color: colorEnglishValue.current.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["rgb(99,71,255)", "rgb(255,99,71)"],
-    }),
-  }; */
 
   const { userState, userDispatch } = React.useContext(GlobalContext);
   const { idioma } = userState;

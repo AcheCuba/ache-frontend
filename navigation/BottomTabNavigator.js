@@ -30,7 +30,7 @@ import { GlobalContext } from "../context/GlobalProvider";
 import { setIdioma } from "../context/Actions/actions";
 import { storeData } from "../libs/asyncStorage.lib";
 import { View } from "react-native";
-import { NeuButton } from "react-native-neu-element";
+import { NeuButton } from "../libs/neu_element/NeuButton";
 import PremioDescription from "../screens/More/PremioDescription";
 import { Audio } from "expo-av";
 

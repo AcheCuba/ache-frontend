@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, Text, TextInput, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { NeuButton, NeuInput, NeuView } from "react-native-neu-element";
+import { Modal, StyleSheet, View } from "react-native";
+import NeuInput from "../../../libs/neu_element/NeuInput"
 import CommonNeuButton from "../../../components/CommonNeuButton";
 import { GlobalContext } from "../../../context/GlobalProvider";
 

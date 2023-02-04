@@ -10,6 +10,7 @@ import { useFonts } from "expo-font";
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const { userState, userDispatch } = React.useContext(GlobalContext);
+  
   const [assets] = useAssets([
     require("../assets/images/home/fondoOscuro.png"),
     require("../assets/images/home/bisel.png"),
@@ -109,7 +110,7 @@ export default function useCachedResources() {
         }
       } catch (e) {
         // We might want to provide this error information to an error reporting service
-        //console.warn(e);
+        console.warn(e);        
       } finally {
         setLoadingComplete(true);
       }
