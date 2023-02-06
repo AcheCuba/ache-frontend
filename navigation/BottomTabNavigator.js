@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+// import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigationState } from "@react-navigation/native";
@@ -30,7 +30,8 @@ import { GlobalContext } from "../context/GlobalProvider";
 import { setIdioma } from "../context/Actions/actions";
 import { storeData } from "../libs/asyncStorage.lib";
 import { View } from "react-native";
-import { NeuButton } from "../libs/neu_element/NeuButton";
+import NeuButton  from "../libs/neu_element/NeuButton";
+
 import PremioDescription from "../screens/More/PremioDescription";
 import { Audio } from "expo-av";
 
@@ -74,6 +75,28 @@ export default function BottomTabNavigator({ navigation, route }) {
     setSoundTabNav(_sound);
   }
 
+  const TabBarVisibility = () => {
+    let routeName;
+    const myRoutes = state?.routes[0]?.state?.routes[1]?.state?.routes;
+    if (myRoutes) {
+      routeName = myRoutes[myRoutes.length - 1]?.name;
+    }
+    switch (routeName) {
+      case "MultiplesContactosScreen":
+      //return false;
+      case "RecargasDisponiblesScreen":
+      //return false;
+      case "PrePagoScreen":
+      //return false;
+      case "PagoScreen":
+      case "PagoCompletadoScreen":
+      case "PagoErrorScreen":
+        return 'none';
+      default:
+        return 'flex';
+    }
+  }
+
   const forFade = ({ current }) => ({
     cardStyle: {
       opacity: current.progress,
@@ -84,14 +107,13 @@ export default function BottomTabNavigator({ navigation, route }) {
     <BottomTab.Navigator
       //tabBar={(props) => <MyTabBar {...props} />}
       initialRouteName="Juego"
-      tabBarOptions={{
+      screenOptions={{
         //activeTintColor: Colors.light.tint,
-
-        activeTintColor: "rgb(255, 248, 0)",
-        inactiveTintColor: "rgba(255,255,255,0.3)",
-        keyboardHidesTabBar: true,
+        tabBarActiveTintColor: "rgb(255, 248, 0)",
+        tabBarInactiveTintColor: "rgba(255,255,255,0.3)",
+        tabBarHideOnKeyboard: true,
         //labelStyle: { fontSize: 12, marginBottom: 15, marginTop: -10 },
-        labelStyle: {
+        tabBarLabelStyle: {
           fontSize: 12,
           position: "absolute",
           bottom: 0,
@@ -99,41 +121,39 @@ export default function BottomTabNavigator({ navigation, route }) {
           flex: 1,
           width: 70,
         },
-
         indicatorStyle: {
           backgroundColor: "transparent",
         },
-        style: {
-          justifyContent: "center",
-          alignItems: "center",
-          height: 100,
-          //paddingTop: 3,
-          allowFontScaling: true,
-          backgroundColor: "rgba(112, 28, 87, 1)",
-          borderTopWidth: 0,
-          // zIndex: 10,
-          paddingHorizontal: 20,
-          borderTopLeftRadius: 35,
-          borderTopRightRadius: 35,
-          paddingBottom: Platform.OS === "android" ? 10 : 18,
-          //borderTopColor:
-          //  Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
-          shadowColor: Platform.OS === "android" ? null : "#1f0918",
-          shadowOffset:
-            Platform.OS === "android" ? null : { width: -6, height: -6 },
-          shadowOpacity: Platform.OS === "android" ? null : 0.6,
-          shadowRadius: Platform.OS === "android" ? null : 7,
-          elevation: Platform.OS === "android" ? 200 : null,
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-        },
-        /* tabBarStyle: {
-          
-        }, */
+    
+        tabBarStyle: {
+            display: TabBarVisibility(),
+            justifyContent: "center",
+            alignItems: "center",
+            height: 100,
+            //paddingTop: 3,
+            allowFontScaling: true,
+            backgroundColor: "rgba(112, 28, 87, 1)",
+            borderTopWidth: 0,
+            // zIndex: 10,
+            paddingHorizontal: 20,
+            borderTopLeftRadius: 35,
+            borderTopRightRadius: 35,
+            paddingBottom: Platform.OS === "android" ? 10 : 18,
+            //borderTopColor:
+            //  Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
+            shadowColor: Platform.OS === "android" ? null : "#1f0918",
+            shadowOffset:
+              Platform.OS === "android" ? null : { width: -6, height: -6 },
+            shadowOpacity: Platform.OS === "android" ? null : 0.6,
+            shadowRadius: Platform.OS === "android" ? null : 7,
+            elevation: Platform.OS === "android" ? 200 : null,
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+        }
       }}
-      screenOptions={{}}
+
     >
       <BottomTab.Screen
         name="Juego"
@@ -145,6 +165,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           },
         }}
         options={{
+          headerShown: false,
           tabBarIcon: () => <TabButtonNeo iconName="Ruleta" />,
           tabBarButton: (props) => {
             return (
@@ -165,23 +186,12 @@ export default function BottomTabNavigator({ navigation, route }) {
                 />
               </View>
             );
-          },
+          }, 
 
           tabBarLabel: idioma_definido === "spa" ? "JUEGA" : "PLAY",
-          /*  tabBarVisible: ((route) => {
-            const routeName = getFocusedRouteNameFromRoute(route) ?? "Juego"; // trampilla
-            //console.log("route name", routeName);
-            //const routeName = getFocusedRouteNameFromRoute(route);
-
-            if (routeName === "Juego") {
-              return false;
-            }
-
-            return true;
-          })(route), */
         }}
       />
-      <BottomTab.Screen
+     <BottomTab.Screen
         name="Nueva Recarga"
         component={NuevaRecargaNavigator}
         listeners={{
@@ -190,6 +200,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           },
         }}
         options={{
+          headerShown: false,
           tabBarIcon: () => <TabButtonNeo iconName="Recarga" />,
           tabBarButton: (props) => {
             return (
@@ -212,31 +223,6 @@ export default function BottomTabNavigator({ navigation, route }) {
             );
           },
           tabBarLabel: idioma_definido === "spa" ? "RECARGA" : "RECHARGE",
-          tabBarVisible: ((route) => {
-            /* const routeName =
-              getFocusedRouteNameFromRoute(route) ?? "MultiplesContactosScreen"; */
-            let routeName;
-
-            const myRoutes = state?.routes[0]?.state?.routes[1]?.state?.routes;
-            if (myRoutes) {
-              routeName = myRoutes[myRoutes.length - 1]?.name;
-            }
-            switch (routeName) {
-              case "MultiplesContactosScreen":
-              //return false;
-              case "RecargasDisponiblesScreen":
-              //return false;
-              case "PrePagoScreen":
-              //return false;
-              case "PagoScreen":
-              case "PagoCompletadoScreen":
-              case "PagoErrorScreen":
-              case "PremioDescription":
-                return false;
-              default:
-                return true;
-            }
-          })(route),
         }}
       />
       <BottomTab.Screen
@@ -249,6 +235,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         }}
         options={{
           tabBarIcon: () => <TabButtonNeo iconName="Settings" />,
+          headerShown: false,
           tabBarButton: (props) => {
             return (
               <View
@@ -270,16 +257,15 @@ export default function BottomTabNavigator({ navigation, route }) {
             );
           },
           tabBarLabel: idioma_definido === "spa" ? "MÁS" : "MORE",
-          tabBarVisible: ((route) => {
-            /* const routeName =
-              getFocusedRouteNameFromRoute(route) ?? "MultiplesContactosScreen"; */
+          /* tabBarVisible: ((route) => {
+            //const routeName =
+            //  getFocusedRouteNameFromRoute(route) ?? "MultiplesContactosScreen"; 
             let routeName;
 
             const myRoutes = state?.routes[0]?.state?.routes[2]?.state?.routes;
             if (myRoutes) {
               routeName = myRoutes[myRoutes.length - 1]?.name;
             }
-
             //console.log("new", state?.routes[0]?.state.routes[2].state?.routes);
 
             switch (routeName) {
@@ -288,7 +274,7 @@ export default function BottomTabNavigator({ navigation, route }) {
               default:
                 return true;
             }
-          })(route),
+          })(route), */
         }}
       />
       <BottomTab.Screen
@@ -322,13 +308,14 @@ export default function BottomTabNavigator({ navigation, route }) {
           },
         })}
         options={{
-          /*  tabBarIcon: ({ color }) => (
-            <TabBarIcon
-              name="flag"
-              //color={spa ? "#005005" : "#8e0000"}
-              color={color}
-            />
-          ), */
+          //  tabBarIcon: ({ color }) => (
+          //  <TabBarIcon
+          //    name="flag"
+          //    //color={spa ? "#005005" : "#8e0000"}
+          //    color={color}
+          //  />
+          // ),
+          headerShown: false,
           tabBarIcon: () => <TabButtonNeo iconName="Idioma" />,
           tabBarLabel: idioma_definido === "spa" ? "IDIOMA" : "LANGUAGE",
           tabBarButton: (props) => {
@@ -368,9 +355,9 @@ export default function BottomTabNavigator({ navigation, route }) {
   return <Ionicons size={30} style={{ marginBottom: -3 }} {...props} />;
 } */
 
-function TabBarIcon(props) {
+/* function TabBarIcon(props) {
   return <Ionicons size={30} style={{ marginBottom: -3 }} {...props} />;
-}
+} */
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab

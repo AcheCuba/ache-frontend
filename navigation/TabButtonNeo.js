@@ -63,41 +63,9 @@ const TabButtonNeo = ({ iconName }) => {
   };
 
   return (
-    /*    <NeuButton
-      color="#701c57"
-      width={50}
-      height={50}
-      borderRadius={25}
-      style={{ justifyContent: "center", alignItems: "center" }}
-    >
-      <Icon />
-    </NeuButton> */
+   
     <Icon />
 
-    /*   <View
-      style={{
-        backgroundColor: "#701c57",
-        width: 58,
-        height: 58,
-        borderRadius: 29,
-        ...StyledCrossPlat("topShadow"),
-      }}
-    >
-      <View
-        style={{
-          //borderWidth: 0.5,
-          //borderColor: "#eee"
-          backgroundColor: "#701c57",
-          width: 58,
-          height: 58,
-          borderRadius: 29,
-          justifyContent: "center",
-          alignItems: "center",
-          ...StyledCrossPlat("bottomShadow"),
-        }}
-      >
-      </View>
-    </View> */
   );
 };
 
