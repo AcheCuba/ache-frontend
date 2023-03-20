@@ -311,7 +311,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           );
           nuevaRecargaDispatch(toggleValidateInProcess(false));
         })
-        .catch((error) => {
+        .catch(() => {
           Toast.show(ResolveText("codigoInvalido"), {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,

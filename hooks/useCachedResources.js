@@ -4,6 +4,7 @@ import { GlobalContext } from "../context/GlobalProvider";
 import { restore_user } from "../context/Actions/actions";
 import moment from "moment";
 import { getData, storeData } from "../libs/asyncStorage.lib";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAssets } from "expo-asset";
 import { useFonts } from "expo-font";
 
@@ -54,7 +55,7 @@ export default function useCachedResources() {
         });
         userDispatch(restore_user({ ...user, prize: null, token }));
 
-        user = await getData("user"); */
+        user = await getData("user");  */
 
         //===================== solo para eliminar premio en app ===========================
 

@@ -1,7 +1,6 @@
 import * as React from "react";
 import {
   ScrollView,
-  StyleSheet,
   View,
   Dimensions,
   Alert,
@@ -79,14 +78,19 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
   async function playSoundError() {
     //console.log("Loading Sound");
+
     const _sound = new Audio.Sound();
     await _sound.loadAsync(require("../../assets/Sonidos/error.wav"), {
       shouldPlay: true,
     });
     await _sound.setPositionAsync(0);
-    await _sound.playAsync();
+
+    try {
+      await _sound.playAsync();
+  } catch (e) {
+    //console.error(e);
     setSoundError(_sound);
-    //console.log("Playing Sound");
+  }
   }
 
   const ResolveText = (site) => {
@@ -308,8 +312,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       axios(config)
         .then((response) => {
           setProducts(response.data);
-          //console.log("products");
-          //console.log(response.data);
+          // console.log("products");
+          // console.log(response.data);
           setLoadingProducts(false);
         })
         .catch((err) => {
@@ -406,6 +410,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       let promisesForTransaction = [];
       contactosSeleccionados.forEach((contacto) => {
         promisesForTransaction.push(create_transaction(contacto, productId));
+        // promisesForTransaction.push(create_transaction(contacto, "123")); //provocar error
       });
 
       for (const promise of promisesForTransaction) {

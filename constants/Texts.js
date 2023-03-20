@@ -80,6 +80,8 @@ export const NuevaRecargaTextSpanish = () => {
     ofertas: "ofertas disponibles",
     precio: "precio",
     monto: "monto",
+    errorConexion: "Ha ocurrido un fallo en la conexión. Revisa por favor.",
+    errorDesconocido: "Error desconocido. Cierra la app e inténtalo de nuevo.",
   };
 };
 
@@ -91,6 +93,8 @@ export const NuevaRecargaTextEnglish = () => {
     ofertas: "top-ups available",
     precio: "price",
     monto: "amount",
+    errorConexion: "Connection fail. Please check.",
+    errorDesconocido: "Unknown error. Close the app and try again.",
   };
 };
 

@@ -56,7 +56,7 @@ export default function BottomTabNavigator({ navigation, route }) {
   const idioma_definido = userState?.idioma;
   const [soundTabNav, setSoundTabNav] = React.useState();
 
-  React.useEffect(() => {
+   React.useEffect(() => {
     return soundTabNav
       ? () => {
           soundTabNav.unloadAsync();
@@ -65,7 +65,9 @@ export default function BottomTabNavigator({ navigation, route }) {
   }, [soundTabNav]);
 
   async function playSoundTabNav() {
+
     //console.log("play sound");
+    //const { sound } = await Audio.Sound.createAsync( require("../assets/Sonidos/tab_nav.wav"))
     const _sound = new Audio.Sound();
     await _sound.loadAsync(require("../assets/Sonidos/tab_nav.wav"), {
       shouldPlay: true,

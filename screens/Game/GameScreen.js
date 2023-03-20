@@ -87,6 +87,10 @@ const GameScreen = ({ navigation }) => {
     React.useState();
   const [soundGanasGranPremio, setSoundGanasGranPremio] = React.useState();
   const [soundImpulsoRuleta, setSoundImpulsoRuleta] = React.useState();
+  const [prizeCollectedError, setPrizeCollectedError] = React.useState(false);
+  const [prizePendingError, setPrizePendingError] = React.useState(false);
+  const [prizeInactiveError, setPrizeInactiveError] = React.useState(false);
+  const [verificationError, setVerificationError] = React.useState(false)
 
   const [casillaFinal, setCasillaFinal] = React.useState("7200deg");
   const thereIsPrizeResult = React.useRef(false);
@@ -104,26 +108,84 @@ const GameScreen = ({ navigation }) => {
   const SENSIBILITY_TIME = 4000; //mantener proporción con ANIMATION_TIME
   const TO_VALUE = 20;
 
-  /* React.useEffect(() => {
-    console.log(casillaFinal);
-  }, [casillaFinal]); */
+  React.useEffect(() => {
+    if (verificationError) {
+      Toast.show(
+        userState.idioma == "spa"
+          ? "No hemos podido verificar el estado de este premio. Intente más tarde"
+          : "We have not been able to verify the status of this award. Please try again later",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
+      setVerificationError(false)
+    }
+  }, [verificationError]);
 
-  /*  React.useEffect(() => {
-    //console.log(width);
-    //console.log(height);
-    //console.log(JoyaWon);
-    console.log(userState);
-    //console.log(width / 3);
-  }, [userState]); */
+React.useEffect(() => {
+    if (prizeCollectedError) {
+      Toast.show(
+        userState.idioma == "spa"
+          ? "Este premio ya ha sido cobrado"
+          : "This prize has already been collected",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
+      setPrizeCollectedError(false)
+    }
+  }, [prizeCollectedError]); 
 
-  /*  React.useEffect(() => {
-    //setPremioAcumuladoType("Jackpot");
-    userDispatch(
-      setPrizeForUser({
-        type: "Jackpot",
-      })
+
+React.useEffect(() => {
+  if (prizePendingError) {
+    Toast.show(
+      userState.idioma == "spa"
+        ? "No se pudo librerar el premio. Intente más tarde por favor"
+        : "The prize could not be released. Please try again later",
+      {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+      }
     );
-  }, []); */
+    setPrizePendingError(false)
+  }
+}, [prizePendingError]); 
+
+React.useEffect(() => {
+  if (prizeInactiveError) {
+    Toast.show(
+      userState.idioma == "spa"
+        ? "Este premio no está activo"
+        : "This prize is not active",
+      {
+        duaration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+      }
+    );
+    setPrizeInactiveError(false)
+  }
+}, [prizeInactiveError]);
+
+  
 
   async function playSoundImpulsoRuleta() {
     const _sound = new Audio.Sound();
@@ -910,6 +972,10 @@ const GameScreen = ({ navigation }) => {
                   setCodigoGenerado={setCodigoGenerado}
                   codigoGenerado={codigoGenerado}
                   horasRestantes={horasRestantes}
+                  setPrizeCollectedError={setPrizeCollectedError}
+                  setPrizePendingError={setPrizePendingError}
+                  setPrizeInactiveError={setPrizeInactiveError}
+                  setVerificationError={setVerificationError}
                 />
               </RootSiblingParent>
             </View>
@@ -1368,13 +1434,16 @@ const GameScreen = ({ navigation }) => {
 
                     // si era un premio, MODAL de que ha EXPIRADO
                   } else {
+                    // abrir modal
                     setPremioExpirado(true);
                   }
 
+                  // eliminar premio del storage de la app
                   storeData("user", {
                     ...userState,
                     prize: null,
                   });
+                  // eliminar premio del estado de la app
                   userDispatch(setPrizeForUser(null));
                 } else {
                   // flujo normal

@@ -28,6 +28,10 @@ const CobrarPremioContent = ({
   codigoGenerado,
   setCodigoGenerado, // equivale a codigo copiado
   horasRestantes,
+  setPrizeCollectedError,
+  setPrizePendingError,
+  setPrizeInactiveError,
+  setVerificationError
 }) => {
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
@@ -37,6 +41,7 @@ const CobrarPremioContent = ({
   const [loading, setLoading] = useState(false);
   const [prizeType, setPrizeType] = useState("");
   const [prizeAmount, setPrizeAmount] = useState(0);
+  const [loadingObtenerPremio, setLoadingObtenerPremio] = useState(false)
 
   React.useEffect(() => {
     setPrizeType(currentPrize?.type);
@@ -60,43 +65,15 @@ const CobrarPremioContent = ({
   }, [userState]); */
 
   const copyToClipboard = (code) => {
-    Clipboard.setString(code);
+    Clipboard.setStringAsync(code);
   };
 
-  /* const EncriptarCodigo = (codigo) => {
-    const codigoEncriptado =
-      codigo.slice(0, 13) +
-      "***" +
-      codigo.slice(codigo.length - 3, codigo.length);
-
-    return codigoEncriptado;
-  }; */
-
-  const onPressGenerarCodigo = () => {
-    // setear codigo a la API
-    // setear código resultante
-
-    //if (currentPrize !== null) {
-    setLoading(true);
-
+ const generarCodigoRequest = () => {
     const user_token = userState.token;
     const prize_id = currentPrize.uuid;
     const url = `${BASE_URL}/prize/exchange/${prize_id}`;
     //console.log(userState);
     //console.log(url);
-
-    // ====== fake para probar
-    /*   userDispatch(setPrizeForUser(null));
-
-    setTimeout(() => {
-      //setCodigo("prizeCode fake");
-      setCodigoGenerado(true);
-      copiarCode("prizeCode fake");
-      setLoading(false);
-    }, 3000); */
-    // ===== fake para probar
-
-    //====================== comentar para trastear ============
 
     let config = {
       method: "post",
@@ -108,13 +85,11 @@ const CobrarPremioContent = ({
     axios(config)
       .then((response) => {
         if (response.status === 201) {
-          const prizeResultUpdated = response.data; // exchanged true
+          // const prizeResultUpdated = response.data; // exchanged true
           const prizeCode = currentPrize.uuid;
 
-          //console.log(userState);
-
           // actualizar persistencia
-          //storeData({ ...userState, prize: prizeResultUpdated });
+          // storeData({ ...userState, prize: prizeResultUpdated });
           storeData("user", { ...userState, prize: null });
 
           // actualizar estado global
@@ -122,24 +97,91 @@ const CobrarPremioContent = ({
           // para no afectar al estado de Nueva Recarga
           nuevaRecargaDispatch(resetNuevaRecargaState());
 
-          // limpiar notificación
-          // cleanNotification();
-
           // actualizar estado local
-          //setCodigo(prizeCode);
           copiarCode(prizeCode);
-          setLoading(false);
-        } else {
-          // do something
-          //console.log(response.status);
-          setLoading(false);
+      }})
+      .catch((error) => {
+        // console.log("error obteniendo codigo:", error);
+      })
+      .finally(()=>{
+        setLoading(false);
+      })
+  }
+ 
+  const onPressGenerarCodigo = () => {
+    setLoading(true);
+
+    verificarEstadoPremio()
+      .then((response) => {
+        // console.log(response.status)
+        if (response.status === 200) {
+          const prizeStatus = response.data.status;
+
+          if (prizeStatus === "active") {
+            // codigo actual
+            generarCodigoRequest()
+          }
+          if (prizeStatus === "inactive") {            
+             // eliminar premio del storage
+             storeData("user", {
+              ...userState,
+              prize: null,
+            });
+            // eliminar premio del estado de la app
+            userDispatch(setPrizeForUser(null)); 
+            setLoading(false);
+            setModalVisible(false)
+            // toast menssaje inactivo
+            setPrizeInactiveError(true)
+          }
+          if (prizeStatus === "collected") {
+            
+            // finish_checkout con true
+            const prize_id = currentPrize.uuid;
+            prize_finish_checkout(prize_id, true)
+              .then(() => {
+                //console.log("premio libre")
+              })
+              .catch(() => {
+                //console.log("error liberando el premio")
+              })
+              .finally(() => {
+                setLoading(false)
+              })
+            // eliminar premio de la app
+            storeData("user", {
+              ...userState,
+              prize: null,
+            });
+            // eliminar premio del estado de la app
+            userDispatch(setPrizeForUser(null));
+
+            setModalVisible(false)
+
+            // toast mensaje colleted
+            setPrizeCollectedError(true)
+          }
+          if (prizeStatus === "pending") {     
+            // finalizar checkout con false
+            const prize_id = currentPrize.uuid;
+            prize_finish_checkout(prize_id, false)
+              .then((response) => {
+                if (response.status === 201) {
+                   // tonce considerar activo e intentar cambiarlo por codigo
+                   generarCodigoRequest()
+                }
+              })
+              .catch(() => {
+                setModalVisible(false)
+                setPrizePendingError(true) //-> toast: no se pudo liberar
+              });
+          }
         }
       })
-      .catch((error) => {
-        //console.log(error);
-        setLoading(false);
-      });
-    //====================== comentar para trastear ============
+      .catch(() => {
+        setModalVisible(false);
+        setVerificationError(true)
+      })
   };
 
   /* const cleanNotification = async () => {
@@ -151,6 +193,7 @@ const CobrarPremioContent = ({
   }; */
 
   const copiarCode = (code) => {
+    console.log(code)
     copyToClipboard(code);
     setCodigoGenerado(true);
 
@@ -164,17 +207,119 @@ const CobrarPremioContent = ({
     //setCodigoGenerado(false);
   };
 
+  const verificarEstadoPremio = () => {
+    const user_token = userState.token;
+    const prize_id = currentPrize.uuid;
+    const url = `${BASE_URL}/prize/status/${prize_id}`;
+
+    let config = {
+      method: "get",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    return axios(config)
+  }
+
+
+
   const onPressObtenerPremio = () => {
-    setModalVisible(false);
-    /* navigation.jumpTo("Nueva Recarga", {
-        screen: "NuevaRecargaScreen",
-        fromCobrarPremio: true,
-      }); */
-    navigation.jumpTo("Nueva Recarga", {
-      screen: "NuevaRecargaScreen",
-      params: { inOrderToCobrarPremio: true },
-    });
+      setLoadingObtenerPremio(true)
+      verificarEstadoPremio()
+      .then((response) => {
+        // console.log(response.status)
+        if (response.status === 200) {
+          const prizeStatus = response.data.status;
+          if (prizeStatus === "active") {
+            setModalVisible(false);
+            setLoadingObtenerPremio(false)
+            // console.log(prizeStatus)
+            navigation.jumpTo("Nueva Recarga", {
+              screen: "NuevaRecargaScreen",
+              params: { inOrderToCobrarPremio: true },
+            });
+          }
+          if (prizeStatus === "collected") {
+            const prize_id = currentPrize.uuid;
+            prize_finish_checkout(prize_id, true)
+            .then(() => {})
+            .catch(() => {})
+            .finally(() => {
+              setLoadingObtenerPremio(false)
+            })
+            // eliminar premio del storage
+            storeData("user", {
+              ...userState,
+              prize: null,
+            });
+            // eliminar premio del estado de la app
+            userDispatch(setPrizeForUser(null));  
+
+            setModalVisible(false);
+
+            // mensaje de que el premio ya esta cobrado
+            // esto activa el estado en GameScreen, se lanza un toast
+            setPrizeCollectedError(true)
+          }
+          if (prizeStatus === "pending") {
+            console.log("pending")
+            const prize_id = currentPrize.uuid;
+            prize_finish_checkout(prize_id, false)
+            .then((response) => {
+              console.log("response status finish checkout:", response.status)
+              if (response.status === 201) {
+                // continuar
+                setLoadingObtenerPremio(false)
+                setModalVisible(false);
+                navigation.jumpTo("Nueva Recarga", {
+                  screen: "NuevaRecargaScreen",
+                  params: { inOrderToCobrarPremio: true },
+                });
+              } 
+            })
+            .catch(() => {
+              setModalVisible(false);
+              setLoadingObtenerPremio(false)
+              setPrizePendingError(true) //-> toast: no se pudo liberar
+            });
+          }
+          if (prizeStatus === "inactive") {
+            setLoadingObtenerPremio(false)
+            setModalVisible(false);
+            // eliminar premio del storage
+            storeData("user", {
+              ...userState,
+              prize: null,
+            });
+            // eliminar premio del estado de la app
+            userDispatch(setPrizeForUser(null));
+            setPrizeInactiveError(true) //-> toast: el premio no está activo
+          }
+        } 
+      })
+      .catch(() => {
+        // error toast
+        setModalVisible(false);
+        setVerificationError(true)
+      })
   };
+
+  const prize_finish_checkout = (uuid, _success) => {
+    const user_token = userState.token;
+    const url = `${BASE_URL}/prize/finish-checkout/${uuid}`;
+    let config = {
+      method: "post",
+      url: url,
+      params: { success: _success },
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    return axios(config)
+  }
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
@@ -333,28 +478,43 @@ const CobrarPremioContent = ({
 
       <View style={{ marginTop: 30, alignItems: "center" }}>
         <View style={styles.button}>
-          <NeuButton
-            color="#62194f"
+          {loadingObtenerPremio ? (
+            <NeuButton
+            color="#5e174d"
             width={(4 / 5) * width}
             height={width / 7.5}
             borderRadius={width / 7.5}
-            onPress={() => {
-              // antes el condicional era con loading solo
-              codigoGenerado || loading ? null : onPressObtenerPremio();
-            }}
-            active={codigoGenerado}
-            inset={false}
+            onPress={() => {}}
+            inset
             style={{ marginTop: 5 }}
           >
-            <TextBold
-              text={ResolveText("obtenerPremio")}
-              style={{
-                color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
-                fontSize: 20,
-                textTransform: "uppercase",
-              }}
-            />
+            <ActivityIndicator size="large" color="#fff800" />
           </NeuButton>
+          ):(
+          <NeuButton
+              color="#62194f"
+              width={(4 / 5) * width}
+              height={width / 7.5}
+              borderRadius={width / 7.5}
+              onPress={() => {
+                // antes el condicional era con loading solo
+                codigoGenerado || loading ? null : onPressObtenerPremio();
+              }}
+              active={codigoGenerado}
+              inset={false}
+              style={{ marginTop: 5 }}
+            >
+              <TextBold
+                text={ResolveText("obtenerPremio")}
+                style={{
+                  color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
+                  fontSize: 20,
+                  textTransform: "uppercase",
+                }}
+              />
+            </NeuButton>
+          )}
+          
         </View>
         <View style={styles.button}>
           {!loading ? (
