@@ -209,6 +209,8 @@ const PagoScreen = ({ navigation, route }) => {
                     // ================ UPDATE 23-07-22: =================
                   })
                   .catch((err) => {
+                    // 21-03-23 -> agregado el finish checkout con false en caso de erorr
+                    prize_finish_checkout(transaccionDePremio.prize_uuid, false); // no cobrado
                     /*  console.log(
                       "confirm transaction request error",
                       err.response.status
