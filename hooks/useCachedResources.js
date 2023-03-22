@@ -7,6 +7,8 @@ import { getData, storeData } from "../libs/asyncStorage.lib";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAssets } from "expo-asset";
 import { useFonts } from "expo-font";
+import { BASE_URL } from "../constants/domain";
+import axios from "axios";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -31,6 +33,39 @@ export default function useCachedResources() {
     "bs-italic": require("../assets/fonts/bloggerSans/BloggerSans-MediumItalic.ttf"),
     "bs-bold-italic": require("../assets/fonts/bloggerSans/BloggerSans-BoldItalic.ttf"),
   });
+
+  const verificarEstadoPremio = (user) => {
+    const user_token = user.token;
+    const prize_id = user.prize?.uuid;
+    const url = `${BASE_URL}/prize/status/${prize_id}`;
+
+    let config = {
+      method: "get",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    return axios(config)
+  }
+
+  const prize_finish_checkout = (user, uuid, success) => {
+    const user_token = user.token;
+    const url = `${BASE_URL}/prize/finish-checkout/${uuid}`;
+    let config = {
+      method: "post",
+      url: url,
+      params: { success },
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    return axios(config)
+  }
+
+
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
@@ -104,8 +139,54 @@ export default function useCachedResources() {
                   token,
                 })
               );
+
+              verificarEstadoPremio(user)
+              .then((response) => {
+                if (response.status === 200) {
+                  const prizeStatus = response.data.status;
+                  // console.log(prizeStatus)
+                  if (prizeStatus === "pending") {
+                    // finalizar checkout con false
+                    const prize_id = currentPrizeState.uuid
+                    prize_finish_checkout(user, prize_id, false)
+                    .then((response) => {
+                      if (response.status === 201) {
+                        // console.log("premio liberado")
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err)
+                    });
+                  }
+                  if (prizeStatus === "collected") {
+                    // finalizar checkout con true
+                    const prize_id = currentPrizeState.uuid
+                    prize_finish_checkout(user, prize_id, true)
+                    .then((response) => {
+                      if (response.status === 201) {
+                        //console.log("premio liberado")
+                      }
+                    })
+                    .catch((err) => {
+                      //console.log(err)
+                    });
+                    // eliminar premio del storage
+                    storeData("user", {
+                      ...user,
+                      prize: null,
+                    });
+                    // eliminar premio del estado de la app
+                    userDispatch(restore_user({ ...user, prize: null, token }));
+                  }
+                }
+
+              })
+              .catch((err) => {
+                // console.log(err)
+              })
             }
           } else {
+            // aqui se copia lo guardado en el storage para el estado actual de la app
             userDispatch(restore_user({ ...user, token }));
           }
         }

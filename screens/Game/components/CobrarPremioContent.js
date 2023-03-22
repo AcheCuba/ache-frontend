@@ -306,13 +306,13 @@ const CobrarPremioContent = ({
       })
   };
 
-  const prize_finish_checkout = (uuid, _success) => {
+  const prize_finish_checkout = (uuid, success) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/prize/finish-checkout/${uuid}`;
     let config = {
       method: "post",
       url: url,
-      params: { success: _success },
+      params: { success },
       headers: {
         Authorization: `Bearer ${user_token}`,
       },

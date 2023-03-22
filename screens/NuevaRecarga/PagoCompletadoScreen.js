@@ -28,9 +28,13 @@ const PagoCompletadoScreen = ({ navigation }) => {
   const [soundFbPositivo, setSoundFbPositivo] = React.useState();
   const [updateForzado, setUpdateForzado] = React.useState(false);
 
+  // es posible que esto lo use mas adelante
   /* React.useEffect(() => {
-    console.log(globalUpdateCompleted);
-  }, [globalUpdateCompleted]); */
+    if (globalUpdateCompleted || updateForzado) {
+      // limpiar storage (user en proceso de recarga)
+    }
+
+  }, [globalUpdateCompleted, updateForzado]); */
 
   React.useEffect(() => {
     const timer_id = setTimeout(() => {

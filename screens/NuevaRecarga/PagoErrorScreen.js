@@ -15,12 +15,14 @@ const { width } = Dimensions.get("screen");
 
 const PagoErrorScreen = ({ navigation }) => {
   const { userState, nuevaRecargaState } = React.useContext(GlobalContext);
-  //const { premiosConfirmadosSocket } = nuevaRecargaState;
 
-  //const { paymentIntentId, amount } = route.params;
-  //const paymentIntentId = "pi_1234";
-  //const amount = 250;
+  // es posible que esto lo use mas adelante
+  /* React.useEffect(() => {
+    console.log("useEffect pago error")
+    // limpiar storage (user en proceso de recarga)
 
+  }) */
+  
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
     const textSpa = ResultadoPagoTextSpanish();
