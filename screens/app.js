@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Alert, Platform } from "react-native";
 import useCachedResources from "../hooks/useCachedResources";
 import Navigation from "../navigation";
 import io from "socket.io-client";
@@ -23,14 +21,64 @@ import {
 import { BASE_URL } from "../constants/domain";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
+import LottieView from "lottie-react-native";
 
-// Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
-export default function MainApp() {
-  const isLoadingComplete = useCachedResources();
-  //const isLoadingComplete = true
+export default function MainAppWrapper() {
+  return (
+    <AnimatedSplashScreen
+      animationSource={require("../assets/animaciones/cocodrilo.mov.lottie.json")}
+    >
+      <MainApp />
+    </AnimatedSplashScreen>
+  );
+}
 
+function AnimatedSplashScreen({ animationSource, children }) {
+  const isAppReady = useCachedResources();
+  const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
+  const animation = useRef(null);
+
+  React.useEffect(() => {
+    async function hideFirstScreen() {
+      await SplashScreen.hideAsync();
+    }
+
+    if (isAppReady) {
+      hideFirstScreen();
+    }
+  }, [isAppReady]);
+
+  setTimeout(() => {
+    setAnimationComplete(true);
+  }, 5300);
+
+  return (
+    <View style={{ flex: 1 }}>
+      {isSplashAnimationComplete && children}
+      {!isSplashAnimationComplete && (
+        <View style={{ flex: 1, backgroundColor: "#fff" }}>
+          <LottieView
+            autoPlay
+            loop={false}
+            source={animationSource}
+            ref={animation}
+            /* onAnimationFinish={() => {
+              if (isAppReady) {
+                setAnimationComplete(true);
+              } else {
+                animation.current?.play();
+              }
+            }} */
+          />
+        </View>
+      )}
+    </View>
+  );
+}
+
+function MainApp() {
   // for socket communication
 
   let transaction_result_arr = [];
@@ -63,9 +111,7 @@ export default function MainApp() {
 
   let socket = io.connect(`${BASE_URL}`);
 
-
-
-useEffect(() => {
+  useEffect(() => {
     //console.log("update completed? ", updateCompleted);
 
     if (updateCompleted) {
@@ -85,7 +131,7 @@ useEffect(() => {
     }
   }, [updateCompleted]);
 
-useEffect(() => {
+  useEffect(() => {
     //console.log("update normales completed? ", updateNormalesCompleted);
     //console.log("update premios completed? ", updatePremiosCompleted);
 
@@ -93,7 +139,7 @@ useEffect(() => {
       setUpdateCompleted(true);
       socketDispatch(SetGlobalUpdateCompleted(true));
     }
-  }, [updateNormalesCompleted, updatePremiosCompleted]); 
+  }, [updateNormalesCompleted, updatePremiosCompleted]);
 
   useEffect(() => {
     //console.log("updateNormalesCompleted", updateNormalesCompleted);
@@ -110,8 +156,6 @@ useEffect(() => {
         //socketDispatch(setTransaccionesPremioResultado([]));
       }
       setUpdatePremiosCompleted(true);
-
-     
     }
 
     async function updateTransaccionesNormalesCompleted() {
@@ -218,8 +262,6 @@ useEffect(() => {
         }
       }
     }
-
-  
   }, [
     transacciones_normales_resultado,
     transacciones_normales_esperadas,
@@ -228,7 +270,7 @@ useEffect(() => {
     transactions_id_array,
     updateNormalesCompleted,
     updatePremiosCompleted,
-  ]); 
+  ]);
 
   useEffect(() => {
     //if (socketIsOpen && !socketCurrentlyOpen) {
@@ -244,8 +286,6 @@ useEffect(() => {
         socketDispatch(setSocketId(sid));
       });
     }
-
-
 
     socket.on("transaction-update", (msg) => {
       //console.log("transaction result variable array ", transaction_result_arr);
@@ -293,55 +333,13 @@ useEffect(() => {
           }
         }
       }
-
     });
   }, [socketIsOpen]);
- 
-  const onLayoutRootView = React.useCallback(async () => {
-    //console.log("onlayout function");
-    if (isLoadingComplete) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
-      
-      await SplashScreen.hideAsync();
-      
-      /* Alert.alert(
-          "hide async splash screen",
-          "ejecutado dentro de timeout de 5 segundos",
-          [
-            {
-              text: "cancelar",
-              style: "cancel",
-              onPress: () => {},
-            },
-            {
-              text: "abortar",
-              style: "destructive",
-
-              onPress: () => {},
-            },
-          ]
-        ); */
-        
-      /* setTimeout(async () => {
-        console.log("hide async")
-        await SplashScreen.hideAsync();
-      }, 3000); */
-    }
-  }, [isLoadingComplete]);
-
-  if (!isLoadingComplete) {
-    return null;
-  }
 
   return (
-  <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <Navigation />
       <StatusBar backgroundColor="transparent" style="light" />
-  </View>
-
+    </View>
   );
 }

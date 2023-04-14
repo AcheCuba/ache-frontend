@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigationState } from "@react-navigation/native";
 import * as React from "react";
 
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 
 // screens
 
@@ -30,7 +30,7 @@ import { GlobalContext } from "../context/GlobalProvider";
 import { setIdioma } from "../context/Actions/actions";
 import { storeData } from "../libs/asyncStorage.lib";
 import { View } from "react-native";
-import NeuButton  from "../libs/neu_element/NeuButton";
+import NeuButton from "../libs/neu_element/NeuButton";
 
 import PremioDescription from "../screens/More/PremioDescription";
 import { Audio } from "expo-av";
@@ -56,7 +56,7 @@ export default function BottomTabNavigator({ navigation, route }) {
   const idioma_definido = userState?.idioma;
   const [soundTabNav, setSoundTabNav] = React.useState();
 
-   React.useEffect(() => {
+  React.useEffect(() => {
     return soundTabNav
       ? () => {
           soundTabNav.unloadAsync();
@@ -65,9 +65,6 @@ export default function BottomTabNavigator({ navigation, route }) {
   }, [soundTabNav]);
 
   async function playSoundTabNav() {
-
-    //console.log("play sound");
-    //const { sound } = await Audio.Sound.createAsync( require("../assets/Sonidos/tab_nav.wav"))
     const _sound = new Audio.Sound();
     await _sound.loadAsync(require("../assets/Sonidos/tab_nav.wav"), {
       shouldPlay: true,
@@ -75,6 +72,13 @@ export default function BottomTabNavigator({ navigation, route }) {
     await _sound.setPositionAsync(0);
     await _sound.playAsync();
     setSoundTabNav(_sound);
+    /* const { sound } = await Audio.Sound.createAsync(
+      require("../assets/Sonidos/tab_nav.wav")
+    );
+    setSoundTabNav(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync(); */
   }
 
   const TabBarVisibility = () => {
@@ -93,11 +97,11 @@ export default function BottomTabNavigator({ navigation, route }) {
       case "PagoScreen":
       case "PagoCompletadoScreen":
       case "PagoErrorScreen":
-        return 'none';
+        return "none";
       default:
-        return 'flex';
+        return "flex";
     }
-  }
+  };
 
   const forFade = ({ current }) => ({
     cardStyle: {
@@ -126,36 +130,35 @@ export default function BottomTabNavigator({ navigation, route }) {
         indicatorStyle: {
           backgroundColor: "transparent",
         },
-    
-        tabBarStyle: {
-            display: TabBarVisibility(),
-            justifyContent: "center",
-            alignItems: "center",
-            height: 100,
-            //paddingTop: 3,
-            allowFontScaling: true,
-            backgroundColor: "rgba(112, 28, 87, 1)",
-            borderTopWidth: 0,
-            // zIndex: 10,
-            paddingHorizontal: 20,
-            borderTopLeftRadius: 35,
-            borderTopRightRadius: 35,
-            paddingBottom: Platform.OS === "android" ? 10 : 18,
-            //borderTopColor:
-            //  Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
-            shadowColor: Platform.OS === "android" ? null : "#1f0918",
-            shadowOffset:
-              Platform.OS === "android" ? null : { width: -6, height: -6 },
-            shadowOpacity: Platform.OS === "android" ? null : 0.6,
-            shadowRadius: Platform.OS === "android" ? null : 7,
-            elevation: Platform.OS === "android" ? 200 : null,
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
-        }
-      }}
 
+        tabBarStyle: {
+          display: TabBarVisibility(),
+          justifyContent: "center",
+          alignItems: "center",
+          height: 100,
+          //paddingTop: 3,
+          allowFontScaling: true,
+          backgroundColor: "rgba(112, 28, 87, 1)",
+          borderTopWidth: 0,
+          // zIndex: 10,
+          paddingHorizontal: 20,
+          borderTopLeftRadius: 35,
+          borderTopRightRadius: 35,
+          paddingBottom: Platform.OS === "android" ? 10 : 18,
+          //borderTopColor:
+          //  Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
+          shadowColor: Platform.OS === "android" ? null : "#1f0918",
+          shadowOffset:
+            Platform.OS === "android" ? null : { width: -6, height: -6 },
+          shadowOpacity: Platform.OS === "android" ? null : 0.6,
+          shadowRadius: Platform.OS === "android" ? null : 7,
+          elevation: Platform.OS === "android" ? 200 : null,
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+        },
+      }}
     >
       <BottomTab.Screen
         name="Juego"
@@ -188,12 +191,12 @@ export default function BottomTabNavigator({ navigation, route }) {
                 />
               </View>
             );
-          }, 
+          },
 
           tabBarLabel: idioma_definido === "spa" ? "JUEGA" : "PLAY",
         }}
       />
-     <BottomTab.Screen
+      <BottomTab.Screen
         name="Nueva Recarga"
         component={NuevaRecargaNavigator}
         listeners={{

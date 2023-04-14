@@ -10,10 +10,10 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash_screen_ache.png",
+      "image": "./assets/images/first_screen_splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
-    },
+    }, 
     "updates": {
       "fallbackToCacheTimeout": 0
     },

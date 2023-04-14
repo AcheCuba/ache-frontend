@@ -13,7 +13,7 @@ import axios from "axios";
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const { userState, userDispatch } = React.useContext(GlobalContext);
-  
+
   const [assets] = useAssets([
     require("../assets/images/home/fondoOscuro.png"),
     require("../assets/images/home/bisel.png"),
@@ -47,8 +47,8 @@ export default function useCachedResources() {
       },
     };
 
-    return axios(config)
-  }
+    return axios(config);
+  };
 
   const prize_finish_checkout = (user, uuid, success) => {
     const user_token = user.token;
@@ -62,10 +62,8 @@ export default function useCachedResources() {
       },
     };
 
-    return axios(config)
-  }
-
-
+    return axios(config);
+  };
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
@@ -141,49 +139,50 @@ export default function useCachedResources() {
               );
 
               verificarEstadoPremio(user)
-              .then((response) => {
-                if (response.status === 200) {
-                  const prizeStatus = response.data.status;
-                  // console.log(prizeStatus)
-                  if (prizeStatus === "pending") {
-                    // finalizar checkout con false
-                    const prize_id = currentPrizeState.uuid
-                    prize_finish_checkout(user, prize_id, false)
-                    .then((response) => {
-                      if (response.status === 201) {
-                        // console.log("premio liberado")
-                      }
-                    })
-                    .catch((err) => {
-                      console.log(err)
-                    });
+                .then((response) => {
+                  if (response.status === 200) {
+                    const prizeStatus = response.data.status;
+                    // console.log(prizeStatus)
+                    if (prizeStatus === "pending") {
+                      // finalizar checkout con false
+                      const prize_id = currentPrizeState.uuid;
+                      prize_finish_checkout(user, prize_id, false)
+                        .then((response) => {
+                          if (response.status === 201) {
+                            // console.log("premio liberado")
+                          }
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                    }
+                    if (prizeStatus === "collected") {
+                      // finalizar checkout con true
+                      const prize_id = currentPrizeState.uuid;
+                      prize_finish_checkout(user, prize_id, true)
+                        .then((response) => {
+                          if (response.status === 201) {
+                            //console.log("premio liberado")
+                          }
+                        })
+                        .catch((err) => {
+                          //console.log(err)
+                        });
+                      // eliminar premio del storage
+                      storeData("user", {
+                        ...user,
+                        prize: null,
+                      });
+                      // eliminar premio del estado de la app
+                      userDispatch(
+                        restore_user({ ...user, prize: null, token })
+                      );
+                    }
                   }
-                  if (prizeStatus === "collected") {
-                    // finalizar checkout con true
-                    const prize_id = currentPrizeState.uuid
-                    prize_finish_checkout(user, prize_id, true)
-                    .then((response) => {
-                      if (response.status === 201) {
-                        //console.log("premio liberado")
-                      }
-                    })
-                    .catch((err) => {
-                      //console.log(err)
-                    });
-                    // eliminar premio del storage
-                    storeData("user", {
-                      ...user,
-                      prize: null,
-                    });
-                    // eliminar premio del estado de la app
-                    userDispatch(restore_user({ ...user, prize: null, token }));
-                  }
-                }
-
-              })
-              .catch((err) => {
-                // console.log(err)
-              })
+                })
+                .catch((err) => {
+                  // console.log(err)
+                });
             }
           } else {
             // aqui se copia lo guardado en el storage para el estado actual de la app
@@ -192,7 +191,7 @@ export default function useCachedResources() {
         }
       } catch (e) {
         // We might want to provide this error information to an error reporting service
-        console.warn(e);        
+        console.warn(e);
       } finally {
         setLoadingComplete(true);
       }
