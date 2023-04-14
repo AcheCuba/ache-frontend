@@ -22,13 +22,14 @@ import { BASE_URL } from "../constants/domain";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
 import LottieView from "lottie-react-native";
+import { Audio } from "expo-av";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function MainAppWrapper() {
   return (
     <AnimatedSplashScreen
-      animationSource={require("../assets/animaciones/cocodrilo.mov.lottie.json")}
+      animationSource={require("../assets/animaciones/cocodrilo.lottie.json")}
     >
       <MainApp />
     </AnimatedSplashScreen>
@@ -39,10 +40,32 @@ function AnimatedSplashScreen({ animationSource, children }) {
   const isAppReady = useCachedResources();
   const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
   const animation = useRef(null);
+  const [soundInicio, setSoundInicio] = React.useState();
+
+  async function playSoundInicio() {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../assets/Sonidos/app_inicio.mp3")
+    );
+    setSoundInicio(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+
+  React.useEffect(() => {
+    return soundInicio
+      ? () => {
+          console.log("Unloading Sound");
+          soundInicio.unloadAsync();
+        }
+      : undefined;
+  }, [soundInicio]);
 
   React.useEffect(() => {
     async function hideFirstScreen() {
       await SplashScreen.hideAsync();
+      playSoundInicio();
     }
 
     if (isAppReady) {
@@ -52,7 +75,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
 
   setTimeout(() => {
     setAnimationComplete(true);
-  }, 5300);
+  }, 5000);
 
   return (
     <View style={{ flex: 1 }}>

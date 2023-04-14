@@ -2,7 +2,7 @@ import GlobalProvider from "./context/GlobalProvider";
 import MainAppWrapper from "./screens/app";
 import { RootSiblingParent } from "react-native-root-siblings";
 import React from "react";
-import * as Sentry from "sentry-expo";
+//import * as Sentry from "sentry-expo";
 import { LogBox } from "react-native";
 
 LogBox.ignoreLogs(["EventEmitter.removeListener"]);
