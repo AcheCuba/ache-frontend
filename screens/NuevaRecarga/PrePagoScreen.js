@@ -14,7 +14,7 @@ import { FlatList } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
 import { TouchableOpacity } from "react-native";
 import { PrePagoTextEnglish, PrePagoTextSpanish } from "../../constants/Texts";
-import NeuButton from "../../libs/neu_element/NeuButton"
+import NeuButton from "../../libs/neu_element/NeuButton";
 import { Image } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
@@ -112,26 +112,111 @@ const PrePagoScreen = ({ navigation, route }) => {
     }
   };
 
+  // opcion 1
   const renderItemContact = ({ item }) => {
     return (
-      <View style={{ height: 30, alignItems: "center" }}>
+      <View
+        style={{
+          height: 30,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
         <TextMedium
           text={
             item.contactName != undefined
-              ? item.contactName
-              : item.contactNumber
+              ? item.contactName + " "
+              : item.contactNumber + " "
           }
           style={{
-            fontSize: normalize(26),
+            fontSize: normalize(25),
             //textTransform: "uppercase",
             color: "#01f9d2",
             //marginBottom: 6,
             //marginTop: 5,
           }}
         />
+        {item.prize != null ? (
+          <View style={{ marginLeft: 10, flexDirection: "row" }}>
+            <Image
+              source={
+                item.prize != null
+                  ? item.prize.type === "TopUpBonus" &&
+                    item.prize.amount === 250
+                    ? require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")
+                    : item.prize.type === "TopUpBonus" &&
+                      item.prize.amount === 500
+                    ? require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")
+                    : item.prize.type === "Jackpot"
+                    ? require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")
+                    : null
+                  : null
+              }
+              style={item.prize != null ? { width: 25, height: 24 } : null}
+            />
+            <TextMedium
+              text={
+                item.prize != null
+                  ? item.prize.type === "TopUpBonus"
+                    ? " +" + item.prize?.amount + " CUP "
+                    : null
+                  : null
+              }
+              style={{
+                fontSize: normalize(15),
+                color: "#fffb00",
+              }}
+            />
+          </View>
+        ) : null}
       </View>
     );
   };
+
+  //opcion 2
+  /*   const renderItemContact = ({ item }) => {
+    return (
+      <View
+        style={{
+          height: 30,
+          flexDirection: "row",
+          justifyContent: "center",
+        }}
+      >
+        <TextMedium
+          text={
+            item.contactName != undefined
+              ? item.contactName + " "
+              : item.contactNumber + " "
+          }
+          style={{
+            fontSize: normalize(25),
+            //textTransform: "uppercase",
+            color: "#01f9d2",
+            //marginBottom: 6,
+            //marginTop: 5,
+          }}
+        />
+        {item.prize != null ? (
+          <Image
+            source={
+              item.prize != null
+                ? item.prize.type === "TopUpBonus" && item.prize.amount === 250
+                  ? require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")
+                  : item.prize.type === "TopUpBonus" &&
+                    item.prize.amount === 500
+                  ? require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")
+                  : item.prize.type === "Jackpot"
+                  ? require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")
+                  : null
+                : null
+            }
+            style={item.prize != null ? { width: 15.5, height: 15 } : null}
+          />
+        ) : null}
+      </View>
+    );
+  }; */
 
   const renderEmptyList = () => {
     return (

@@ -43,20 +43,20 @@ function AnimatedSplashScreen({ animationSource, children }) {
   const [soundInicio, setSoundInicio] = React.useState();
 
   async function playSoundInicio() {
-    console.log("Loading Sound");
+    //console.log("Loading Sound");
     const { sound } = await Audio.Sound.createAsync(
       require("../assets/Sonidos/app_inicio.mp3")
     );
     setSoundInicio(sound);
 
-    console.log("Playing Sound");
+    //console.log("Playing Sound");
     await sound.playAsync();
   }
 
   React.useEffect(() => {
     return soundInicio
       ? () => {
-          console.log("Unloading Sound");
+          //console.log("Unloading Sound");
           soundInicio.unloadAsync();
         }
       : undefined;
