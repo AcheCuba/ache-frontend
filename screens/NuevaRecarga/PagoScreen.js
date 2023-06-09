@@ -114,6 +114,8 @@ const PagoScreen = ({ navigation, route }) => {
   }, [paymentSucceded]);
 
   const managePrizes = () => {
+    // console.log("SE LLAMA A MANAGE PRIZES");
+
     // CREATE TRANSACTION y CONFIRM TRANSACTION de premios si las recargas normales fueron completed
     // FINISH CHECKOUT de los premios asociados si no fueron completed
     // se elimina la NADA si alguna recarga salio bien
@@ -135,6 +137,8 @@ const PagoScreen = ({ navigation, route }) => {
         return recarga.status === "COMPLETED";
       });
 
+    //console.log("COMPLETADAS", transaccionesNormalesCompletadas);
+
     const transaccionesNormalesNoCompletadas =
       transacciones_normales_confirmadas.filter((recarga) => {
         return recarga.status !== "COMPLETED";
@@ -150,6 +154,7 @@ const PagoScreen = ({ navigation, route }) => {
       }
       transaccionesNormalesCompletadas.forEach(
         (transaccionNormalCompletada) => {
+          //console.log("transaccion completada", transaccionNormalCompletada);
           const transaccionDePremio = transaction_id_array.find(
             (transaccion) => {
               return (
@@ -159,8 +164,9 @@ const PagoScreen = ({ navigation, route }) => {
               );
             }
           );
+          // console.log("TRANSACCION DE PREMIO ASOCIADA", transaccionDePremio);
           if (transaccionDePremio != undefined) {
-            //console.log("confirm transaction premio - pago screen");
+            console.log("CREATE TRANSACTION PREMIO - PAGO SCREEN");
 
             // create transaction
             create_transaction_prizes(
@@ -171,54 +177,78 @@ const PagoScreen = ({ navigation, route }) => {
             )
               .then((response) => {
                 const transaction_data = response.data;
-                /* console.log(
+                console.log(
                   "create transaction response status: ",
                   response.status
-                ); */
+                );
 
-                //confirm transaction
-                confirmTransactionRequest(transaction_data.id, true)
-                  .then((response) => {
-                    /*  console.log(
+                console.log("TRANSACTION DATA", transaction_data);
+
+                // 3 de junio, 2023
+                // en el caso de jackpot, el resultado seria null, "", o undefined
+                // con jackpot solo se envia un correo al usario
+                // lo que probare cuando tenga jackpots para hacerlo es:
+                // lo que viene abajo (confirm transaction) se hace si response.data no es null, "", o undefined
+                // pero debo revisar bien que devuelve
+
+                if (
+                  transaction_data != "" &&
+                  transaction_data != undefined &&
+                  transaction_data != null
+                ) {
+                  //confirm transaction
+                  confirmTransactionRequest(transaction_data.id, true)
+                    .then((response) => {
+                      /*  console.log(
                       "confirm transaction response status",
                       response.status
                     );
  */
-                    /* console.log(
+                      /* console.log(
                       "UUID PRIZE ACTUAL",
                       transaccionDePremio.prize_uuid
                     ); */
 
-                    // ================ UPDATE 23-07-22: =================
-                    // SI EL CONFIRM TRANSACTION FUNCIONA OK, FINALIZAR CHECKOUT DEL PREMIO CON TRUE (COMO COBRADO)
-                    // ESTE PREMIO YA TIENE GARANTIZADO QUE EL EL CONTACTO TUVO SU RECARGA NORMAL COMPLETADA
-                    prize_finish_checkout(transaccionDePremio.prize_uuid, true); // cobrado
+                      // ================ UPDATE 23-07-22: =================
+                      // SI EL CONFIRM TRANSACTION FUNCIONA OK, FINALIZAR CHECKOUT DEL PREMIO CON TRUE (COMO COBRADO)
+                      // ESTE PREMIO YA TIENE GARANTIZADO QUE EL EL CONTACTO TUVO SU RECARGA NORMAL COMPLETADA
+                      prize_finish_checkout(
+                        transaccionDePremio.prize_uuid,
+                        true
+                      ); // cobrado
 
-                    // ADEMÁS, SI TENÍA, SE ELIMINA PREMIO DE LA APP
-                    if (prizeInApp?.type != "Nada") {
-                      if (prizeInApp?.uuid === transaccionDePremio.prize_uuid) {
-                        // nada más puede coincidir una vez
+                      // ADEMÁS, SI TENÍA, SE ELIMINA PREMIO DE LA APP
+                      if (prizeInApp?.type != "Nada") {
+                        if (
+                          prizeInApp?.uuid === transaccionDePremio.prize_uuid
+                        ) {
+                          // nada más puede coincidir una vez
 
-                        // console.log("SE ELIMINA PREMIO DE LA APP");
+                          // console.log("SE ELIMINA PREMIO DE LA APP");
 
-                        storeData("user", { ...userState, prize: null });
-                        userDispatch(setPrizeForUser(null));
+                          storeData("user", { ...userState, prize: null });
+                          userDispatch(setPrizeForUser(null));
+                        }
                       }
-                    }
 
-                    // ================ UPDATE 23-07-22: =================
-                  })
-                  .catch((err) => {
-                    // 21-03-23 -> agregado el finish checkout con false en caso de erorr
-                    prize_finish_checkout(transaccionDePremio.prize_uuid, false); // no cobrado
-                    /*  console.log(
+                      // ================ UPDATE 23-07-22: =================
+                    })
+                    .catch((err) => {
+                      // 21-03-23 -> agregado el finish checkout con false en caso de erorr
+                      prize_finish_checkout(
+                        transaccionDePremio.prize_uuid,
+                        false
+                      ); // no cobrado
+                      /*  console.log(
                       "confirm transaction request error",
                       err.response.status
                     ); */
-                  });
+                    });
+                }
               })
               .catch((err) => {
-                //console.log("create transaction error", err.response.status)
+                console.log("create transaction error", err.response.status);
+                console.log(err.message);
               });
           }
         }
