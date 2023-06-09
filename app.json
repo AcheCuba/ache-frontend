@@ -22,11 +22,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.achecuba.achev1",
+      "bundleIdentifier": "com.marole.ache",
       "buildNumber": "1.0.0"
     },
     "android": {
-      "package": "com.achecuba.achev1",
+      "package": "com.marole.ache",
       "versionCode": 1,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
