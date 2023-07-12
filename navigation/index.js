@@ -9,7 +9,7 @@ import SignupScreenUptd from "../screens/SignupScreenUptd";
 import BottomTabNavigator from "./BottomTabNavigator";
 import { GlobalContext } from "../context/GlobalProvider";
 
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 import { Alert } from "react-native";
 
 // If you are not familiar with React Navigation, we recommend going through the
@@ -34,7 +34,7 @@ const Stack = createStackNavigator();
 
 function RootNavigator({ navigation, route }) {
   const { userState } = React.useContext(GlobalContext);
-  
+
   //console.log(userState)
   //console.log("userState index.js", userState);
   //console.log("token", userState.token);
@@ -51,7 +51,7 @@ function RootNavigator({ navigation, route }) {
       ) : (
         <>
           <Stack.Screen name="Root" component={BottomTabNavigator} />
-          {/* <Stack.Screen name="Root" component={MainStackNavigator} /> */}
+          {/* <Stack.Screen name="Root" component={BottomTabNavigator} /> */}
           <Stack.Screen
             name="NotFound"
             component={NotFoundScreen}

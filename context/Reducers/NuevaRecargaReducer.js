@@ -4,6 +4,7 @@ import nuevaRecargaInitialState from "../initialStates/nuevaRecargaInitialState"
 const TOOGLE_ADD_CONTACT_AVAIABLE = actionTypes.TOOGLE_ADD_CONTACT_AVAIABLE;
 const SELECT_CONTACT = actionTypes.SELECT_CONTACT;
 const DELETE_CONTACT = actionTypes.DELETE_CONTACT;
+const DELETE_ALL_CONTACTS = actionTypes.DELETE_ALL_CONTACTS;
 const UPDATE_PRIZE_FOR_CONTACT = actionTypes.UPDATE_PRIZE_FOR_CONTACT;
 const SET_PRIZE = actionTypes.SET_PRIZE;
 const DELETE_PRIZE = actionTypes.DELETE_PRIZE;
@@ -17,6 +18,7 @@ const RESTORE_NUEVA_RECARGA_INITIAL_STATE =
 const DELETE_FIELD = actionTypes.DELETE_FIELD;
 const DELETE_ALL_VALIDATED_PRIZES = actionTypes.DELETE_ALL_VALIDATED_PRIZES;
 const SET_TRANSACTIONS_ID_ARRAY = actionTypes.SET_TRANSACTIONS_ID_ARRAY;
+const DELETE_ALL_FIELDS = actionTypes.DELETE_ALL_FIELDS;
 
 //socket
 const SET_TRANSACCIONES_NORMALES_CONFIRMADAS =
@@ -84,6 +86,12 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         ),
       };
 
+    case DELETE_ALL_CONTACTS:
+      return {
+        ...state,
+        contactosSeleccionados: [],
+      };
+
     case DELETE_FIELD:
       return {
         ...state,
@@ -96,6 +104,14 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         fields: state.fields.filter(
           (field) => field.fieldId !== action.payload
         ),
+      };
+    // borrarlo todo!
+    case DELETE_ALL_FIELDS:
+      return {
+        ...state,
+        contactosSeleccionados: [],
+        validated_prizes: [],
+        fields: [],
       };
 
     // prizes

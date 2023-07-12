@@ -32,7 +32,7 @@ const PagoScreen = ({ navigation, route }) => {
   const amount = route.params?.amount;
   const transaction_id_array = route.params?.transaction_id_array;
   const productPriceUsd = route.params?.productPriceUsd;
-  const amount_cup_por_recarga = route.params?.amount_cup_por_recarga;
+  const recharge_amount_por_recarga = route.params?.recharge_amount_por_recarga;
 
   const {
     userState,
@@ -42,6 +42,8 @@ const PagoScreen = ({ navigation, route }) => {
     socketDispatch,
   } = React.useContext(GlobalContext);
   const { name, email } = userState;
+  const countryIsoCode = userState?.country;
+
   const {
     transacciones_premio_confirmadas,
     transacciones_normales_confirmadas,
@@ -297,6 +299,7 @@ const PagoScreen = ({ navigation, route }) => {
         prizeCode,
         dtoneProductId,
         socketId,
+        countryIsoCode,
       },
       headers: {
         Authorization: `Bearer ${user_token}`,
@@ -378,7 +381,7 @@ const PagoScreen = ({ navigation, route }) => {
     const createPaymentDescArray = contactosSeleccionados.map((contacto) => {
       const topups_array = [
         {
-          amount: amount_cup_por_recarga,
+          amount: recharge_amount_por_recarga,
           price: parseFloat(productPriceUsd),
           isPrize: false,
         },

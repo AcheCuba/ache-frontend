@@ -21,7 +21,8 @@ const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const PrePagoScreen = ({ navigation, route }) => {
-  const { productPriceUsd, transaction_id_array, amount_cup } = route.params;
+  const { productPriceUsd, transaction_id_array, recharge_amount } =
+    route.params;
 
   const { userState } = React.useContext(GlobalContext);
   const { nuevaRecargaState, nuevaRecargaDispatch } = useContext(GlobalContext);
@@ -32,12 +33,27 @@ const PrePagoScreen = ({ navigation, route }) => {
   //const [precioRecarga, setPrecioRecarga] = React.useState("20");
   const flatRef = React.useRef(null);
 
+  const countryIsoCode = userState?.country;
+
   React.useEffect(() => {
     const _amount = parseFloat((quantity * productPriceUsd).toFixed(2));
     //console.log(typeof _amount);
     setAmount(_amount);
     //console.log(esDirecta);
   }, []);
+
+  const getlocalCurrency = (countryIsoCode) => {
+    switch (countryIsoCode) {
+      case "CUB":
+        return "CUP";
+      case "MEX":
+        return "MXN";
+      case "DOM":
+        return "DOP";
+      default:
+        return null;
+    }
+  };
 
   /*  React.useEffect(() => {
     //console.log(typeof amount);
@@ -47,7 +63,7 @@ const PrePagoScreen = ({ navigation, route }) => {
     const createPaymentDescription = contactosSeleccionados.map((contacto) => {
       const topups_array = [
         {
-          amount: amount_cup,
+          amount: recharge_amount,
           price: parseFloat(productPriceUsd),
           isPrize: false,
         },
@@ -411,7 +427,7 @@ const PrePagoScreen = ({ navigation, route }) => {
                 amount,
                 transaction_id_array,
                 productPriceUsd,
-                amount_cup_por_recarga: amount_cup,
+                recharge_amount_por_recarga: recharge_amount,
               });
             }}
           />
@@ -434,7 +450,7 @@ const PrePagoScreen = ({ navigation, route }) => {
             }}
           />
           <TextBold
-            text={`${amount_cup} CUP`}
+            text={`${recharge_amount} ${getlocalCurrency(countryIsoCode)}`}
             style={{
               fontSize: 26,
               textTransform: "uppercase",

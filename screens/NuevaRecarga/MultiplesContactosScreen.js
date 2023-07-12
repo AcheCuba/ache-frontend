@@ -16,8 +16,8 @@ import {
   toogleAddContactAvaiable,
 } from "../../context/Actions/actions";
 
-import NeuButton from "../../libs/neu_element/NeuButton"
-import NeuInput from "../../libs/neu_element/NeuInput"
+import NeuButton from "../../libs/neu_element/NeuButton";
+import NeuInput from "../../libs/neu_element/NeuInput";
 
 import Toast from "react-native-root-toast";
 import { Image } from "react-native";
@@ -38,6 +38,8 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 
   const { nuevaRecargaDispatch, nuevaRecargaState, userState } =
     useContext(GlobalContext);
+
+  const userCountry = userState.country;
 
   const { contactosSeleccionados } = nuevaRecargaState;
 
@@ -60,18 +62,123 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 
   const onPressContact = (id, contactName, contactNumber) => {
     nuevaRecargaDispatch(deleteContact(fieldInputId));
-    const cleanContactNumber = contactNumber.replace(/ /g, "");
-    nuevaRecargaDispatch(
-      selectContact({
-        id,
-        contactName,
-        contactNumber: cleanContactNumber,
-        fieldInputId,
-        prize: prizeForCurrentField,
-      })
-    );
-    nuevaRecargaDispatch(toogleAddContactAvaiable(true));
-    navigation.navigate("NuevaRecargaScreen");
+
+    let literalCountry;
+    let literalCountryEng;
+
+    const cleanText = contactNumber
+      .replace(/ /g, "")
+      .replace(/\-/g, "")
+      .replace(/\(/g, "")
+      .replace(/\)/g, "");
+
+    //console.log(cleanText);
+
+    let isOfficialNumberMatched;
+    let isNumberMatched;
+
+    if (userCountry === "CUB") {
+      literalCountry = "Cuba";
+      literalCountryEng = "Cuba";
+
+      const CubanOfficialNumberRegex =
+        /^\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
+      const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
+
+      const matchOfficialNumber = contactNumber.match(CubanOfficialNumberRegex);
+      const matchNumber = text.match(CubanNumberRegex);
+
+      isOfficialNumberMatched =
+        matchOfficialNumber !== null && cleanText.length === 11;
+      isNumberMatched = matchNumber !== null && cleanText.length === 8;
+
+      //console.log(isOfficialNumberMatched);
+    }
+
+    if (userCountry === "MEX") {
+      literalCountry = "México";
+      literalCountryEng = "Mexico";
+
+      //para clean numbers
+      const MexOfficialNumberRegex = /^\+52[0-9]{10}/;
+      const MexNumberRegex = /^[0-9]{10}/;
+
+      // en caso mexico, comparo con clean text, es mas sencillo.
+      const matchOfficialNumber = cleanText.match(MexOfficialNumberRegex);
+      const matchNumber = cleanText.match(MexNumberRegex);
+
+      isOfficialNumberMatched =
+        matchOfficialNumber !== null && cleanText.length === 13;
+      isNumberMatched = matchNumber !== null && cleanText.length === 10;
+    }
+
+    if (userCountry === "DOM") {
+      literalCountry = "República Dominicana";
+      literalCountryEng = "Dominican Republic";
+
+      //para clean numbers
+      const DomOfficialNumberRegex = /^\+1(809)|(829)|(849)[0-9]{7}/;
+      const DomNumberRegex = /^[0-9]{10}/;
+
+      // en caso mexico, comparo con clean text, es mas sencillo.
+      const matchOfficialNumber = cleanText.match(DomOfficialNumberRegex);
+      const matchNumber = cleanText.match(DomNumberRegex);
+
+      isOfficialNumberMatched =
+        matchOfficialNumber !== null && cleanText.length === 12;
+      isNumberMatched = matchNumber !== null && cleanText.length === 10;
+    }
+
+    //SI COINCIDE CON EL PAIS SELECCIONADO:
+    if (isOfficialNumberMatched || isNumberMatched) {
+      let finalContactNumber = cleanText;
+
+      if (userCountry === "CUB") {
+        if (cleanText.length === 8) {
+          finalContactNumber = "+53" + cleanText;
+        }
+      }
+
+      if (userCountry === "MEX") {
+        if (cleanText.length === 10) {
+          finalContactNumber = "+52" + cleanText;
+        }
+      }
+
+      if (userCountry === "DOM") {
+        if (cleanText.length === 10) {
+          finalContactNumber = "+1" + cleanText;
+        }
+      }
+
+      nuevaRecargaDispatch(
+        selectContact({
+          id,
+          contactName,
+          contactNumber: finalContactNumber,
+          fieldInputId,
+          prize: prizeForCurrentField,
+        })
+      );
+      nuevaRecargaDispatch(toogleAddContactAvaiable(true));
+      navigation.navigate("NuevaRecargaScreen");
+    } else {
+      // NO COINCIDE CON EL PAIS SELECCIONADO
+      Toast.show(
+        userState?.idioma === "spa"
+          ? `El número telefónico no coincide con el formato de ${literalCountry}`
+          : `The phone number does not match the format of ${literalCountryEng}`,
+
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
+    }
   };
 
   const filterNumbers = (contacts) => {
@@ -114,42 +221,16 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
         multiplesContactosFiltered.concat(_cleanActualArray);
     }
 
-    const filtered = multiplesContactosFiltered.filter((contact) => {
-      const number = contact.phoneNumber;
-
-      const CubanOfficialNumberRegex =
-        /^\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
-      const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
-
-      const matchOfficialNumber = number.match(CubanOfficialNumberRegex);
-      const matchNumber = number.match(CubanNumberRegex);
-
-      const cleanNumber = number
-        .replace(/ /g, "")
-        .replace(/\-/g, "")
-        .replace(/\(/g, "")
-        .replace(/\)/g, "");
-
-      const isOfficialNumberMatched =
-        matchOfficialNumber !== null && cleanNumber.length === 11;
-      const isNumberMatched = matchNumber !== null && cleanNumber.length === 8;
-
-      return isOfficialNumberMatched || isNumberMatched;
-    });
-
-    return filtered;
+    return multiplesContactosFiltered;
   };
 
-  const onPressCheckmark = () => {
+  const onPressCheckmark = (country) => {
     //const CubanNumberOfficial = /\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
     //const CubanNumber = /5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
 
-    const CubanOfficialNumberRegex =
-      /^\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
-    const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
-
-    const matchOfficialNumber = text.match(CubanOfficialNumberRegex);
-    const matchNumber = text.match(CubanNumberRegex);
+    //console.log(country);
+    let literalCountry;
+    let literalCountryEng;
 
     const cleanText = text
       .replace(/ /g, "")
@@ -157,18 +238,87 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       .replace(/\(/g, "")
       .replace(/\)/g, "");
 
-    const isOfficialNumberMatched =
-      matchOfficialNumber !== null && cleanText.length === 11;
-    const isNumberMatched = matchNumber !== null && cleanText.length === 8;
+    let isOfficialNumberMatched;
+    let isNumberMatched;
+
+    if (country === "CUB") {
+      literalCountry = "Cuba";
+      literalCountryEng = "Cuba";
+
+      const CubanOfficialNumberRegex =
+        /^\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
+      const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
+
+      const matchOfficialNumber = text.match(CubanOfficialNumberRegex);
+      const matchNumber = text.match(CubanNumberRegex);
+
+      isOfficialNumberMatched =
+        matchOfficialNumber !== null && cleanText.length === 11;
+      isNumberMatched = matchNumber !== null && cleanText.length === 8;
+    }
+
+    if (country === "MEX") {
+      literalCountry = "México";
+      literalCountryEng = "Mexico";
+
+      //para clean numbers
+      const MexOfficialNumberRegex = /^\+52[0-9]{10}/;
+      const MexNumberRegex = /^[0-9]{10}/;
+
+      // en caso mexico, comparo con clean text, es mas sencillo.
+      const matchOfficialNumber = cleanText.match(MexOfficialNumberRegex);
+      const matchNumber = cleanText.match(MexNumberRegex);
+
+      isOfficialNumberMatched =
+        matchOfficialNumber !== null && cleanText.length === 13;
+      isNumberMatched = matchNumber !== null && cleanText.length === 10;
+    }
+
+    if (country === "DOM") {
+      literalCountry = "República Dominicana";
+      literalCountryEng = "Dominican Republic";
+
+      //para clean numbers
+      const DomOfficialNumberRegex = /^\+1(809)|(829)|(849)[0-9]{7}/;
+      const DomNumberRegex = /^[0-9]{10}/;
+
+      // en caso mexico, comparo con clean text, es mas sencillo.
+      const matchOfficialNumber = cleanText.match(DomOfficialNumberRegex);
+      const matchNumber = cleanText.match(DomNumberRegex);
+
+      isOfficialNumberMatched =
+        matchOfficialNumber !== null && cleanText.length === 12;
+      isNumberMatched = matchNumber !== null && cleanText.length === 10;
+    }
 
     //const regexp = /\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/;
     if (isOfficialNumberMatched || isNumberMatched) {
+      let finalContactNumber = cleanText;
+
+      if (userCountry === "CUB") {
+        if (cleanText.length === 8) {
+          finalContactNumber = "+53" + cleanText;
+        }
+      }
+
+      if (userCountry === "MEX") {
+        if (cleanText.length === 10) {
+          finalContactNumber = "+52" + cleanText;
+        }
+      }
+
+      if (userCountry === "DOM") {
+        if (cleanText.length === 10) {
+          finalContactNumber = "+1" + cleanText;
+        }
+      }
+
       nuevaRecargaDispatch(deleteContact(fieldInputId));
       nuevaRecargaDispatch(
         selectContact({
           id: undefined,
           contactName: undefined,
-          contactNumber: cleanText,
+          contactNumber: finalContactNumber,
           fieldInputId: fieldInputId,
           prize: prizeForCurrentField,
         })
@@ -176,14 +326,19 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       nuevaRecargaDispatch(toogleAddContactAvaiable(true));
       navigation.navigate("NuevaRecargaScreen");
     } else {
-      Toast.show("Introduzca un número de teléfono válidado en Cuba", {
-        duaration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
+      Toast.show(
+        userState?.idioma === "spa"
+          ? `Introduzca un número de teléfono válidado en ${literalCountry}`
+          : `Enter a valid phone number in ${literalCountryEng}`,
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
     }
 
     //for testing
@@ -343,7 +498,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           height={width / 7 - 20}
           borderRadius={5}
           onPress={() => {
-            onPressCheckmark();
+            onPressCheckmark(userCountry);
           }}
           style={{ marginRight: marginGlobal, marginTop: 10 }}
         >

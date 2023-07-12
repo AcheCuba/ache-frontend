@@ -395,7 +395,7 @@ function GameNavigator({ navigation, route }) {
   return (
     <GameStack.Navigator>
       <GameStack.Screen
-        name="Juego"
+        name="JuegoScreen" //actualizado 4/07/23  -> anteriormente "Juego"
         component={GameScreen}
         options={{
           headerShown: false,

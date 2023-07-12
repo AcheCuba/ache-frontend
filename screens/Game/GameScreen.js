@@ -9,7 +9,7 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import NeuButton from "../../libs/neu_element/NeuButton"
+import NeuButton from "../../libs/neu_element/NeuButton";
 import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
@@ -19,9 +19,8 @@ import {
 } from "../../context/Actions/actions";
 import Toast from "react-native-root-toast";
 import moment from "moment";
-import * as SecureStore from "expo-secure-store";
-import Constants from "expo-constants";
-import { getData, storeData } from "../../libs/asyncStorage.lib";
+
+import { storeData } from "../../libs/asyncStorage.lib";
 
 import ConfettiCannon from "react-native-confetti-cannon";
 import { Modal } from "react-native";
@@ -90,7 +89,7 @@ const GameScreen = ({ navigation }) => {
   const [prizeCollectedError, setPrizeCollectedError] = React.useState(false);
   const [prizePendingError, setPrizePendingError] = React.useState(false);
   const [prizeInactiveError, setPrizeInactiveError] = React.useState(false);
-  const [verificationError, setVerificationError] = React.useState(false)
+  const [verificationError, setVerificationError] = React.useState(false);
 
   const [casillaFinal, setCasillaFinal] = React.useState("7200deg");
   const thereIsPrizeResult = React.useRef(false);
@@ -123,11 +122,11 @@ const GameScreen = ({ navigation }) => {
           delay: 0,
         }
       );
-      setVerificationError(false)
+      setVerificationError(false);
     }
   }, [verificationError]);
 
-React.useEffect(() => {
+  React.useEffect(() => {
     if (prizeCollectedError) {
       Toast.show(
         userState.idioma == "spa"
@@ -142,50 +141,51 @@ React.useEffect(() => {
           delay: 0,
         }
       );
-      setPrizeCollectedError(false)
+      setPrizeCollectedError(false);
     }
-  }, [prizeCollectedError]); 
+  }, [prizeCollectedError]);
 
+  React.useEffect(() => {
+    if (prizePendingError) {
+      Toast.show(
+        userState.idioma == "spa"
+          ? "No se pudo librerar el premio. Intente más tarde por favor"
+          : "The prize could not be released. Please try again later",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
+      setPrizePendingError(false);
+    }
+  }, [prizePendingError]);
 
-React.useEffect(() => {
-  if (prizePendingError) {
-    Toast.show(
-      userState.idioma == "spa"
-        ? "No se pudo librerar el premio. Intente más tarde por favor"
-        : "The prize could not be released. Please try again later",
-      {
-        duaration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      }
-    );
-    setPrizePendingError(false)
-  }
-}, [prizePendingError]); 
+  React.useEffect(() => {
+    if (prizeInactiveError) {
+      Toast.show(
+        userState.idioma == "spa"
+          ? "Este premio no está activo"
+          : "This prize is not active",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
+      setPrizeInactiveError(false);
+    }
+  }, [prizeInactiveError]);
 
-React.useEffect(() => {
-  if (prizeInactiveError) {
-    Toast.show(
-      userState.idioma == "spa"
-        ? "Este premio no está activo"
-        : "This prize is not active",
-      {
-        duaration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      }
-    );
-    setPrizeInactiveError(false)
-  }
-}, [prizeInactiveError]);
-
-  
+  /* React.useEffect(() => {
+    console.log(userState.country);
+  }); */
 
   async function playSoundImpulsoRuleta() {
     const _sound = new Audio.Sound();

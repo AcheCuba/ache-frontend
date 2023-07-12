@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -18,9 +18,12 @@ import {
   toogleAddContactAvaiable,
   updatePrize,
   openSocket,
+  setCountryForUser,
+  deleteAllContacts,
+  deleteAllFields,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
-import NeuButton from "../../libs/neu_element/NeuButton"
+import NeuButton from "../../libs/neu_element/NeuButton";
 import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
@@ -32,6 +35,8 @@ import {
   NuevaRecargaTextEnglish,
   NuevaRecargaTextSpanish,
 } from "../../constants/Texts";
+import DropDownMenuModal from "./components/DropDownMenuModal";
+import { storeData } from "../../libs/asyncStorage.lib";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -59,7 +64,9 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     fields,
     validatetInProcess,
   } = nuevaRecargaState;
-  const { userState } = React.useContext(GlobalContext);
+  const { userState, userDispatch } = React.useContext(GlobalContext);
+
+  const userCountry = userState?.country;
 
   const { socketState, socketDispatch } = React.useContext(GlobalContext);
 
@@ -70,6 +77,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     fieldId: undefined,
     valid: true,
   });
+
+  const [dropDownVisible, setDropDownVisible] = React.useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -205,6 +214,10 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     ])
   );
 
+  /* React.useEffect(() => {
+    console.log(contactosSeleccionados);
+  }, [contactosSeleccionados]); */
+
   React.useEffect(() => {
     const unsub = navigation.addListener("blur", () => {
       navigation.setParams({ inOrderToCobrarPremio: false });
@@ -244,6 +257,29 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     };
 
     return axios(config);
+  };
+
+  const onSelectCountry = (anteriorCountry, selectedCountry) => {
+    //console.log(anteriorCountry);
+    //console.log(selectedCountry);
+
+    //actualizar estado app
+    userDispatch(setCountryForUser(selectedCountry));
+    //actualizar almacenamiento de la app
+    storeData("user", {
+      ...userState,
+      country: selectedCountry,
+    });
+
+    // si el pais seleccionado es != pais actual
+    // eliminar contactos seleccionados
+    if (selectedCountry !== anteriorCountry) {
+      nuevaRecargaDispatch(deleteAllFields());
+    }
+
+    // cerrar drom down menu
+    setDropDownVisible(false);
+    //debe cambiar el icono solo
   };
 
   const comprobarUuidRepetido = (uuid) => {
@@ -544,14 +580,26 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           height={width / 7 - 20}
           borderRadius={5}
           onPress={() => {
-            navigation.jumpTo("Juego"), { screen: "Juego" };
+            setDropDownVisible(!dropDownVisible);
           }}
           style={{ marginLeft: marginGlobal, marginTop: 10 }}
         >
-          <Image
-            source={require("../../assets/images/iconos/atras.png")}
-            style={{ width: 15, height: 15 }}
-          />
+          {userCountry == "CUB" ? (
+            <Image
+              source={require("../../assets/images/bandera_cub.jpg")}
+              style={{ width: 30, height: 16 }}
+            />
+          ) : userCountry == "MEX" ? (
+            <Image
+              source={require("../../assets/images/bandera_mex.jpg")}
+              style={{ width: 30, height: 16 }}
+            />
+          ) : userCountry == "DOM" ? (
+            <Image
+              source={require("../../assets/images/bandera_do.jpg")}
+              style={{ width: 30, height: 16 }}
+            />
+          ) : null}
         </NeuButton>
         <NeuButton
           color="#701c57"
@@ -567,6 +615,14 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           />
         </NeuButton>
       </View>
+      <DropDownMenuModal
+        modalVisible={dropDownVisible}
+        setModalVisible={setDropDownVisible}
+        transparent={true}
+        width={width}
+        height={height}
+        onSelectCountry={onSelectCountry}
+      />
       <ScrollView style={styles.outterContainer}>
         <CodigoRecargaModal
           modalVisible={modalVisible}

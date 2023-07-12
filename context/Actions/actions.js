@@ -29,6 +29,13 @@ export const setIdioma = (idioma) => {
   };
 };
 
+export const setCountryForUser = (country) => {
+  return {
+    type: actionTypes.SET_COUNTRY_FOR_USER,
+    country,
+  };
+};
+
 // ================================= ACTIONS FOR NUEVA RECARGA STATE ===========================
 
 export const resetNuevaRecargaState = () => {
@@ -81,11 +88,23 @@ export const deleteContact = (contactId) => {
   };
 };
 
+export const deleteAllContacts = () => {
+  return {
+    type: actionTypes.DELETE_ALL_CONTACTS,
+  };
+};
+
 // delete contact and prize
 export const deleteField = (fieldId) => {
   return {
     type: actionTypes.DELETE_FIELD,
     payload: fieldId,
+  };
+};
+
+export const deleteAllFields = () => {
+  return {
+    type: actionTypes.DELETE_ALL_FIELDS,
   };
 };
 

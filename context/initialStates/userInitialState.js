@@ -6,6 +6,7 @@ export default {
   phone: undefined,
   prize: null,
   idioma: "eng",
+  country: "CUB",
 };
 
 // actions que lo modifican:

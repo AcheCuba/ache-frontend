@@ -5,6 +5,7 @@ const SIGNUP = actionTypes.SIGNUP;
 const RESTORE_USER = actionTypes.RESTORE_USER;
 const SET_PRIZE_FOR_USER = actionTypes.SET_PRIZE_FOR_USER;
 const SET_IDIOMA = actionTypes.SET_IDIOMA;
+const SET_COUNTRY_FOR_USER = actionTypes.SET_COUNTRY_FOR_USER;
 
 const UserReducer = (state = userInitialState, action) => {
   switch (action.type) {
@@ -23,6 +24,11 @@ const UserReducer = (state = userInitialState, action) => {
       return {
         ...state,
         idioma: action.idioma,
+      };
+    case SET_COUNTRY_FOR_USER:
+      return {
+        ...state,
+        country: action.country,
       };
     default:
       //console.log("Default case (in user reducer):", state);

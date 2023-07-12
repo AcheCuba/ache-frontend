@@ -6,7 +6,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import NeuButton from "../../libs/neu_element/NeuButton"
+import NeuButton from "../../libs/neu_element/NeuButton";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import Toast from "react-native-root-toast";
@@ -39,6 +39,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   //const { esDirecta } = route?.params;
 
   const { userState } = React.useContext(GlobalContext);
+
+  const countryIsoCode = userState?.country;
+
   const { nuevaRecargaState, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
   const { contactosSeleccionados, validated_prizes } = nuevaRecargaState;
@@ -87,10 +90,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
     try {
       await _sound.playAsync();
-  } catch (e) {
-    //console.error(e);
-    setSoundError(_sound);
-  }
+    } catch (e) {
+      //console.error(e);
+      setSoundError(_sound);
+    }
   }
 
   const ResolveText = (site) => {
@@ -104,6 +107,19 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
     if (idioma === "eng") {
       return textEng[site];
+    }
+  };
+
+  const getlocalCurrency = (countryIsoCode) => {
+    switch (countryIsoCode) {
+      case "CUB":
+        return "CUP";
+      case "MEX":
+        return "MXN";
+      case "DOM":
+        return "DOP";
+      default:
+        return null;
     }
   };
 
@@ -246,7 +262,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const getPromotions = (cancelToken) => {
     setLoadingPromotions(true);
     const user_token = userState.token;
-    const url = `${BASE_URL}/topup/promotions`;
+    const url = `${BASE_URL}/topup/promotions/${countryIsoCode}`;
 
     const config = {
       method: "get",
@@ -298,7 +314,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       }, 1500);
     } else {
       const user_token = userState.token;
-      const url = `${BASE_URL}/topup/products`;
+      const url = `${BASE_URL}/topup/products/${countryIsoCode}`;
 
       const config = {
         method: "get",
@@ -351,6 +367,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         prizeCode: "",
         dtoneProductId: productId,
         socketId: socketId,
+        countryIsoCode,
       },
       headers: {
         Authorization: `Bearer ${user_token}`,
@@ -377,7 +394,11 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
     return axios(config);
   };
-  const onPressProduct = async (productId, productPriceUsd, amount_cup) => {
+  const onPressProduct = async (
+    productId,
+    productPriceUsd,
+    recharge_amount
+  ) => {
     // por cada contacto, se crea una transaccion
     // endpoint: create-transacition
 
@@ -510,7 +531,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         navigation.navigate("PrePagoScreen", {
           productPriceUsd,
           transaction_id_array,
-          amount_cup,
+          recharge_amount,
         });
       }
     }
@@ -585,6 +606,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
             }}
           >
             {products.map((product, index) => {
+              const product_price_usd = parseFloat(product.price_usd).toFixed(
+                2
+              );
+
               return (
                 <View
                   style={{
@@ -601,7 +626,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                       onPressProduct(
                         product.id,
                         product.price_usd,
-                        product.amount_cup
+                        product.recharge_amount
                       );
                     }}
                     width={width / 1.3}
@@ -641,8 +666,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
                         <TextMedium
                           text={`${ResolveText("monto")}: ${
-                            product.amount_cup
-                          } CUP`}
+                            product.recharge_amount
+                          } ${getlocalCurrency(countryIsoCode)}`}
                           style={{
                             fontSize: 20,
                             color: "rgba(255,255,255,0.6)",
@@ -652,9 +677,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         />
 
                         <TextMedium
-                          text={`${ResolveText("precio")}: ${
-                            product.price_usd
-                          } USD`}
+                          text={`${ResolveText(
+                            "precio"
+                          )}: ${product_price_usd} USD`}
                           style={{
                             fontSize: 20,
                             color: "rgba(255,255,255,0.6)",
