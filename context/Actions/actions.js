@@ -36,6 +36,13 @@ export const setCountryForUser = (country) => {
   };
 };
 
+export const setOperatorForUser = (operator) => {
+  return {
+    type: actionTypes.SET_OPERATOR_FOR_USER,
+    operator,
+  };
+};
+
 // ================================= ACTIONS FOR NUEVA RECARGA STATE ===========================
 
 export const resetNuevaRecargaState = () => {

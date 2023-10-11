@@ -80,26 +80,24 @@ export default function useCachedResources() {
 
         //console.log(token);
 
-        //===================== solo para eliminar premio en app ===========================
-
+        //===================== USO EN DEV: ELIMINAR PREMIO DE APP ===========================
         /* storeData("user", {
           ...user,
           prize: null,
         });
         userDispatch(restore_user({ ...user, prize: null, token }));
 
-        user = await getData("user");  */
+        user = await getData("user"); */
+        //===================== USO EN DEV: ELIMINAR PREMIO DE APP ============================
 
-        //===================== solo para eliminar premio en app ===========================
+        //===================== USO EN DEV: ELIMINAR USER DE LA APP ===========================
+        //await AsyncStorage.removeItem("user");
+        //user = await getData("user");
+        //===================== USO EN DEV: ELIMINAR USER DE LA APP ===========================
 
-        //===================== solo para eliminar user ===========================
-        // await AsyncStorage.removeItem("user");
-        // user = await getData("user");
-        //===================== solo para eliminar user ===========================
-
-        //===================== solo para eliminar token de expo push not ===========================
+        //===================== USO EN DEV eliminar token de expo push not ===========================
         //await SecureStore.deleteItemAsync("expo-push-token");
-        //===================== solo para eliminar token de expo push not ===========================
+        //===================== USO EN DEV eliminar token de expo push not ===========================
 
         //console.log(user);
         //console.log(token);

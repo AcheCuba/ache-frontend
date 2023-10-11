@@ -1,0 +1,252 @@
+import React, { useContext, useState, useEffect } from "react";
+import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
+import Toast from "react-native-root-toast";
+import { StyleSheet, View, Dimensions, Image, Platform } from "react-native";
+//import { NeuButton, NeuInput } from "react-native-neu-element";
+import NeuButton from "../libs/neu_element/NeuButton";
+import NeuInput from "../libs/neu_element/NeuInput";
+
+import { BASE_URL } from "../constants/domain";
+import { signup } from "../context/Actions/actions";
+import { GlobalContext } from "../context/GlobalProvider";
+import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ImageBackground } from "react-native";
+import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
+import normalize from "react-native-normalize";
+
+const { width, height } = Dimensions.get("screen");
+//console.log(height / 7);
+
+const TfaScreen = ({ navigation, route }) => {
+  const { userState, userDispatch } = useContext(GlobalContext);
+  const { name, email, phone } = route.params;
+
+  const [loadingTwo, setLoadingTwo] = useState(false);
+  const [codeIn, setCodeIn] = useState("");
+
+  const { idioma } = userState;
+
+  /*  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault();
+      }),
+    [navigation]
+  ); */
+
+  async function storeSacureValue(key, value) {
+    await SecureStore.setItemAsync(key, value);
+  }
+
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("user", jsonValue);
+    } catch (e) {
+      // saving error
+      // console.log(error);
+    }
+  };
+
+  const onChangeCode = (codeValue) => {
+    //setCode(codeValueIn);
+    setCodeIn(codeValue);
+  };
+
+  const checkVerificationCode = () => {
+    const url = `${BASE_URL}/check-verification-code`;
+
+    let config = {
+      method: "get",
+      url: url,
+      params: {
+        phoneNumber: phone,
+        code: codeIn,
+      },
+      /* headers: {
+        Authorization: `Bearer ${user_token}`,
+      }, */
+    };
+    return axios(config);
+  };
+
+  const fetchRegister = async (name, email, phone) => {
+    let data = {
+      name: name,
+      email: email.trim(),
+      phone: phone.replace(/-/g, "").replace(/ /g, ""),
+      lang: idioma,
+    };
+
+    //console.log(data);
+
+    let requestOptions = {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    };
+
+    const url = `${BASE_URL}/auth/register`;
+
+    fetch(url, requestOptions)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw Error(`Request rejected with status ${response.status}`);
+          //throw Error("No se pudo registrar a este usuario");
+        }
+      })
+      .then((result) => {
+        //console.log(result);
+        //console.log(typeof result);
+        const newUser = result;
+        if (newUser) {
+          const token = newUser.accessToken;
+          storeSacureValue("token", token);
+          storeData({
+            //token: newUser.accessToken,
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            phone: newUser.phone,
+            prize: null,
+            country: "CUB",
+          });
+
+          userDispatch(
+            signup({
+              token: newUser.accessToken,
+              id: newUser.id,
+              name: newUser.name,
+              email: newUser.email,
+              phone: newUser.phone,
+              prize: null,
+              idioma: idioma,
+              country: "CUB",
+            })
+          );
+        }
+
+        setLoadingTwo(false);
+      })
+      .catch((error) => {
+        //console.log("error", error);
+        Toast.show(error.message, {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        });
+        setLoadingTwo(false);
+      });
+  };
+
+  const onPressVerify = () => {
+    setLoadingTwo(true);
+
+    // quitar con api actualizada
+    fetchRegister(name, email, phone);
+    // quitar con api actualizada
+
+    /*  checkVerificationCode()
+      .then((response) => {
+        if (response.status === 200) {
+          // todo correcto: signup
+          fetchRegister();
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          //console.log(error.response.headers);
+        }
+      }); */
+  };
+
+  /*  useEffect(() => {
+    console.log(name, email, phone);
+  }); */
+
+  return (
+    <ImageBackground
+      source={require("../assets/images/degradado_general.png")}
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        justifyContent: "center",
+      }}
+      transition={false}
+    >
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View
+          style={{
+            marginBottom: 30,
+          }}
+        >
+          <NeuInput
+            textStyle={{
+              color: "#fff",
+              fontWeight: "bold",
+              fontFamily: "bs-italic",
+              fontSize: 26,
+              textAlign: "center",
+            }}
+            placeholder={idioma === "spa" ? "CÓDIGO" : "CODE"}
+            width={300}
+            height={60}
+            borderRadius={30}
+            onChangeText={(value) => onChangeCode(value)}
+            value={codeIn}
+            placeholderTextColor="gray"
+            color="#701c57"
+            keyboardType="number-pad"
+          />
+        </View>
+
+        <View
+          style={{
+            zIndex: 0,
+            //flex: 1,
+            //alignItems: "center",
+            //marginTop: normalize(-40),
+            //marginTop: -120,
+          }}
+        >
+          <NeuButton
+            color="#58184d"
+            width={180}
+            height={50}
+            borderRadius={width / 7.5}
+            onPress={() => onPressVerify()}
+            style={{}}
+            active={loadingTwo}
+          >
+            {loadingTwo ? (
+              <ActivityIndicator size="large" color="#01f9d2" />
+            ) : (
+              <TextBold
+                text={idioma === "spa" ? "VERIFICAR" : "VERIFY"}
+                style={{
+                  color: "#fff800",
+                  //fontWeight: "bold",
+                  fontSize: 20,
+                  textTransform: "uppercase",
+                }}
+              />
+            )}
+          </NeuButton>
+        </View>
+      </View>
+    </ImageBackground>
+  );
+};
+
+export default TfaScreen;

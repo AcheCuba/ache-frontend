@@ -19,7 +19,6 @@ const OnBoardingScreen = ({ navigation }) => {
   const [showSkip, setShowSkip] = React.useState(false);
   const [selectedIdiom, setSelectedIdiom] = React.useState("eng");
 
-
   const { userState, userDispatch } = React.useContext(GlobalContext);
   const { idioma } = userState;
 
@@ -431,8 +430,8 @@ const OnBoardingScreen = ({ navigation }) => {
                     <Image
                       source={require("../assets/images/home/logo_para_boton.png")}
                       style={{
-                        width: 60,
-                        height: 60,
+                        width: 85,
+                        height: 85,
                       }}
                     />
                   </NeuButton>
@@ -568,8 +567,8 @@ const OnBoardingScreen = ({ navigation }) => {
                   <Image
                     source={require("../assets/images/home/logo_para_boton.png")}
                     style={{
-                      width: 60,
-                      height: 60,
+                      width: 85,
+                      height: 85,
                     }}
                   />
                 </NeuButton>

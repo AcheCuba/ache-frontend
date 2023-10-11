@@ -21,7 +21,7 @@ const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const PrePagoScreen = ({ navigation, route }) => {
-  const { productPriceUsd, transaction_id_array, recharge_amount } =
+  const { productPriceUsd, transaction_id_array, productDescription } =
     route.params;
 
   const { userState } = React.useContext(GlobalContext);
@@ -42,6 +42,10 @@ const PrePagoScreen = ({ navigation, route }) => {
     //console.log(esDirecta);
   }, []);
 
+  /*  React.useEffect(() => {
+    console.log(userState);
+  }, [userState]); */
+
   const getlocalCurrency = (countryIsoCode) => {
     switch (countryIsoCode) {
       case "CUB":
@@ -54,50 +58,6 @@ const PrePagoScreen = ({ navigation, route }) => {
         return null;
     }
   };
-
-  /*  React.useEffect(() => {
-    //console.log(typeof amount);
-    //console.log(amount);
-    //console.log("CONTACTOS SELECCIONADOS", contactosSeleccionados);
-
-    const createPaymentDescription = contactosSeleccionados.map((contacto) => {
-      const topups_array = [
-        {
-          amount: recharge_amount,
-          price: parseFloat(productPriceUsd),
-          isPrize: false,
-        },
-      ]; // como mínimo tiene una recarga
-
-      if (contacto.prize != null) {
-        topups_array.push({
-          amount: contacto.prize.amount,
-          price: contacto.prize.price,
-          isPrize: true,
-        });
-      }
-
-      return {
-        [contacto.contactNumber]: {
-          name: contacto.contactName,
-          topups: topups_array,
-        },
-      };
-    });
-
-    //console.log("DESCRIPTION", createPaymentDescription);
-    const desc = Object.assign(...createPaymentDescription);
-
-    console.log("desc final", desc);
-
-    return () => {
-      //cleanup
-    };
-  }, [contactosSeleccionados]); */
-
-  /* React.useEffect(() => {
-    console.log("transaction array - Pre Pago Screen", transaction_id_array);
-  }, [transaction_id_array]); */
 
   useAndroidBackHandler(() => {
     /*
@@ -158,10 +118,10 @@ const PrePagoScreen = ({ navigation, route }) => {
               source={
                 item.prize != null
                   ? item.prize.type === "TopUpBonus" &&
-                    item.prize.amount === 250
+                    item.prize.size === "Small"
                     ? require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")
                     : item.prize.type === "TopUpBonus" &&
-                      item.prize.amount === 500
+                      item.prize.size === "Big"
                     ? require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")
                     : item.prize.type === "Jackpot"
                     ? require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")
@@ -174,13 +134,16 @@ const PrePagoScreen = ({ navigation, route }) => {
               text={
                 item.prize != null
                   ? item.prize.type === "TopUpBonus"
-                    ? " +" + item.prize?.amount + " CUP "
+                    ? " (" + item.prize.size + ")"
                     : null
-                  : null
+                  : //? " +" + item.prize?.amount + " CUP "
+                    //: null
+                    null
               }
               style={{
-                fontSize: normalize(15),
+                fontSize: normalize(12),
                 color: "#fffb00",
+                textTransform: "uppercase",
               }}
             />
           </View>
@@ -217,10 +180,10 @@ const PrePagoScreen = ({ navigation, route }) => {
           <Image
             source={
               item.prize != null
-                ? item.prize.type === "TopUpBonus" && item.prize.amount === 250
+                ? item.prize.type === "TopUpBonus" && item.prize.size === "Small"
                   ? require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")
                   : item.prize.type === "TopUpBonus" &&
-                    item.prize.amount === 500
+                    item.prize.size === "Big"
                   ? require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")
                   : item.prize.type === "Jackpot"
                   ? require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")
@@ -427,7 +390,7 @@ const PrePagoScreen = ({ navigation, route }) => {
                 amount,
                 transaction_id_array,
                 productPriceUsd,
-                recharge_amount_por_recarga: recharge_amount,
+                //recharge_amount_por_recarga: recharge_amount,
               });
             }}
           />
@@ -450,7 +413,7 @@ const PrePagoScreen = ({ navigation, route }) => {
             }}
           />
           <TextBold
-            text={`${recharge_amount} ${getlocalCurrency(countryIsoCode)}`}
+            text={`${productDescription}`}
             style={{
               fontSize: 26,
               textTransform: "uppercase",

@@ -15,8 +15,8 @@ import {
   deletePrizeByFieldId,
   toogleAddContactAvaiable,
 } from "../../../context/Actions/actions";
-import NeuButton from "../../../libs/neu_element/NeuButton"
-import NeuInput from "../../../libs/neu_element/NeuInput"
+import NeuButton from "../../../libs/neu_element/NeuButton";
+import NeuInput from "../../../libs/neu_element/NeuInput";
 
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
@@ -249,11 +249,16 @@ const NuevoContactoInput = ({
     }
   }; */
 
-  const onPressDeleteContact = () => {
+  const onPressDeleteContactField = () => {
     // falta finish checkout del premio?
-    nuevaRecargaDispatch(deleteField(fieldInputId));
-    if (contactosSeleccionados.length > 0) {
+    nuevaRecargaDispatch(deleteField(fieldInputId)); // elimina contacto y premio de la lista de seleccionados
+    //console.log(listaContactos);
+    if (contactosSeleccionados.length > 1) {
       nuevaRecargaDispatch(toogleAddContactAvaiable(true));
+    }
+
+    if (contactosSeleccionados.length == 1) {
+      nuevaRecargaDispatch(toogleAddContactAvaiable(false));
     }
   };
 
@@ -318,7 +323,7 @@ const NuevoContactoInput = ({
             width={width / 9.5}
             height={width / 9.5}
             borderRadius={width / 16}
-            onPress={() => onPressDeleteContact()}
+            onPress={() => onPressDeleteContactField()}
             style={{}}
           >
             <Image
@@ -380,8 +385,17 @@ const NuevoContactoInput = ({
           >
             <View>
               <NeuInput
-                textStyle={{ color: "#fff", fontWeight: "bold" }}
-                placeholder="Toca para ir a Contactos"
+                textStyle={{
+                  color: "#fff",
+                  fontWeight: "bold",
+                  fontFamily: "bs-italic",
+                  fontSize: 18,
+                }}
+                placeholder={
+                  userState?.idioma === "spa"
+                    ? "Añadir Contacto"
+                    : "Add Contact"
+                }
                 width={inputWidth}
                 height={40}
                 borderRadius={20}

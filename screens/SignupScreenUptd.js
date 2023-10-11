@@ -16,6 +16,7 @@ import { Keyboard } from "react-native";
 import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 import normalize from "react-native-normalize";
+import axios from "axios";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
@@ -75,92 +76,23 @@ const SignupScreenUptd = ({ navigation }) => {
     return phoneRegexp.test(cleanPhone);
   };
 
-  const fetchRegister = async (name, email, phone) => {
-    let data = {
-      name: name,
-      email: email.trim(),
-      phone: phone.replace(/-/g, "").replace(/ /g, ""),
-      lang: idioma,
-    };
+  const sendVerificationCode = (phoneNumber) => {
+    //const user_token = userState.token;
 
-    //console.log(data);
+    console.log(typeof phoneNumber);
+    const url = `${BASE_URL}/users/send-verification-code`;
 
-    let requestOptions = {
+    console.log(url);
+
+    let config = {
       method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      url,
+      params: { phoneNumber },
+      /* headers: {
+        Authorization: `Bearer ${user_token}`,
+      }, */
     };
-
-    const url = `${BASE_URL}/auth/register`;
-
-    fetch(url, requestOptions)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw Error(`Request rejected with status ${response.status}`);
-          //throw Error("No se pudo registrar a este usuario");
-        }
-      })
-      .then((result) => {
-        //console.log(result);
-        //console.log(typeof result);
-        const newUser = result;
-        if (newUser) {
-          const token = newUser.accessToken;
-          storeSacureValue("token", token);
-          storeData({
-            //token: newUser.accessToken,
-            id: newUser.id,
-            name: newUser.name,
-            email: newUser.email,
-            phone: newUser.phone,
-            prize: null,
-            country: "CUB",
-          });
-
-          userDispatch(
-            signup({
-              token: newUser.accessToken,
-              id: newUser.id,
-              name: newUser.name,
-              email: newUser.email,
-              phone: newUser.phone,
-              prize: null,
-              idioma: idioma,
-              country: "CUB",
-            })
-          );
-        }
-
-        setLoading(false);
-      })
-      .catch((error) => {
-        //console.log("error", error);
-        Toast.show(error.message, {
-          duaration: Toast.durations.LONG,
-          position: Toast.positions.BOTTOM,
-          shadow: true,
-          animation: true,
-          hideOnPress: true,
-          delay: 0,
-        });
-        setLoading(false);
-      });
-  };
-
-  async function storeSacureValue(key, value) {
-    await SecureStore.setItemAsync(key, value);
-  }
-
-  const storeData = async (value) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("user", jsonValue);
-    } catch (e) {
-      // saving error
-      // console.log(error);
-    }
+    return axios(config);
   };
 
   const onSubmit = async () => {
@@ -180,8 +112,28 @@ const SignupScreenUptd = ({ navigation }) => {
           setPhoneError("Invalid Phone");
         } else {
           // todo ok
-          setLoading(true);
-          await fetchRegister(name, email, phone);
+          //await fetchRegister(name, email, phone);
+
+          navigation.navigate("Tfa", { name, email, phone }); // quitar cuando este la api
+          // cuando este lista la api
+
+          sendVerificationCode(phone)
+            .then((response) => {
+              console.log(response.status);
+              if (response.status === 200) {
+                //+34695082384
+                navigation.navigate("Tfa", { name, email, phone });
+              }
+            })
+            .catch((error) => {
+              if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log(error.response.data);
+                console.log(error.response.status);
+                //console.log(error.response.headers);
+              }
+            });
         }
       }
     }

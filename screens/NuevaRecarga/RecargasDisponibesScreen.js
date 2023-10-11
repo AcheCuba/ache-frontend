@@ -36,11 +36,10 @@ const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const RecargasDisponiblesScreen = ({ navigation, route }) => {
-  //const { esDirecta } = route?.params;
-
   const { userState } = React.useContext(GlobalContext);
 
   const countryIsoCode = userState?.country;
+  const operatorId = userState?.operator.id;
 
   const { nuevaRecargaState, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
@@ -62,13 +61,13 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
   //const [price_usd, setPrice_usd] = React.useState("");
 
-  /* React.useEffect(() => {
+  React.useEffect(() => {
     //console.log("pressedProductId", pressedProductId);
     //console.log("price_usd", price_usd);
     //console.log(esDirecta);
-    console.log("validated prizes rec disp", validated_prizes);
-    console.log("CONTACTOS SELECCIONADOSS", contactosSeleccionados);
-  }, [contactosSeleccionados]); */
+    //console.log("validated prizes rec disp", validated_prizes);
+    console.log("CONTACTOS SELECCIONADOS", contactosSeleccionados);
+  }, [contactosSeleccionados]);
 
   React.useEffect(() => {
     return soundError
@@ -262,12 +261,16 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const getPromotions = (cancelToken) => {
     setLoadingPromotions(true);
     const user_token = userState.token;
-    const url = `${BASE_URL}/topup/promotions/${countryIsoCode}`;
+    const url = `${BASE_URL}/topup/promotions`;
 
     const config = {
       method: "get",
       cancelToken,
       url,
+      params: {
+        countryIsoCode,
+        operatorId,
+      },
       headers: {
         Authorization: `Bearer ${user_token}`,
       },
@@ -275,7 +278,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
     axios(config)
       .then((response) => {
-        //setProducts(response.data);
         //console.log("Promociones");
         //console.log(response.data);
         const data = response.data;
@@ -314,12 +316,16 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       }, 1500);
     } else {
       const user_token = userState.token;
-      const url = `${BASE_URL}/topup/products/${countryIsoCode}`;
+      const url = `${BASE_URL}/topup/products`;
 
       const config = {
         method: "get",
         cancelToken,
         url,
+        params: {
+          countryIsoCode,
+          operatorId,
+        },
         headers: {
           Authorization: `Bearer ${user_token}`,
         },
@@ -328,8 +334,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       axios(config)
         .then((response) => {
           setProducts(response.data);
-          // console.log("products");
-          // console.log(response.data);
+          //console.log("products");
+          //console.log(response.data);
           setLoadingProducts(false);
         })
         .catch((err) => {
@@ -364,7 +370,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       url,
       data: {
         beneficiary: contacto.contactNumber,
-        prizeCode: "",
+        //prizeCode: "",
         dtoneProductId: productId,
         socketId: socketId,
         countryIsoCode,
@@ -397,7 +403,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   const onPressProduct = async (
     productId,
     productPriceUsd,
-    recharge_amount
+    productDescription
   ) => {
     // por cada contacto, se crea una transaccion
     // endpoint: create-transacition
@@ -437,18 +443,13 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       for (const promise of promisesForTransaction) {
         await promise
           .then((response) => {
-            //const transaction_data_arr = response.data;
-
-            // es este
             const transaction_data = response.data;
+            //console.log(transaction_data);
 
             // test - bad request
             // const transaction_data = response.data.lol;
 
-            // se recibe un arreglo que puede tener 2 transaccios (para caso de premio de 500)
-            // se crea un object por cada uno de estas 2 (o 1) transacciones
-
-            // update 3 de mayo
+            // update 3 de mayo, 2023
             // se mandan las transacciones normales aqui
             // se recibe un object
 
@@ -530,8 +531,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
         navigation.navigate("PrePagoScreen", {
           productPriceUsd,
+          productDescription,
           transaction_id_array,
-          recharge_amount,
         });
       }
     }
@@ -596,6 +597,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
             marginTop: 10,
             alignItems: "center",
             width: width,
+            paddingBottom: 30 + height / 5, // box height,
           }}
         >
           <ScrollView
@@ -626,7 +628,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                       onPressProduct(
                         product.id,
                         product.price_usd,
-                        product.recharge_amount
+                        product.product_description
                       );
                     }}
                     width={width / 1.3}
@@ -654,7 +656,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                     >
                       <View>
                         <TextBold
-                          text={product.name}
+                          text={product.product_title}
                           style={{
                             fontSize: 24,
                             textTransform: "uppercase",
@@ -665,9 +667,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         />
 
                         <TextMedium
-                          text={`${ResolveText("monto")}: ${
-                            product.recharge_amount
-                          } ${getlocalCurrency(countryIsoCode)}`}
+                          text={`${ResolveText(
+                            "precio"
+                          )}: ${product_price_usd} USD`}
                           style={{
                             fontSize: 20,
                             color: "rgba(255,255,255,0.6)",
@@ -677,9 +679,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         />
 
                         <TextMedium
-                          text={`${ResolveText(
-                            "precio"
-                          )}: ${product_price_usd} USD`}
+                          text={`DESC: ${product.product_description}`}
                           style={{
                             fontSize: 20,
                             color: "rgba(255,255,255,0.6)",

@@ -10,7 +10,7 @@ import BottomTabNavigator from "./BottomTabNavigator";
 import { GlobalContext } from "../context/GlobalProvider";
 
 import "react-native-gesture-handler";
-import { Alert } from "react-native";
+import TfaScreen from "../screens/TfaScreen";
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
@@ -47,6 +47,7 @@ function RootNavigator({ navigation, route }) {
         <>
           <Stack.Screen name="Onboarding" component={OnBoardingScreen} />
           <Stack.Screen name="Signup" component={SignupScreenUptd} />
+          <Stack.Screen name="Tfa" component={TfaScreen} />
         </>
       ) : (
         <>

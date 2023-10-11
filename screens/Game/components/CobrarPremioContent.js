@@ -31,7 +31,7 @@ const CobrarPremioContent = ({
   setPrizeCollectedError,
   setPrizePendingError,
   setPrizeInactiveError,
-  setVerificationError
+  setVerificationError,
 }) => {
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
@@ -40,12 +40,12 @@ const CobrarPremioContent = ({
 
   const [loading, setLoading] = useState(false);
   const [prizeType, setPrizeType] = useState("");
-  const [prizeAmount, setPrizeAmount] = useState(0);
-  const [loadingObtenerPremio, setLoadingObtenerPremio] = useState(false)
+  const [prizeSize, setPrizeSize] = useState("");
+  const [loadingObtenerPremio, setLoadingObtenerPremio] = useState(false);
 
   React.useEffect(() => {
     setPrizeType(currentPrize?.type);
-    setPrizeAmount(currentPrize?.amount);
+    setPrizeSize(currentPrize?.size);
     //console.log(currentPrize?.type);
   }, []);
 
@@ -68,7 +68,7 @@ const CobrarPremioContent = ({
     Clipboard.setStringAsync(code);
   };
 
- const generarCodigoRequest = () => {
+  const generarCodigoRequest = () => {
     const user_token = userState.token;
     const prize_id = currentPrize.uuid;
     const url = `${BASE_URL}/prize/exchange/${prize_id}`;
@@ -99,15 +99,16 @@ const CobrarPremioContent = ({
 
           // actualizar estado local
           copiarCode(prizeCode);
-      }})
+        }
+      })
       .catch((error) => {
         // console.log("error obteniendo codigo:", error);
       })
-      .finally(()=>{
+      .finally(() => {
         setLoading(false);
-      })
-  }
- 
+      });
+  };
+
   const onPressGenerarCodigo = () => {
     setLoading(true);
 
@@ -119,23 +120,22 @@ const CobrarPremioContent = ({
 
           if (prizeStatus === "active") {
             // codigo actual
-            generarCodigoRequest()
+            generarCodigoRequest();
           }
-          if (prizeStatus === "inactive") {            
-             // eliminar premio del storage
-             storeData("user", {
+          if (prizeStatus === "inactive") {
+            // eliminar premio del storage
+            storeData("user", {
               ...userState,
               prize: null,
             });
             // eliminar premio del estado de la app
-            userDispatch(setPrizeForUser(null)); 
+            userDispatch(setPrizeForUser(null));
             setLoading(false);
-            setModalVisible(false)
+            setModalVisible(false);
             // toast menssaje inactivo
-            setPrizeInactiveError(true)
+            setPrizeInactiveError(true);
           }
           if (prizeStatus === "collected") {
-            
             // finish_checkout con true
             const prize_id = currentPrize.uuid;
             prize_finish_checkout(prize_id, true)
@@ -146,8 +146,8 @@ const CobrarPremioContent = ({
                 //console.log("error liberando el premio")
               })
               .finally(() => {
-                setLoading(false)
-              })
+                setLoading(false);
+              });
             // eliminar premio de la app
             storeData("user", {
               ...userState,
@@ -156,32 +156,32 @@ const CobrarPremioContent = ({
             // eliminar premio del estado de la app
             userDispatch(setPrizeForUser(null));
 
-            setModalVisible(false)
+            setModalVisible(false);
 
             // toast mensaje colleted
-            setPrizeCollectedError(true)
+            setPrizeCollectedError(true);
           }
-          if (prizeStatus === "pending") {     
+          if (prizeStatus === "pending") {
             // finalizar checkout con false
             const prize_id = currentPrize.uuid;
             prize_finish_checkout(prize_id, false)
               .then((response) => {
                 if (response.status === 201) {
-                   // tonce considerar activo e intentar cambiarlo por codigo
-                   generarCodigoRequest()
+                  // tonce considerar activo e intentar cambiarlo por codigo
+                  generarCodigoRequest();
                 }
               })
               .catch(() => {
-                setModalVisible(false)
-                setPrizePendingError(true) //-> toast: no se pudo liberar
+                setModalVisible(false);
+                setPrizePendingError(true); //-> toast: no se pudo liberar
               });
           }
         }
       })
       .catch(() => {
         setModalVisible(false);
-        setVerificationError(true)
-      })
+        setVerificationError(true);
+      });
   };
 
   /* const cleanNotification = async () => {
@@ -193,7 +193,7 @@ const CobrarPremioContent = ({
   }; */
 
   const copiarCode = (code) => {
-    console.log(code)
+    console.log(code);
     copyToClipboard(code);
     setCodigoGenerado(true);
 
@@ -220,21 +220,19 @@ const CobrarPremioContent = ({
       },
     };
 
-    return axios(config)
-  }
-
-
+    return axios(config);
+  };
 
   const onPressObtenerPremio = () => {
-      setLoadingObtenerPremio(true)
-      verificarEstadoPremio()
+    setLoadingObtenerPremio(true);
+    verificarEstadoPremio()
       .then((response) => {
         // console.log(response.status)
         if (response.status === 200) {
           const prizeStatus = response.data.status;
           if (prizeStatus === "active") {
             setModalVisible(false);
-            setLoadingObtenerPremio(false)
+            setLoadingObtenerPremio(false);
             // console.log(prizeStatus)
             navigation.jumpTo("Nueva Recarga", {
               screen: "NuevaRecargaScreen",
@@ -244,49 +242,52 @@ const CobrarPremioContent = ({
           if (prizeStatus === "collected") {
             const prize_id = currentPrize.uuid;
             prize_finish_checkout(prize_id, true)
-            .then(() => {})
-            .catch(() => {})
-            .finally(() => {
-              setLoadingObtenerPremio(false)
-            })
+              .then(() => {})
+              .catch(() => {})
+              .finally(() => {
+                setLoadingObtenerPremio(false);
+              });
             // eliminar premio del storage
             storeData("user", {
               ...userState,
               prize: null,
             });
             // eliminar premio del estado de la app
-            userDispatch(setPrizeForUser(null));  
+            userDispatch(setPrizeForUser(null));
 
             setModalVisible(false);
 
             // mensaje de que el premio ya esta cobrado
             // esto activa el estado en GameScreen, se lanza un toast
-            setPrizeCollectedError(true)
+            setPrizeCollectedError(true);
           }
           if (prizeStatus === "pending") {
-            console.log("pending")
+            console.log("pending");
             const prize_id = currentPrize.uuid;
             prize_finish_checkout(prize_id, false)
-            .then((response) => {
-              console.log("response status finish checkout:", response.status)
-              if (response.status === 201) {
-                // continuar
-                setLoadingObtenerPremio(false)
+              .then((response) => {
+                console.log(
+                  "response status finish checkout:",
+                  response.status
+                );
+                if (response.status === 201) {
+                  // continuar
+                  setLoadingObtenerPremio(false);
+                  setModalVisible(false);
+                  navigation.jumpTo("Nueva Recarga", {
+                    screen: "NuevaRecargaScreen",
+                    params: { inOrderToCobrarPremio: true },
+                  });
+                }
+              })
+              .catch(() => {
                 setModalVisible(false);
-                navigation.jumpTo("Nueva Recarga", {
-                  screen: "NuevaRecargaScreen",
-                  params: { inOrderToCobrarPremio: true },
-                });
-              } 
-            })
-            .catch(() => {
-              setModalVisible(false);
-              setLoadingObtenerPremio(false)
-              setPrizePendingError(true) //-> toast: no se pudo liberar
-            });
+                setLoadingObtenerPremio(false);
+                setPrizePendingError(true); //-> toast: no se pudo liberar
+              });
           }
           if (prizeStatus === "inactive") {
-            setLoadingObtenerPremio(false)
+            setLoadingObtenerPremio(false);
             setModalVisible(false);
             // eliminar premio del storage
             storeData("user", {
@@ -295,15 +296,15 @@ const CobrarPremioContent = ({
             });
             // eliminar premio del estado de la app
             userDispatch(setPrizeForUser(null));
-            setPrizeInactiveError(true) //-> toast: el premio no está activo
+            setPrizeInactiveError(true); //-> toast: el premio no está activo
           }
-        } 
+        }
       })
       .catch(() => {
         // error toast
         setModalVisible(false);
-        setVerificationError(true)
-      })
+        setVerificationError(true);
+      });
   };
 
   const prize_finish_checkout = (uuid, success) => {
@@ -318,8 +319,8 @@ const CobrarPremioContent = ({
       },
     };
 
-    return axios(config)
-  }
+    return axios(config);
+  };
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
@@ -354,7 +355,7 @@ const CobrarPremioContent = ({
         }
         break;
       case "TopUpBonus":
-        if (prizeAmount === 250) {
+        if (prizeSize === "Small") {
           if (idioma === "spa") {
             title = "Media Bolsa";
             desc = `Tienes 250 pesos de regalo para agregar a una recarga. Si no deseas recargar, puedes compartir el premio con el contacto que elijas para que lo haga por ti.`;
@@ -367,7 +368,7 @@ const CobrarPremioContent = ({
           break;
         }
 
-        if (prizeAmount === 500) {
+        if (prizeSize === "Big") {
           if (idioma === "spa") {
             title = "bolsa llena";
             desc =
@@ -422,7 +423,7 @@ const CobrarPremioContent = ({
           />
         );
       case "TopUpBonus":
-        if (prizeAmount === 250) {
+        if (prizeSize === "Small") {
           return (
             <Image
               source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
@@ -436,7 +437,7 @@ const CobrarPremioContent = ({
           );
         }
 
-        if (prizeAmount === 500) {
+        if (prizeSize === "Big") {
           return (
             <Image
               source={require("../../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
@@ -480,18 +481,18 @@ const CobrarPremioContent = ({
         <View style={styles.button}>
           {loadingObtenerPremio ? (
             <NeuButton
-            color="#5e174d"
-            width={(4 / 5) * width}
-            height={width / 7.5}
-            borderRadius={width / 7.5}
-            onPress={() => {}}
-            inset
-            style={{ marginTop: 5 }}
-          >
-            <ActivityIndicator size="large" color="#fff800" />
-          </NeuButton>
-          ):(
-          <NeuButton
+              color="#5e174d"
+              width={(4 / 5) * width}
+              height={width / 7.5}
+              borderRadius={width / 7.5}
+              onPress={() => {}}
+              inset
+              style={{ marginTop: 5 }}
+            >
+              <ActivityIndicator size="large" color="#fff800" />
+            </NeuButton>
+          ) : (
+            <NeuButton
               color="#62194f"
               width={(4 / 5) * width}
               height={width / 7.5}
@@ -514,7 +515,6 @@ const CobrarPremioContent = ({
               />
             </NeuButton>
           )}
-          
         </View>
         <View style={styles.button}>
           {!loading ? (

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -21,6 +21,8 @@ import {
   setCountryForUser,
   deleteAllContacts,
   deleteAllFields,
+  setOperatorForUser,
+  resetNuevaRecargaState,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import NeuButton from "../../libs/neu_element/NeuButton";
@@ -37,6 +39,7 @@ import {
 } from "../../constants/Texts";
 import DropDownMenuModal from "./components/DropDownMenuModal";
 import { storeData } from "../../libs/asyncStorage.lib";
+import ProviderMenuModal from "./components/ProviderMenuModal";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -79,6 +82,18 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   });
 
   const [dropDownVisible, setDropDownVisible] = React.useState(false);
+  const [providerMenuVisible, setProviderMenuVisible] = React.useState(false);
+  const [loadingProviders, setLoadingProviders] = React.useState(false);
+  const [providerList, setProviderList] = React.useState([]);
+
+  /* useEffect(() => {
+    console.log(validated_prizes);
+  }, [validated_prizes]); */
+
+  useEffect(() => {
+    setLoadingProviders(true);
+    getOperators(userState?.country);
+  }, [userState]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -95,11 +110,11 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         if (inOrderToCobrarPremio === true) {
           const type = userState.prize.type;
           const uuid = userState.prize.uuid;
-          const amount = userState.prize.amount;
+          const size = userState.prize.size;
           const fieldId = firstFieldId;
 
           nuevaRecargaDispatch(
-            setPrize({ fieldId, uuid, type, amount, loading: true })
+            setPrize({ fieldId, uuid, type, size, loading: true })
           );
 
           validate_prize(uuid)
@@ -109,7 +124,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                   fieldId,
                   uuid,
                   type,
-                  amount,
+                  size,
                   loading: false,
                 })
               );
@@ -139,7 +154,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             // si hay un slot vacio, solo agregar
             const type = userState.prize.type;
             const uuid = userState.prize.uuid;
-            const amount = userState.prize.amount;
+            const size = userState.prize.size;
 
             //let fieldId;
 
@@ -147,7 +162,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               const fieldId = fields[fields.length - 1].fieldId;
 
               nuevaRecargaDispatch(
-                setPrize({ fieldId, uuid, type, amount, loading: true })
+                setPrize({ fieldId, uuid, type, size, loading: true })
               );
 
               validate_prize(uuid)
@@ -157,7 +172,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                       fieldId,
                       uuid,
                       type,
-                      amount,
+                      size,
                       loading: false,
                     })
                   );
@@ -175,7 +190,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               nuevaRecargaDispatch(setFields(true, fieldId));
 
               nuevaRecargaDispatch(
-                setPrize({ fieldId, uuid, type, amount, loading: true })
+                setPrize({ fieldId, uuid, type, size, loading: true })
               );
 
               validate_prize(uuid)
@@ -185,7 +200,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                       fieldId,
                       uuid,
                       type,
-                      amount,
+                      size,
                       loading: false,
                     })
                   );
@@ -259,27 +274,96 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     return axios(config);
   };
 
+  const getOperators = (selectedCountry) => {
+    const countryIsoCode = selectedCountry;
+    const user_token = userState.token;
+    const url = `${BASE_URL}/topup/operators`;
+
+    const config = {
+      method: "get",
+      url,
+      params: {
+        countryIsoCode,
+      },
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    //console.log(config);
+
+    axios(config)
+      .then((response) => {
+        //console.log(response.data);
+        const data = response.data;
+        //console.log("data", [...data]);
+
+        setProviderList([...data]);
+
+        // console.log(data.length);
+        if (data.length !== 0) {
+        }
+      })
+      .catch((err) => {
+        //console.log(err.message);
+        setProviderList([]);
+        Toast.show(
+          userState?.idioma === "spa"
+            ? "No se pudo cargar la lista de operadores de esta región"
+            : "Unable to load the list of operators in this region",
+          {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+          }
+        );
+      })
+      .finally(() => {
+        setLoadingProviders(false);
+      });
+  };
+
   const onSelectCountry = (anteriorCountry, selectedCountry) => {
     //console.log(anteriorCountry);
     //console.log(selectedCountry);
 
     //actualizar estado app
     userDispatch(setCountryForUser(selectedCountry));
+    userDispatch(setOperatorForUser({ name: undefined, id: undefined }));
     //actualizar almacenamiento de la app
     storeData("user", {
       ...userState,
       country: selectedCountry,
+      operator: { name: undefined, id: undefined },
     });
 
     // si el pais seleccionado es != pais actual
     // eliminar contactos seleccionados
     if (selectedCountry !== anteriorCountry) {
-      nuevaRecargaDispatch(deleteAllFields());
+      nuevaRecargaDispatch(resetNuevaRecargaState());
     }
 
     // cerrar drom down menu
     setDropDownVisible(false);
+    // refrescar operadores
+    setLoadingProviders(true);
+    getOperators(selectedCountry);
     //debe cambiar el icono solo
+  };
+
+  const onSelectProvider = (selectedProvider) => {
+    //console.log("selected", selectedProvider);
+    // userDispatch
+    userDispatch(setOperatorForUser(selectedProvider));
+    // storeData
+    storeData("user", {
+      ...userState,
+      operator: selectedProvider,
+    });
+    setProviderMenuVisible(false);
   };
 
   const comprobarUuidRepetido = (uuid) => {
@@ -320,7 +404,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           fieldId,
           uuid,
           type: undefined,
-          amount: undefined,
+          size: undefined,
           loading: true,
         })
       );
@@ -329,9 +413,9 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         .then((response) => {
           const currentPrize = response.data;
           const type = currentPrize.type;
-          const amount = currentPrize.amount;
+          const size = currentPrize.size;
 
-          //console.log("AMOUNT", amount);
+          console.log("size", size);
 
           Toast.show(ResolveText("codigoValido"), {
             duaration: Toast.durations.LONG,
@@ -343,7 +427,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           });
           // actualizar lista de premios validados
           nuevaRecargaDispatch(
-            updatePrize(uuid, { fieldId, uuid, type, amount, loading: false })
+            updatePrize(uuid, { fieldId, uuid, type, size, loading: false })
           );
           nuevaRecargaDispatch(toggleValidateInProcess(false));
         })
@@ -376,7 +460,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     setModalVisible(true);
   };
 
-  const onPressAddContact = () => {
+  const onPressAddContactField = () => {
     if (addContactAvaiable) {
       nuevaRecargaDispatch(setFields(false, makeid(15)));
 
@@ -467,31 +551,37 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         );
         setLoadingContinuar(false);
       } else {
-        /*   console.log(
+        if (
+          userState.operator.id == undefined ||
+          userState.operator.name == undefined
+        ) {
+          Toast.show(
+            userState?.idioma === "spa"
+              ? "Antes de continuar, seleccione su operador"
+              : "Before proceeding, select your operator",
+            {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+            }
+          );
+          setLoadingContinuar(false);
+        } else {
+          /*   console.log(
           "socket state - nueva recarga screen",
           socketState.socketOpen
         ); */
 
-        if (!socketState.socketIsOpen) {
-          socketDispatch(openSocket());
-        }
+          if (!socketState.socketIsOpen) {
+            socketDispatch(openSocket());
+          }
 
-        // init checkout de los premios validados
-        // si un premio está asociado a un contacto, es que está en checkout
+          // init checkout de los premios validados
+          // si un premio está asociado a un contacto, es que está en checkout
 
-        if (validated_prizes.length === 0) {
-          //console.log("VALIDATED PRIZES", validated_prizes);
-          /*  Toast.show("No hay premios válidos por cobrar", {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          }); */
-          setLoadingContinuar(false);
-          navigation.navigate("RecargasDisponiblesScreen", { esDirecta: true });
-        } else {
           let prizesForInitCheckoutPromise = [];
 
           validated_prizes.forEach((prize_validado) => {
@@ -502,27 +592,21 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
           Promise.all(prizesForInitCheckoutPromise)
             .then(() => {
+              // antes de CONTINUAR
+              // se actualiza el arreglo de contactos seleccionados
+              // con los premios correspondientes
               validated_prizes.forEach((prize) => {
-                /*  let price;
-                if (prize.amount === 250) {
-                  price = 19.9;
-                } else if (prize.amount === 500) {
-                  price = 24.7;
-                } */
                 nuevaRecargaDispatch(
                   updatePrizeForContact(prize.fieldId, {
                     uuid: prize.uuid,
                     type: prize.type,
-                    amount: prize.amount,
-                    price: 0,
+                    size: prize.size,
                   })
                 );
               });
               setLoadingContinuar(false);
               //console.log(BASE_URL);
-              navigation.navigate("RecargasDisponiblesScreen", {
-                esDirecta: false,
-              });
+              navigation.navigate("RecargasDisponiblesScreen");
             })
             .catch((err) => {
               setLoadingContinuar(false);
@@ -601,12 +685,75 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             />
           ) : null}
         </NeuButton>
+        <View
+          style={{
+            width: width / 3.3,
+            height: width / 7 - 20,
+            //flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-start",
+          }}
+        >
+          <NeuButton
+            color="#701c57"
+            width={width / 3}
+            height={width / 7 - 20}
+            borderRadius={5}
+            onPress={() => {
+              loadingProviders || providerList.length == 0
+                ? null
+                : setProviderMenuVisible(!providerMenuVisible);
+
+              /* if (providerList.length == 0) {
+                Toast.show(
+                  userState?.idioma === "spa"
+                    ? "No se pudo cargar la lista de operadores de esta región"
+                    : "Unable to load the list of operators in this region",
+                  {
+                    duaration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                  }
+                );
+              } */
+            }}
+            style={{ marginTop: 10 }}
+          >
+            {loadingProviders ? (
+              <ActivityIndicator size="small" color="#fffb00" />
+            ) : (
+              <TextBold
+                //text={ResolveText("continuar")}
+                text={
+                  userState.operator.id != undefined
+                    ? userState.operator.name
+                    : userState.idioma == "spa"
+                    ? "OPERADORES"
+                    : "OPERATORS"
+                }
+                style={{
+                  fontSize: 20,
+                  color: "#fffb00",
+                  textTransform: "uppercase",
+                }}
+              />
+            )}
+          </NeuButton>
+          {/* <Image
+            source={require("../../assets/images/iconos/abajo.png")}
+            style={{ width: 12, height: 10, marginTop: 8, marginLeft: -15 }}
+          /> */}
+        </View>
+
         <NeuButton
           color="#701c57"
           width={width / 7}
           height={width / 7 - 20}
           borderRadius={5}
-          onPress={() => onPressAddContact()}
+          onPress={() => onPressAddContactField()}
           style={{ marginRight: marginGlobal, marginTop: 10 }}
         >
           <Image
@@ -622,6 +769,15 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         width={width}
         height={height}
         onSelectCountry={onSelectCountry}
+      />
+      <ProviderMenuModal
+        modalVisible={providerMenuVisible}
+        setModalVisible={setProviderMenuVisible}
+        transparent={true}
+        width={width}
+        height={height}
+        onSelectProvider={onSelectProvider}
+        providerList={providerList}
       />
       <ScrollView style={styles.outterContainer}>
         <CodigoRecargaModal

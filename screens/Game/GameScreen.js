@@ -59,14 +59,15 @@ const GameScreen = ({ navigation }) => {
   const [animate, SetAnimate] = React.useState(false);
   const [clickEvent, SetClickEvent] = React.useState(false);
 
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalCobrarPremioVisible, setModalCobrarPremioVisible] =
+    React.useState(false);
   //const [codigo, setCodigo] = React.useState("");
   const [codigoGenerado, setCodigoGenerado] = React.useState(false);
 
   const [premioAcumulado, setPremioAcumulado] = React.useState(false);
   const [premioAcumuladoType, setPremioAcumuladoType] =
     React.useState(undefined);
-  const [premioAcumuladoAmount, setPremioAcumuladoAmount] =
+  const [premioAcumuladoSize, setPremioAcumuladoSize] =
     React.useState(undefined);
   const [NadaWon, setNadaWon] = React.useState(false);
   const [MediaBolsaWon, setMediaBolsaWon] = React.useState(false);
@@ -106,6 +107,10 @@ const GameScreen = ({ navigation }) => {
   const ANIMATION_TIME = 10000; // ms (movimiento de ruleta)
   const SENSIBILITY_TIME = 4000; //mantener proporción con ANIMATION_TIME
   const TO_VALUE = 20;
+
+  /* React.useEffect(() => {
+    console.log(userState);
+  }, [userState]); */
 
   React.useEffect(() => {
     if (verificationError) {
@@ -294,7 +299,7 @@ const GameScreen = ({ navigation }) => {
 
   const ImagePrizePremioAcumulado = () => {
     const typeOfPrize = premioAcumuladoType;
-    const amount = premioAcumuladoAmount;
+    const size = premioAcumuladoSize;
 
     //console.log(typeOfPrize);
     //console.log(amount);
@@ -313,7 +318,7 @@ const GameScreen = ({ navigation }) => {
       case "TopUpBonus":
         //const amount = userState?.prize?.amount;
 
-        if (amount === 10 || amount === 250) {
+        if (size === "Small") {
           return (
             <Image
               source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
@@ -324,7 +329,7 @@ const GameScreen = ({ navigation }) => {
             />
           );
         }
-        if (amount === 20 || amount === 500) {
+        if (size === "Big") {
           return (
             <Image
               source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
@@ -366,9 +371,9 @@ const GameScreen = ({ navigation }) => {
           />
         );
       case "TopUpBonus":
-        const amount = userState?.prize?.amount;
+        const size = userState?.prize?.size;
 
-        if (amount === 10 || amount === 250) {
+        if (size === "Small") {
           return (
             <Image
               source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
@@ -380,7 +385,7 @@ const GameScreen = ({ navigation }) => {
             />
           );
         }
-        if (amount === 20 || amount === 500) {
+        if (size === "Big") {
           return (
             <Image
               source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
@@ -416,8 +421,8 @@ const GameScreen = ({ navigation }) => {
             <Image
               source={require("../../assets/images/home/logo_para_boton.png")}
               style={{
-                width: 60,
-                height: 60,
+                width: 85,
+                height: 85,
               }}
             />
           </View>
@@ -451,27 +456,30 @@ const GameScreen = ({ navigation }) => {
       setPremioAcumuladoType("Jackpot");
     }
     // entre 0.5 y 0.75 - 2 posibilidades (250 pesos)
+    // UBDATE 29/09/23: SIZE Small, KEY AMOUNT eliminado
+
     if (random_seed >= 0.5 && random_seed < 0.62) {
       setCasillaFinal("7268deg");
       setPremioAcumuladoType("TopUpBonus");
-      setPremioAcumuladoAmount(250);
+      setPremioAcumuladoSize("Small");
     }
     if (random_seed >= 0.62 && random_seed < 0.75) {
       setCasillaFinal("7358deg");
       setPremioAcumuladoType("TopUpBonus");
-      setPremioAcumuladoAmount(250);
+      setPremioAcumuladoSize("Small");
     }
 
     // entre 0.75 y 1 - 2 posibilidades (500 pesos)
+    // UBDATE 29/09/23: SIZE Big
     if (random_seed >= 0.75 && random_seed < 0.87) {
       setCasillaFinal("7178deg");
       setPremioAcumuladoType("TopUpBonus");
-      setPremioAcumuladoAmount(500);
+      setPremioAcumuladoSize("Big");
     }
     if (random_seed >= 0.87 && random_seed <= 1) {
       setCasillaFinal("7088deg");
       setPremioAcumuladoType("TopUpBonus");
-      setPremioAcumuladoAmount(500);
+      setPremioAcumuladoSize("Big");
     }
   };
 
@@ -870,7 +878,7 @@ const GameScreen = ({ navigation }) => {
 
   const Salir = () => {
     setCodigoGenerado(false);
-    setModalVisible(false);
+    setModalCobrarPremioVisible(false);
   };
 
   /* React.useEffect(() => {
@@ -945,12 +953,12 @@ const GameScreen = ({ navigation }) => {
           </LinearGradient>
         </Modal>
       ) : null}
-      {modalVisible ? ( //cobrar premio modal
+      {modalCobrarPremioVisible ? ( //cobrar premio modal
         <Modal
           animationType="slide"
           transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
+          visible={modalCobrarPremioVisible}
+          onRequestClose={() => setModalCobrarPremioVisible(false)}
         >
           <LinearGradient
             colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
@@ -967,7 +975,7 @@ const GameScreen = ({ navigation }) => {
               <RootSiblingParent>
                 <CobrarPremioContent
                   navigation={navigation}
-                  setModalVisible={setModalVisible}
+                  setModalVisible={setModalCobrarPremioVisible}
                   Salir={Salir}
                   setCodigoGenerado={setCodigoGenerado}
                   codigoGenerado={codigoGenerado}
@@ -1395,7 +1403,7 @@ const GameScreen = ({ navigation }) => {
             //marginRight: width / 10,
           }}
         >
-          <NeuButton
+          <NeuButton // boton naranja premios
             color="#fe8457"
             width={width / 3.5}
             height={width / 3.5}
@@ -1452,7 +1460,7 @@ const GameScreen = ({ navigation }) => {
                     setNadaDescriptionModalVisible(true);
                   } else {
                     enMovimiento.current = false;
-                    setModalVisible(true);
+                    setModalCobrarPremioVisible(true);
                   }
                 }
               } else {
@@ -1597,7 +1605,7 @@ const GameScreen = ({ navigation }) => {
             bottom: 130,
           }}
         >
-          <NeuButton
+          <NeuButton // boton morado recarga directa
             color="#311338"
             width={width / 3.5}
             height={width / 3.5}

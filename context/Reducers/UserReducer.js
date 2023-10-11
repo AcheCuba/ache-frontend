@@ -6,6 +6,7 @@ const RESTORE_USER = actionTypes.RESTORE_USER;
 const SET_PRIZE_FOR_USER = actionTypes.SET_PRIZE_FOR_USER;
 const SET_IDIOMA = actionTypes.SET_IDIOMA;
 const SET_COUNTRY_FOR_USER = actionTypes.SET_COUNTRY_FOR_USER;
+const SET_OPERATOR_FOR_USER = actionTypes.SET_OPERATOR_FOR_USER;
 
 const UserReducer = (state = userInitialState, action) => {
   switch (action.type) {
@@ -29,6 +30,17 @@ const UserReducer = (state = userInitialState, action) => {
       return {
         ...state,
         country: action.country,
+      };
+    case SET_OPERATOR_FOR_USER:
+      //console.log("action", action);
+      const nuevo_operador = action.operator;
+      return {
+        ...state,
+        operator: {
+          ...state.operator,
+          name: nuevo_operador.name,
+          id: nuevo_operador.id,
+        },
       };
     default:
       //console.log("Default case (in user reducer):", state);

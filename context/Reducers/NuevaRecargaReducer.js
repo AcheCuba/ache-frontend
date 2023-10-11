@@ -92,7 +92,7 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         contactosSeleccionados: [],
       };
 
-    case DELETE_FIELD:
+    case DELETE_FIELD: // elimina contacto y premio de la lista de seleccionados
       return {
         ...state,
         contactosSeleccionados: state.contactosSeleccionados.filter(

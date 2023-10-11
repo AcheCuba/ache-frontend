@@ -7,6 +7,7 @@ export default {
   prize: null,
   idioma: "eng",
   country: "CUB",
+  operator: { name: undefined, id: undefined },
 };
 
 // actions que lo modifican:
