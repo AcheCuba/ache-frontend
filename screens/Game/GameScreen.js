@@ -533,7 +533,7 @@ const GameScreen = ({ navigation }) => {
 
         break;
       case "TopUpBonus":
-        if (prize.amount === 10 || prize.amount === 250) {
+        if (prize.size === "Small") {
           //console.log("sellama");
           setTimeout(() => {
             setMediaBolsaWon(true);
@@ -552,7 +552,7 @@ const GameScreen = ({ navigation }) => {
             setCasillaFinal("7358deg");
           }
         }
-        if (prize.amount === 20 || prize.amount === 500) {
+        if (prize.size === "Big") {
           setTimeout(() => {
             setBolsaLlenaWon(true);
             playSoundGanasPremioDigital();
@@ -679,6 +679,12 @@ const GameScreen = ({ navigation }) => {
     axios(config)
       .then((response) => {
         const prize_result = response.data;
+
+        /* const prize_result = {
+          size: "Big",
+          type: "Jackpot",
+        }; */
+
         thereIsPrizeResult.current = true;
 
         if (prize_result === "" || prize_result === undefined) {
@@ -1021,7 +1027,7 @@ const GameScreen = ({ navigation }) => {
             onPress={() => {
               setPremioAcumulado(false);
               setPremioAcumuladoType(undefined);
-              setPremioAcumuladoAmount(undefined);
+              //setPremioAcumuladoAmount(undefined);
             }}
           >
             <LinearGradient
