@@ -29,7 +29,8 @@ SplashScreen.preventAutoHideAsync();
 export default function MainAppWrapper() {
   return (
     <AnimatedSplashScreen
-      animationSource={require("../assets/animaciones/cocodrilo.lottie.json")}
+      //animationSource={require("../assets/animaciones/cocodrilo.lottie.json")}
+      animationSource={require("../assets/animaciones/spinRecargasSplash.mp4.lottie.json")}
     >
       <MainApp />
     </AnimatedSplashScreen>
@@ -75,7 +76,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
 
   setTimeout(() => {
     setAnimationComplete(true);
-  }, 5000);
+  }, 10000);
 
   return (
     <View style={{ flex: 1 }}>

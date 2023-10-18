@@ -1,12 +1,12 @@
 {
   "expo": {
-    "owner": "achecuba",
-    "name": "ache",
-    "slug": "ache",
+    "owner": "marole_pte",
+    "name": "Spin Recargas",
+    "slug": "spinRecargas",
     "privacy": "unlisted",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
-    "icon": "./assets/images/icon_ache.png",
+    "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -30,8 +30,9 @@
       "versionCode": 1,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive_icon_ache.png",
-        "backgroundColor": "#701c57"
+        "foregroundImage": "./assets/images/app_icon_foreground.png",
+        "backgroundImage": "./assets/images/app_icon_background.png"
+        //"backgroundColor": "#701c57"
       }
     },
     "web": {

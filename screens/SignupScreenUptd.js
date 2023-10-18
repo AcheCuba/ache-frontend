@@ -1,11 +1,10 @@
 import React, { useContext, useState } from "react";
 import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
-import Toast from "react-native-root-toast";
 import { StyleSheet, View, Dimensions, Image, Platform } from "react-native";
 //import { NeuButton, NeuInput } from "react-native-neu-element";
 import NeuButton from "../libs/neu_element/NeuButton";
 import NeuInput from "../libs/neu_element/NeuInput";
-
+import Toast from "react-native-root-toast";
 import { BASE_URL } from "../constants/domain";
 import { signup } from "../context/Actions/actions";
 import { GlobalContext } from "../context/GlobalProvider";
@@ -79,8 +78,8 @@ const SignupScreenUptd = ({ navigation }) => {
   const sendVerificationCode = (phoneNumber) => {
     //const user_token = userState.token;
 
-    console.log(typeof phoneNumber);
-    const url = `${BASE_URL}/users/send-verification-code`;
+    //console.log(typeof phoneNumber);
+    const url = `${BASE_URL}/auth/send-verification-code`;
 
     console.log(url);
 
@@ -88,9 +87,6 @@ const SignupScreenUptd = ({ navigation }) => {
       method: "post",
       url,
       params: { phoneNumber },
-      /* headers: {
-        Authorization: `Bearer ${user_token}`,
-      }, */
     };
     return axios(config);
   };
@@ -114,14 +110,17 @@ const SignupScreenUptd = ({ navigation }) => {
           // todo ok
           //await fetchRegister(name, email, phone);
 
-          navigation.navigate("Tfa", { name, email, phone }); // quitar cuando este la api
+          // navigation.navigate("Tfa", { name, email, phone }); // quitar cuando este la api
           // cuando este lista la api
 
+          setLoading(true);
           sendVerificationCode(phone)
             .then((response) => {
               console.log(response.status);
-              if (response.status === 200) {
+              if (response.status === 200 || response.status == 201) {
+                // code sent
                 //+34695082384
+                setLoading(false);
                 navigation.navigate("Tfa", { name, email, phone });
               }
             })
@@ -129,9 +128,18 @@ const SignupScreenUptd = ({ navigation }) => {
               if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
+                setLoading(false);
                 console.log(error.response.data);
                 console.log(error.response.status);
-                //console.log(error.response.headers);
+
+                Toast.show(error.response.data.message, {
+                  duaration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0,
+                });
               }
             });
         }

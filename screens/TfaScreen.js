@@ -13,7 +13,8 @@ import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
-import normalize from "react-native-normalize";
+import axios from "axios";
+import { createIconSetFromFontello } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
@@ -24,6 +25,7 @@ const TfaScreen = ({ navigation, route }) => {
 
   const [loadingTwo, setLoadingTwo] = useState(false);
   const [codeIn, setCodeIn] = useState("");
+  const [resendOption, setResendOption] = useState(false);
 
   const { idioma } = userState;
 
@@ -51,11 +53,53 @@ const TfaScreen = ({ navigation, route }) => {
 
   const onChangeCode = (codeValue) => {
     //setCode(codeValueIn);
-    setCodeIn(codeValue);
+    if (codeValue.length <= 6) {
+      setCodeIn(codeValue);
+    }
+  };
+
+  const onPressResend = (phoneNumber) => {
+    //const user_token = userState.token;
+
+    const url = `${BASE_URL}/auth/send-verification-code`;
+
+    let config = {
+      method: "post",
+      url,
+      params: { phoneNumber },
+    };
+    axios(config)
+      .then((response) => {
+        if (response.status === 200 || response.status == 201) {
+          // code sent
+          console.log("code sent");
+          setLoadingTwo(false);
+          setCodeIn("");
+          setResendOption(false);
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          setLoadingTwo(false);
+
+          Toast.show(error.response.data.message, {
+            duaration: Toast.durations.LONG,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+          });
+        }
+      });
   };
 
   const checkVerificationCode = () => {
-    const url = `${BASE_URL}/check-verification-code`;
+    const url = `${BASE_URL}/auth/check-verification-code`;
+
+    //console.log(codeIn);
 
     let config = {
       method: "get",
@@ -146,28 +190,62 @@ const TfaScreen = ({ navigation, route }) => {
   };
 
   const onPressVerify = () => {
-    setLoadingTwo(true);
-
-    // quitar con api actualizada
-    fetchRegister(name, email, phone);
-    // quitar con api actualizada
-
-    /*  checkVerificationCode()
-      .then((response) => {
-        if (response.status === 200) {
-          // todo correcto: signup
-          fetchRegister();
+    if (codeIn.length !== 6) {
+      Toast.show(
+        idioma === "spa"
+          ? "Introduzca un código de 6 dígitos"
+          : "Enter a 6-digit code",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
         }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          //console.log(error.response.headers);
-        }
-      }); */
+      );
+      setLoadingTwo(false);
+    } else {
+      setLoadingTwo(true);
+
+      // == quitar con api actualizada
+      // fetchRegister(name, email, phone);
+      // == quitar con api actualizada
+
+      checkVerificationCode()
+        .then((response) => {
+          if (response.status === 200) {
+            //console.log(response.status);
+            // valid code => signup
+            fetchRegister(name, email, phone);
+            setLoadingTwo(false);
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+
+            if (error.response.status === 500) {
+              setResendOption(true);
+            }
+
+            setLoadingTwo(false);
+
+            //console.log(error.response.data);
+            //console.log(error.response.status);
+            //console.log(error.response.headers);
+            Toast.show(error.response.data.message, {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+            });
+          }
+        });
+    }
   };
 
   /*  useEffect(() => {
@@ -207,7 +285,7 @@ const TfaScreen = ({ navigation, route }) => {
             value={codeIn}
             placeholderTextColor="gray"
             color="#701c57"
-            keyboardType="number-pad"
+            keyboardType="numeric"
           />
         </View>
 
@@ -220,29 +298,55 @@ const TfaScreen = ({ navigation, route }) => {
             //marginTop: -120,
           }}
         >
-          <NeuButton
-            color="#58184d"
-            width={180}
-            height={50}
-            borderRadius={width / 7.5}
-            onPress={() => onPressVerify()}
-            style={{}}
-            active={loadingTwo}
-          >
-            {loadingTwo ? (
-              <ActivityIndicator size="large" color="#01f9d2" />
-            ) : (
-              <TextBold
-                text={idioma === "spa" ? "VERIFICAR" : "VERIFY"}
-                style={{
-                  color: "#fff800",
-                  //fontWeight: "bold",
-                  fontSize: 20,
-                  textTransform: "uppercase",
-                }}
-              />
-            )}
-          </NeuButton>
+          {resendOption ? (
+            <NeuButton
+              color="#58184d"
+              width={180}
+              height={50}
+              borderRadius={width / 7.5}
+              onPress={() => onPressResend(phone)}
+              style={{}}
+              active={loadingTwo}
+            >
+              {loadingTwo ? (
+                <ActivityIndicator size="large" color="#01f9d2" />
+              ) : (
+                <TextBold
+                  text={idioma === "spa" ? "REENVIAR" : "RESEND"}
+                  style={{
+                    color: "#fff800",
+                    //fontWeight: "bold",
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                  }}
+                />
+              )}
+            </NeuButton>
+          ) : (
+            <NeuButton
+              color="#58184d"
+              width={180}
+              height={50}
+              borderRadius={width / 7.5}
+              onPress={() => onPressVerify()}
+              style={{}}
+              active={loadingTwo}
+            >
+              {loadingTwo ? (
+                <ActivityIndicator size="large" color="#01f9d2" />
+              ) : (
+                <TextBold
+                  text={idioma === "spa" ? "VERIFICAR" : "VERIFY"}
+                  style={{
+                    color: "#fff800",
+                    //fontWeight: "bold",
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                  }}
+                />
+              )}
+            </NeuButton>
+          )}
         </View>
       </View>
     </ImageBackground>

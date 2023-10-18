@@ -91,8 +91,8 @@ export default function useCachedResources() {
         //===================== USO EN DEV: ELIMINAR PREMIO DE APP ============================
 
         //===================== USO EN DEV: ELIMINAR USER DE LA APP ===========================
-        //await AsyncStorage.removeItem("user");
-        //user = await getData("user");
+        // await AsyncStorage.removeItem("user");
+        // user = await getData("user");
         //===================== USO EN DEV: ELIMINAR USER DE LA APP ===========================
 
         //===================== USO EN DEV eliminar token de expo push not ===========================
