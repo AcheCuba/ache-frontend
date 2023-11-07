@@ -4,17 +4,17 @@ export const GameScreenTextSpanish = () => {
     //nadaWonTitle: "calavera",
     /* nadaWonBody:
       "Te faltó ACHÉ en el giro. Intenta otra vez en 24 horas o envía una recarga para que desaparezca y puedas probar nuevamente.", */
-    MediaBolsaWonTitle: "media bolsa",
+    MediaBolsaWonTitle: "La Bolsa",
     MediaBolsaWonBody:
-      "¡ACHÉ! ¡Has ganado 250 pesos! Para cobrar tu premio agrega la MEDIA BOLSA a una recarga, o compártela con quien quieras. Te guardaremos tu premio por 72 horas.",
+      "¡Felicidades, has ganado una recarga gratis! Para cobrar el premio agrégalo a una recarga o compártelo con quien desees. Tu premio quedará guardado por 72 horas",
     //PremioWonButtonObtenerPremio: "obtener premio",
     //PremioWonButtonSalir: "salir",
-    BolsaLlenaWonTitle: "bolsa llena",
+    BolsaLlenaWonTitle: "El Cofre",
     BolsaLlenaWonBody:
-      "¡ACHÉ! ¡Has ganado 500 pesos! Para cobrar tu premio agrega la BOLSA LLENA a una recarga, o compártela con quien quieras. Te guardaremos tu premio por 72 horas.",
-    JoyaWonTitle: "LAS GEMAS",
+      "¡Felicidades, has ganado una recarga doble! Para cobrar el premio agrégalo a una recarga o compártelo con quien desees. Tu premio quedará guardado por 72 horas",
+    JoyaWonTitle: "El Diamante",
     JoyaWonBody:
-      "¡Se desbordó el ACHÉ! ¡Has ganado nuestro súper premio de 500 USD! Para reclamar tu premio agrega LAS GEMAS a una recarga, revisa tu email y sigue las instrucciones. Te guardaremos tu súper premio por 72 horas!",
+      "¡Felicidades, has ganado El Diamante! ¡Tienes derecho a un premio de $500 en efectivo! Para cobrar el premio agrégalo a una recarga y un representante de Spin se pondrá en contacto contigo rápidamente mediante un correo para entregártelo. Tu premio quedará guardado por 72 horas",
     cancelar: "Cancelar",
     obtenerPremio: "Obtener Premio",
     volverAJugar: "volver a jugar",
@@ -31,20 +31,20 @@ export const GameScreenTextSpanish = () => {
 
 export const GameScreenTextEnglish = () => {
   return {
-    MediaBolsaWonTitle: "HALF BAG",
+    MediaBolsaWonTitle: "The Pouch",
     MediaBolsaWonBody:
-      "ACHE! You’ve won 250 pesos! To cash your prize, add the HALF BAG to a recharge or share it with anyone you want to. You have 72 hours.",
-    BolsaLlenaWonTitle: "FULL BAG",
+      "Congrats! You’ve won a free top-up. To collect your prize, add it to a top-up or share it with anyone. Your prize will be saved for 72 hours.",
+    BolsaLlenaWonTitle: "The Chest",
     BolsaLlenaWonBody:
-      "ACHE! You’ve won 500 pesos! To cash your prize, add the FULL BAG to a recharge or share it with anyone you want to. You have 72 hours",
+      "Congrats! You’ve won a double top-up. To collect your prize, add it to a top-up or share it with anyone. Your prize will be saved for 72 hours.",
     JoyaWonTitle: "GEMS",
     JoyaWonBody:
-      "Your ACHÉ is on fire! You’ve won our super 500 dollars’ jackpot! To claim your GEMS, send a fast recharge The Flash, check your email and follow the instructions. You have 72 hours.",
+      "Congratulations, you won The Diamond! You are entitled to a $500 cash prize! To collect the prize add it to a top-up and a Spin representative will contact you promptly by mail to deliver it to you. Your prize will be saved for 72 hours",
     cancelar: "cancel",
     obtenerPremio: "get prize",
     volverAJugar: "play again",
     salir: "exit",
-    recargar: "recharge",
+    recargar: "top-up",
     errorConexion: "Connection fail. Please check.",
     premioVacio: "No price to redeem. \n Use your ACHÉ and spin the Wheel!",
     errorDesconocido: "Unknown error. Close the app and try again.",
@@ -66,7 +66,7 @@ export const CobrarPremioTextSpanish = () => {
 export const CobrarPremioTextEngish = () => {
   return {
     cancelar: "cancel",
-    obtenerPremio: "ADD TO RECHARGE",
+    obtenerPremio: "ADD TO A TOP-UP",
     copiarCodigo: "SHARE PRIZE",
     compartirCodigo: "Code successfully copied",
   };
@@ -166,37 +166,37 @@ export const MoreNosotrosTextEnglish = () => {
 
 export const PremioDescriptionTextSpanish = () => {
   return {
-    ruletaFortuna: "Ruleta de la fortuna",
-    mediaBolsa: "media bolsa",
+    ruletaFortuna: "Rueda de la fortuna",
+    mediaBolsa: "La bolsa",
     mediaBolsaDesc:
-      "Si giras la Ruleta y consigues este premio significa que has ganado 250 pesos que podrás enviar como extra en una recarga o compartir con quien desees. Tienes 72 horas para cobrar tu premio de la forma que elijas.",
-    bolsaLlena: "Bolsa llena",
+      "¿Te ganaste este premio cuando giraste la ruleta? ¡Acabas de ganar una recarga gratis. Puedes agregarlo a una recarga o compartirlo con cualquiera de tus contactos. Debes cobrar tu premio en las próximas 72 horas.",
+    bolsaLlena: "El cofre",
     bolsaLlenaDesc:
-      "Si giras la Ruleta y consigues este premio significa que has ganado 500 pesos que podrás enviar como extra en una recarga o compartir con quien desees. Tienes 72 horas para cobrar tu premio de la forma que elijas.",
-    joyitas: "Las Gemas",
+      "¿Te ganaste este premio cuando giraste la ruleta? ¡Acabas de ganar una recarga doble! Puedes agregarlo a una recarga o compartirlo con cualquiera de tus contactos. Debes cobrar tu premio en las próximas 72 horas.",
+    joyitas: "El diamante",
     joyitasDesc:
-      "Si giras la Ruleta y consigues LAS GEMAS significa que has ganado nuestro súper premio de ¡500 USD! Para cobrarlo debes enviar una recarga y revisar tu email para seguir las instrucciones. Tienes 72 horas para cobrar tu premio de la forma que elijas.",
-    calavera: "calavera",
+      "Giraste la ruleta y te salió El Diamante... ¡Acabas de ganar el gran premio de 500 dólares! Para poder cobrarlo debes comprar antes una recarga y revisa después tu correo y sigue las instrucciones. Recuerda que debes cobrar el premio en las próximas 72 horas",
+    calavera: "La calavera",
     calaveraDesc:
-      "Si giras la Ruleta y te cae CALAVERA es porque te faltó ACHÉ en el giro. Puedes intentarlo otra vez en 24 horas, o enviar una recarga rápida en El Rayo para jugar de nuevo.",
+      "Si giras la ruleta y te sale La Calavera...mala suerte esta vez. Inténtalo de nuevo en 24 horas o compra una recarga rápida usando el botón del Rayo para que puedas jugar de nuevo.",
   };
 };
 
 export const PremioDescriptionTextEnglish = () => {
   return {
-    ruletaFortuna: "RECHARGE WHEEL",
-    mediaBolsa: "Half bag",
+    ruletaFortuna: "FORTUNE WHEEL",
+    mediaBolsa: "The Pouch",
     mediaBolsaDesc:
-      "If you spin the Wheel and get this prize it means you’ve won 250 pesos. That is the amount you could add as an extra in any recharge, or share it with anyone you want to. You have 72 hours to cash your reward.",
-    bolsaLlena: "Full bag",
+      "Did you spin the wheel and get this prize? Means you’ve won a free top-up to add or share with any of your contacts. You must collect the prize within the next 72 hours.",
+    bolsaLlena: "The Chest",
     bolsaLlenaDesc:
-      "If you spin the Wheel and get this prize it means you’ve won 500 pesos. That is the amount you could add as an extra in any recharge, or share it with anyone you want to. You have 72 hours to cash your reward.",
-    joyitas: "Gems",
+      "Did you spin the wheel and get this prize? Means you’ve won a double top-up to add or share with any of your contacts. You must collect the prize within the next 72 hours.",
+    joyitas: "The Diamond",
     joyitasDesc:
-      "If you spin the Wheel and get the GEMS it means you’ve won our super 500 dollars’ jackpot! To cash it you must send a recharge and check your email to follow the instructions. You have 72 hours.",
+      "If you spin the wheel and get The Diamond... You’ve won our 500 dollars Jackpot! To collect it you must buy a top- up first and check your mail for further instructions. Don’t forget you must collect the prize within the next 72 hours.",
     calavera: "The skull",
     calaveraDesc:
-      "If you spin the Wheel and get this, it means you need more ACHE. You could try again in 24 hours, or send an instant recharge using The Flash to play again.",
+      "If you spin the wheel and get The Skull... no luck this time. Try again in 24 hours or get a quick recharge using The Lightening button to be able to spin again!",
   };
 };
 
@@ -204,13 +204,13 @@ export const ModoDeUsoTextSpanish = () => {
   return {
     juega: "juega",
     juegaDesc:
-      "Solo haz girar la Ruleta, desde cualquier parte del mundo e incluso sin haber recargado aún. Si ganas algún premio podrás encontrarlo en El ACHÉ ubicado en la parte superior derecha de tu pantalla. Para obtener el premio que salga en cada giro de la Ruleta primero debes enviar el premio que tengas pendiente en El ACHÉ.",
+      "Puedes jugar la ruleta desde cualquier lugar del mundo, incluso sin haber recargado. Si tienes suerte y ganas un premio, se guardará en la esquina superior derecha de la pantalla. Para poder cobrar cada nuevo premio que ganes en la ruleta, debes usar antes el premio guardado.",
     recarga: "recarga",
     recargaDesc:
-      "Podrás poner recargas con premio y sin premio, además de incluir varios contactos a la vez, y elegir con cuál lo compartirás, incluyéndote a ti mismo/a. Si no desearas poner la recarga, tendrás también la opción de compartir el premio que ganes con quien elijas, y esa persona, usando la aplicación ACHÉ, tendrá la posibilidad de agregar el premio como parte de una recarga para ti o para una tercera persona, o de compartirlo igualmente.",
+      "Puedes recargar más de un contacto a la vez y elegir a cuál recarga vas a agregar el premio. También puedes elegir a quién mandarás solo el premio, o quedártelo. Si no quieres recargar y has ganado un premio, puedes compartirlo y la persona a quien lo envíes, usando SPIN, podrá agregar ese premio a una recarga que puede usar para sí o enviar a cualquier contacto.",
     premios: "premios",
     premiosDesc:
-      "La Ruleta tiene tres premios y una mala suerte. Los premios son de 250 o 500 pesos que se adicionan a la recarga que desees, y un súper premio de 500 USD que depositamos dónde elijas. Si cae la Calavera significa que te falló el ACHÉ en el giro.",
+      "La Ruleta tiene tres premios y una mala suerte. Los premios son una recarga simple, una doble o un súper premio de 500 USD que depositamos dónde elijas. Si cae la Calavera significa que te falló la suerte en el giro.",
     tiempo: "tiempo",
     tiempoDesc:
       "Tienes 72 horas para cobrar o compartir cualquier premio, de lo contrario se pierde.",
@@ -221,13 +221,13 @@ export const ModoDeUsoTextEnglish = () => {
   return {
     juega: "play",
     juegaDesc:
-      "You just have to spin de Recharge Wheel, from anywhere in the world even if you haven’t recharged yet. If you win a prize you’ll find it in the Ache Button at the top right corner of your home screen. In order to cash every prize you get in the Wheel, first you must send any prize on hold located in the Ache Button.",
-    recarga: "Recharge",
+      "You can spin the wheel from anywhere in the world even if you haven’t recharged. Got lucky and got a prize? You’ll find it saved on the top right corner of the screen. To collect any new prize won in the wheel, you must first use the saved prize.",
+    recarga: "Top-up",
     recargaDesc:
-      "You could choose to send recharges with or without the prize you’ve won. Plus, you could add several contacts at a time to send recharges and choose the one you’ll share your prize with, including yourself. In case you don’t want to send the recharge, you’ll have the option of sharing it with anyone you want to so that person, using the ACHE app, can add the prize to a recharge either for you or a third person, or even also share it again.",
+      "You can top-up more than one contact at a time and add a prize or not. You can also share a prize with someone or keep it to yourself. If you don’t want to buy a top-up, you can share the prize with any of your contacts and that person, using SPIN, will be able to add a prize to a recharge and send it back to you or any other contact.",
     premios: "prizes",
     premiosDesc:
-      "There are three prizes and one bad luck in the Wheel. The rewards are 250 or 500 pesos you can add to any recharge, and one super 500 dollars’ jackpot we’ll deposit where you tell us to. If you get The Skull it means you need more ACHE in the spin.",
+      "There are three prizes and one bad luck in the Wheel. The rewards are a simple top-up, a double top-up or one super 500 dollars’ jackpot we’ll deposit where you tell us to. If you get The Skull it means you need more luck in the spin.",
     tiempo: "time",
     tiempoDesc:
       "You have up to 72 hours to cash or share your prize, otherwise you’ll lose it.",

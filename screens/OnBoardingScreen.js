@@ -143,7 +143,7 @@ const OnBoardingScreen = ({ navigation }) => {
                       }}
                     />
                     <TextMedium
-                      text="¡Ya tienes ACHÉ! En breve podrás recargar, jugar y ganar premios. Gracias por ser miembro de nuestra comunidad."
+                      text="En breve podrás recargar, jugar y ganar premios. Gracias por ser miembro de nuestra comunidad."
                       style={{
                         marginTop: 20,
                         fontSize: 20,
@@ -167,7 +167,7 @@ const OnBoardingScreen = ({ navigation }) => {
                       }}
                     />
                     <TextMedium
-                      text={`You now have ACHE! ACHÉ is an Afro-Cuban word for good luck, and that is the positive energy we wish you while connecting with  your friends and family in Cuba. You’re now only one spin away from playing, winning prizes or sending recharges. Thanks you being a member of our community.`}
+                      text={`You’re now only one spin away from playing, winning prizes or sending recharges. Thanks you being a member of our community.`}
                       style={{
                         marginTop: 10,
                         fontSize: 20,
@@ -242,7 +242,7 @@ const OnBoardingScreen = ({ navigation }) => {
                       }}
                     />
                     <TextMedium
-                      text="Con buen ACHÉ te caerá"
+                      text="Con buena suerte te caerá"
                       style={{
                         //marginTop: 100,
                         fontSize: 20,
@@ -293,7 +293,7 @@ const OnBoardingScreen = ({ navigation }) => {
                       }}
                     />
                     <TextMedium
-                      text="Con ACHÉ, tus recargas serán divertidas."
+                      text="Con SPIN, tus recargas serán divertidas."
                       style={{
                         fontSize: 20,
                         textAlign: "center",
@@ -328,7 +328,7 @@ const OnBoardingScreen = ({ navigation }) => {
                         }}
                       />
                       <TextBold
-                        text="Recharge Roulette!"
+                        text="Fotune Wheel!"
                         style={{
                           fontSize: 20,
                           textAlign: "center",
@@ -338,7 +338,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     </View>
                     <View>
                       <TextMedium
-                        text="Try your luck and win prizes. With a really good ACHÉ you could get the jackpot!"
+                        text="Try your luck and win prizes. With a really good luck you could get the jackpot!"
                         style={{
                           //marginTop: 100,
                           fontSize: 20,
@@ -370,7 +370,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     }}
                   >
                     <TextMedium
-                      text="Spin the Wheel and win. Play and share. Your recharges will be way more fun with ACHÉ."
+                      text="Spin the Wheel and win. Play and share. Your recharges will be way more fun with SPIN."
                       style={{
                         //marginTop: 100,
                         fontSize: 20,
@@ -452,7 +452,7 @@ const OnBoardingScreen = ({ navigation }) => {
                         }}
                       >
                         <TextBold
-                          text="El Aché"
+                          text=""
                           style={{
                             fontSize: 20,
                             color: "#fffc00",
@@ -495,7 +495,7 @@ const OnBoardingScreen = ({ navigation }) => {
                         }}
                       >
                         <TextBold
-                          text="ACHÉ Button"
+                          text=""
                           style={{
                             fontSize: 20,
                             color: "#fffc00",
@@ -667,7 +667,7 @@ const OnBoardingScreen = ({ navigation }) => {
                         }}
                       >
                         <TextBold
-                          text="The Lighting or The Flash"
+                          text="The Lightening"
                           style={{
                             fontSize: 20,
                             color: "#fffc00",

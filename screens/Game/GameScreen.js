@@ -680,9 +680,13 @@ const GameScreen = ({ navigation }) => {
       .then((response) => {
         const prize_result = response.data;
 
+        // probar premio falso para ver textos o whathever
         /* const prize_result = {
-          size: "Big",
+          size: "Small",
+          //size: "Small",
+          //type: "Nada"
           type: "Jackpot",
+          //type: "TopUpBonus",
         }; */
 
         thereIsPrizeResult.current = true;
@@ -1090,8 +1094,8 @@ const GameScreen = ({ navigation }) => {
                       <TextItalic
                         text={
                           userState?.idioma === "spa"
-                            ? `Lo sentimos…tienes Calavera. Recupera tu ACHÉ en ${horasRestantes} horas, o envía una recarga y vuelve a jugar.`
-                            : `Sorry… you have The Skull. Get back your ACHÉ in ${horasRestantes} hours, or …send a recharge now to play again.`
+                            ? `lo sentimos... tienes calavera. Espera ${horasRestantes} horas para que se elimine o envía una recarga y vuelve a jugar`
+                            : `sorry... you have the skull. Wait ${horasRestantes} hours for it to go away on its own or send a recharge and play again`
                         }
                         style={{
                           fontSize: 20,
@@ -1102,7 +1106,7 @@ const GameScreen = ({ navigation }) => {
                       />
                     ) : (
                       <TextItalic
-                        text={
+                        /* text={
                           userState?.idioma === "spa"
                             ? premioAcumuladoType === "Jackpot"
                               ? `¡Reclama tu súper premio de 500 USD! Para cobrarlo envía una recarga, revisa el email y sigue las instrucciones. Te guardaremos LAS GEMAS por 72 horas.`
@@ -1110,6 +1114,11 @@ const GameScreen = ({ navigation }) => {
                             : premioAcumuladoType === "Jackpot"
                             ? `Redeem your super 500 dollars’ jackpot! To cash your GEMS, send a recharge, check your email and follow the instructions. We’ll keep the GEMS safe for 72 hours.`
                             : `The Ache Button is full. To win another prize in the Wheel, first add your prize on hold to a recharge, or share it by using the button on your home screen’s top right corner. We’ll keep the prize safe for 72 hours.`
+                        } */
+                        text={
+                          userState?.idioma === "spa"
+                            ? "Ya tienes un premio guardado. Para poder cobrar otro premio que ganes en la ruleta debes agregar el premio actual a una recarga o compartirlo usando el botón de la esquina superior derecha de la pantalla."
+                            : "You already have a saved prize. To be able to collect another prize from the fortune wheel add the existing one to a top up or share it using the icon on the top right corner of the screen."
                         }
                         style={{
                           fontSize: 20,
@@ -1215,7 +1224,7 @@ const GameScreen = ({ navigation }) => {
               }}
             >
               <TextBold
-                text={userState?.idioma === "spa" ? "Calavera" : "The Skull"}
+                text={userState?.idioma === "spa" ? "La Calavera" : "The Skull"}
                 //text={ResolveText("nadaWonTitle")}
                 style={{
                   fontSize: 30,
@@ -1229,8 +1238,8 @@ const GameScreen = ({ navigation }) => {
                 <TextItalic
                   text={
                     userState?.idioma === "spa"
-                      ? "Oh…lo sentimos, pero te faltó ACHÉ en el giro. Intenta otra vez en 24 horas o envía una recarga rápida con"
-                      : "Sorry…you need more ACHE in the spin. Try again in 24 hours, or send a fast recharge with"
+                      ? "Lo sentimos... Mala suerte esta vez. Inténtalo de nuevo en 24 horas o envía una recarga rápida con El Rayo para que puedas volver a probar tu suerte de inmediato."
+                      : "Oops... bad luck this time. You can try again in 24 hours or send a quick recharge with The Lightning to try again right away!"
                   }
                   style={{
                     fontSize: 18,
@@ -1239,7 +1248,7 @@ const GameScreen = ({ navigation }) => {
                     fontWeight: "bold",
                   }}
                 />
-                <TextBoldItalic
+                {/* <TextBoldItalic
                   text={
                     userState?.idioma === "spa" ? " El Rayo " : " The Flash "
                   }
@@ -1262,7 +1271,7 @@ const GameScreen = ({ navigation }) => {
                     textAlign: "center",
                     fontWeight: "bold",
                   }}
-                />
+                /> */}
               </Text>
             </View>
 

@@ -2,9 +2,9 @@
   "expo": {
     "owner": "marole_pte",
     "name": "Spin Recargas",
-    "slug": "spinRecargas",
+    "slug": "ache",
     "privacy": "unlisted",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",

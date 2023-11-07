@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Image } from "react-native";
 import { View, Dimensions } from "react-native";
 
-
 import NeuButton from "../../../libs/neu_element/NeuButton";
 
 import { TextBold, TextItalic } from "../../../components/CommonText";
@@ -77,8 +76,8 @@ const NadaDescriptionContentModal = ({
           }}
           text={
             userState?.idioma === "spa"
-              ? `Sin ACHÉ. Espera ${horasRestantes} horas, o recarga.`
-              : `No ACHÉ found. Wait ${horasRestantes} hours or send a recharge. `
+              ? `Mala suerte... Espera ${horasRestantes} horas o recarga ahora`
+              : `Oops... no luck this time. You have to wait ${horasRestantes} hours or buy a top-up now.`
           }
         />
         <View

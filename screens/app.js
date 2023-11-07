@@ -76,7 +76,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
 
   setTimeout(() => {
     setAnimationComplete(true);
-  }, 10000);
+  }, 8300);
 
   return (
     <View style={{ flex: 1 }}>
