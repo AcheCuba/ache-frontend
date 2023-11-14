@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { View, Text } from "react-native";
+import { buttonColor } from "../../../constants/commonColors";
 
 const ContactCreds = ({ contactName, contactNumber, width }) => {
   return (
@@ -15,7 +16,7 @@ const ContactCreds = ({ contactName, contactNumber, width }) => {
     >
       <View
         style={{
-          color: "#701c57",
+          color: { buttonColor },
           width: width / 8,
           height: width / 8,
           borderRadius: width / 16,

@@ -3,7 +3,7 @@ import { Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
 import { StyleSheet, View, Image } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import NeuButton from "../../libs/neu_element/NeuButton"
+import NeuButton from "../../libs/neu_element/NeuButton";
 import CommonHeader from "../../components/CommonHeader";
 import { TextBold } from "../../components/CommonText";
 import {
@@ -11,6 +11,7 @@ import {
   PremioDescriptionTextSpanish,
 } from "../../constants/Texts";
 import { GlobalContext } from "../../context/GlobalProvider";
+import { buttonColor } from "../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -97,7 +98,7 @@ const PremioScreen = ({ navigation }) => {
               description,
             });
           }}
-          color="#701c57"
+          color={buttonColor}
           style={{ marginTop: 10 }}
           containerStyle={{
             flex: 1,
@@ -142,7 +143,6 @@ const PremioScreen = ({ navigation }) => {
           flex: 1,
           alignItems: "center",
           marginBottom: 105,
-          //backgroundColor: "rgba(112, 28, 87, 1)",
         }}
       >
         <View style={styles.container}>
@@ -197,7 +197,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    //backgroundColor: "rgba(112, 28, 87, 1)",
     marginHorizontal: marginGlobal,
   },
   title: {

@@ -1,14 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Image } from "react-native";
 import { Text } from "react-native";
-import NeuButton from "../libs/neu_element/NeuButton"
+import NeuButton from "../libs/neu_element/NeuButton";
+import { buttonColor } from "../constants/commonColors";
 
 const CommonNeuButton = ({
   text,
   screenWidth,
   onPress,
-  color = "#701c57",
+  color = buttonColor,
   width = (4 / 5) * screenWidth,
 }) => {
   return (

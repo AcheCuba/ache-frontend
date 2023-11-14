@@ -9,6 +9,7 @@ import {
   GameScreenTextEnglish,
   GameScreenTextSpanish,
 } from "../../../constants/Texts";
+import { buttonColor } from "../../../constants/commonColors";
 
 // sale cuando presionas el boton de cobrar premio con La Nada
 
@@ -87,7 +88,7 @@ const NadaDescriptionContentModal = ({
           }}
         />
         <NeuButton
-          color="#5f174d"
+          color={buttonColor}
           width={(4 / 5) * width}
           height={width / 7.5}
           borderRadius={width / 7.5}
@@ -117,7 +118,7 @@ const NadaDescriptionContentModal = ({
           }}
         />
         <NeuButton
-          color="#5a154b"
+          color={buttonColor}
           width={(4 / 5) * width}
           height={width / 7.5}
           borderRadius={width / 7.5}

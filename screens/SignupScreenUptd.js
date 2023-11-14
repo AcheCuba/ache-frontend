@@ -16,6 +16,7 @@ import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 import normalize from "react-native-normalize";
 import axios from "axios";
+import { buttonColor, generalBgColor } from "../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
@@ -178,7 +179,7 @@ const SignupScreenUptd = ({ navigation }) => {
               paddingTop: normalize(50),
               width: width,
               height: height / 6,
-              backgroundColor: "rgba(112, 28, 87, 1)",
+              backgroundColor: generalBgColor,
               flexDirection: "row",
               //justifyContent: "space-between",
               justifyContent: "center",
@@ -223,7 +224,7 @@ const SignupScreenUptd = ({ navigation }) => {
                   }}
                 />
                 <TextMedium
-                  text="Regístrate para que puedas comenzar a recargar y pruebes tu ACHÉ."
+                  text="Regístrate para que puedas comenzar a recargar y pruebes tu suerte."
                   style={{
                     fontSize: 20,
                     color: "#fffc00",
@@ -248,7 +249,7 @@ const SignupScreenUptd = ({ navigation }) => {
                   }}
                 />
                 <TextMedium
-                  text="Sign up to start sending recharges and try your ACHÉ!"
+                  text="Sign up to start sending recharges and try your luck!"
                   style={{
                     fontSize: normalize(20),
                     color: "#fffc00",
@@ -283,7 +284,7 @@ const SignupScreenUptd = ({ navigation }) => {
                   onChangeText={(value) => onChangeName(value)}
                   value={name}
                   placeholderTextColor="gray"
-                  color="#701c57"
+                  color={buttonColor}
                 />
               </View>
               {nameError !== "" ? (
@@ -316,7 +317,7 @@ const SignupScreenUptd = ({ navigation }) => {
                   onChangeText={(value) => onChangeEmail(value)}
                   value={email}
                   placeholderTextColor="gray"
-                  color="#701c57"
+                  color={buttonColor}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -354,7 +355,7 @@ const SignupScreenUptd = ({ navigation }) => {
                   onChangeText={(value) => onChangePhone(value)}
                   value={phone}
                   placeholderTextColor="gray"
-                  color="#701c57"
+                  color={buttonColor}
                   keyboardType="phone-pad"
                 />
               </View>
@@ -383,7 +384,7 @@ const SignupScreenUptd = ({ navigation }) => {
           }}
         >
           <NeuButton
-            color="#58184d"
+            color={buttonColor}
             width={(4 / 5) * width}
             height={height / 14}
             borderRadius={width / 7.5}
@@ -413,10 +414,10 @@ const SignupScreenUptd = ({ navigation }) => {
 
 export default SignupScreenUptd;
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(112, 28, 87, 1)",
+    //backgroundColor: "rgba(112, 28, 87, 1)",
   },
   title: {
     fontSize: 40,
@@ -440,4 +441,4 @@ const styles = StyleSheet.create({
     height: normalize(50),
     //marginTop: 30,
   },
-});
+}); */

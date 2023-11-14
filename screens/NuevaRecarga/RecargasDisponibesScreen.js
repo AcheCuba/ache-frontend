@@ -31,6 +31,7 @@ import {
   NuevaRecargaTextSpanish,
 } from "../../constants/Texts";
 import { Audio } from "expo-av";
+import { buttonColor, generalBgColor } from "../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -554,13 +555,13 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           paddingTop: 50,
           width: width,
           height: height / 6,
-          backgroundColor: "rgba(112, 28, 87, 1)",
+          backgroundColor: generalBgColor,
           flexDirection: "row",
           justifyContent: "space-between",
         }}
       >
         <NeuButton
-          color="#701c57"
+          color={buttonColor}
           width={width / 7}
           height={width / 7 - 20}
           borderRadius={5}
@@ -634,7 +635,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                     width={width / 1.3}
                     height={height / 5}
                     borderRadius={10}
-                    color="#701c57"
+                    color={buttonColor}
                     style={{
                       marginBottom: 25,
                     }}

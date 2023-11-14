@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { Modal, StyleSheet, View } from "react-native";
-import NeuInput from "../../../libs/neu_element/NeuInput"
+import NeuInput from "../../../libs/neu_element/NeuInput";
 import CommonNeuButton from "../../../components/CommonNeuButton";
 import { GlobalContext } from "../../../context/GlobalProvider";
+import {
+  buttonColor,
+  generalBgColorTrans8,
+} from "../../../constants/commonColors";
 
 const CodigoRecargaModal = ({
   modalVisible,
@@ -31,7 +35,7 @@ const CodigoRecargaModal = ({
       <View
         style={{
           flex: 1,
-          backgroundColor: "rgba(112, 28, 87, .8)",
+          backgroundColor: generalBgColorTrans8,
           justifyContent: "center",
           alignItems: "center",
           //marginBottom: 80,
@@ -46,7 +50,7 @@ const CodigoRecargaModal = ({
           onChangeText={(value) => setText(value)}
           value={text}
           placeholderTextColor="#bbb"
-          color="#701c57"
+          color={buttonColor}
           textStyle={{
             color: "#fff",
             fontWeight: "bold",
@@ -120,16 +124,6 @@ const styles = StyleSheet.create({
     backgroundColor: "gray",
   },
 
-  modalContent: {
-    /*   backgroundColor: "rgba(112, 28, 87, 1)",
-    //backgroundColor: "rgba(0,0,0,.2)",
-    paddingHorizontal: 22,
-    paddingVertical: 40,
-    alignItems: "center",
-    borderRadius: 17,
-    marginHorizontal: 20,
-    marginTop: "60%", */
-  },
   input: {
     // width: "90%",
     borderBottomWidth: 2,
@@ -139,12 +133,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
 });
-{
-  /* <NeuView
-style={{ borderRadius: 10, borderColor: "#701c57", opacity: 0.9 }}
-width={width / 1.2}
-height={height / 4}
-color="#701c57"
-borderRadius={10}
-> */
-}

@@ -4,6 +4,11 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
 import CommonNeuButton from "../../../components/CommonNeuButton";
 import { TextBold, TextMedium } from "../../../components/CommonText";
+import {
+  buttonColor,
+  generalBgColor,
+  generalBgColorTrans8,
+} from "../../../constants/commonColors";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import NeuView from "../../../libs/neu_element/NeuView";
 
@@ -41,7 +46,8 @@ const ProviderMenuModal = ({
           style={{
             height: 3,
             width: width / 2.3,
-            backgroundColor: "rgba(255, 251, 0, 0.7)",
+            //backgroundColor: "rgba(255, 251, 0, 0.7)",
+            backgroundColor: generalBgColorTrans8,
             alignItems: "center",
           }}
         />
@@ -92,7 +98,7 @@ const ProviderMenuModal = ({
         <NeuView
           width={width / 1.5}
           height={heightList}
-          color="#701c57"
+          color={buttonColor}
           borderRadius={30}
         >
           <FlatList

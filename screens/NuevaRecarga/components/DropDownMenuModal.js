@@ -4,6 +4,10 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
 import CommonNeuButton from "../../../components/CommonNeuButton";
 import { TextBold, TextMedium } from "../../../components/CommonText";
+import {
+  buttonColor,
+  generalBgColorTrans8,
+} from "../../../constants/commonColors";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import NeuView from "../../../libs/neu_element/NeuView";
 
@@ -32,7 +36,7 @@ const DropDownMenuModal = ({
         style={{
           flex: 1,
           flexDirection: "row",
-          backgroundColor: "rgba(112, 28, 87, .8)",
+          backgroundColor: generalBgColorTrans8,
           paddingTop: 50, // aqui empiezan los
           paddingLeft: width / 9,
           //justifyContent: "space-between",
@@ -43,14 +47,14 @@ const DropDownMenuModal = ({
         <NeuView
           style={{
             borderRadius: 10,
-            borderColor: "#701c57",
+            borderColor: buttonColor,
             opacity: 0.9,
             marginTop: width / 7,
             marginLeft: width / 7,
           }}
           width={width / 3}
           height={heightList}
-          color="#701c57"
+          color={buttonColor}
           borderRadius={10}
         >
           <TouchableOpacity
@@ -146,24 +150,11 @@ const styles = StyleSheet.create({
   },
 
   modalContainer: {
-    //justifyContent: "center",
-    // backgroundColor: "pink",
     alignItems: "center",
     backgroundColor: "gray",
   },
 
-  modalContent: {
-    /*   backgroundColor: "rgba(112, 28, 87, 1)",
-    //backgroundColor: "rgba(0,0,0,.2)",
-    paddingHorizontal: 22,
-    paddingVertical: 40,
-    alignItems: "center",
-    borderRadius: 17,
-    marginHorizontal: 20,
-    marginTop: "60%", */
-  },
   input: {
-    // width: "90%",
     borderBottomWidth: 2,
     borderBottomColor: "#eee",
     marginBottom: 10,

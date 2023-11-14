@@ -4,6 +4,7 @@ import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold, TextItalic } from "../../components/CommonText";
+import { buttonColor } from "../../constants/commonColors";
 import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
@@ -61,7 +62,8 @@ const PremioDescription = ({ navigation, route }) => {
               text={idioma === "spa" ? "Jugar" : "Play"}
               screenWidth={width}
               width={width / 3}
-              color={type === "calavera" ? "#6b1b54" : "#611951"}
+              //color={type === "calavera" ? "#6b1b54" : "#611951"}
+              color={buttonColor}
               onPress={() => {
                 navigation.navigate("Juego");
               }}
@@ -70,7 +72,7 @@ const PremioDescription = ({ navigation, route }) => {
               text={idioma === "spa" ? "Atrás" : "Back"}
               width={width / 3}
               screenWidth={width}
-              color={type === "calavera" ? "#6b1b54" : "#611951"}
+              color={buttonColor}
               onPress={() => {
                 navigation.navigate("PremioScreen");
               }}

@@ -16,6 +16,7 @@ import { TouchableOpacity } from "react-native";
 import { PrePagoTextEnglish, PrePagoTextSpanish } from "../../constants/Texts";
 import NeuButton from "../../libs/neu_element/NeuButton";
 import { Image } from "react-native";
+import { buttonColor, generalBgColor } from "../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -326,13 +327,13 @@ const PrePagoScreen = ({ navigation, route }) => {
           paddingTop: 50,
           width: width,
           height: height / 6,
-          backgroundColor: "rgba(112, 28, 87, 1)",
+          backgroundColor: generalBgColor,
           flexDirection: "row",
           justifyContent: "space-between",
         }}
       >
         <NeuButton
-          color="#701c57"
+          color={buttonColor}
           width={width / 7}
           height={width / 7 - 20}
           borderRadius={5}
@@ -347,7 +348,6 @@ const PrePagoScreen = ({ navigation, route }) => {
       </View>
       <View
         style={{
-          //backgroundColor: "blue",
           alignItems: "center",
           //justifyContent: "center",
           flex: 1,
@@ -447,7 +447,6 @@ const PrePagoScreen = ({ navigation, route }) => {
               paddingBottom: 20,
               width: width / 1.3,
               alignItems: "center",
-              //backgroundColor: "gray",
             }}
           >
             <FlatList

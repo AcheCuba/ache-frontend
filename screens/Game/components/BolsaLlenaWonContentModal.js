@@ -7,6 +7,7 @@ import {
   GameScreenTextEnglish,
   GameScreenTextSpanish,
 } from "../../../constants/Texts";
+import { buttonColor } from "../../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -78,7 +79,7 @@ const BolsaLlenaWonContentModal = ({
           }}
         />
         <NeuButton
-          color="#60184d"
+          color={buttonColor}
           width={(4 / 5) * width}
           height={width / 7.5}
           borderRadius={width / 7.5}
@@ -108,7 +109,7 @@ const BolsaLlenaWonContentModal = ({
           }}
         />
         <NeuButton
-          color="#5c164b"
+          color={buttonColor}
           width={(4 / 5) * width}
           height={width / 7.5}
           borderRadius={width / 7.5}

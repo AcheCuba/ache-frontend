@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
+import { generalBgColorTrans8 } from "../../../constants/commonColors";
+import { buttonColor } from "../../../constants/commonColors";
 
 import NeuButton from "../../../libs/neu_element/NeuButton";
 import NeuView from "../../../libs/neu_element/NeuView";
 
+import { GlobalContext } from "../../../context/GlobalProvider";
+import { TextBoldItalic } from "../../../components/CommonText";
+
 const { width, height } = Dimensions.get("screen");
 
 const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
+  const { userState } = React.useContext(GlobalContext);
+  const idioma = userState?.idioma;
+
   //console.log(type);
   const PrizeImage = () => {
     switch (type) {
@@ -31,16 +39,18 @@ const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
       default:
         return (
           <View style={{ height: width / 8 + 7 }}>
-            <Text
+            <TextBoldItalic
+              text={
+                idioma === "spa"
+                  ? "No hemos podido validar su premio"
+                  : "We've not been able to validate your prize"
+              }
               style={{
                 fontSize: 18,
-                fontWeight: "bold",
+                color: "#eee",
                 marginTop: 20,
-                color: "#222",
               }}
-            >
-              No se ha podido validar su premio
-            </Text>
+            />
           </View>
         );
     }
@@ -50,31 +60,33 @@ const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
     <View
       style={{
         flex: 1,
-        backgroundColor: "rgba(112, 28, 87, .8)",
+        backgroundColor: generalBgColorTrans8,
         justifyContent: "center",
         alignItems: "center",
       }}
     >
       <NeuView
-        style={{ borderRadius: 10, borderColor: "#701c57", opacity: 0.9 }}
+        style={{ borderRadius: 10, borderColor: buttonColor, opacity: 0.9 }}
         width={width / 1.2}
         height={height / 4}
-        color="#701c57"
+        color={buttonColor}
         borderRadius={10}
       >
         {type === undefined ? (
           <View style={{ height: width / 8 + 7 }}>
             <ActivityIndicator size="small" color="#01f9d2" />
-            <Text
+            <TextBoldItalic
+              text={
+                idioma === "spa"
+                  ? "Estamos validando su premio"
+                  : "We're validating your prize"
+              }
               style={{
                 fontSize: 18,
-                fontWeight: "bold",
+                color: "#eee",
                 marginTop: 20,
-                color: "#222",
               }}
-            >
-              Estamos validando su premio
-            </Text>
+            />
           </View>
         ) : (
           <>
@@ -90,7 +102,7 @@ const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
               }}
             >
               <NeuButton
-                color="#701c57"
+                color={buttonColor}
                 width={width / 3}
                 height={40}
                 borderRadius={20}
@@ -108,7 +120,7 @@ const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
                 </Text>
               </NeuButton>
               <NeuButton
-                color="#701c57"
+                color={buttonColor}
                 width={width / 5}
                 height={40}
                 borderRadius={20}

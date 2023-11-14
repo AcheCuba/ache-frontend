@@ -18,6 +18,7 @@ import {
   CobrarPremioTextSpanish,
 } from "../../../constants/Texts";
 import normalize from "react-native-normalize";
+import { buttonColor } from "../../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -477,7 +478,7 @@ const CobrarPremioContent = ({
         <View style={styles.button}>
           {loadingObtenerPremio ? (
             <NeuButton
-              color="#5e174d"
+              color={buttonColor}
               width={(4 / 5) * width}
               height={width / 7.5}
               borderRadius={width / 7.5}
@@ -489,7 +490,7 @@ const CobrarPremioContent = ({
             </NeuButton>
           ) : (
             <NeuButton
-              color="#62194f"
+              color={buttonColor}
               width={(4 / 5) * width}
               height={width / 7.5}
               borderRadius={width / 7.5}
@@ -515,7 +516,7 @@ const CobrarPremioContent = ({
         <View style={styles.button}>
           {!loading ? (
             <NeuButton
-              color="#5e174d"
+              color={buttonColor}
               width={(4 / 5) * width}
               height={width / 7.5}
               borderRadius={width / 7.5}
@@ -538,7 +539,7 @@ const CobrarPremioContent = ({
             </NeuButton>
           ) : (
             <NeuButton
-              color="#5e174d"
+              color={buttonColor}
               width={(4 / 5) * width}
               height={width / 7.5}
               borderRadius={width / 7.5}
@@ -566,7 +567,7 @@ const CobrarPremioContent = ({
           </View>
 
           <NeuButton
-            color="#541348"
+            color={buttonColor}
             width={(4 / 5) * width}
             height={width / 7.5}
             borderRadius={width / 7.5}

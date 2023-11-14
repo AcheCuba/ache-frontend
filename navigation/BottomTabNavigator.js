@@ -34,6 +34,7 @@ import NeuButton from "../libs/neu_element/NeuButton";
 
 import PremioDescription from "../screens/More/PremioDescription";
 import { Audio } from "expo-av";
+import { buttonColor } from "../constants/commonColors";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -138,7 +139,8 @@ export default function BottomTabNavigator({ navigation, route }) {
           height: 100,
           //paddingTop: 3,
           allowFontScaling: true,
-          backgroundColor: "rgba(112, 28, 87, 1)",
+          //backgroundColor: "rgba(112, 28, 87, 1)",
+          backgroundColor: "#6a5c98",
           borderTopWidth: 0,
           // zIndex: 10,
           paddingHorizontal: 20,
@@ -186,7 +188,7 @@ export default function BottomTabNavigator({ navigation, route }) {
                   {...props}
                   width={50}
                   height={50}
-                  color="#701c57"
+                  color={buttonColor}
                   borderRadius={25}
                 />
               </View>
@@ -221,7 +223,7 @@ export default function BottomTabNavigator({ navigation, route }) {
                   {...props}
                   width={50}
                   height={50}
-                  color="#701c57"
+                  color={buttonColor}
                   borderRadius={25}
                 />
               </View>
@@ -255,7 +257,8 @@ export default function BottomTabNavigator({ navigation, route }) {
                   {...props}
                   width={50}
                   height={50}
-                  color="#701c57"
+                  //color="#701c57"
+                  color={buttonColor}
                   borderRadius={25}
                 />
               </View>
@@ -337,7 +340,7 @@ export default function BottomTabNavigator({ navigation, route }) {
                   {...props}
                   width={50}
                   height={50}
-                  color="#701c57"
+                  color={buttonColor}
                   borderRadius={25}
                 />
               </View>

@@ -46,6 +46,14 @@ import { Text } from "react-native";
 import { getNetworkState } from "../../libs/networkState.lib";
 import { Audio } from "expo-av";
 import PremioExpiradoContentModal from "./components/PremioExpiradoContentModal";
+import {
+  bgColorFinalGradient,
+  btPremioColor,
+  btRecargaColor,
+  buttonColor,
+  generalBgColor,
+  generalBgColorTrans5,
+} from "../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -685,7 +693,7 @@ const GameScreen = ({ navigation }) => {
           size: "Small",
           //size: "Small",
           //type: "Nada"
-          type: "Jackpot",
+          type: "TopUpBonus",
           //type: "TopUpBonus",
         }; */
 
@@ -942,7 +950,7 @@ const GameScreen = ({ navigation }) => {
           onRequestClose={() => setNadaDescriptionModalVisible(false)}
         >
           <LinearGradient
-            colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
+            colors={[generalBgColor, bgColorFinalGradient]}
             style={{ width: "100%", height: "100%" }}
           >
             <View
@@ -950,7 +958,7 @@ const GameScreen = ({ navigation }) => {
                 flex: 1,
                 width: "100%",
                 height: "100%",
-                backgroundColor: "rgba(112, 28, 87, 0.5)",
+                backgroundColor: generalBgColorTrans5,
               }}
             >
               <NadaDescriptionContentModal
@@ -971,7 +979,7 @@ const GameScreen = ({ navigation }) => {
           onRequestClose={() => setModalCobrarPremioVisible(false)}
         >
           <LinearGradient
-            colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
+            colors={[generalBgColor, bgColorFinalGradient]}
             style={{ width: "100%", height: "100%" }}
           >
             <View
@@ -979,7 +987,7 @@ const GameScreen = ({ navigation }) => {
                 flex: 1,
                 width: "100%",
                 height: "100%",
-                backgroundColor: "rgba(112, 28, 87, 0.5)",
+                backgroundColor: generalBgColorTrans5,
               }}
             >
               <RootSiblingParent>
@@ -1035,7 +1043,7 @@ const GameScreen = ({ navigation }) => {
             }}
           >
             <LinearGradient
-              colors={["rgba(112, 28, 87,0.9)", "rgba(55,07,55,0.9)"]}
+              colors={[generalBgColor, bgColorFinalGradient]}
               style={{ width: "100%", height: "100%" }}
             >
               <View
@@ -1044,7 +1052,7 @@ const GameScreen = ({ navigation }) => {
                   flex: 1,
                   width: "100%",
                   height: "100%",
-                  backgroundColor: "rgba(112, 28, 87, 0.3)",
+                  backgroundColor: generalBgColorTrans5,
                   alignItems: "center",
                 }}
               >
@@ -1134,7 +1142,7 @@ const GameScreen = ({ navigation }) => {
                 <View style={{ marginTop: 30 }}>
                   {userState.prize?.type !== "Nada" ? (
                     <NeuButton
-                      color="#5a1549"
+                      color={buttonColor}
                       width={(4 / 5) * width}
                       height={width / 7.5}
                       borderRadius={width / 7.5}
@@ -1163,7 +1171,7 @@ const GameScreen = ({ navigation }) => {
                   ) : null}
 
                   <NeuButton
-                    color="#5a1549"
+                    color={buttonColor}
                     width={(4 / 5) * width}
                     height={width / 7.5}
                     borderRadius={width / 7.5}
@@ -1197,7 +1205,7 @@ const GameScreen = ({ navigation }) => {
           onRequestClose={() => setNadaWon(false)}
         >
           <LinearGradient
-            colors={["rgba(112, 28, 87,0.9)", "rgba(55,07,55,0.9)"]}
+            colors={[generalBgColor, bgColorFinalGradient]}
             style={{
               width: "100%",
               height: "100%",
@@ -1282,7 +1290,7 @@ const GameScreen = ({ navigation }) => {
                   setNadaWon(false);
                 }}
                 screenWidth={width}
-                color="#501243"
+                color={buttonColor}
               />
             </View>
           </LinearGradient>
@@ -1296,7 +1304,7 @@ const GameScreen = ({ navigation }) => {
           onRequestClose={() => setMediaBolsaWon(false)}
         >
           <LinearGradient
-            colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
+            colors={[generalBgColor, bgColorFinalGradient]}
             style={{ width: "100%", height: "100%" }}
           >
             <View
@@ -1304,7 +1312,7 @@ const GameScreen = ({ navigation }) => {
                 flex: 1,
                 width: "100%",
                 height: "100%",
-                backgroundColor: "rgba(112, 28, 87, 0.5)",
+                backgroundColor: generalBgColorTrans5,
               }}
             >
               <MediaBolsaWonContentModal
@@ -1324,7 +1332,7 @@ const GameScreen = ({ navigation }) => {
           onRequestClose={() => setBolsaLlenaWon(false)}
         >
           <LinearGradient
-            colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
+            colors={[generalBgColor, bgColorFinalGradient]}
             style={{ width: "100%", height: "100%" }}
           >
             <View
@@ -1332,7 +1340,7 @@ const GameScreen = ({ navigation }) => {
                 flex: 1,
                 width: "100%",
                 height: "100%",
-                backgroundColor: "rgba(112, 28, 87, 0.5)",
+                backgroundColor: generalBgColorTrans5,
               }}
             >
               <BolsaLlenaWonContentModal
@@ -1352,7 +1360,7 @@ const GameScreen = ({ navigation }) => {
           onRequestClose={() => setJoyaWon(false)}
         >
           <LinearGradient
-            colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
+            colors={[generalBgColor, bgColorFinalGradient]}
             style={{ width: "100%", height: "100%" }}
           >
             <View
@@ -1360,7 +1368,7 @@ const GameScreen = ({ navigation }) => {
                 flex: 1,
                 width: "100%",
                 height: "100%",
-                backgroundColor: "rgba(112, 28, 87, 0.5)",
+                backgroundColor: generalBgColorTrans5,
               }}
             >
               <JoyaWonContentModal
@@ -1381,7 +1389,7 @@ const GameScreen = ({ navigation }) => {
           onRequestClose={() => setPremioExpirado(false)}
         >
           <LinearGradient
-            colors={["rgba(112, 28, 87,0.8)", "rgba(55,07,55,0.8)"]}
+            colors={[generalBgColor, bgColorFinalGradient]}
             style={{ width: "100%", height: "100%" }}
           >
             <View
@@ -1389,7 +1397,7 @@ const GameScreen = ({ navigation }) => {
                 flex: 1,
                 width: "100%",
                 height: "100%",
-                backgroundColor: "rgba(112, 28, 87, 0.5)",
+                backgroundColor: generalBgColorTrans5,
               }}
             >
               <PremioExpiradoContentModal
@@ -1409,7 +1417,6 @@ const GameScreen = ({ navigation }) => {
             flexDirection: "row",
             justifyContent: "flex-end",
             width: "80%",
-            //backgroundColor: "red",
             //marginTop: -height / 15,
             zIndex: 1,
             position: "absolute",
@@ -1419,7 +1426,8 @@ const GameScreen = ({ navigation }) => {
           }}
         >
           <NeuButton // boton naranja premios
-            color="#fe8457"
+            color={btPremioColor}
+            //color="#fe8457"
             width={width / 3.5}
             height={width / 3.5}
             borderRadius={width / 7}
@@ -1621,7 +1629,8 @@ const GameScreen = ({ navigation }) => {
           }}
         >
           <NeuButton // boton morado recarga directa
-            color="#311338"
+            color={btRecargaColor}
+            //color="#311338"
             width={width / 3.5}
             height={width / 3.5}
             borderRadius={width / 7}

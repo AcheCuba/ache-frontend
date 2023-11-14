@@ -40,6 +40,7 @@ import {
 import DropDownMenuModal from "./components/DropDownMenuModal";
 import { storeData } from "../../libs/asyncStorage.lib";
 import ProviderMenuModal from "./components/ProviderMenuModal";
+import { buttonColor } from "../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -93,6 +94,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   useEffect(() => {
     setLoadingProviders(true);
     getOperators(userState?.country);
+    // console.log(userState.country);
   }, [userState]);
 
   useFocusEffect(
@@ -653,13 +655,13 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           paddingTop: 50,
           width: width,
           height: height / 6,
-          backgroundColor: "rgba(112, 28, 87, 1)",
+          backgroundColor: { buttonColor },
           flexDirection: "row",
           justifyContent: "space-between",
         }}
       >
         <NeuButton
-          color="#701c57"
+          color={buttonColor}
           width={width / 7}
           height={width / 7 - 20}
           borderRadius={5}
@@ -668,22 +670,39 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           }}
           style={{ marginLeft: marginGlobal, marginTop: 10 }}
         >
-          {userCountry == "CUB" ? (
-            <Image
-              source={require("../../assets/images/bandera_cub.jpg")}
-              style={{ width: 30, height: 16 }}
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
+          >
+            {userCountry == "CUB" ? (
+              <Image
+                source={require("../../assets/images/bandera_cub.jpg")}
+                style={{ width: 30, height: 16 }}
+              />
+            ) : userCountry == "MEX" ? (
+              <Image
+                source={require("../../assets/images/bandera_mex.jpg")}
+                style={{ width: 30, height: 16 }}
+              />
+            ) : userCountry == "DOM" ? (
+              <Image
+                source={require("../../assets/images/bandera_do.jpg")}
+                style={{ width: 30, height: 16 }}
+              />
+            ) : null}
+            <TextBold
+              text={userCountry}
+              style={{
+                fontSize: 14,
+                color: "#fffb00",
+                textTransform: "uppercase",
+                marginTop: 5,
+              }}
             />
-          ) : userCountry == "MEX" ? (
-            <Image
-              source={require("../../assets/images/bandera_mex.jpg")}
-              style={{ width: 30, height: 16 }}
-            />
-          ) : userCountry == "DOM" ? (
-            <Image
-              source={require("../../assets/images/bandera_do.jpg")}
-              style={{ width: 30, height: 16 }}
-            />
-          ) : null}
+          </View>
         </NeuButton>
         <View
           style={{
@@ -695,7 +714,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           }}
         >
           <NeuButton
-            color="#701c57"
+            color={buttonColor}
             width={width / 3}
             height={width / 7 - 20}
             borderRadius={5}
@@ -749,7 +768,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         </View>
 
         <NeuButton
-          color="#701c57"
+          color={buttonColor}
           width={width / 7}
           height={width / 7 - 20}
           borderRadius={5}
@@ -819,7 +838,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       </ScrollView>
       <View style={[styles.button_continuar, { alignItems: "center" }]}>
         <NeuButton
-          color="#611951"
+          //color="#611951"
+          color={buttonColor}
           width={(4 / 5) * width}
           height={width / 7.5}
           borderRadius={width / 7.5}
@@ -889,7 +909,7 @@ const styles = StyleSheet.create({
     //backgroundColor: "rgba(112, 28, 87, 0.1)",
     //borderRadius: 10,
     borderBottomWidth: 2,
-    borderBottomColor: "rgba(112, 28, 87, 1)",
+    borderBottomColor: { buttonColor },
     marginBottom: 10,
     paddingLeft: 10,
     marginHorizontal: 10,

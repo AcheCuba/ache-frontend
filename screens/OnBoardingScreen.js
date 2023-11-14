@@ -11,6 +11,12 @@ import { GlobalContext } from "../context/GlobalProvider";
 import { TouchableOpacity } from "react-native";
 import { setIdioma } from "../context/Actions/actions";
 import normalize from "react-native-normalize";
+import {
+  btPremioColor,
+  btRecargaColor,
+  generalBgColor,
+  generalBgColorTrans5,
+} from "../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -51,10 +57,10 @@ const OnBoardingScreen = ({ navigation }) => {
       bottomBarHeight={50}
       pages={[
         {
-          backgroundColor: "rgb(45,22,56)",
+          backgroundColor: generalBgColor,
           image: (
             <ImageBackground
-              source={require("../assets/images/degradado_home.png")}
+              source={require("../assets/images/degradado_general.png")}
               style={{
                 width: width,
                 height: height,
@@ -108,11 +114,11 @@ const OnBoardingScreen = ({ navigation }) => {
           subtitle: "",
         },
         {
-          backgroundColor: "rgb(45,22,56)",
+          backgroundColor: generalBgColor,
           image: (
             <View style={{}}>
               <ImageBackground
-                source={require("../assets/images/degradado_home.png")}
+                source={require("../assets/images/degradado_general.png")}
                 style={{
                   width: width,
                   height: height,
@@ -187,7 +193,7 @@ const OnBoardingScreen = ({ navigation }) => {
           subtitle: "",
         },
         {
-          backgroundColor: "rgb(45,22,56)",
+          backgroundColor: generalBgColor,
           image: (
             <ImageBackground
               source={require("../assets/images/degradado_home.png")}
@@ -265,11 +271,12 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       position: "absolute",
                       left: 0,
-                      top: normalize(height / 6, "height"),
+                      //top: normalize(height / 6, "height"),
+                      top: height / 6,
                     }}
                   >
                     <Image
-                      source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
+                      source={require("../assets/animaciones/spin-onboarding.gif")}
                       style={{
                         width: height / 2.4,
                         height: height / 1.5,
@@ -353,11 +360,12 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       position: "absolute",
                       left: 0,
-                      top: normalize(height / 6, "height"),
+                      //top: normalize(height / 6, "height"),
+                      top: height / 6,
                     }}
                   >
                     <Image
-                      source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
+                      source={require("../assets/animaciones/spin-onboarding.gif")}
                       style={{ width: height / 2.4, height: height / 1.5 }}
                     />
                   </View>
@@ -365,7 +373,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       marginTop: 100,
                       position: "absolute",
-                      bottom: 60,
+                      bottom: 65,
                       paddingHorizontal: 10,
                     }}
                   >
@@ -388,7 +396,7 @@ const OnBoardingScreen = ({ navigation }) => {
         },
 
         {
-          backgroundColor: "rgb(45,22,56)",
+          backgroundColor: generalBgColor,
           image: (
             <ImageBackground
               source={require("../assets/images/degradado_home.png")}
@@ -400,13 +408,14 @@ const OnBoardingScreen = ({ navigation }) => {
             >
               <View style={{ position: "absolute", left: 0, top: height / 6 }}>
                 <Image
-                  source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
+                  source={require("../assets/animaciones/spin-onboarding.gif")}
                   style={{ width: height / 2.4, height: height / 1.5 }}
                 />
               </View>
 
               <LinearGradient
-                colors={["rgba(227, 123, 104,0.9)", "rgba(40,20,50,1)"]}
+                //colors={["rgba(227, 123, 104,0.9)", "rgba(40,20,50,1)"]}
+                colors={[generalBgColorTrans5, generalBgColor]}
                 style={{ flex: 1, width: width }}
               >
                 <View
@@ -420,7 +429,7 @@ const OnBoardingScreen = ({ navigation }) => {
                   }}
                 >
                   <NeuButton
-                    color="#fe8457"
+                    color={btPremioColor}
                     width={width / 3.5}
                     height={width / 3.5}
                     borderRadius={width / 7}
@@ -530,7 +539,7 @@ const OnBoardingScreen = ({ navigation }) => {
           subtitle: "",
         },
         {
-          backgroundColor: "rgb(45,22,56)",
+          backgroundColor: generalBgColor,
           image: (
             <ImageBackground
               source={require("../assets/images/degradado_home.png")}
@@ -542,7 +551,7 @@ const OnBoardingScreen = ({ navigation }) => {
             >
               <View style={{ position: "absolute", left: 0, top: height / 6 }}>
                 <Image
-                  source={require("../assets/animaciones/media-ruleta-para-onboarding-15mg.gif")}
+                  source={require("../assets/animaciones/spin-onboarding.gif")}
                   style={{ width: height / 2.4, height: height / 1.5 }}
                 />
               </View>
@@ -557,7 +566,7 @@ const OnBoardingScreen = ({ navigation }) => {
                 }}
               >
                 <NeuButton
-                  color="#fe8457"
+                  color={btPremioColor}
                   width={width / 3.5}
                   height={width / 3.5}
                   borderRadius={width / 7}
@@ -575,7 +584,8 @@ const OnBoardingScreen = ({ navigation }) => {
               </View>
 
               <LinearGradient
-                colors={["rgba(227, 123, 104,0.9)", "rgba(40,20,50,1)"]}
+                //colors={["rgba(227, 123, 104,0.9)", "rgba(40,20,50,1)"]}
+                colors={[generalBgColor, generalBgColorTrans5]}
                 style={{ flex: 1, width: width }}
               >
                 <View
@@ -589,25 +599,13 @@ const OnBoardingScreen = ({ navigation }) => {
                   }}
                 >
                   <NeuButton
-                    color="#311338"
+                    color={btRecargaColor}
                     width={width / 3.5}
                     height={width / 3.5}
                     borderRadius={width / 7}
                     active={false}
                     onPress={() => {}}
                   >
-                    {/* <Image
-                      //source={require("../assets/animaciones/moneda-recarga-rapida.gif")}
-                      source={require("../assets/images/home/recarga_directa.png")}
-                      //resizeMode="center"
-                      style={{
-                        width: 65,
-                        height: 67,
-
-                        //width: 95,
-                        //height: 115,
-                      }}
-                    /> */}
                     <Image
                       source={require("../assets/animaciones/moneda-recarga-rapida.gif")}
                       style={{

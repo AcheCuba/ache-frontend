@@ -22,6 +22,7 @@ import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import DeletePrizeModal from "./DeletePrizeModal";
+import { buttonColor } from "../../../constants/commonColors";
 //import Animated from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("screen");
@@ -319,7 +320,7 @@ const NuevoContactoInput = ({
           }}
         >
           <NeuButton
-            color="#701c57"
+            color={buttonColor}
             width={width / 9.5}
             height={width / 9.5}
             borderRadius={width / 16}
@@ -368,7 +369,7 @@ const NuevoContactoInput = ({
                     : ""
                 }
                 placeholderTextColor="gray"
-                color="#701c57"
+                color={buttonColor}
                 keyboardType="phone-pad"
                 name={fieldInputId}
                 editable={false}
@@ -409,7 +410,7 @@ const NuevoContactoInput = ({
                     : ""
                 }
                 placeholderTextColor="gray"
-                color="#701c57"
+                color={buttonColor}
                 keyboardType="phone-pad"
                 name={fieldInputId}
                 editable={false}
@@ -434,7 +435,7 @@ const NuevoContactoInput = ({
           }}
         >
           <NeuButton
-            color="#701c57"
+            color={buttonColor}
             width={width / 9.5}
             height={width / 9.5}
             borderRadius={width / 16}

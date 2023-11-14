@@ -21,6 +21,7 @@ import NeuInput from "../../libs/neu_element/NeuInput";
 
 import Toast from "react-native-root-toast";
 import { Image } from "react-native";
+import { buttonColor, generalBgColor } from "../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -472,13 +473,13 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           paddingTop: 50,
           width: width,
           height: height / 6,
-          backgroundColor: "rgba(112, 28, 87, 1)",
+          backgroundColor: generalBgColor,
           flexDirection: "row",
           justifyContent: "space-between",
         }}
       >
         <NeuButton
-          color="#701c57"
+          color={buttonColor}
           width={width / 7}
           height={width / 7 - 20}
           borderRadius={5}
@@ -493,7 +494,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           />
         </NeuButton>
         <NeuButton
-          color="#701c57"
+          color={buttonColor}
           width={width / 7}
           height={width / 7 - 20}
           borderRadius={5}
@@ -533,7 +534,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           onChangeText={(value) => onChangeText(value)}
           value={text}
           placeholderTextColor="gray"
-          color="#701c57"
+          color={buttonColor}
           width={width / 1.3}
           height={40}
           borderRadius={20}
@@ -577,7 +578,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#701c57",
+    backgroundColor: generalBgColor,
     //alignItems: "center",
     //justifyContent: "center",
   },

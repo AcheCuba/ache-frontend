@@ -15,6 +15,7 @@ import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 import axios from "axios";
 import { createIconSetFromFontello } from "@expo/vector-icons";
+import { buttonColor } from "../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
@@ -284,7 +285,7 @@ const TfaScreen = ({ navigation, route }) => {
             onChangeText={(value) => onChangeCode(value)}
             value={codeIn}
             placeholderTextColor="gray"
-            color="#701c57"
+            color={buttonColor}
             keyboardType="numeric"
           />
         </View>
@@ -300,7 +301,7 @@ const TfaScreen = ({ navigation, route }) => {
         >
           {resendOption ? (
             <NeuButton
-              color="#58184d"
+              color={buttonColor}
               width={180}
               height={50}
               borderRadius={width / 7.5}
@@ -324,7 +325,7 @@ const TfaScreen = ({ navigation, route }) => {
             </NeuButton>
           ) : (
             <NeuButton
-              color="#58184d"
+              color={buttonColor}
               width={180}
               height={50}
               borderRadius={width / 7.5}
