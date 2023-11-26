@@ -32,7 +32,7 @@ const MoreScreen = ({ navigation }) => {
         }}
       >
         <Image
-          source={require("../../assets/images/logo.png")}
+          source={require("../../assets/images/logo_amarillo.png")}
           //resizeMode="center"
           style={{
             marginLeft: width / 10,

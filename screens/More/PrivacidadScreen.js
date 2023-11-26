@@ -4,6 +4,7 @@ import { ImageBackground } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
+import { infoTextColor } from "../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -29,7 +30,6 @@ const PrivacidadScreen = ({ navigation }) => {
         style={{
           flex: 1,
           alignItems: "center",
-          //backgroundColor: "rgba(112, 28, 87, 1)",
         }}
       >
         <View style={styles.container}>
@@ -42,7 +42,7 @@ const PrivacidadScreen = ({ navigation }) => {
             }}
           >
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={styles.title}>
+              <Text style={styles.infoText}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -70,13 +70,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    //backgroundColor: "rgba(112, 28, 87, 1)",
     marginHorizontal: marginGlobal,
   },
-  title: {
+  infoText: {
     fontSize: 20,
     //fontWeight: "bold",
     fontStyle: "italic",
-    color: "#eee",
+    color: infoTextColor,
   },
 });

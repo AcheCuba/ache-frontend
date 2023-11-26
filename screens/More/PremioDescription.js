@@ -4,7 +4,7 @@ import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold, TextItalic } from "../../components/CommonText";
-import { buttonColor } from "../../constants/commonColors";
+import { buttonColor, infoTextColor } from "../../constants/commonColors";
 import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
@@ -43,7 +43,7 @@ const PremioDescription = ({ navigation, route }) => {
             <TextItalic
               style={{
                 fontSize: 20,
-                color: "#01f9d2",
+                color: infoTextColor, //"#01f9d2",
                 textAlign: "left",
               }}
               text={description}

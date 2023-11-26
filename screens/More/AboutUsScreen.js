@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
 import { TextBold, TextItalic } from "../../components/CommonText";
+import { infoTextColor } from "../../constants/commonColors";
 import {
   MoreNosotrosTextEnglish,
   MoreNosotrosTextSpanish,
@@ -70,7 +71,7 @@ const AboutUsScreen = ({ navigation }) => {
                   style={{
                     fontSize: 20,
                     textTransform: "uppercase",
-                    color: "#eee",
+                    color: infoTextColor,
                     marginBottom: 5,
                   }}
                   text={ResolveText("quienesSomosTitle")}
@@ -78,7 +79,7 @@ const AboutUsScreen = ({ navigation }) => {
                 <TextItalic
                   style={{
                     fontSize: 20,
-                    color: "#eee",
+                    color: infoTextColor,
                     textAlign: "left",
                   }}
                   text={ResolveText("quienesSomosBody")}
@@ -89,7 +90,7 @@ const AboutUsScreen = ({ navigation }) => {
                   style={{
                     fontSize: 20,
                     textTransform: "uppercase",
-                    color: "#eee",
+                    color: infoTextColor,
                     marginBottom: 5,
                   }}
                   text={ResolveText("queNosDistingueTitle")}
@@ -97,29 +98,10 @@ const AboutUsScreen = ({ navigation }) => {
                 <TextItalic
                   style={{
                     fontSize: 20,
-                    color: "#eee",
+                    color: infoTextColor,
                     textAlign: "left",
                   }}
                   text={ResolveText("queNosDistingueBody")}
-                />
-              </View>
-              <View style={{ marginBottom: 20 }}>
-                <TextBold
-                  style={{
-                    fontSize: 20,
-                    textTransform: "uppercase",
-                    color: "#eee",
-                    marginBottom: 5,
-                  }}
-                  text={ResolveText("acheTitle")}
-                />
-                <TextItalic
-                  style={{
-                    fontSize: 20,
-                    color: "#eee",
-                    textAlign: "left",
-                  }}
-                  text={ResolveText("acheBody")}
                 />
               </View>
 

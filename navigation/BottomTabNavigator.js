@@ -5,6 +5,7 @@ import { useNavigationState } from "@react-navigation/native";
 import * as React from "react";
 
 import "react-native-gesture-handler";
+import { Text } from "react-native";
 
 // screens
 
@@ -56,6 +57,7 @@ export default function BottomTabNavigator({ navigation, route }) {
   const { userState, userDispatch } = React.useContext(GlobalContext);
   const idioma_definido = userState?.idioma;
   const [soundTabNav, setSoundTabNav] = React.useState();
+  const [langTabFocused, setLangTabFocused] = React.useState(false);
 
   React.useEffect(() => {
     return soundTabNav
@@ -140,7 +142,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           //paddingTop: 3,
           allowFontScaling: true,
           //backgroundColor: "rgba(112, 28, 87, 1)",
-          backgroundColor: "#6a5c98",
+          backgroundColor: buttonColor,
           borderTopWidth: 0,
           // zIndex: 10,
           paddingHorizontal: 20,
@@ -169,6 +171,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           tabPress: (e) => {
             //console.log("press home");
             playSoundTabNav();
+            setLangTabFocused(false);
           },
         }}
         options={{
@@ -204,6 +207,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         listeners={{
           tabPress: (e) => {
             playSoundTabNav();
+            setLangTabFocused(false);
           },
         }}
         options={{
@@ -238,11 +242,13 @@ export default function BottomTabNavigator({ navigation, route }) {
         listeners={{
           tabPress: (e) => {
             playSoundTabNav();
+            setLangTabFocused(false);
           },
         }}
         options={{
           tabBarIcon: () => <TabButtonNeo iconName="Settings" />,
           headerShown: false,
+
           tabBarButton: (props) => {
             return (
               <View
@@ -264,7 +270,26 @@ export default function BottomTabNavigator({ navigation, route }) {
               </View>
             );
           },
-          tabBarLabel: idioma_definido === "spa" ? "MÁS" : "MORE",
+          tabBarLabel: (props) => {
+            return (
+              <Text
+                style={{
+                  fontSize: 12,
+                  position: "absolute",
+                  bottom: 0,
+                  marginBottom: -23,
+                  flex: 1,
+                  textAlign: "center",
+                  width: 70,
+                  color: props.focused
+                    ? "rgb(255, 248, 0)"
+                    : "rgba(255,255,255,0.3)",
+                }}
+              >
+                {idioma_definido === "spa" ? "MÁS" : "MORE"}
+              </Text>
+            );
+          },
           /* tabBarVisible: ((route) => {
             //const routeName =
             //  getFocusedRouteNameFromRoute(route) ?? "MultiplesContactosScreen"; 
@@ -292,6 +317,10 @@ export default function BottomTabNavigator({ navigation, route }) {
           tabPress: (e) => {
             // Prevent default action
             e.preventDefault();
+            //console.log(e);
+
+            setLangTabFocused(true);
+
             playSoundTabNav();
             if (idioma_definido === "spa") {
               userDispatch(setIdioma("eng"));
@@ -325,7 +354,27 @@ export default function BottomTabNavigator({ navigation, route }) {
           // ),
           headerShown: false,
           tabBarIcon: () => <TabButtonNeo iconName="Idioma" />,
-          tabBarLabel: idioma_definido === "spa" ? "IDIOMA" : "LANGUAGE",
+          tabBarLabel: (props) => {
+            //console.log(props);
+            return (
+              <Text
+                style={{
+                  fontSize: 12,
+                  position: "absolute",
+                  bottom: 0,
+                  marginBottom: -23,
+                  flex: 1,
+                  textAlign: "center",
+                  width: 70,
+                  color: langTabFocused
+                    ? "rgb(255, 248, 0)"
+                    : "rgba(255,255,255,0.3)",
+                }}
+              >
+                {idioma_definido === "spa" ? "IDIOMA" : "LANGUAGE"}
+              </Text>
+            );
+          },
           tabBarButton: (props) => {
             return (
               <View

@@ -7,6 +7,7 @@ import { TextBold, TextMedium } from "../../../components/CommonText";
 import {
   buttonColor,
   generalBgColor,
+  generalBgColorTrans5,
   generalBgColorTrans8,
 } from "../../../constants/commonColors";
 import { GlobalContext } from "../../../context/GlobalProvider";
@@ -90,7 +91,7 @@ const ProviderMenuModal = ({
       <View
         style={{
           flex: 1,
-          backgroundColor: "rgba(112, 28, 87, .8)",
+          backgroundColor: generalBgColorTrans5,
           justifyContent: "center",
           alignItems: "center",
         }}

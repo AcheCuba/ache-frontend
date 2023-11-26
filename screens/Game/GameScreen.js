@@ -427,10 +427,10 @@ const GameScreen = ({ navigation }) => {
         return (
           <View>
             <Image
-              source={require("../../assets/images/home/logo_para_boton.png")}
+              source={require("../../assets/images/home/boton_recarga_premio.png")}
               style={{
-                width: 85,
-                height: 85,
+                width: 160,
+                height: 160,
               }}
             />
           </View>
@@ -934,7 +934,7 @@ const GameScreen = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require("../../assets/images/degradado_home.png")}
+      source={require("../../assets/images/degradado_general.png")}
       style={{
         width: "100%",
         height: "100%",
@@ -1652,13 +1652,13 @@ const GameScreen = ({ navigation }) => {
           >
             <Image
               //source={require("../../assets/animaciones/moneda-recarga-rapida.gif")}
-              source={require("../../assets/images/home/recarga_directa.png")}
+              source={require("../../assets/images/home/boton_recarga_directa.png")}
               //resizeMode="center"
               style={{
                 //width: 90,
                 //height: 110,
-                width: 70,
-                height: 72,
+                width: 160,
+                height: 160,
               }}
             />
           </NeuButton>

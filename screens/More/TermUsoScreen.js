@@ -4,6 +4,7 @@ import { ImageBackground } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
+import { infoTextColor } from "../../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -42,7 +43,7 @@ const TermUsoScreen = ({ navigation }) => {
             }}
           >
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={styles.title}>
+              <Text style={styles.textInfo}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -73,10 +74,10 @@ const styles = StyleSheet.create({
     //backgroundColor: "rgba(112, 28, 87, 1)",
     marginHorizontal: marginGlobal,
   },
-  title: {
+  textInfo: {
     fontSize: 20,
     //fontWeight: "bold",
     fontStyle: "italic",
-    color: "#eee",
+    color: infoTextColor,
   },
 });

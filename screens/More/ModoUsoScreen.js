@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
 import { TextBold, TextItalic } from "../../components/CommonText";
+import { infoTextColor } from "../../constants/commonColors";
 import {
   ModoDeUsoTextEnglish,
   ModoDeUsoTextSpanish,
@@ -50,7 +51,6 @@ const ModoUsoScreen = ({ navigation }) => {
         style={{
           flex: 1,
           alignItems: "center",
-          //backgroundColor: "rgba(112, 28, 87, 1)",
         }}
       >
         <View style={styles.container}>
@@ -68,7 +68,7 @@ const ModoUsoScreen = ({ navigation }) => {
                   style={{
                     fontSize: 20,
                     textTransform: "uppercase",
-                    color: "#eee",
+                    color: infoTextColor,
                     marginBottom: 5,
                   }}
                   text={ResolveText("juega")}
@@ -76,7 +76,7 @@ const ModoUsoScreen = ({ navigation }) => {
                 <TextItalic
                   style={{
                     fontSize: 20,
-                    color: "#eee",
+                    color: infoTextColor,
                     textAlign: "left",
                   }}
                   text={ResolveText("juegaDesc")}
@@ -87,7 +87,7 @@ const ModoUsoScreen = ({ navigation }) => {
                   style={{
                     fontSize: 20,
                     textTransform: "uppercase",
-                    color: "#eee",
+                    color: infoTextColor,
                     marginBottom: 5,
                   }}
                   text={ResolveText("recarga")}
@@ -95,7 +95,7 @@ const ModoUsoScreen = ({ navigation }) => {
                 <TextItalic
                   style={{
                     fontSize: 20,
-                    color: "#eee",
+                    color: infoTextColor,
                     textAlign: "left",
                   }}
                   text={ResolveText("recargaDesc")}
@@ -106,7 +106,7 @@ const ModoUsoScreen = ({ navigation }) => {
                   style={{
                     fontSize: 20,
                     textTransform: "uppercase",
-                    color: "#eee",
+                    color: infoTextColor,
                     marginBottom: 5,
                   }}
                   text={ResolveText("premios")}
@@ -114,7 +114,7 @@ const ModoUsoScreen = ({ navigation }) => {
                 <TextItalic
                   style={{
                     fontSize: 20,
-                    color: "#eee",
+                    color: infoTextColor,
                     textAlign: "left",
                   }}
                   text={ResolveText("premiosDesc")}
@@ -125,7 +125,7 @@ const ModoUsoScreen = ({ navigation }) => {
                   style={{
                     fontSize: 20,
                     textTransform: "uppercase",
-                    color: "#eee",
+                    color: infoTextColor,
                     marginBottom: 5,
                   }}
                   text={ResolveText("tiempo")}
@@ -133,7 +133,7 @@ const ModoUsoScreen = ({ navigation }) => {
                 <TextItalic
                   style={{
                     fontSize: 20,
-                    color: "#eee",
+                    color: infoTextColor,
                     textAlign: "left",
                   }}
                   text={ResolveText("tiempoDesc")}
@@ -156,10 +156,10 @@ const styles = StyleSheet.create({
     //backgroundColor: "rgba(112, 28, 87, 1)",
     marginHorizontal: marginGlobal,
   },
-  title: {
+  /* title: {
     fontSize: 20,
     //fontWeight: "bold",
     fontStyle: "italic",
     color: "#eee",
-  },
+  }, */
 });

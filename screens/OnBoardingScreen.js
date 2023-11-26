@@ -128,13 +128,13 @@ const OnBoardingScreen = ({ navigation }) => {
                 }}
               >
                 <Image
-                  source={require("../assets/images/Logo_amarillo.png")}
+                  source={require("../assets/images/logo_amarillo.png")}
                   style={{ width: 120, height: 60, marginTop: 100 }}
                 />
 
                 <Image
-                  source={require("../assets/images/emojis/emoji_wink.png")}
-                  style={{ width: 150, height: 150, marginTop: 60 }}
+                  source={require("../assets/images/emojis/spin_character.png")}
+                  style={{ width: 200, height: 200, marginTop: 60 }}
                 />
 
                 {idioma == "spa" ? (
@@ -196,7 +196,7 @@ const OnBoardingScreen = ({ navigation }) => {
           backgroundColor: generalBgColor,
           image: (
             <ImageBackground
-              source={require("../assets/images/degradado_home.png")}
+              source={require("../assets/images/degradado_general.png")}
               style={{
                 width: width,
                 height: height,
@@ -219,17 +219,8 @@ const OnBoardingScreen = ({ navigation }) => {
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
                     >
-                      <TextMedium
-                        text="¡Esta es nuestra "
-                        style={{
-                          //marginTop: 100,
-                          fontSize: 20,
-                          textAlign: "center",
-                          color: "#fffc00",
-                        }}
-                      />
                       <TextBold
-                        text="Ruleta de las Recargas!"
+                        text="ANÍMATE Y GIRA PARA GANAR !!!"
                         style={{
                           fontSize: 20,
                           textAlign: "center",
@@ -239,25 +230,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     </View>
 
                     <TextMedium
-                      text="Prueba tu suerte y gana premios."
-                      style={{
-                        //marginTop: 100,
-                        fontSize: 20,
-                        textAlign: "center",
-                        color: "#fffc00",
-                      }}
-                    />
-                    <TextMedium
-                      text="Con buena suerte te caerá"
-                      style={{
-                        //marginTop: 100,
-                        fontSize: 20,
-                        textAlign: "center",
-                        color: "#fffc00",
-                      }}
-                    />
-                    <TextMedium
-                      text="¡el súper premio!"
+                      text="Simplemente toca la Rueda de la Fortuna y ¡¡¡Mira cómo gira!!! Si tienes suerte podrías ganar una recarga gratis o incluso mejor ¡¡¡¡el Gran Premio Mensual!!!"
                       style={{
                         //marginTop: 100,
                         fontSize: 20,
@@ -292,15 +265,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     }}
                   >
                     <TextMedium
-                      text="Gira la Ruleta y gana. Juega y comparte."
-                      style={{
-                        fontSize: 20,
-                        textAlign: "center",
-                        color: "#fffc00",
-                      }}
-                    />
-                    <TextMedium
-                      text="Con SPIN, tus recargas serán divertidas."
+                      text="¡No creerás lo divertido que puede ser recargar con SPIN!"
                       style={{
                         fontSize: 20,
                         textAlign: "center",
@@ -325,18 +290,10 @@ const OnBoardingScreen = ({ navigation }) => {
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
                     >
-                      <TextMedium
-                        text="Play our "
+                      <TextBold
+                        text="TAKE A CHANCE AND SPIN TO WIN !!!"
                         style={{
                           //marginTop: 100,
-                          fontSize: 20,
-                          textAlign: "center",
-                          color: "#fffc00",
-                        }}
-                      />
-                      <TextBold
-                        text="Fotune Wheel!"
-                        style={{
                           fontSize: 20,
                           textAlign: "center",
                           color: "#fffc00",
@@ -345,7 +302,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     </View>
                     <View>
                       <TextMedium
-                        text="Try your luck and win prizes. With a really good luck you could get the jackpot!"
+                        text="Simply touch the Fortune Wheel and watch it Spin !!! and if you get lucky you could be on your way to a free top up or even better the monthly Big Cash Jackpot !!!"
                         style={{
                           //marginTop: 100,
                           fontSize: 20,
@@ -371,14 +328,14 @@ const OnBoardingScreen = ({ navigation }) => {
                   </View>
                   <View
                     style={{
-                      marginTop: 100,
+                      //marginTop: 100,
                       position: "absolute",
-                      bottom: 65,
+                      bottom: 80,
                       paddingHorizontal: 10,
                     }}
                   >
                     <TextMedium
-                      text="Spin the Wheel and win. Play and share. Your recharges will be way more fun with SPIN."
+                      text="You won't believe how much fun recharging can be with SPIN!"
                       style={{
                         //marginTop: 100,
                         fontSize: 20,
@@ -399,7 +356,7 @@ const OnBoardingScreen = ({ navigation }) => {
           backgroundColor: generalBgColor,
           image: (
             <ImageBackground
-              source={require("../assets/images/degradado_home.png")}
+              source={require("../assets/images/degradado_general.png")}
               style={{
                 width: width,
                 height: height,
@@ -437,10 +394,10 @@ const OnBoardingScreen = ({ navigation }) => {
                     onPress={() => {}}
                   >
                     <Image
-                      source={require("../assets/images/home/logo_para_boton.png")}
+                      source={require("../assets/images/home/boton_recarga_premio.png")}
                       style={{
-                        width: 85,
-                        height: 85,
+                        width: 160,
+                        height: 160,
                       }}
                     />
                   </NeuButton>
@@ -453,39 +410,50 @@ const OnBoardingScreen = ({ navigation }) => {
                       alignItems: "center",
                     }}
                   >
-                    <View style={{ paddingHorizontal: 25 }}>
-                      <View
+                    <View style={{ paddingHorizontal: 20 }}>
+                      <Text
                         style={{
-                          flexDirection: "row",
-                          justifyContent: "center",
+                          marginBottom: 30,
                         }}
                       >
-                        <TextBold
-                          text=""
-                          style={{
-                            fontSize: 20,
-                            color: "#fffc00",
-                            textTransform: "uppercase",
-                          }}
-                        />
-                      </View>
-                      <Text>
                         <TextMedium
-                          text="Cada premio que ganes lo encontrarás aquí. Cuando tengas un premio pendiente envíalo para poder obtener otro al girar la"
+                          text="Cuando haces girar la ruleta y ganas un premio, aparecerá en la esquina superior derecha para que lo veas."
                           style={{
-                            fontSize: 20,
+                            fontSize: 22,
                             color: "#fffc00",
                             textAlign: "center",
                           }}
                         />
-                        <TextBold
-                          text=" Ruleta."
+                        <Text> </Text>
+                        <Text> </Text>
+
+                        <Image
+                          source={require("../assets/images/home/boton_recarga_premio.png")}
                           style={{
-                            fontSize: 20,
-                            color: "#fffc00",
+                            marginTop: -13,
+                            width: 35,
+                            height: 35,
                           }}
                         />
                       </Text>
+
+                      <TextMedium
+                        text="Sin embargo, para volver a ganar, primero debes utilizar el premio que tienes en ese momento, ya sea añadiéndolo a una recarga o compartiéndolo con un amigo."
+                        style={{
+                          fontSize: 22,
+                          color: "#fffc00",
+                          textAlign: "center",
+                          marginBottom: 30,
+                        }}
+                      />
+                      <TextMedium
+                        text="Una vez hecho esto, puedes volver a jugar, girar la ruleta y probar suerte para conseguir otro premio increíble."
+                        style={{
+                          fontSize: 22,
+                          color: "#fffc00",
+                          textAlign: "center",
+                        }}
+                      />
                     </View>
                   </View>
                 ) : (
@@ -496,39 +464,50 @@ const OnBoardingScreen = ({ navigation }) => {
                       alignItems: "center",
                     }}
                   >
-                    <View style={{ paddingHorizontal: 25 }}>
-                      <View
+                    <View style={{ paddingHorizontal: 20 }}>
+                      <Text
                         style={{
-                          flexDirection: "row",
-                          justifyContent: "center",
+                          marginBottom: 30,
                         }}
                       >
-                        <TextBold
-                          text=""
-                          style={{
-                            fontSize: 20,
-                            color: "#fffc00",
-                            textTransform: "uppercase",
-                          }}
-                        />
-                      </View>
-                      <Text>
                         <TextMedium
-                          text="Here’s where you’ll find the amount you win. Whenever you have a prize on hold send it to win another by spinning the "
+                          text="When you hit the wheel and secure a prize, it will be displayed in the top right hand corner for you to see!"
                           style={{
-                            fontSize: 20,
+                            fontSize: 22,
                             color: "#fffc00",
                             textAlign: "center",
                           }}
                         />
-                        <TextBold
-                          text="Wheel."
+                        <Text> </Text>
+                        <Text> </Text>
+
+                        <Image
+                          source={require("../assets/images/home/boton_recarga_premio.png")}
                           style={{
-                            fontSize: 20,
-                            color: "#fffc00",
+                            marginTop: -13,
+                            width: 35,
+                            height: 35,
                           }}
                         />
                       </Text>
+
+                      <TextMedium
+                        text="However, in order to win again, you must first use the prize you currently have - either by recharging or sharing it with a friend."
+                        style={{
+                          fontSize: 22,
+                          color: "#fffc00",
+                          textAlign: "center",
+                          marginBottom: 30,
+                        }}
+                      />
+                      <TextMedium
+                        text="Once done, you can jump back into the action, spin the wheel, and try your luck for another amazing win!"
+                        style={{
+                          fontSize: 22,
+                          color: "#fffc00",
+                          textAlign: "center",
+                        }}
+                      />
                     </View>
                   </View>
                 )}
@@ -542,7 +521,7 @@ const OnBoardingScreen = ({ navigation }) => {
           backgroundColor: generalBgColor,
           image: (
             <ImageBackground
-              source={require("../assets/images/degradado_home.png")}
+              source={require("../assets/images/degradado_general.png")}
               style={{
                 width: width,
                 height: height,
@@ -574,10 +553,10 @@ const OnBoardingScreen = ({ navigation }) => {
                   onPress={() => {}}
                 >
                   <Image
-                    source={require("../assets/images/home/logo_para_boton.png")}
+                    source={require("../assets/images/home/boton_recarga_premio.png")}
                     style={{
-                      width: 85,
-                      height: 85,
+                      width: 160,
+                      height: 160,
                     }}
                   />
                 </NeuButton>
@@ -606,11 +585,18 @@ const OnBoardingScreen = ({ navigation }) => {
                     active={false}
                     onPress={() => {}}
                   >
-                    <Image
+                    {/* <Image
                       source={require("../assets/animaciones/moneda-recarga-rapida.gif")}
                       style={{
-                        width: 90,
-                        height: 110,
+                        width: 130,
+                        height: 150,
+                      }}
+                    /> */}
+                    <Image
+                      source={require("../assets/images/home/boton_recarga_directa.png")}
+                      style={{
+                        width: 160,
+                        height: 160,
                       }}
                     />
                   </NeuButton>

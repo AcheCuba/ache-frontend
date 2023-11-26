@@ -555,7 +555,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           paddingTop: 50,
           width: width,
           height: height / 6,
-          backgroundColor: generalBgColor,
+          backgroundColor: "transparent",
           flexDirection: "row",
           justifyContent: "space-between",
         }}

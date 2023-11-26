@@ -13,7 +13,7 @@ const CommonHeader = ({ width, height, _onPress }) => {
         paddingTop: 50,
         width: width,
         height: height / 6,
-        backgroundColor: generalBgColor,
+        backgroundColor: "transparent",
         flexDirection: "row",
         justifyContent: "space-between",
       }}

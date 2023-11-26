@@ -179,7 +179,7 @@ const SignupScreenUptd = ({ navigation }) => {
               paddingTop: normalize(50),
               width: width,
               height: height / 6,
-              backgroundColor: generalBgColor,
+              backgroundColor: "transparent",
               flexDirection: "row",
               //justifyContent: "space-between",
               justifyContent: "center",
@@ -200,10 +200,10 @@ const SignupScreenUptd = ({ navigation }) => {
             {/*           <Ionicons name="person-sharp" size={130} color="#ddd" />
              */}
             <Image
-              source={require("../assets/images/emojis/emoji_wink.png")}
+              source={require("../assets/images/emojis/spin_character.png")}
               style={{
-                width: normalize(height / 7, "height"),
-                height: normalize(height / 7, "height"),
+                width: normalize(height / 6, "height"),
+                height: normalize(height / 6, "height"),
               }}
             />
 
@@ -216,15 +216,16 @@ const SignupScreenUptd = ({ navigation }) => {
                 }}
               >
                 <TextMedium
-                  text="¡Casi listo!"
+                  text="¡ya casi!"
                   style={{
                     fontSize: 20,
                     color: "#fffc00",
                     textAlign: "center",
+                    textTransform: "uppercase",
                   }}
                 />
                 <TextMedium
-                  text="Regístrate para que puedas comenzar a recargar y pruebes tu suerte."
+                  text="¡Regístrate para empezar a enviar recargas y prueba tu suerte con Spin!"
                   style={{
                     fontSize: 20,
                     color: "#fffc00",
@@ -246,10 +247,11 @@ const SignupScreenUptd = ({ navigation }) => {
                     fontSize: normalize(20),
                     color: "#fffc00",
                     textAlign: "center",
+                    textTransform: "uppercase",
                   }}
                 />
                 <TextMedium
-                  text="Sign up to start sending recharges and try your luck!"
+                  text="Sign up to start sending recharge and try your luck with Spin!!"
                   style={{
                     fontSize: normalize(20),
                     color: "#fffc00",

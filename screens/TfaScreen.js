@@ -192,6 +192,8 @@ const TfaScreen = ({ navigation, route }) => {
 
   const onPressVerify = () => {
     if (codeIn.length !== 6) {
+      //fetchRegister(name, email, phone);
+
       Toast.show(
         idioma === "spa"
           ? "Introduzca un código de 6 dígitos"
