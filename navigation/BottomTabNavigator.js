@@ -35,7 +35,7 @@ import NeuButton from "../libs/neu_element/NeuButton";
 
 import PremioDescription from "../screens/More/PremioDescription";
 import { Audio } from "expo-av";
-import { buttonColor } from "../constants/commonColors";
+import { navBarColor } from "../constants/commonColors";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -142,7 +142,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           //paddingTop: 3,
           allowFontScaling: true,
           //backgroundColor: "rgba(112, 28, 87, 1)",
-          backgroundColor: buttonColor,
+          backgroundColor: navBarColor,
           borderTopWidth: 0,
           // zIndex: 10,
           paddingHorizontal: 20,
@@ -191,7 +191,7 @@ export default function BottomTabNavigator({ navigation, route }) {
                   {...props}
                   width={50}
                   height={50}
-                  color={buttonColor}
+                  color={navBarColor}
                   borderRadius={25}
                 />
               </View>
@@ -227,7 +227,7 @@ export default function BottomTabNavigator({ navigation, route }) {
                   {...props}
                   width={50}
                   height={50}
-                  color={buttonColor}
+                  color={navBarColor}
                   borderRadius={25}
                 />
               </View>
@@ -264,7 +264,7 @@ export default function BottomTabNavigator({ navigation, route }) {
                   width={50}
                   height={50}
                   //color="#701c57"
-                  color={buttonColor}
+                  color={navBarColor}
                   borderRadius={25}
                 />
               </View>
@@ -389,7 +389,7 @@ export default function BottomTabNavigator({ navigation, route }) {
                   {...props}
                   width={50}
                   height={50}
-                  color={buttonColor}
+                  color={navBarColor}
                   borderRadius={25}
                 />
               </View>

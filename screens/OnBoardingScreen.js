@@ -173,7 +173,7 @@ const OnBoardingScreen = ({ navigation }) => {
                       }}
                     />
                     <TextMedium
-                      text={`You’re now only one spin away from playing, winning prizes or sending recharges. Thanks you being a member of our community.`}
+                      text={`You’re now only one spin away from playing, winning prizes or sending recharges. Thanks for being a part of our community.`}
                       style={{
                         marginTop: 10,
                         fontSize: 20,

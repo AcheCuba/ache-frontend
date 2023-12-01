@@ -1,4 +1,5 @@
-export const buttonColor = "#6c375f"; // #701c57
+export const navBarColor = "#6c375f";
+export const buttonColor = "#e38944"; // #701c57
 export const generalBgColor = "#eea063"; //"rgb(238, 159, 99)"; // #eea063
 export const generalBgColorTrans8 = "rgba(238, 159, 99, .8)"; //transparecia baja
 export const generalBgColorTrans5 = "rgba(238, 159, 99, .5)"; //transparecia media
