@@ -12,6 +12,7 @@ import {
   GameScreenTextSpanish,
 } from "../../../constants/Texts";
 import { buttonColor } from "../../../constants/commonColors";
+import LargeFlatButton from "../../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -79,11 +80,8 @@ const JoyaWonContentModal = ({ navigation, setModalVisible, userState }) => {
             width: width,
           }}
         />
-        <NeuButton
-          color={buttonColor}
-          width={(4 / 5) * width}
-          height={width / 7.5}
-          borderRadius={width / 7.5}
+        <LargeFlatButton
+          text={ResolveText("obtenerPremio")}
           onPress={() => {
             salir();
             navigation.jumpTo("Nueva Recarga", {
@@ -91,42 +89,15 @@ const JoyaWonContentModal = ({ navigation, setModalVisible, userState }) => {
               params: { inOrderToCobrarPremio: true },
             });
           }}
-          // style={{ marginTop: 80 }}
-        >
-          <TextBold
-            text={ResolveText("obtenerPremio")}
-            style={{
-              color: "#fff800", //"#01f9d2",
-              fontWeight: "bold",
-              fontSize: 20,
-              textTransform: "uppercase",
-            }}
-          />
-        </NeuButton>
+        />
+
         <View
           style={{
             height: 25,
             width: width,
           }}
         />
-        <NeuButton
-          color={buttonColor}
-          width={(4 / 5) * width}
-          height={width / 7.5}
-          borderRadius={width / 7.5}
-          onPress={() => salir()}
-          //style={{ marginTop: 25 }}
-        >
-          <TextBold
-            text={ResolveText("salir")}
-            style={{
-              color: "#fff800", //"#01f9d2",
-              fontWeight: "bold",
-              fontSize: 20,
-              textTransform: "uppercase",
-            }}
-          />
-        </NeuButton>
+        <LargeFlatButton text={ResolveText("salir")} onPress={() => salir()} />
       </View>
     </View>
   );

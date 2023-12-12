@@ -54,6 +54,7 @@ import {
   generalBgColor,
   generalBgColorTrans5,
 } from "../../constants/commonColors";
+import LargeFlatButton from "../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -690,13 +691,13 @@ const GameScreen = ({ navigation }) => {
 
         // probar premio falso para ver textos o whathever
         /* const prize_result = {
-          size: "Small",
+          size: "Big",
           //size: "Small",
-          //type: "Nada"
-          type: "TopUpBonus",
+          type: "Nada",
+          //type: "Jackpot",
           //type: "TopUpBonus",
-        }; */
-
+        };
+ */
         thereIsPrizeResult.current = true;
 
         if (prize_result === "" || prize_result === undefined) {
@@ -1035,12 +1036,11 @@ const GameScreen = ({ navigation }) => {
           visible={premioAcumulado}
           onRequestClose={() => setPremioAcumulado(false)}
         >
-          <Pressable
-            onPress={() => {
+          <View
+          /* onPress={() => {
               setPremioAcumulado(false);
-              setPremioAcumuladoType(undefined);
-              //setPremioAcumuladoAmount(undefined);
-            }}
+              setPremioAcumuladoType(undefined); 
+            }} */
           >
             <LinearGradient
               colors={[generalBgColor, bgColorFinalGradient]}
@@ -1114,15 +1114,6 @@ const GameScreen = ({ navigation }) => {
                       />
                     ) : (
                       <TextItalic
-                        /* text={
-                          userState?.idioma === "spa"
-                            ? premioAcumuladoType === "Jackpot"
-                              ? `¡Reclama tu súper premio de 500 USD! Para cobrarlo envía una recarga, revisa el email y sigue las instrucciones. Te guardaremos LAS GEMAS por 72 horas.`
-                              : `El ACHÉ está lleno. Para ganar otro premio en la Ruleta, agrega tu premio pendiente a una recarga, o compártelo usando el botón ubicado en la esquina superior derecha de tu pantalla.`
-                            : premioAcumuladoType === "Jackpot"
-                            ? `Redeem your super 500 dollars’ jackpot! To cash your GEMS, send a recharge, check your email and follow the instructions. We’ll keep the GEMS safe for 72 hours.`
-                            : `The Ache Button is full. To win another prize in the Wheel, first add your prize on hold to a recharge, or share it by using the button on your home screen’s top right corner. We’ll keep the prize safe for 72 hours.`
-                        } */
                         text={
                           userState?.idioma === "spa"
                             ? "Ya tienes un premio guardado. Para poder cobrar otro premio que ganes en la ruleta debes agregar el premio actual a una recarga o compartirlo usando el botón de la esquina superior derecha de la pantalla."
@@ -1141,14 +1132,11 @@ const GameScreen = ({ navigation }) => {
 
                 <View style={{ marginTop: 30 }}>
                   {userState.prize?.type !== "Nada" ? (
-                    <NeuButton
-                      color={buttonColor}
-                      width={(4 / 5) * width}
-                      height={width / 7.5}
-                      borderRadius={width / 7.5}
+                    <LargeFlatButton
+                      text={ResolveText("obtenerPremio")}
+                      btStyle={{ marginBottom: 30 }}
                       onPress={() => {
                         setPremioAcumulado(false);
-
                         if (userState.prize?.type !== "Nada") {
                           navigation.jumpTo("Nueva Recarga", {
                             screen: "NuevaRecargaScreen",
@@ -1156,44 +1144,19 @@ const GameScreen = ({ navigation }) => {
                           });
                         }
                       }}
-                      style={{ marginBottom: 30 }}
-                    >
-                      <TextBold
-                        text={ResolveText("obtenerPremio")}
-                        style={{
-                          fontSize: 20,
-                          color: "#fffb00",
-                          textAlign: "center",
-                          textTransform: "uppercase",
-                        }}
-                      />
-                    </NeuButton>
+                    />
                   ) : null}
 
-                  <NeuButton
-                    color={buttonColor}
-                    width={(4 / 5) * width}
-                    height={width / 7.5}
-                    borderRadius={width / 7.5}
+                  <LargeFlatButton
                     onPress={() => {
                       setPremioAcumulado(false);
                     }}
-                    style={{}}
-                  >
-                    <TextBold
-                      text={ResolveText("cancelar")}
-                      style={{
-                        fontSize: 20,
-                        color: "#fffb00",
-                        textAlign: "center",
-                        textTransform: "uppercase",
-                      }}
-                    />
-                  </NeuButton>
+                    text={ResolveText("cancelar")}
+                  />
                 </View>
               </View>
             </LinearGradient>
-          </Pressable>
+          </View>
         </Modal>
       ) : null}
 
@@ -1256,41 +1219,15 @@ const GameScreen = ({ navigation }) => {
                     fontWeight: "bold",
                   }}
                 />
-                {/* <TextBoldItalic
-                  text={
-                    userState?.idioma === "spa" ? " El Rayo " : " The Flash "
-                  }
-                  style={{
-                    fontSize: 18,
-                    color: "#01f9d2",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                  }}
-                />
-                <TextItalic
-                  text={
-                    userState?.idioma === "spa"
-                      ? "para que desaparezca al instante. ¡Sigue probando!"
-                      : "so it vanishes instantly. Keep trying!"
-                  }
-                  style={{
-                    fontSize: 18,
-                    color: "#01f9d2",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                  }}
-                /> */}
               </Text>
             </View>
 
             <View style={{ marginTop: 30 }}>
-              <CommonNeuButton
+              <LargeFlatButton
                 text={ResolveText("volverAJugar")}
                 onPress={() => {
                   setNadaWon(false);
                 }}
-                screenWidth={width}
-                color={buttonColor}
               />
             </View>
           </LinearGradient>
@@ -1644,6 +1581,7 @@ const GameScreen = ({ navigation }) => {
               //const pushAction = StackActions.push("Nueva Recarga");
               //navigation.dispatch(pushAction);
               enMovimiento.current = false;
+
               navigation.jumpTo("Nueva Recarga", {
                 screen: "NuevaRecargaScreen",
                 params: { inOrderToCobrarPremio: false },

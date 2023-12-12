@@ -30,7 +30,8 @@ export default function MainAppWrapper() {
   return (
     <AnimatedSplashScreen
       //animationSource={require("../assets/animaciones/cocodrilo.lottie.json")}
-      animationSource={require("../assets/animaciones/spinRecargasSplash.mp4.lottie.json")}
+      //animationSource={require("../assets/animaciones/spinRecargasSplash.mp4.lottie.json")}
+      animationSource={require("../assets/animaciones/loading.json")}
     >
       <MainApp />
     </AnimatedSplashScreen>
@@ -85,7 +86,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
           <LottieView
             autoPlay
-            loop={false}
+            loop={true}
             source={animationSource}
             ref={animation}
             /* onAnimationFinish={() => {

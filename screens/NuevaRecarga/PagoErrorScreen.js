@@ -2,7 +2,6 @@ import React from "react";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
 import { View, Dimensions } from "react-native";
-import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold } from "../../components/CommonText";
 import {
   ResultadoPagoTextEnglish,
@@ -10,6 +9,7 @@ import {
 } from "../../constants/Texts";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { CommonActions } from "@react-navigation/native";
+import LargeFlatButton from "../../components/LargeFlatButton";
 
 const { width } = Dimensions.get("screen");
 
@@ -22,7 +22,7 @@ const PagoErrorScreen = ({ navigation }) => {
     // limpiar storage (user en proceso de recarga)
 
   }) */
-  
+
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
     const textSpa = ResultadoPagoTextSpanish();
@@ -96,7 +96,7 @@ const PagoErrorScreen = ({ navigation }) => {
 
         <View style={{ width: "100%", alignItems: "center" }}>
           <View style={{ marginTop: 50 }}>
-            <CommonNeuButton
+            <LargeFlatButton
               text={ResolveText("reintentar")}
               onPress={() => {
                 //navigation.navigate("Juego");

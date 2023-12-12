@@ -5,7 +5,7 @@ import { useNavigationState } from "@react-navigation/native";
 import * as React from "react";
 
 import "react-native-gesture-handler";
-import { Text } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 // screens
 
@@ -26,12 +26,11 @@ import LanguageScreen from "../screens/LanguageScreen";
 import MultiplesContactosScreen from "../screens/NuevaRecarga/MultiplesContactosScreen";
 import { forHorizontal } from "./forHorizontal";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
-import TabButtonNeo from "./TabButtonNeo";
+import TabButtonImage from "./TabButtonImage";
 import { GlobalContext } from "../context/GlobalProvider";
 import { setIdioma } from "../context/Actions/actions";
 import { storeData } from "../libs/asyncStorage.lib";
 import { View } from "react-native";
-import NeuButton from "../libs/neu_element/NeuButton";
 
 import PremioDescription from "../screens/More/PremioDescription";
 import { Audio } from "expo-av";
@@ -127,8 +126,9 @@ export default function BottomTabNavigator({ navigation, route }) {
           position: "absolute",
           bottom: 0,
           marginBottom: -23,
-          flex: 1,
+          //flex: 1,
           width: 70,
+          justifyContent: "flex-start",
         },
         indicatorStyle: {
           backgroundColor: "transparent",
@@ -176,7 +176,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         }}
         options={{
           headerShown: false,
-          tabBarIcon: () => <TabButtonNeo iconName="Ruleta" />,
+          tabBarIcon: () => <TabButtonImage iconName="Ruleta" />,
           tabBarButton: (props) => {
             return (
               <View
@@ -187,18 +187,23 @@ export default function BottomTabNavigator({ navigation, route }) {
                   flex: 1,
                 }}
               >
-                <NeuButton
+                <TouchableOpacity
+                  activeOpacity={0.6}
                   {...props}
-                  width={50}
-                  height={50}
-                  color={navBarColor}
-                  borderRadius={25}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 25,
+                    backgroundColor: navBarColor,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 />
               </View>
             );
           },
-
           tabBarLabel: idioma_definido === "spa" ? "JUEGA" : "PLAY",
+          //tabBarLabelStyle: { backgroundColor: "green" },
         }}
       />
       <BottomTab.Screen
@@ -212,7 +217,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         }}
         options={{
           headerShown: false,
-          tabBarIcon: () => <TabButtonNeo iconName="Recarga" />,
+          tabBarIcon: () => <TabButtonImage iconName="Recarga" />,
           tabBarButton: (props) => {
             return (
               <View
@@ -223,12 +228,17 @@ export default function BottomTabNavigator({ navigation, route }) {
                   flex: 1,
                 }}
               >
-                <NeuButton
+                <TouchableOpacity
                   {...props}
-                  width={50}
-                  height={50}
-                  color={navBarColor}
-                  borderRadius={25}
+                  activeOpacity={0.6}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 25,
+                    backgroundColor: navBarColor,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 />
               </View>
             );
@@ -246,7 +256,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           },
         }}
         options={{
-          tabBarIcon: () => <TabButtonNeo iconName="Settings" />,
+          tabBarIcon: () => <TabButtonImage iconName="Settings" />,
           headerShown: false,
 
           tabBarButton: (props) => {
@@ -259,13 +269,17 @@ export default function BottomTabNavigator({ navigation, route }) {
                   flex: 1,
                 }}
               >
-                <NeuButton
+                <TouchableOpacity
                   {...props}
-                  width={50}
-                  height={50}
-                  //color="#701c57"
-                  color={navBarColor}
-                  borderRadius={25}
+                  activeOpacity={0.6}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 25,
+                    backgroundColor: navBarColor,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 />
               </View>
             );
@@ -353,7 +367,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           //  />
           // ),
           headerShown: false,
-          tabBarIcon: () => <TabButtonNeo iconName="Idioma" />,
+          tabBarIcon: () => <TabButtonImage iconName="Idioma" />,
           tabBarLabel: (props) => {
             //console.log(props);
             return (
@@ -385,12 +399,17 @@ export default function BottomTabNavigator({ navigation, route }) {
                   flex: 1,
                 }}
               >
-                <NeuButton
+                <TouchableOpacity
                   {...props}
-                  width={50}
-                  height={50}
-                  color={navBarColor}
-                  borderRadius={25}
+                  activeOpacity={0.6}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 25,
+                    backgroundColor: navBarColor,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 />
               </View>
             );

@@ -1,13 +1,13 @@
 import React from "react";
 import { Image } from "react-native";
 import { View, Dimensions } from "react-native";
-import NeuButton from "../../../libs/neu_element/NeuButton";
 import { TextBold, TextItalic } from "../../../components/CommonText";
 import {
   GameScreenTextEnglish,
   GameScreenTextSpanish,
 } from "../../../constants/Texts";
 import { buttonColor } from "../../../constants/commonColors";
+import LargeFlatButton from "../../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -85,24 +85,7 @@ const PremioExpiradoContentModal = ({
           }}
         />
 
-        <NeuButton
-          color={buttonColor}
-          width={(4 / 5) * width}
-          height={width / 7.5}
-          borderRadius={width / 7.5}
-          onPress={() => salir()}
-          //style={{ marginTop: 25 }}
-        >
-          <TextBold
-            text={ResolveText("salir")}
-            style={{
-              color: "#fff800", //"#01f9d2",
-              fontWeight: "bold",
-              fontSize: 20,
-              textTransform: "uppercase",
-            }}
-          />
-        </NeuButton>
+        <LargeFlatButton text={ResolveText("salir")} onPress={() => salir()} />
       </View>
     </View>
   );

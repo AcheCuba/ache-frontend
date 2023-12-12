@@ -4,13 +4,13 @@
     "name": "Spin Recargas",
     "slug": "ache",
     "privacy": "unlisted",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/first_screen_splash.png",
+      //"image": "./assets/images/first_screen_splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     }, 

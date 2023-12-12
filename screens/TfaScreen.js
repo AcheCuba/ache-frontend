@@ -1,10 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
-import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
+import { ActivityIndicator, TextInput, TouchableOpacity } from "react-native";
 import Toast from "react-native-root-toast";
 import { StyleSheet, View, Dimensions, Image, Platform } from "react-native";
 //import { NeuButton, NeuInput } from "react-native-neu-element";
-import NeuButton from "../libs/neu_element/NeuButton";
-import NeuInput from "../libs/neu_element/NeuInput";
 
 import { BASE_URL } from "../constants/domain";
 import { signup } from "../context/Actions/actions";
@@ -14,7 +12,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 import axios from "axios";
-import { createIconSetFromFontello } from "@expo/vector-icons";
 import { buttonColor } from "../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
@@ -272,12 +269,13 @@ const TfaScreen = ({ navigation, route }) => {
             marginBottom: 30,
           }}
         >
-          <NeuInput
-            textStyle={{
-              color: "#fff",
+          <TextInput
+            style={{
+              backgroundColor: buttonColor,
               fontWeight: "bold",
               fontFamily: "bs-italic",
               fontSize: 26,
+              padding: 10,
               textAlign: "center",
             }}
             placeholder={idioma === "spa" ? "CÓDIGO" : "CODE"}
@@ -287,7 +285,7 @@ const TfaScreen = ({ navigation, route }) => {
             onChangeText={(value) => onChangeCode(value)}
             value={codeIn}
             placeholderTextColor="gray"
-            color={buttonColor}
+            color={"#fff"}
             keyboardType="numeric"
           />
         </View>
@@ -302,14 +300,19 @@ const TfaScreen = ({ navigation, route }) => {
           }}
         >
           {resendOption ? (
-            <NeuButton
-              color={buttonColor}
-              width={180}
-              height={50}
-              borderRadius={width / 7.5}
+            <TouchableOpacity
+              activeOpacity={0.6}
               onPress={() => onPressResend(phone)}
-              style={{}}
-              active={loadingTwo}
+              disabled={loadingTwo}
+              style={{
+                backgroundColor: buttonColor,
+                borderRadius: width / 7.5,
+                width: 180,
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
             >
               {loadingTwo ? (
                 <ActivityIndicator size="large" color="#01f9d2" />
@@ -324,16 +327,21 @@ const TfaScreen = ({ navigation, route }) => {
                   }}
                 />
               )}
-            </NeuButton>
+            </TouchableOpacity>
           ) : (
-            <NeuButton
-              color={buttonColor}
-              width={180}
-              height={50}
-              borderRadius={width / 7.5}
+            <TouchableOpacity
+              activeOpacity={0.6}
               onPress={() => onPressVerify()}
-              style={{}}
-              active={loadingTwo}
+              disabled={loadingTwo}
+              style={{
+                backgroundColor: buttonColor,
+                borderRadius: width / 7.5,
+                width: 180,
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
             >
               {loadingTwo ? (
                 <ActivityIndicator size="large" color="#01f9d2" />
@@ -348,7 +356,7 @@ const TfaScreen = ({ navigation, route }) => {
                   }}
                 />
               )}
-            </NeuButton>
+            </TouchableOpacity>
           )}
         </View>
       </View>

@@ -15,6 +15,7 @@ import {
 import { GlobalContext } from "../../context/GlobalProvider";
 import { Audio } from "expo-av";
 import { CommonActions } from "@react-navigation/native";
+import LargeFlatButton from "../../components/LargeFlatButton";
 
 const { width } = Dimensions.get("screen");
 
@@ -160,7 +161,7 @@ const PagoCompletadoScreen = ({ navigation }) => {
         <View style={{ width: "100%", alignItems: "center" }}>
           <View style={{ marginTop: 50 }}>
             {globalUpdateCompleted || updateForzado ? (
-              <CommonNeuButton
+              <LargeFlatButton
                 text={ResolveText("inicio")}
                 onPress={async () => {
                   //navigation.navigate("Juego");

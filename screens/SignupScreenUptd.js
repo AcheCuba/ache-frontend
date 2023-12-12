@@ -1,22 +1,22 @@
 import React, { useContext, useState } from "react";
-import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
-import { StyleSheet, View, Dimensions, Image, Platform } from "react-native";
-//import { NeuButton, NeuInput } from "react-native-neu-element";
-import NeuButton from "../libs/neu_element/NeuButton";
-import NeuInput from "../libs/neu_element/NeuInput";
+import {
+  ActivityIndicator,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { View, Dimensions, Image, Platform } from "react-native";
 import Toast from "react-native-root-toast";
 import { BASE_URL } from "../constants/domain";
-import { signup } from "../context/Actions/actions";
 import { GlobalContext } from "../context/GlobalProvider";
-import * as SecureStore from "expo-secure-store";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Keyboard } from "react-native";
 import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 import normalize from "react-native-normalize";
 import axios from "axios";
-import { buttonColor, generalBgColor } from "../constants/commonColors";
+import { buttonColor } from "../constants/commonColors";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
@@ -272,21 +272,22 @@ const SignupScreenUptd = ({ navigation }) => {
           >
             <View style={{ marginTop: height / 45 }}>
               <View style={{ marginBottom: 0 }}>
-                <NeuInput
-                  textStyle={{
-                    color: "#fff",
+                <TextInput
+                  style={{
+                    backgroundColor: buttonColor,
                     fontWeight: "bold",
                     fontFamily: "bs-italic",
                     fontSize: 18,
+                    padding: 15,
                   }}
                   placeholder={idioma === "spa" ? "Nombre" : "Name"}
                   width={(4 / 5) * width}
-                  height={40}
-                  borderRadius={20}
+                  height={45}
+                  borderRadius={23}
                   onChangeText={(value) => onChangeName(value)}
                   value={name}
                   placeholderTextColor="gray"
-                  color={buttonColor}
+                  color={"#fff"}
                 />
               </View>
               {nameError !== "" ? (
@@ -305,21 +306,22 @@ const SignupScreenUptd = ({ navigation }) => {
             </View>
             <View style={{ marginTop: height / 45 }}>
               <View style={{ marginBottom: 0 }}>
-                <NeuInput
-                  textStyle={{
-                    color: "#fff",
+                <TextInput
+                  style={{
+                    backgroundColor: buttonColor,
                     fontWeight: "bold",
                     fontFamily: "bs-italic",
                     fontSize: 18,
+                    padding: 15,
                   }}
                   placeholder="Email"
                   width={(4 / 5) * width}
-                  height={40}
-                  borderRadius={20}
+                  height={45}
+                  borderRadius={23}
                   onChangeText={(value) => onChangeEmail(value)}
                   value={email}
                   placeholderTextColor="gray"
-                  color={buttonColor}
+                  color={"#fff"}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -341,23 +343,24 @@ const SignupScreenUptd = ({ navigation }) => {
             </View>
             <View style={{ marginTop: height / 45 }}>
               <View style={{}}>
-                <NeuInput
-                  textStyle={{
-                    color: "#fff",
+                <TextInput
+                  style={{
+                    backgroundColor: buttonColor,
                     fontWeight: "bold",
                     fontFamily: "bs-italic",
                     fontSize: 18,
+                    padding: 15,
                   }}
                   placeholder={
                     idioma === "spa" ? "Ej. +5350000000" : "Ex. +5350000000"
                   }
                   width={(4 / 5) * width}
-                  height={40}
-                  borderRadius={20}
+                  height={45}
+                  borderRadius={23}
                   onChangeText={(value) => onChangePhone(value)}
                   value={phone}
                   placeholderTextColor="gray"
-                  color={buttonColor}
+                  color={"#fff"}
                   keyboardType="phone-pad"
                 />
               </View>
@@ -385,14 +388,19 @@ const SignupScreenUptd = ({ navigation }) => {
             //marginTop: -120,
           }}
         >
-          <NeuButton
-            color={buttonColor}
-            width={(4 / 5) * width}
-            height={height / 14}
-            borderRadius={width / 7.5}
+          <TouchableOpacity
+            activeOpacity={0.6}
             onPress={() => onSubmit()}
-            style={{}}
-            active={loading}
+            disabled={loading}
+            style={{
+              backgroundColor: buttonColor,
+              borderRadius: width / 7.5,
+              width: (4 / 5) * width,
+              height: height / 14,
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 5,
+            }}
           >
             {loading ? (
               <ActivityIndicator size="large" color="#01f9d2" />
@@ -407,7 +415,7 @@ const SignupScreenUptd = ({ navigation }) => {
                 }}
               />
             )}
-          </NeuButton>
+          </TouchableOpacity>
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>

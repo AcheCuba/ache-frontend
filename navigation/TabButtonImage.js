@@ -4,29 +4,7 @@ import React from "react";
 import { Image, Dimensions, Platform } from "react-native";
 //import NeuButton from "../../libs/neu_element/NeuButton"
 
-const TabButtonNeo = ({ iconName }) => {
-  const StyledCrossPlat = (shadowPosition) => {
-    if (shadowPosition === "bottomShadow") {
-      return {
-        shadowColor: "rgba(201, 147, 185,0.5)",
-        shadowOffset: { width: -3, height: -3 },
-        shadowOpacity: Platform.OS === "android" ? 5 : 0.5,
-        shadowRadius: 7,
-        elevation: Platform.OS === "android" ? 10 : null,
-      };
-    }
-
-    if (shadowPosition === "topShadow") {
-      return {
-        shadowColor: "#1f0918",
-        shadowOffset: { width: 3, height: 3 },
-        shadowOpacity: Platform.OS === "android" ? 5 : 0.5,
-        shadowRadius: 7,
-        elevation: Platform.OS === "android" ? 10 : null,
-      };
-    }
-  };
-
+const TabButtonImage = ({ iconName }) => {
   const Icon = () => {
     switch (iconName) {
       case "Ruleta":
@@ -62,11 +40,7 @@ const TabButtonNeo = ({ iconName }) => {
     }
   };
 
-  return (
-   
-    <Icon />
-
-  );
+  return <Icon />;
 };
 
-export default TabButtonNeo;
+export default TabButtonImage;

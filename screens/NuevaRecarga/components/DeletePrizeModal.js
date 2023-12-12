@@ -9,6 +9,7 @@ import NeuView from "../../../libs/neu_element/NeuView";
 
 import { GlobalContext } from "../../../context/GlobalProvider";
 import { TextBoldItalic } from "../../../components/CommonText";
+import LargeFlatButton from "../../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -65,14 +66,20 @@ const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
         alignItems: "center",
       }}
     >
-      <NeuView
-        style={{ borderRadius: 10, borderColor: buttonColor, opacity: 0.9 }}
-        width={width / 1.2}
-        height={height / 4}
-        color={buttonColor}
-        borderRadius={10}
+      <View
+        style={{
+          borderRadius: 10,
+          borderColor: buttonColor,
+          opacity: 0.9,
+          width: width / 1.2,
+          height: height / 4,
+          backgroundColor: buttonColor,
+          borderRadius: 10,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
-        {type === undefined ? (
+        {type == !undefined ? (
           <View style={{ height: width / 8 + 7 }}>
             <ActivityIndicator size="small" color="#01f9d2" />
             <TextBoldItalic
@@ -101,48 +108,25 @@ const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
                 width: width / 1.4,
               }}
             >
-              <NeuButton
-                color={buttonColor}
-                width={width / 3}
-                height={40}
-                borderRadius={20}
+              <LargeFlatButton
+                _width={width / 3}
+                buttonHeight={40}
+                text={userState.idioma === "spa" ? "CANCELAR" : "CANCEL"}
                 onPress={onPressCancelar}
-              >
-                <Text
-                  style={{
-                    color: "#01f9d2",
-                    fontWeight: "bold",
-                    fontSize: 16,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  CANCELAR
-                </Text>
-              </NeuButton>
-              <NeuButton
-                color={buttonColor}
-                width={width / 5}
-                height={40}
-                borderRadius={20}
+              />
+
+              <LargeFlatButton
+                _width={width / 3}
+                buttonHeight={40}
+                text={userState.idioma === "spa" ? "QUITAR" : "DELETE"}
                 onPress={() => {
                   onPressDeletePrize();
                 }}
-              >
-                <Text
-                  style={{
-                    color: "#01f9d2",
-                    fontWeight: "bold",
-                    fontSize: 16,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Quitar
-                </Text>
-              </NeuButton>
+              />
             </View>
           </>
         )}
-      </NeuView>
+      </View>
     </View>
   );
 };

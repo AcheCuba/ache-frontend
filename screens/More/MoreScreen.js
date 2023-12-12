@@ -2,7 +2,7 @@ import * as React from "react";
 import { ImageBackground } from "react-native";
 import { Image } from "react-native";
 import { StyleSheet, View, Dimensions } from "react-native";
-import CommonNeuButton from "../../components/CommonNeuButton";
+import LargeFlatButton from "../../components/LargeFlatButton";
 import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
@@ -43,43 +43,38 @@ const MoreScreen = ({ navigation }) => {
       </View>
       <View style={styles.containerButtons}>
         <View style={styles.buttons}>
-          <CommonNeuButton
+          <LargeFlatButton
             text={userState?.idioma === "spa" ? "Sobre Nosotros" : "About Us"}
-            screenWidth={width}
             onPress={() => navigation.navigate("AboutUsScreen")}
           />
         </View>
         <View style={styles.buttons}>
-          <CommonNeuButton
+          <LargeFlatButton
             text={userState?.idioma === "spa" ? "Premios" : "Prizes"}
-            screenWidth={width}
             onPress={() => navigation.navigate("PremioScreen")}
           />
         </View>
         <View style={styles.buttons}>
-          <CommonNeuButton
+          <LargeFlatButton
             text={
               userState?.idioma === "spa"
                 ? "Política de privacidad"
                 : "Privacy Policy"
             }
-            screenWidth={width}
             onPress={() => navigation.navigate("PrivacidadScreen")}
           />
         </View>
         <View style={styles.buttons}>
-          <CommonNeuButton
+          <LargeFlatButton
             text={
               userState?.idioma === "spa" ? "Términos de uso" : "Terms of Use"
             }
-            screenWidth={width}
             onPress={() => navigation.navigate("TermUsoScreen")}
           />
         </View>
         <View style={styles.buttons}>
-          <CommonNeuButton
+          <LargeFlatButton
             text={userState?.idioma === "spa" ? "Modo de uso" : "Mode of Use"}
-            screenWidth={width}
             onPress={() => navigation.navigate("ModoUsoScreen")}
           />
         </View>

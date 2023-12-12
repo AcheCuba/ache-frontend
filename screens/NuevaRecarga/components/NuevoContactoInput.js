@@ -2,12 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Dimensions,
-  Pressable,
   Image,
   Modal,
-  Platform,
   Easing,
   Animated,
+  TextInput,
 } from "react-native";
 import { GlobalContext } from "../../../context/GlobalProvider";
 import {
@@ -15,8 +14,6 @@ import {
   deletePrizeByFieldId,
   toogleAddContactAvaiable,
 } from "../../../context/Actions/actions";
-import NeuButton from "../../../libs/neu_element/NeuButton";
-import NeuInput from "../../../libs/neu_element/NeuInput";
 
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-root-toast";
@@ -279,6 +276,7 @@ const NuevoContactoInput = ({
         transparent={true}
         animationType="fade"
         visible={deletePrizeModalVisible}
+        //visible={true}
         onRequestClose={() => setDeletePrizeModalVisible(false)}
       >
         <DeletePrizeModal
@@ -296,22 +294,6 @@ const NuevoContactoInput = ({
           marginTop: 20,
         }}
       >
-        {/*   <TouchableOpacity
-          onPress={() => onPressDeleteContact()}
-          style={{
-            //width: width / 8,
-            //heigth: width / 8,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "yelow",
-            marginTop: 3,
-          }}
-        >
-          <Image
-            source={require("../../../assets/images/iconos/Boton_Eliminar.png")}
-            //style={{ width: 31, height: 21 }}
-          />
-        </TouchableOpacity> */}
         <View
           style={{
             flexDirection: "row",
@@ -319,106 +301,65 @@ const NuevoContactoInput = ({
             marginTop: -2,
           }}
         >
-          <NeuButton
-            color={buttonColor}
-            width={width / 9.5}
-            height={width / 9.5}
-            borderRadius={width / 16}
+          <TouchableOpacity
+            activeOpacity={0.6}
             onPress={() => onPressDeleteContactField()}
-            style={{}}
+            style={{
+              backgroundColor: buttonColor,
+              width: width / 9.5,
+              height: width / 9.5,
+              borderRadius: width / 16,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
             <Image
               source={require("../../../assets/images/iconos/Boton_Eliminar.png")}
               style={{ width: width / 9.5 - 22, height: 4 }}
             />
-          </NeuButton>
+          </TouchableOpacity>
         </View>
 
-        {Platform.OS === "ios" ? (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() =>
-              navigation.navigate("MultiplesContactosScreen", {
-                fieldInputId: fieldInputId,
-              })
-            }
-          >
-            <View>
-              <NeuInput
-                textStyle={{
-                  color: "#fff",
-                  fontWeight: "bold",
-                  fontFamily: "bs-italic",
-                  fontSize: 18,
-                }}
-                placeholder={
-                  userState?.idioma === "spa"
-                    ? "Añadir Contacto"
-                    : "Add Contact"
-                }
-                width={inputWidth}
-                height={40}
-                borderRadius={20}
-                onChangeText={(value) => onChangeText(value)}
-                value={
-                  contactSelected
-                    ? contactSelected.contactName !== undefined &&
-                      contactSelected.id !== undefined
-                      ? contactSelected.contactName
-                      : contactSelected.contactNumber
-                    : ""
-                }
-                placeholderTextColor="gray"
-                color={buttonColor}
-                keyboardType="phone-pad"
-                name={fieldInputId}
-                editable={false}
-              />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <Pressable
-            onPress={() =>
-              navigation.navigate("MultiplesContactosScreen", {
-                fieldInputId: fieldInputId,
-              })
-            }
-          >
-            <View>
-              <NeuInput
-                textStyle={{
-                  color: "#fff",
-                  fontWeight: "bold",
-                  fontFamily: "bs-italic",
-                  fontSize: 18,
-                }}
-                placeholder={
-                  userState?.idioma === "spa"
-                    ? "Añadir Contacto"
-                    : "Add Contact"
-                }
-                width={inputWidth}
-                height={40}
-                borderRadius={20}
-                onChangeText={(value) => onChangeText(value)}
-                value={
-                  contactSelected
-                    ? contactSelected.contactName !== undefined &&
-                      contactSelected.id !== undefined
-                      ? contactSelected.contactName
-                      : contactSelected.contactNumber
-                    : ""
-                }
-                placeholderTextColor="gray"
-                color={buttonColor}
-                keyboardType="phone-pad"
-                name={fieldInputId}
-                editable={false}
-              />
-            </View>
-          </Pressable>
-        )}
-
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            navigation.navigate("MultiplesContactosScreen", {
+              fieldInputId: fieldInputId,
+            })
+          }
+        >
+          <View>
+            <TextInput
+              style={{
+                width: inputWidth,
+                height: 45,
+                borderRadius: 23,
+                backgroundColor: buttonColor,
+                color: "#fff",
+                fontWeight: "bold",
+                fontFamily: "bs-italic",
+                fontSize: 18,
+                paddingLeft: 10,
+              }}
+              placeholder={
+                userState?.idioma === "spa" ? "Añadir Contacto" : "Add Contact"
+              }
+              onChangeText={(value) => onChangeText(value)}
+              value={
+                contactSelected
+                  ? contactSelected.contactName !== undefined &&
+                    contactSelected.id !== undefined
+                    ? contactSelected.contactName
+                    : contactSelected.contactNumber
+                  : ""
+              }
+              placeholderTextColor="gray"
+              keyboardType="phone-pad"
+              name={fieldInputId}
+              editable={false}
+            />
+          </View>
+        </TouchableOpacity>
         <Animated.View
           style={{
             flexDirection: "row",
@@ -434,16 +375,20 @@ const NuevoContactoInput = ({
             ],
           }}
         >
-          <NeuButton
-            color={buttonColor}
-            width={width / 9.5}
-            height={width / 9.5}
-            borderRadius={width / 16}
+          <TouchableOpacity
+            activeOpacity={0.6}
             onPress={() => handlePressBarcode()}
-            style={{}}
+            style={{
+              backgroundColor: buttonColor,
+              width: width / 9.5,
+              height: width / 9.5,
+              borderRadius: width / 16,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
             <Figure />
-          </NeuButton>
+          </TouchableOpacity>
         </Animated.View>
       </View>
     </>

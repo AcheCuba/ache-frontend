@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, View } from "react-native";
+import { Modal, StyleSheet, View, TextInput } from "react-native";
 import NeuInput from "../../../libs/neu_element/NeuInput";
 import CommonNeuButton from "../../../components/CommonNeuButton";
 import { GlobalContext } from "../../../context/GlobalProvider";
@@ -7,6 +7,7 @@ import {
   buttonColor,
   generalBgColorTrans8,
 } from "../../../constants/commonColors";
+import LargeFlatButton from "../../../components/LargeFlatButton";
 
 const CodigoRecargaModal = ({
   modalVisible,
@@ -41,18 +42,18 @@ const CodigoRecargaModal = ({
           //marginBottom: 80,
         }}
       >
-        <NeuInput
-          width={width / 1.4}
-          height={40}
-          borderRadius={20}
+        <TextInput
+          width={width / 1.3}
+          height={45}
+          borderRadius={22}
           //style={styles.input}
           placeholder={idioma === "spa" ? "Introducir código" : "Enter code"}
           onChangeText={(value) => setText(value)}
           value={text}
           placeholderTextColor="#bbb"
-          color={buttonColor}
-          textStyle={{
-            color: "#fff",
+          color={"#fff"}
+          style={{
+            backgroundColor: buttonColor,
             fontWeight: "bold",
             fontFamily: "bs-italic",
             fontSize: 18,
@@ -64,11 +65,9 @@ const CodigoRecargaModal = ({
             marginTop: 30,
           }}
         >
-          <CommonNeuButton
+          <LargeFlatButton
             text={idioma === "spa" ? "Aceptar" : "Accept"}
-            width={width / 1.6}
-            screenWidth={width}
-            //color="#672557"
+            _width={width / 1.6}
             onPress={() => {
               onPressOkModal(fieldIdMatched, text);
             }}
@@ -80,11 +79,9 @@ const CodigoRecargaModal = ({
             marginTop: 30,
           }}
         >
-          <CommonNeuButton
+          <LargeFlatButton
             text={idioma === "spa" ? "Añadir mi premio" : "Add my prize"}
-            width={width / 1.6}
-            screenWidth={width}
-            //color="#672557"
+            _width={width / 1.6}
             onPress={() => {
               onPressOkModal(fieldIdMatched, userState?.prize?.uuid);
             }}
@@ -96,11 +93,9 @@ const CodigoRecargaModal = ({
             marginTop: 30,
           }}
         >
-          <CommonNeuButton
+          <LargeFlatButton
             text={idioma === "spa" ? "Atrás" : "Back"}
-            width={width / 1.6}
-            screenWidth={width}
-            //color="#672557"
+            _width={width / 1.6}
             onPress={() => setModalVisible(false)}
           />
         </View>

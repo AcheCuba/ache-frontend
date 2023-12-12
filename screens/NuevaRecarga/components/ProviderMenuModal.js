@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Modal, StyleSheet, View, Text, FlatList } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
-import CommonNeuButton from "../../../components/CommonNeuButton";
 import { TextBold, TextMedium } from "../../../components/CommonText";
 import {
   buttonColor,
@@ -11,7 +10,6 @@ import {
   generalBgColorTrans8,
 } from "../../../constants/commonColors";
 import { GlobalContext } from "../../../context/GlobalProvider";
-import NeuView from "../../../libs/neu_element/NeuView";
 
 const ProviderMenuModal = ({
   modalVisible,
@@ -96,11 +94,17 @@ const ProviderMenuModal = ({
           alignItems: "center",
         }}
       >
-        <NeuView
+        <View
           width={width / 1.5}
           height={heightList}
           color={buttonColor}
           borderRadius={30}
+          style={{
+            backgroundColor: buttonColor,
+            width: width / 1.5,
+            height: heightList,
+            borderRadius: 30,
+          }}
         >
           <FlatList
             keyExtractor={(item) => item.id}
@@ -115,7 +119,7 @@ const ProviderMenuModal = ({
               marginTop: 20,
             }}
           />
-        </NeuView>
+        </View>
       </View>
     </Modal>
   );

@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import { Modal, StyleSheet, View, Text, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
-import CommonNeuButton from "../../../components/CommonNeuButton";
 import { TextBold, TextMedium } from "../../../components/CommonText";
 import {
   buttonColor,
   generalBgColorTrans8,
 } from "../../../constants/commonColors";
 import { GlobalContext } from "../../../context/GlobalProvider";
-import NeuView from "../../../libs/neu_element/NeuView";
 
 const DropDownMenuModal = ({
   modalVisible,
@@ -44,18 +42,20 @@ const DropDownMenuModal = ({
           //marginBottom: 80,
         }}
       >
-        <NeuView
+        <View
           style={{
             borderRadius: 10,
             borderColor: buttonColor,
             opacity: 0.9,
             marginTop: width / 7,
             marginLeft: width / 7,
+            width: width / 3,
+            height: heightList,
+            backgroundColor: buttonColor,
+            borderRadius: 10,
+            justifyContent: "center",
+            alignItems: "center",
           }}
-          width={width / 3}
-          height={heightList}
-          color={buttonColor}
-          borderRadius={10}
         >
           <TouchableOpacity
             style={{
@@ -121,21 +121,7 @@ const DropDownMenuModal = ({
               text="+52"
             />
           </TouchableOpacity>
-
-          {/* <View
-            style={{
-              marginTop: 30,
-            }}
-          >
-            <CommonNeuButton
-              text={idioma === "spa" ? "Atrás" : "Back"}
-              width={width / 1.6}
-              screenWidth={width}
-              //color="#672557"
-              onPress={() => setModalVisible(false)}
-            />
-          </View> */}
-        </NeuView>
+        </View>
       </View>
     </Modal>
   );

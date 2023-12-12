@@ -7,6 +7,7 @@ import {
   FlatList,
   Dimensions,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import Contact from "./components/Contact";
 import { GlobalContext } from "../../context/GlobalProvider";
@@ -16,12 +17,10 @@ import {
   toogleAddContactAvaiable,
 } from "../../context/Actions/actions";
 
-import NeuButton from "../../libs/neu_element/NeuButton";
-import NeuInput from "../../libs/neu_element/NeuInput";
-
 import Toast from "react-native-root-toast";
 import { Image } from "react-native";
 import { buttonColor, generalBgColor } from "../../constants/commonColors";
+import { TextInput } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -478,30 +477,41 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           justifyContent: "space-between",
         }}
       >
-        <NeuButton
-          color={buttonColor}
-          width={width / 7}
-          height={width / 7 - 20}
-          borderRadius={5}
+        <Pressable
           onPress={() => {
             navigation.navigate("NuevaRecargaScreen");
           }}
-          style={{ marginLeft: marginGlobal, marginTop: 10 }}
+          style={{
+            backgroundColor: buttonColor,
+            width: width / 7,
+            height: width / 7 - 20,
+            borderRadius: 5,
+            marginLeft: marginGlobal,
+            marginTop: 10,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <Image
             source={require("../../assets/images/iconos/atras.png")}
             style={{ width: 15, height: 15 }}
           />
-        </NeuButton>
-        <NeuButton
-          color={buttonColor}
-          width={width / 7}
-          height={width / 7 - 20}
-          borderRadius={5}
+        </Pressable>
+
+        <Pressable
           onPress={() => {
             onPressCheckmark(userCountry);
           }}
-          style={{ marginRight: marginGlobal, marginTop: 10 }}
+          style={{
+            backgroundColor: buttonColor,
+            width: width / 7,
+            height: width / 7 - 20,
+            borderRadius: 5,
+            marginRight: marginGlobal,
+            marginTop: 10,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <Image
             source={require("../../assets/images/iconos/check_mark.png")}
@@ -510,7 +520,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
               height: 16,
             }}
           />
-        </NeuButton>
+        </Pressable>
       </View>
       <View
         style={{
@@ -519,22 +529,24 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
           marginBottom: 20,
         }}
       >
-        <NeuInput
-          textStyle={{
-            color: "#fff",
+        <TextInput
+          style={{
+            backgroundColor: buttonColor,
             fontWeight: "bold",
             fontFamily: "bs-italic",
             fontSize: 18,
+            paddingLeft: 10,
+            color: "#fff",
           }}
           placeholder={
             userState?.idioma === "spa"
-              ? "Escribe el teléfono o el nombre"
+              ? "Escriba el teléfono o el nombre"
               : "Type phone number or name"
           }
           onChangeText={(value) => onChangeText(value)}
           value={text}
           placeholderTextColor="gray"
-          color={buttonColor}
+          color={"#fff"}
           width={width / 1.3}
           height={40}
           borderRadius={20}

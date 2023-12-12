@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Alert } from "react-native";
-import { Dimensions, View, Text, Platform } from "react-native";
+import { Dimensions, View, Text, TouchableOpacity } from "react-native";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import { resetNuevaRecargaState } from "../../context/Actions/actions";
@@ -12,11 +12,10 @@ import CommonNeuButton from "../../components/CommonNeuButton";
 import { ImageBackground } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
-import { TouchableOpacity } from "react-native";
 import { PrePagoTextEnglish, PrePagoTextSpanish } from "../../constants/Texts";
-import NeuButton from "../../libs/neu_element/NeuButton";
 import { Image } from "react-native";
 import { buttonColor, generalBgColor } from "../../constants/commonColors";
+import LargeFlatButton from "../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -332,19 +331,25 @@ const PrePagoScreen = ({ navigation, route }) => {
           justifyContent: "space-between",
         }}
       >
-        <NeuButton
-          color={buttonColor}
-          width={width / 7}
-          height={width / 7 - 20}
-          borderRadius={5}
+        <TouchableOpacity
+          activeOpacity={0.6}
           onPress={() => onPressBackButton()}
-          style={{ marginLeft: marginGlobal, marginTop: 10 }}
+          style={{
+            marginLeft: marginGlobal,
+            marginTop: 10,
+            backgroundColor: buttonColor,
+            width: width / 7,
+            height: width / 7 - 20,
+            borderRadius: 5,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <Image
             source={require("../../assets/images/iconos/equis.png")}
             style={{ width: 16, height: 16 }}
           />
-        </NeuButton>
+        </TouchableOpacity>
       </View>
       <View
         style={{
@@ -382,9 +387,8 @@ const PrePagoScreen = ({ navigation, route }) => {
         </View>
 
         <View style={{ marginTop: normalize(20) }}>
-          <CommonNeuButton
+          <LargeFlatButton
             text={ResolveText("pagar")}
-            screenWidth={width}
             onPress={() => {
               navigation.navigate("PagoScreen", {
                 amount,

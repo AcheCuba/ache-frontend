@@ -1,9 +1,8 @@
 import React from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, Pressable, TouchableOpacity } from "react-native";
 import { ImageBackground } from "react-native";
 import { StyleSheet, View, Image } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import NeuButton from "../../libs/neu_element/NeuButton";
 import CommonHeader from "../../components/CommonHeader";
 import { TextBold } from "../../components/CommonText";
 import {
@@ -88,23 +87,24 @@ const PremioScreen = ({ navigation }) => {
           flex: 1,
         }}
       >
-        <NeuButton
-          width={width / 1.3}
-          height={height / 8}
-          borderRadius={10}
+        <TouchableOpacity
+          activeOpacity={0.6}
           onPress={() => {
             navigation.navigate("PremioDescription", {
               type: ResolveText(type),
               description,
             });
           }}
-          color={buttonColor}
-          style={{ marginTop: 10 }}
-          containerStyle={{
+          style={{
             flex: 1,
             flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",
+            width: width / 1.3,
+            height: height / 8,
+            borderRadius: 10,
+            backgroundColor: buttonColor,
+            marginTop: 10,
           }}
         >
           {imagen}
@@ -117,7 +117,7 @@ const PremioScreen = ({ navigation }) => {
             }}
             text={ResolveText(type)}
           />
-        </NeuButton>
+        </TouchableOpacity>
       </View>
     );
   };

@@ -19,13 +19,10 @@ import {
   updatePrize,
   openSocket,
   setCountryForUser,
-  deleteAllContacts,
-  deleteAllFields,
   setOperatorForUser,
   resetNuevaRecargaState,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
-import NeuButton from "../../libs/neu_element/NeuButton";
 import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
@@ -41,6 +38,7 @@ import DropDownMenuModal from "./components/DropDownMenuModal";
 import { storeData } from "../../libs/asyncStorage.lib";
 import ProviderMenuModal from "./components/ProviderMenuModal";
 import { buttonColor } from "../../constants/commonColors";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -660,15 +658,19 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           justifyContent: "space-between",
         }}
       >
-        <NeuButton
-          color={buttonColor}
-          width={width / 7}
-          height={width / 7 - 20}
-          borderRadius={5}
+        <TouchableOpacity
+          activeOpacity={0.6}
           onPress={() => {
             setDropDownVisible(!dropDownVisible);
           }}
-          style={{ marginLeft: marginGlobal, marginTop: 10 }}
+          style={{
+            marginLeft: marginGlobal,
+            marginTop: 10,
+            backgroundColor: buttonColor,
+            width: width / 7,
+            height: width / 7 - 20,
+            borderRadius: 5,
+          }}
         >
           <View
             style={{
@@ -703,7 +705,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               }}
             />
           </View>
-        </NeuButton>
+        </TouchableOpacity>
         <View
           style={{
             width: width / 3.3,
@@ -713,33 +715,22 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             justifyContent: "flex-start",
           }}
         >
-          <NeuButton
-            color={buttonColor}
-            width={width / 3}
-            height={width / 7 - 20}
-            borderRadius={5}
+          <TouchableOpacity
             onPress={() => {
               loadingProviders || providerList.length == 0
                 ? null
                 : setProviderMenuVisible(!providerMenuVisible);
-
-              /* if (providerList.length == 0) {
-                Toast.show(
-                  userState?.idioma === "spa"
-                    ? "No se pudo cargar la lista de operadores de esta región"
-                    : "Unable to load the list of operators in this region",
-                  {
-                    duaration: Toast.durations.LONG,
-                    position: Toast.positions.BOTTOM,
-                    shadow: true,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
-                  }
-                );
-              } */
             }}
-            style={{ marginTop: 10 }}
+            activeOpacity={0.6}
+            style={{
+              marginTop: 10,
+              backgroundColor: buttonColor,
+              width: width / 3,
+              height: width / 7 - 20,
+              borderRadius: 5,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
             {loadingProviders ? (
               <ActivityIndicator size="small" color="#fffb00" />
@@ -760,26 +751,32 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                 }}
               />
             )}
-          </NeuButton>
+          </TouchableOpacity>
           {/* <Image
             source={require("../../assets/images/iconos/abajo.png")}
             style={{ width: 12, height: 10, marginTop: 8, marginLeft: -15 }}
           /> */}
         </View>
 
-        <NeuButton
-          color={buttonColor}
-          width={width / 7}
-          height={width / 7 - 20}
-          borderRadius={5}
+        <TouchableOpacity
           onPress={() => onPressAddContactField()}
-          style={{ marginRight: marginGlobal, marginTop: 10 }}
+          activeOpacity={0.6}
+          style={{
+            marginTop: 10,
+            marginRight: marginGlobal,
+            backgroundColor: buttonColor,
+            width: width / 7,
+            height: width / 7 - 20,
+            borderRadius: 5,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <Image
             source={require("../../assets/images/iconos/add_user.png")}
             style={{ width: 31, height: 21 }}
           />
-        </NeuButton>
+        </TouchableOpacity>
       </View>
       <DropDownMenuModal
         modalVisible={dropDownVisible}
@@ -837,14 +834,19 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         </View>
       </ScrollView>
       <View style={[styles.button_continuar, { alignItems: "center" }]}>
-        <NeuButton
+        <TouchableOpacity
           //color="#611951"
-          color={buttonColor}
-          width={(4 / 5) * width}
-          height={width / 7.5}
-          borderRadius={width / 7.5}
+          activeOpacity={0.6}
           onPress={() => onPressContinuar()}
-          style={{ marginBottom: 100 }}
+          style={{
+            backgroundColor: buttonColor,
+            width: (4 / 5) * width,
+            height: width / 7.5,
+            borderRadius: width / 7.5,
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 100,
+          }}
         >
           {loadingContinuar ? (
             <ActivityIndicator size="large" color="#01f9d2" />
@@ -857,19 +859,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                 textTransform: "uppercase",
               }}
             />
-
-            /*   <Text
-              style={{
-                color: "#01f9d2",
-                fontWeight: "bold",
-                fontSize: 20,
-                textTransform: "uppercase",
-              }}
-            >
-              continuar
-            </Text> */
           )}
-        </NeuButton>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );

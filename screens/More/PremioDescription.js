@@ -4,6 +4,7 @@ import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold, TextItalic } from "../../components/CommonText";
+import LargeFlatButton from "../../components/LargeFlatButton";
 import { buttonColor, infoTextColor } from "../../constants/commonColors";
 import { GlobalContext } from "../../context/GlobalProvider";
 
@@ -58,21 +59,16 @@ const PremioDescription = ({ navigation, route }) => {
               marginTop: 50,
             }}
           >
-            <CommonNeuButton
+            <LargeFlatButton
               text={idioma === "spa" ? "Jugar" : "Play"}
-              screenWidth={width}
-              width={width / 3}
-              //color={type === "calavera" ? "#6b1b54" : "#611951"}
-              color={buttonColor}
+              _width={width / 3}
               onPress={() => {
                 navigation.navigate("Juego");
               }}
             />
-            <CommonNeuButton
+            <LargeFlatButton
               text={idioma === "spa" ? "Atrás" : "Back"}
-              width={width / 3}
-              screenWidth={width}
-              color={buttonColor}
+              _width={width / 3}
               onPress={() => {
                 navigation.navigate("PremioScreen");
               }}

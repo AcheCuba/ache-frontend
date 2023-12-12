@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import * as Clipboard from "expo-clipboard";
-import NeuButton from "../../../libs/neu_element/NeuButton";
 
 import { GlobalContext } from "../../../context/GlobalProvider";
 import axios from "axios";
@@ -19,6 +25,7 @@ import {
 } from "../../../constants/Texts";
 import normalize from "react-native-normalize";
 import { buttonColor } from "../../../constants/commonColors";
+import LargeFlatButton from "../../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -477,78 +484,61 @@ const CobrarPremioContent = ({
       <View style={{ marginTop: 30, alignItems: "center" }}>
         <View style={styles.button}>
           {loadingObtenerPremio ? (
-            <NeuButton
-              color={buttonColor}
-              width={(4 / 5) * width}
-              height={width / 7.5}
-              borderRadius={width / 7.5}
+            <TouchableOpacity
+              activeOpacity={0.6}
               onPress={() => {}}
-              inset
-              style={{ marginTop: 5 }}
+              style={{
+                backgroundColor: buttonColor,
+                borderRadius: width / 7.5,
+                width: (4 / 5) * width,
+                height: width / 7,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
             >
               <ActivityIndicator size="large" color="#fff800" />
-            </NeuButton>
+            </TouchableOpacity>
           ) : (
-            <NeuButton
-              color={buttonColor}
-              width={(4 / 5) * width}
-              height={width / 7.5}
-              borderRadius={width / 7.5}
+            <LargeFlatButton
+              text={ResolveText("obtenerPremio")}
+              disabled={codigoGenerado}
               onPress={() => {
                 // antes el condicional era con loading solo
                 codigoGenerado || loading ? null : onPressObtenerPremio();
               }}
-              active={codigoGenerado}
-              inset={false}
-              style={{ marginTop: 5 }}
-            >
-              <TextBold
-                text={ResolveText("obtenerPremio")}
-                style={{
-                  color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
-                  fontSize: 20,
-                  textTransform: "uppercase",
-                }}
-              />
-            </NeuButton>
+            />
           )}
         </View>
         <View style={styles.button}>
           {!loading ? (
-            <NeuButton
-              color={buttonColor}
-              width={(4 / 5) * width}
-              height={width / 7.5}
-              borderRadius={width / 7.5}
+            <LargeFlatButton
+              text={ResolveText("copiarCodigo")}
               onPress={() => {
                 codigoGenerado ? null : onPressGenerarCodigo(); //genera y copia el code de una vez
               }} // la condicion de generado implica que ha sido copiado ya
-              active={codigoGenerado}
-              //inset={codigoGenerado}
-              style={{ marginTop: 5 }}
-            >
-              <TextBold
-                text={ResolveText("copiarCodigo")}
-                style={{
-                  color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  textTransform: "uppercase",
-                }}
-              />
-            </NeuButton>
+              disabled={codigoGenerado}
+              textStyle={{
+                color: codigoGenerado ? "#666666" : "#fff800", //"#01f9d2",
+              }}
+              btStyle={{ marginTop: 5 }}
+            />
           ) : (
-            <NeuButton
-              color={buttonColor}
-              width={(4 / 5) * width}
-              height={width / 7.5}
-              borderRadius={width / 7.5}
+            <TouchableOpacity
+              activeOpacity={0.6}
               onPress={() => {}}
-              inset
-              style={{ marginTop: 5 }}
+              style={{
+                backgroundColor: buttonColor,
+                borderRadius: width / 7.5,
+                width: (4 / 5) * width,
+                height: width / 7,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
             >
               <ActivityIndicator size="large" color="#fff800" />
-            </NeuButton>
+            </TouchableOpacity>
           )}
 
           <View style={{ height: normalize(50, "height"), width: width / 1.3 }}>
@@ -566,26 +556,12 @@ const CobrarPremioContent = ({
             ) : null}
           </View>
 
-          <NeuButton
-            color={buttonColor}
-            width={(4 / 5) * width}
-            height={width / 7.5}
-            borderRadius={width / 7.5}
+          <LargeFlatButton
+            text={ResolveText("cancelar")}
             onPress={() => {
               loading ? null : Salir();
             }}
-            style={{ marginTop: normalize(10, "height") }}
-          >
-            <TextBold
-              text={ResolveText("cancelar")}
-              style={{
-                color: "#fff800", //"#01f9d2",
-                fontWeight: "bold",
-                fontSize: 20,
-                textTransform: "uppercase",
-              }}
-            />
-          </NeuButton>
+          />
         </View>
       </View>
     </View>

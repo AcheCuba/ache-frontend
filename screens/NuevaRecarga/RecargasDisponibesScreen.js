@@ -5,6 +5,7 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import NeuButton from "../../libs/neu_element/NeuButton";
 import { BASE_URL } from "../../constants/domain";
@@ -560,19 +561,25 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           justifyContent: "space-between",
         }}
       >
-        <NeuButton
-          color={buttonColor}
-          width={width / 7}
-          height={width / 7 - 20}
-          borderRadius={5}
+        <TouchableOpacity
+          activeOpacity={0.6}
           onPress={() => onPressBackButton()}
-          style={{ marginLeft: marginGlobal, marginTop: 10 }}
+          style={{
+            marginLeft: marginGlobal,
+            marginTop: 10,
+            backgroundColor: buttonColor,
+            width: width / 7,
+            height: width / 7 - 20,
+            borderRadius: 5,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <Image
             source={require("../../assets/images/iconos/equis.png")}
             style={{ width: 16, height: 16 }}
           />
-        </NeuButton>
+        </TouchableOpacity>
       </View>
 
       <View
@@ -622,7 +629,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                   }}
                   key={index}
                 >
-                  <NeuButton
+                  <TouchableOpacity
+                    activeOpacity={0.6}
                     onPress={() => {
                       //console.log(product);
                       setPressed(product.id); // para el loading
@@ -632,18 +640,14 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         product.product_description
                       );
                     }}
-                    width={width / 1.3}
-                    height={height / 5}
-                    borderRadius={10}
-                    color={buttonColor}
                     style={{
-                      marginBottom: 25,
-                    }}
-                    //key={index}
-                    containerStyle={{
-                      flex: 1,
                       alignItems: "center",
                       justifyContent: "center",
+                      marginBottom: 25,
+                      width: width / 1.3,
+                      height: height / 5,
+                      borderRadius: 10,
+                      backgroundColor: buttonColor,
                     }}
                   >
                     <View
@@ -722,7 +726,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         )}
                       </View>
                     </View>
-                  </NeuButton>
+                  </TouchableOpacity>
                 </View>
               );
             })}
