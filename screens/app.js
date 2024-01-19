@@ -22,7 +22,7 @@ import { BASE_URL } from "../constants/domain";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
 import LottieView from "lottie-react-native";
-import { Audio } from "expo-av";
+import { Audio, Video, ResizeMode } from "expo-av";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,8 +30,8 @@ export default function MainAppWrapper() {
   return (
     <AnimatedSplashScreen
       //animationSource={require("../assets/animaciones/cocodrilo.lottie.json")}
-      //animationSource={require("../assets/animaciones/spinRecargasSplash.mp4.lottie.json")}
-      animationSource={require("../assets/animaciones/loading.json")}
+      animationSource={require("../assets/animaciones/spinRecargasSplash.mp4.lottie.json")}
+      //animationSource={require("../assets/animaciones/loading.json")}
     >
       <MainApp />
     </AnimatedSplashScreen>
@@ -43,6 +43,13 @@ function AnimatedSplashScreen({ animationSource, children }) {
   const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
   const animation = useRef(null);
   const [soundInicio, setSoundInicio] = React.useState();
+
+  const splashVideoDir = require("../assets/animaciones/spinRecargasSplash.mp4");
+  const video = React.useRef(null);
+
+  /* const onEndf = () => {
+    videoRef.current.pause();
+  }; */
 
   async function playSoundInicio() {
     //console.log("Loading Sound");
@@ -72,30 +79,48 @@ function AnimatedSplashScreen({ animationSource, children }) {
 
     if (isAppReady) {
       hideFirstScreen();
+      //video.current.playAsync();
     }
   }, [isAppReady]);
 
   setTimeout(() => {
     setAnimationComplete(true);
-  }, 6000); //8300
+    //video.current.pauseAsync();
+  }, 8000); //8300
 
   return (
     <View style={{ flex: 1 }}>
       {isSplashAnimationComplete && children}
       {!isSplashAnimationComplete && (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
+          {/* <Video
+            ref={video}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+            }}
+            source={splashVideoDir}
+            useNativeControls
+            resizeMode={ResizeMode.COVER}
+            isLooping={false}
+            shouldPlay
+            //onPlaybackStatusUpdate={status => setStatus(() => status)}
+          /> */}
           <LottieView
             autoPlay
             loop={true}
             source={animationSource}
             ref={animation}
-            /* onAnimationFinish={() => {
-              if (isAppReady) {
-                setAnimationComplete(true);
-              } else {
-                animation.current?.play();
-              }
-            }} */
+            // onAnimationFinish={() => {
+            // if (isAppReady) {
+            //   setAnimationComplete(true);
+            // } else {
+            //   animation.current?.play();
+            // }
+            //}}
           />
         </View>
       )}

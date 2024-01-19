@@ -10,7 +10,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      //"image": "./assets/images/first_screen_splash.png",
+      "image": "./assets/images/first_screen_splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     }, 
