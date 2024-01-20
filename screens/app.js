@@ -111,7 +111,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
           /> */}
           <LottieView
             autoPlay
-            loop={true}
+            loop={false}
             source={animationSource}
             ref={animation}
             // onAnimationFinish={() => {
