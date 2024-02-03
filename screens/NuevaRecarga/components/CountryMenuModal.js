@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, View, Text, Image } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
 import { TextBold, TextMedium } from "../../../components/CommonText";
@@ -9,7 +16,7 @@ import {
 } from "../../../constants/commonColors";
 import { GlobalContext } from "../../../context/GlobalProvider";
 
-const DropDownMenuModal = ({
+const CountryMenuModal = ({
   modalVisible,
   setModalVisible,
   transparent,
@@ -20,7 +27,7 @@ const DropDownMenuModal = ({
   const actualCountry = userState?.country;
 
   const numOpciones = 3;
-  const heightOpcion = 50;
+  const heightOpcion = 55;
   const heightList = numOpciones * heightOpcion;
 
   return (
@@ -30,16 +37,26 @@ const DropDownMenuModal = ({
       visible={modalVisible}
       onRequestClose={() => setModalVisible(false)}
     >
+      <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            //flexDirection: "row",
+            backgroundColor: generalBgColorTrans8,
+            //paddingTop: 50, // aqui empiezan los
+            //paddingLeft: width / 9,
+            justifyContent: "center",
+            alignItems: "center",
+            //marginBottom: 80,
+          }}
+        />
+      </TouchableWithoutFeedback>
+
       <View
         style={{
-          flex: 1,
-          flexDirection: "row",
-          backgroundColor: generalBgColorTrans8,
-          paddingTop: 50, // aqui empiezan los
-          paddingLeft: width / 9,
-          //justifyContent: "space-between",
-          //alignItems: "flex-start",
-          //marginBottom: 80,
+          position: "absolute",
+          top: width / 1.4,
+          left: width / 2.5 - width / (4 * 2.5),
         }}
       >
         <View
@@ -47,12 +64,12 @@ const DropDownMenuModal = ({
             borderRadius: 10,
             borderColor: buttonColor,
             opacity: 0.9,
-            marginTop: width / 7,
-            marginLeft: width / 7,
-            width: width / 3,
+            //marginTop: width / 7,
+            //marginLeft: width / 7,
+            width: width / 2.5,
             height: heightList,
             backgroundColor: buttonColor,
-            borderRadius: 10,
+            borderRadius: 25,
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -127,7 +144,7 @@ const DropDownMenuModal = ({
   );
 };
 
-export default DropDownMenuModal;
+export default CountryMenuModal;
 
 const styles = StyleSheet.create({
   title: {

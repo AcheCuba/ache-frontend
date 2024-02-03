@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   Animated,
   Easing,
+  TouchableOpacity,
 } from "react-native";
 import NeuButton from "../../libs/neu_element/NeuButton";
 import axios from "axios";
@@ -1362,14 +1363,17 @@ const GameScreen = ({ navigation }) => {
             //marginRight: width / 10,
           }}
         >
-          <NeuButton // boton naranja premios
-            color={btPremioColor}
-            //color="#fe8457"
-            width={width / 3.5}
-            height={width / 3.5}
-            borderRadius={width / 7}
-            //noShadow
+          <TouchableOpacity
+            //activeOpacity={0.6}
 
+            style={{
+              backgroundColor: btPremioColor,
+              width: width / 3.5,
+              height: width / 3.5,
+              borderRadius: width / 7,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
             onPress={() => {
               if (userState.prize !== null) {
                 // actualizar horas restantes
@@ -1436,7 +1440,7 @@ const GameScreen = ({ navigation }) => {
             }}
           >
             <ImageConditional typeOfPrize={userState?.prize?.type} />
-          </NeuButton>
+          </TouchableOpacity>
         </View>
 
         <View
@@ -1565,18 +1569,17 @@ const GameScreen = ({ navigation }) => {
             bottom: 130,
           }}
         >
-          <NeuButton // boton morado recarga directa
-            color={btRecargaColor}
-            //color="#311338"
-            width={width / 3.5}
-            height={width / 3.5}
-            borderRadius={width / 7}
-            style={{ zIndex: 3 }}
-            /*  onPress={() => {
-                  navigation.jumpTo("Nueva Recarga", {
-                    screen: "Nueva Recarga"
-                  });
-                }} */
+          <TouchableOpacity
+            //activeOpacity={0.6}
+
+            style={{
+              backgroundColor: btPremioColor,
+              width: width / 3.5,
+              height: width / 3.5,
+              borderRadius: width / 7,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
             onPress={() => {
               //const pushAction = StackActions.push("Nueva Recarga");
               //navigation.dispatch(pushAction);
@@ -1599,7 +1602,7 @@ const GameScreen = ({ navigation }) => {
                 height: 160,
               }}
             />
-          </NeuButton>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>

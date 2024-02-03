@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, View, Text, FlatList } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
 import { TextBold, TextMedium } from "../../../components/CommonText";
@@ -86,13 +93,27 @@ const ProviderMenuModal = ({
       visible={modalVisible}
       onRequestClose={() => setModalVisible(false)}
     >
+      <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: generalBgColorTrans8,
+          }}
+        />
+      </TouchableWithoutFeedback>
+
       <View
         style={{
+          position: "absolute",
+          top: width / 1.4,
+          left: (0.5 * width) / 3,
+        }}
+        /* style={{
           flex: 1,
           backgroundColor: generalBgColorTrans5,
           justifyContent: "center",
           alignItems: "center",
-        }}
+        }} */
       >
         <View
           width={width / 1.5}

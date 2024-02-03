@@ -133,8 +133,8 @@ const OnBoardingScreen = ({ navigation }) => {
                 />
 
                 <Image
-                  source={require("../assets/images/emojis/spin_character.png")}
-                  style={{ width: 200, height: 200, marginTop: 60 }}
+                  source={require("../assets/images/onboarding/spin_character.png")}
+                  style={{ width: 300, height: 300, marginTop: 20 }}
                 />
 
                 {idioma == "spa" ? (
@@ -291,7 +291,7 @@ const OnBoardingScreen = ({ navigation }) => {
                       style={{ flexDirection: "row", justifyContent: "center" }}
                     >
                       <TextBold
-                        text="TAKE A CHANCE AND SPIN TO WIN !!!"
+                        text="TAKE A CHANCE AND SPIN TO WIN!!!"
                         style={{
                           //marginTop: 100,
                           fontSize: 20,
@@ -302,7 +302,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     </View>
                     <View>
                       <TextMedium
-                        text="Simply touch the Fortune Wheel and watch it Spin !!! and if you get lucky you could be on your way to a free top up or even better the monthly Big Cash Jackpot !!!"
+                        text="Simply touch the Fortune Wheel and watch it Spin !!! and if you get lucky you could be on your way to a free top up or even better the monthly Big Cash Jackpot!!!"
                         style={{
                           //marginTop: 100,
                           fontSize: 20,

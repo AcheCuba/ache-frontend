@@ -13,6 +13,8 @@ import { ImageBackground } from "react-native";
 import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 import axios from "axios";
 import { buttonColor } from "../constants/commonColors";
+import { TouchableWithoutFeedback } from "react-native";
+import { Keyboard } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
@@ -120,6 +122,12 @@ const TfaScreen = ({ navigation, route }) => {
       phone: phone.replace(/-/g, "").replace(/ /g, ""),
       lang: idioma,
     };
+    /* let data = {
+      name: "elias",
+      email: "elias@sab.com",
+      phone: "+34695082384",
+      lang: "esp",
+    }; */
 
     //console.log(data);
 
@@ -133,6 +141,7 @@ const TfaScreen = ({ navigation, route }) => {
 
     fetch(url, requestOptions)
       .then((response) => {
+        console.log(response.ok);
         if (response.ok) {
           return response.json();
         } else {
@@ -144,6 +153,7 @@ const TfaScreen = ({ navigation, route }) => {
         //console.log(result);
         //console.log(typeof result);
         const newUser = result;
+        console.log("newUser", newUser);
         if (newUser) {
           const token = newUser.accessToken;
           storeSacureValue("token", token);
@@ -263,103 +273,107 @@ const TfaScreen = ({ navigation, route }) => {
       }}
       transition={false}
     >
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
-          style={{
-            marginBottom: 30,
-          }}
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <TextInput
+          <View
             style={{
-              backgroundColor: buttonColor,
-              fontWeight: "bold",
-              fontFamily: "bs-italic",
-              fontSize: 26,
-              padding: 10,
-              textAlign: "center",
+              marginBottom: 30,
             }}
-            placeholder={idioma === "spa" ? "CÓDIGO" : "CODE"}
-            width={300}
-            height={60}
-            borderRadius={30}
-            onChangeText={(value) => onChangeCode(value)}
-            value={codeIn}
-            placeholderTextColor="gray"
-            color={"#fff"}
-            keyboardType="numeric"
-          />
-        </View>
+          >
+            <TextInput
+              style={{
+                backgroundColor: buttonColor,
+                fontWeight: "bold",
+                fontFamily: "bs-italic",
+                fontSize: 26,
+                padding: 10,
+                textAlign: "center",
+              }}
+              placeholder={idioma === "spa" ? "CÓDIGO" : "CODE"}
+              width={300}
+              height={60}
+              borderRadius={30}
+              onChangeText={(value) => onChangeCode(value)}
+              value={codeIn}
+              placeholderTextColor="gray"
+              color={"#fff"}
+              keyboardType="numeric"
+            />
+          </View>
 
-        <View
-          style={{
-            zIndex: 0,
-            //flex: 1,
-            //alignItems: "center",
-            //marginTop: normalize(-40),
-            //marginTop: -120,
-          }}
-        >
-          {resendOption ? (
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() => onPressResend(phone)}
-              disabled={loadingTwo}
-              style={{
-                backgroundColor: buttonColor,
-                borderRadius: width / 7.5,
-                width: 180,
-                height: 50,
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: 5,
-              }}
-            >
-              {loadingTwo ? (
-                <ActivityIndicator size="large" color="#01f9d2" />
-              ) : (
-                <TextBold
-                  text={idioma === "spa" ? "REENVIAR" : "RESEND"}
-                  style={{
-                    color: "#fff800",
-                    //fontWeight: "bold",
-                    fontSize: 20,
-                    textTransform: "uppercase",
-                  }}
-                />
-              )}
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() => onPressVerify()}
-              disabled={loadingTwo}
-              style={{
-                backgroundColor: buttonColor,
-                borderRadius: width / 7.5,
-                width: 180,
-                height: 50,
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: 5,
-              }}
-            >
-              {loadingTwo ? (
-                <ActivityIndicator size="large" color="#01f9d2" />
-              ) : (
-                <TextBold
-                  text={idioma === "spa" ? "VERIFICAR" : "VERIFY"}
-                  style={{
-                    color: "#fff800",
-                    //fontWeight: "bold",
-                    fontSize: 20,
-                    textTransform: "uppercase",
-                  }}
-                />
-              )}
-            </TouchableOpacity>
-          )}
+          <View
+            style={{
+              zIndex: 0,
+              //flex: 1,
+              //alignItems: "center",
+              //marginTop: normalize(-40),
+              //marginTop: -120,
+            }}
+          >
+            {resendOption ? (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => onPressResend(phone)}
+                disabled={loadingTwo}
+                style={{
+                  backgroundColor: buttonColor,
+                  borderRadius: width / 7.5,
+                  width: 180,
+                  height: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 5,
+                }}
+              >
+                {loadingTwo ? (
+                  <ActivityIndicator size="large" color="#01f9d2" />
+                ) : (
+                  <TextBold
+                    text={idioma === "spa" ? "REENVIAR" : "RESEND"}
+                    style={{
+                      color: "#fff800",
+                      //fontWeight: "bold",
+                      fontSize: 20,
+                      textTransform: "uppercase",
+                    }}
+                  />
+                )}
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => onPressVerify()}
+                disabled={loadingTwo}
+                style={{
+                  backgroundColor: buttonColor,
+                  borderRadius: width / 7.5,
+                  width: 180,
+                  height: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 5,
+                }}
+              >
+                {loadingTwo ? (
+                  <ActivityIndicator size="large" color="#01f9d2" />
+                ) : (
+                  <TextBold
+                    text={idioma === "spa" ? "VERIFICAR" : "VERIFY"}
+                    style={{
+                      color: "#fff800",
+                      //fontWeight: "bold",
+                      fontSize: 20,
+                      textTransform: "uppercase",
+                    }}
+                  />
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </ImageBackground>
   );
 };

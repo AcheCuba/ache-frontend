@@ -5,7 +5,7 @@ import { useNavigationState } from "@react-navigation/native";
 import * as React from "react";
 
 import "react-native-gesture-handler";
-import { Text, TouchableOpacity } from "react-native";
+import { PixelRatio, Text, TouchableOpacity } from "react-native";
 
 // screens
 
@@ -122,7 +122,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         tabBarHideOnKeyboard: true,
         //labelStyle: { fontSize: 12, marginBottom: 15, marginTop: -10 },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 12 / PixelRatio.getFontScale(),
           position: "absolute",
           bottom: 0,
           marginBottom: -23,
@@ -151,12 +151,11 @@ export default function BottomTabNavigator({ navigation, route }) {
           paddingBottom: Platform.OS === "android" ? 10 : 18,
           //borderTopColor:
           //  Platform.OS === "android" ? "rgba(10,10,10, 0.1)" : null,
-          shadowColor: Platform.OS === "android" ? null : "#1f0918",
-          shadowOffset:
-            Platform.OS === "android" ? null : { width: -6, height: -6 },
-          shadowOpacity: Platform.OS === "android" ? null : 0.6,
-          shadowRadius: Platform.OS === "android" ? null : 7,
-          elevation: Platform.OS === "android" ? 200 : null,
+          //shadowColor: Platform.OS === "android" ? null : "#1f0918",
+          ///shadowOffset: Platform.OS === "android" ? null : { width: -6, height: -6 },
+          //shadowOpacity: Platform.OS === "android" ? null : 0.6,
+          //shadowRadius: Platform.OS === "android" ? null : 7,
+          //elevation: Platform.OS === "android" ? 200 : null,
           position: "absolute",
           left: 0,
           right: 0,
@@ -288,7 +287,7 @@ export default function BottomTabNavigator({ navigation, route }) {
             return (
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: 12 / PixelRatio.getFontScale(),
                   position: "absolute",
                   bottom: 0,
                   marginBottom: -23,
@@ -373,7 +372,7 @@ export default function BottomTabNavigator({ navigation, route }) {
             return (
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: 12 / PixelRatio.getFontScale(),
                   position: "absolute",
                   bottom: 0,
                   marginBottom: -23,

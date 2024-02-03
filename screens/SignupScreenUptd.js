@@ -17,6 +17,7 @@ import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
 import normalize from "react-native-normalize";
 import axios from "axios";
 import { buttonColor } from "../constants/commonColors";
+import { PixelRatio } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
@@ -129,7 +130,6 @@ const SignupScreenUptd = ({ navigation }) => {
               if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
-                setLoading(false);
                 console.log(error.response.data);
                 console.log(error.response.status);
 
@@ -141,6 +141,8 @@ const SignupScreenUptd = ({ navigation }) => {
                   hideOnPress: true,
                   delay: 0,
                 });
+
+                setLoading(false);
               }
             });
         }
@@ -187,7 +189,7 @@ const SignupScreenUptd = ({ navigation }) => {
             }}
           >
             <Image
-              source={require("../assets/images/logo.png")}
+              source={require("../assets/images/logo_amarillo.png")}
               //resizeMode="center"
               style={{
                 //marginLeft: width / 10,
@@ -199,13 +201,21 @@ const SignupScreenUptd = ({ navigation }) => {
           <View style={{ alignItems: "center" }}>
             {/*           <Ionicons name="person-sharp" size={130} color="#ddd" />
              */}
-            <Image
-              source={require("../assets/images/emojis/spin_character.png")}
+            <View
               style={{
-                width: normalize(height / 6, "height"),
                 height: normalize(height / 6, "height"),
+                marginTop: -40,
+                marginBottom: 30,
               }}
-            />
+            >
+              <Image
+                source={require("../assets/images/onboarding/spin_character.png")}
+                style={{
+                  width: normalize(height / 4.7, "height"),
+                  height: normalize(height / 4.7, "height"),
+                }}
+              />
+            </View>
 
             {idioma === "spa" ? (
               <View
@@ -278,7 +288,8 @@ const SignupScreenUptd = ({ navigation }) => {
                     fontWeight: "bold",
                     fontFamily: "bs-italic",
                     fontSize: 18,
-                    padding: 15,
+                    paddingHorizontal: 15,
+                    paddingVertical: 5,
                   }}
                   placeholder={idioma === "spa" ? "Nombre" : "Name"}
                   width={(4 / 5) * width}
@@ -312,7 +323,8 @@ const SignupScreenUptd = ({ navigation }) => {
                     fontWeight: "bold",
                     fontFamily: "bs-italic",
                     fontSize: 18,
-                    padding: 15,
+                    paddingHorizontal: 15,
+                    paddingVertical: 5,
                   }}
                   placeholder="Email"
                   width={(4 / 5) * width}
@@ -349,7 +361,8 @@ const SignupScreenUptd = ({ navigation }) => {
                     fontWeight: "bold",
                     fontFamily: "bs-italic",
                     fontSize: 18,
-                    padding: 15,
+                    paddingHorizontal: 15,
+                    paddingVertical: 5,
                   }}
                   placeholder={
                     idioma === "spa" ? "Ej. +5350000000" : "Ex. +5350000000"
@@ -410,7 +423,7 @@ const SignupScreenUptd = ({ navigation }) => {
                 style={{
                   color: "#fff800",
                   //fontWeight: "bold",
-                  fontSize: 20,
+                  fontSize: 25 / PixelRatio.getFontScale(),
                   textTransform: "uppercase",
                 }}
               />

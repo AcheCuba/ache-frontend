@@ -5,6 +5,7 @@ import {
   Dimensions,
   ScrollView,
   ActivityIndicator,
+  PixelRatio,
 } from "react-native";
 
 import NuevoContactoInput from "./components/NuevoContactoInput";
@@ -34,7 +35,7 @@ import {
   NuevaRecargaTextEnglish,
   NuevaRecargaTextSpanish,
 } from "../../constants/Texts";
-import DropDownMenuModal from "./components/DropDownMenuModal";
+import CountryMenuModal from "./components/CountryMenuModal";
 import { storeData } from "../../libs/asyncStorage.lib";
 import ProviderMenuModal from "./components/ProviderMenuModal";
 import { buttonColor } from "../../constants/commonColors";
@@ -80,7 +81,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     valid: true,
   });
 
-  const [dropDownVisible, setDropDownVisible] = React.useState(false);
+  const [countryMenuVisible, setCountryMenuVisible] = React.useState(false);
   const [providerMenuVisible, setProviderMenuVisible] = React.useState(false);
   const [loadingProviders, setLoadingProviders] = React.useState(false);
   const [providerList, setProviderList] = React.useState([]);
@@ -347,7 +348,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     }
 
     // cerrar drom down menu
-    setDropDownVisible(false);
+    setCountryMenuVisible(false);
     // refrescar operadores
     setLoadingProviders(true);
     getOperators(selectedCountry);
@@ -650,7 +651,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     >
       <View
         style={{
-          paddingTop: 50,
+          paddingTop: 65,
           width: width,
           height: height / 6,
           backgroundColor: { buttonColor },
@@ -661,7 +662,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         <TouchableOpacity
           activeOpacity={0.6}
           onPress={() => {
-            setDropDownVisible(!dropDownVisible);
+            setCountryMenuVisible(!countryMenuVisible);
           }}
           style={{
             marginLeft: marginGlobal,
@@ -698,7 +699,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             <TextBold
               text={userCountry}
               style={{
-                fontSize: 14,
+                fontSize: 14 / PixelRatio.getFontScale(),
                 color: "#fffb00",
                 textTransform: "uppercase",
                 marginTop: 5,
@@ -745,7 +746,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                     : "OPERATORS"
                 }
                 style={{
-                  fontSize: 20,
+                  fontSize: 20 / PixelRatio.getFontScale(),
                   color: "#fffb00",
                   textTransform: "uppercase",
                 }}
@@ -778,9 +779,9 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           />
         </TouchableOpacity>
       </View>
-      <DropDownMenuModal
-        modalVisible={dropDownVisible}
-        setModalVisible={setDropDownVisible}
+      <CountryMenuModal
+        modalVisible={countryMenuVisible}
+        setModalVisible={setCountryMenuVisible}
         transparent={true}
         width={width}
         height={height}
