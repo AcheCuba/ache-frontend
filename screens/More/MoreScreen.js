@@ -28,14 +28,15 @@ const MoreScreen = ({ navigation }) => {
           height: height / 6,
           //backgroundColor: "rgba(112, 28, 87, 1)",
           flexDirection: "row",
-          justifyContent: "flex-start",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Image
           source={require("../../assets/images/logo_amarillo.png")}
           //resizeMode="center"
           style={{
-            marginLeft: width / 10,
+            //marginLeft: width / 10,
             width: width / 4.5,
             height: width / 8.6,
           }}

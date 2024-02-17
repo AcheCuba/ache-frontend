@@ -299,6 +299,17 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       });
   };
 
+  const eliminaProductosRepetidos = (prods) => {
+    //console.log(prods.length);
+
+    const productosUnicos = prods.filter((item, index, array) => {
+      return array.findIndex((findItem) => findItem.id === item.id) === index;
+    });
+    //console.log(productosUnicos.length);
+
+    return productosUnicos;
+  };
+
   const getProducts = async (cancelToken) => {
     setLoadingProducts(true);
     const networkState = await getNetworkState();
@@ -335,7 +346,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
       axios(config)
         .then((response) => {
-          setProducts(response.data);
+          const prods = eliminaProductosRepetidos(response.data);
+
+          setProducts(prods);
+          //setProducts(prods);
           //console.log("products");
           //console.log(response.data);
           setLoadingProducts(false);
@@ -624,39 +638,37 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                 <View
                   style={{
                     alignItems: "center",
+                    justifyContent: "center",
                     padding: 5,
                     flex: 1,
                   }}
                   key={index}
                 >
-                  <TouchableOpacity
-                    activeOpacity={0.6}
-                    onPress={() => {
-                      //console.log(product);
-                      setPressed(product.id); // para el loading
-                      onPressProduct(
-                        product.id,
-                        product.price_usd,
-                        product.product_description
-                      );
-                    }}
-                    style={{
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 25,
-                      width: width / 1.3,
-                      height: height / 5,
-                      borderRadius: 10,
-                      backgroundColor: buttonColor,
-                    }}
-                  >
-                    <View
+                  <View style={{ position: "relative" }}>
+                    <TouchableOpacity
+                      activeOpacity={0.3}
+                      onPress={() => {
+                        //console.log(product);
+                        setPressed(product.id); // para el loading
+                        onPressProduct(
+                          product.id,
+                          product.price_usd,
+                          product.product_description
+                        );
+                      }}
                       style={{
-                        flexDirection: "row",
-                        justifyContent: "space-around",
-                        alignItems: "center",
+                        opacity:
+                          loadingContinuar && product.id === pressedProductId
+                            ? 0.3
+                            : 1,
+                        alignItems: "flex-start",
+                        justifyContent: "center",
+                        paddingHorizontal: 30,
+                        marginBottom: 25,
                         width: width / 1.3,
-                        padding: 20,
+                        height: height / 5,
+                        borderRadius: 10,
+                        backgroundColor: buttonColor,
                       }}
                     >
                       <View>
@@ -684,7 +696,13 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         />
 
                         <TextMedium
-                          text={`DESC: ${product.product_description}`}
+                          text={
+                            product.product_description === "" ||
+                            product.product_description == undefined ||
+                            product.product_description == null
+                              ? ""
+                              : `DESC: ${product.product_description}`
+                          }
                           style={{
                             fontSize: 20,
                             color: "rgba(255,255,255,0.6)",
@@ -706,27 +724,19 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                           />
                         ) : null}
                       </View>
-                      <View
-                        style={{
-                          height: height / 8,
-                          justifyContent: "center",
-                        }}
-                      >
-                        {loadingContinuar && product.id === pressedProductId ? (
-                          <ActivityIndicator size="small" color="#fffb00" />
-                        ) : (
-                          <Image
-                            source={require("../../assets/images/iconos/atras.png")}
-                            style={{
-                              width: 15,
-                              height: 15,
-                              transform: [{ rotate: "180deg" }],
-                            }}
-                          />
-                        )}
-                      </View>
-                    </View>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      position: "absolute",
+                      //top: "40%",
+                      //left: "50%",
+                    }}
+                  >
+                    {loadingContinuar && product.id === pressedProductId ? (
+                      <ActivityIndicator size="large" color="#fffb00" />
+                    ) : null}
+                  </View>
                 </View>
               );
             })}

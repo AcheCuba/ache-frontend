@@ -2,6 +2,7 @@ import React from "react";
 import { Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
+import CommonHeader from "../../components/CommonHeader";
 import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold, TextItalic } from "../../components/CommonText";
 import LargeFlatButton from "../../components/LargeFlatButton";
@@ -27,6 +28,11 @@ const PremioDescription = ({ navigation, route }) => {
       }}
       transition={false}
     >
+      <CommonHeader
+        width={width}
+        height={height}
+        _onPress={() => navigation.navigate("MoreScreen")}
+      />
       <View style={styles.container}>
         <View style={{ flex: 1, marginTop: 250 }}>
           <View style={{ alignItems: "center" }}>
@@ -48,30 +54,6 @@ const PremioDescription = ({ navigation, route }) => {
                 textAlign: "left",
               }}
               text={description}
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              //position: "absolute",
-              marginTop: 50,
-            }}
-          >
-            <LargeFlatButton
-              text={idioma === "spa" ? "Jugar" : "Play"}
-              _width={width / 3}
-              onPress={() => {
-                navigation.navigate("Juego");
-              }}
-            />
-            <LargeFlatButton
-              text={idioma === "spa" ? "Atrás" : "Back"}
-              _width={width / 3}
-              onPress={() => {
-                navigation.navigate("PremioScreen");
-              }}
             />
           </View>
         </View>

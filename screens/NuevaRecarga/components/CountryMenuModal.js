@@ -37,7 +37,7 @@ const CountryMenuModal = ({
       visible={modalVisible}
       onRequestClose={() => setModalVisible(false)}
     >
-      <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
+      <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
         <View
           style={{
             flex: 1,

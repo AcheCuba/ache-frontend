@@ -86,9 +86,9 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   const [loadingProviders, setLoadingProviders] = React.useState(false);
   const [providerList, setProviderList] = React.useState([]);
 
-  /* useEffect(() => {
-    console.log(validated_prizes);
-  }, [validated_prizes]); */
+  /*   useEffect(() => {
+    console.log(providerMenuVisible);
+  }, [providerMenuVisible]); */
 
   useEffect(() => {
     setLoadingProviders(true);
@@ -386,7 +386,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       // el premio ya esta validado para otro beneficiario, considere eliminarlo
       Toast.show(
         userState?.idioma === "spa"
-          ? "El premio ya esta validado para otro beneficiario, considere eliminarlo"
+          ? "El premio ya está validado para otro beneficiario, considere eliminarlo"
           : "The prize is already validated for another beneficiary, consider removing it",
         {
           duaration: Toast.durations.LONG,
@@ -418,14 +418,14 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
           console.log("size", size);
 
-          Toast.show(ResolveText("codigoValido"), {
+          /* Toast.show(ResolveText("codigoValido"), {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
             shadow: true,
             animation: true,
             hideOnPress: true,
             delay: 0,
-          });
+          }); */
           // actualizar lista de premios validados
           nuevaRecargaDispatch(
             updatePrize(uuid, { fieldId, uuid, type, size, loading: false })
@@ -743,7 +743,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                     ? userState.operator.name
                     : userState.idioma == "spa"
                     ? "OPERADORES"
-                    : "OPERATORS"
+                    : "CARRIER"
                 }
                 style={{
                   fontSize: 20 / PixelRatio.getFontScale(),

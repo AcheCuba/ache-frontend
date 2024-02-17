@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, Text } from "react-native";
 import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -17,9 +17,10 @@ const marginGlobal = width / 10;
 
 const AboutUsScreen = ({ navigation }) => {
   const { userState } = React.useContext(GlobalContext);
+  const idioma = userState?.idioma;
 
   const ResolveText = (site) => {
-    const idioma = userState?.idioma;
+    //const idioma = userState?.idioma;
     const textSpa = MoreNosotrosTextSpanish();
     const textEng = MoreNosotrosTextEnglish();
 
@@ -67,15 +68,18 @@ const AboutUsScreen = ({ navigation }) => {
           >
             <ScrollView>
               <View style={{ marginBottom: 20 }}>
-                <TextBold
+                <Text
                   style={{
+                    fontWeight: "bold",
                     fontSize: 20,
                     textTransform: "uppercase",
                     color: infoTextColor,
                     marginBottom: 5,
                   }}
-                  text={ResolveText("quienesSomosTitle")}
-                />
+                >
+                  {idioma === "spa" ? "¿QUIÉNES SOMOS?" : "WHO ARE WE?"}
+                </Text>
+
                 <TextItalic
                   style={{
                     fontSize: 20,
@@ -86,15 +90,19 @@ const AboutUsScreen = ({ navigation }) => {
                 />
               </View>
               <View style={{ marginBottom: 20 }}>
-                <TextBold
+                <Text
                   style={{
+                    fontWeight: "bold",
                     fontSize: 20,
                     textTransform: "uppercase",
                     color: infoTextColor,
                     marginBottom: 5,
                   }}
-                  text={ResolveText("queNosDistingueTitle")}
-                />
+                >
+                  {idioma === "spa"
+                    ? "¿QUÉ NOS DISTINGUE?"
+                    : "WHAT MAKES US UNIQUE?"}
+                </Text>
                 <TextItalic
                   style={{
                     fontSize: 20,

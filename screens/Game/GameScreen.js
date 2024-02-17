@@ -10,7 +10,6 @@ import {
   Easing,
   TouchableOpacity,
 } from "react-native";
-import NeuButton from "../../libs/neu_element/NeuButton";
 import axios from "axios";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
@@ -25,8 +24,7 @@ import { storeData } from "../../libs/asyncStorage.lib";
 
 import ConfettiCannon from "react-native-confetti-cannon";
 import { Modal } from "react-native";
-import CommonNeuButton from "../../components/CommonNeuButton";
-import { Pressable } from "react-native";
+
 import { RootSiblingParent } from "react-native-root-siblings";
 import CobrarPremioContent from "./components/CobrarPremioContent";
 import {
@@ -606,19 +604,6 @@ const GameScreen = ({ navigation }) => {
         playSoundImpulsoRuleta(); // la primera vez
         setTimeout(() => {
           ruletaSensible.current = false;
-          Toast.show(
-            userState.idioma == "spa"
-              ? "¡LA SUERTE ESTÁ ECHADA! ESPERE..."
-              : "THE DIE IS CAST! WAIT...",
-            {
-              duaration: Toast.durations.LONG,
-              position: Toast.positions.CENTER,
-              shadow: true,
-              animation: true,
-              hideOnPress: true,
-              delay: 0,
-            }
-          );
         }, SENSIBILITY_TIME);
       }
 

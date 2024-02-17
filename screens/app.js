@@ -30,7 +30,7 @@ export default function MainAppWrapper() {
   return (
     <AnimatedSplashScreen
       //animationSource={require("../assets/animaciones/cocodrilo.lottie.json")}
-      animationSource={require("../assets/animaciones/spinRecargasSplash.mp4.lottie.json")}
+      animationSource={require("../assets/animaciones/spinSplash.mp4.lottie.json")}
       //animationSource={require("../assets/animaciones/loading.json")}
     >
       <MainApp />
@@ -86,7 +86,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
   setTimeout(() => {
     setAnimationComplete(true);
     //video.current.pauseAsync();
-  }, 8000); //8300
+  }, 8300); //8300
 
   return (
     <View style={{ flex: 1 }}>

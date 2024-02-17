@@ -2,7 +2,6 @@ import React from "react";
 import { ActivityIndicator } from "react-native";
 import { Image } from "react-native";
 import { View, Dimensions, ImageBackground } from "react-native";
-import CommonNeuButton from "../../components/CommonNeuButton";
 import { TextBold } from "../../components/CommonText";
 import {
   ResultadoPagoTextEnglish,

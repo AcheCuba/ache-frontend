@@ -328,7 +328,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     } else {
       Toast.show(
         userState?.idioma === "spa"
-          ? `Introduzca un número de teléfono válidado en ${literalCountry}`
+          ? `Introduzca un número de teléfono válido en ${literalCountry}`
           : `Enter a valid phone number in ${literalCountryEng}`,
         {
           duaration: Toast.durations.LONG,

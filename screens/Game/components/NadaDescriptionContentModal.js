@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { Image } from "react-native";
 import { View, Dimensions } from "react-native";
-
-import NeuButton from "../../../libs/neu_element/NeuButton";
-
 import { TextBold, TextItalic } from "../../../components/CommonText";
 import {
   GameScreenTextEnglish,
   GameScreenTextSpanish,
 } from "../../../constants/Texts";
-import { buttonColor } from "../../../constants/commonColors";
 import LargeFlatButton from "../../../components/LargeFlatButton";
 
 // sale cuando presionas el boton de cobrar premio con La Nada

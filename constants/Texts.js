@@ -21,7 +21,7 @@ export const GameScreenTextSpanish = () => {
     salir: "salir",
     recargar: "recargar",
     errorConexion: "Ha ocurrido un fallo en la conexión. Revisa por favor.",
-    premioVacio: "No hay premio por cobrar. \n ¡Gira la ruleta con ACHÉ!",
+    premioVacio: "No hay premio por cobrar. \n ¡Gira la ruleta!",
     errorDesconocido: "Error desconocido. Cierra la app e inténtalo de nuevo.",
     CalaveraExpirada: "¡Ya puedes volver a jugar!",
     PremioExpiradoTitle: "Premio Expirado",
@@ -46,7 +46,7 @@ export const GameScreenTextEnglish = () => {
     salir: "exit",
     recargar: "top-up",
     errorConexion: "Connection fail. Please check.",
-    premioVacio: "No price to redeem. \n Use your ACHÉ and spin the Wheel!",
+    premioVacio: "No price to redeem. \n Spin the Wheel!",
     errorDesconocido: "Unknown error. Close the app and try again.",
     CalaveraExpirada: "You can play again!",
     PremioExpiradoTitle: "Prize Expired",
@@ -117,7 +117,7 @@ export const PrePagoTextEnglish = () => {
 export const ResultadoPagoTextSpanish = () => {
   return {
     pagoCompletado:
-      "La transacción se ha realizado con éxito. Su recarga llegará pronto al destino. ¡ACHÉ!",
+      "La transacción se ha realizado con éxito. Su recarga llegará pronto al destino.",
     errorEnPago:
       "Se ha detectado algún fallo. No se puedo completar la recarga, pero su dinero está seguro. Cierre la app e intente de nuevo más tarde.",
     reintentar: "Reintentar",
@@ -128,7 +128,7 @@ export const ResultadoPagoTextSpanish = () => {
 export const ResultadoPagoTextEnglish = () => {
   return {
     pagoCompletado:
-      "The transaction was completed. Your recharge is on the way. ACHÉ!",
+      "The transaction was completed. Your recharge is on the way.",
     errorEnPago:
       "Something failed. Your transaction was not completed but your money is save. Close the app and try again later.",
     reintentar: "Retry",
@@ -138,29 +138,23 @@ export const ResultadoPagoTextEnglish = () => {
 
 export const MoreNosotrosTextSpanish = () => {
   return {
-    quienesSomosTitle: "¿QUIÉNES SOMOS?",
+    //quienesSomosTitle: "¿QUIÉNES SOMOS?",
     quienesSomosBody:
       "Somos una comunidad de emprendedores cuyo objetivo es hacer que las recargas sean rápidas y divertidas.",
-    queNosDistingueTitle: "¿QUÉ NOS DISTINGUE?",
+    //queNosDistingueTitle: `¿QUÉ NOS DISTINGUE?`,
     queNosDistingueBody:
-      "No somos la única empresa con servicio de recargas online, pero nuestro juego nos hace únicos en el mercado. Cada usuario puede, además de recargar con total seguridad, ganar premios retando su ACHÉ.",
-    acheTitle: "ACHÉ",
-    acheBody:
-      "Término de la religión afrocubana que hace referencia a la buena suerte. Con esa energía positiva deseamos que recargue, juegue y conecte con Cuba.",
+      "No somos la única empresa con servicio de recargas online, pero nuestro juego nos hace únicos en el mercado. Cada usuario puede ganar premios además de recargar con total seguridad.",
   };
 };
 
 export const MoreNosotrosTextEnglish = () => {
   return {
-    quienesSomosTitle: "WHO ARE WE?",
+    //quienesSomosTitle: "WHO ARE WE?",
     quienesSomosBody:
       "We are a community of entrepreneurs and our goal is to make the recharge process not only easier but actually fun.",
-    queNosDistingueTitle: "WHAT MAKES US UNIQUE? ",
+    //queNosDistingueTitle: "WHAT MAKES US UNIQUE? ",
     queNosDistingueBody:
-      "We are not the only business offering online recharge services, but we are the only one with a game! Users can send safe recharges and at the same time win prizes challenging their ACHÉ.",
-    acheTitle: "ACHÉ",
-    acheBody:
-      "It is an Afro-Cuban religious word to name good luck, and that is the positive energy we wish you while sending recharges, playing and connecting with Cuba.",
+      "We are not the only business offering online recharge services, but we are the only one with a game! Users can send safe recharges and at the same time win prizes.",
   };
 };
 

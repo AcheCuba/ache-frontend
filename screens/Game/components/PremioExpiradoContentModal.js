@@ -6,7 +6,6 @@ import {
   GameScreenTextEnglish,
   GameScreenTextSpanish,
 } from "../../../constants/Texts";
-import { buttonColor } from "../../../constants/commonColors";
 import LargeFlatButton from "../../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
