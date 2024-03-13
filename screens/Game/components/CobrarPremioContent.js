@@ -48,12 +48,10 @@ const CobrarPremioContent = ({
 
   const [loading, setLoading] = useState(false);
   const [prizeType, setPrizeType] = useState("");
-  const [prizeSize, setPrizeSize] = useState("");
   const [loadingObtenerPremio, setLoadingObtenerPremio] = useState(false);
 
   React.useEffect(() => {
     setPrizeType(currentPrize?.type);
-    setPrizeSize(currentPrize?.size);
     //console.log(currentPrize?.type);
   }, []);
 
@@ -355,35 +353,21 @@ const CobrarPremioContent = ({
         if (idioma === "spa") {
           title = "El Diamante";
           desc = `Tienes un premio de $500! Para activarlo, debes comprar una recarga y añadir el premio. Un representante de Spin se pondrá en contacto contigo inmediatamente después. Si no quieres recargar ahora, compártelo con cualquiera de tus contactos para que recargue y cobre el premio`;
-          //desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
         } else if (idioma === "eng") {
           title = "The Diamond";
           desc = `You have a $500 prize. To claim it, add to a top-up and a Spin representative will get in touch with you shortly. Don’t want to recharge now? You can share it with any of your contacts so they do and then collect the prize.`;
         }
         break;
-      case "TopUpBonus":
-        if (prizeSize === "Small") {
-          if (idioma === "spa") {
-            title = "La Bolsa";
-            desc = `Tienes una recarga gratis para agregar. Si no quieres recargar ahora, compártelo con cualquiera de tus contactos para que recargue y cobre el premio`;
-            //desc = `Tienes 250 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas.`;
-          } else if (idioma === "eng") {
-            title = "The Pouch";
-            desc = `You have a free top-up to add. Don’t want to recharge now? You can share it with any of your contacts so they do and then collect the prize.`;
-          }
-          break;
+      case "DoublePrize":
+        if (idioma === "spa") {
+          title = "Recarga Doble";
+          desc = `Tienes una recarga adicional para agregar. Si no quieres recargar ahora, puedes compartir su código con cualquiera de tus contactos para que recargue y cobre el premio`;
+        } else if (idioma === "eng") {
+          title = "Double Top-up";
+          desc = `You have an extra top-up to add. Don’t want to recharge now? You can turn it into a code and share it with anyone so they can collect the prize`;
         }
+        break;
 
-        if (prizeSize === "Big") {
-          if (idioma === "spa") {
-            title = "El Cofre";
-            desc = `Tienes recarga doble para agregar. Si no quieres recargar ahora, compártelo con cualquiera de tus contactos para que recargue y cobre el premio`;
-            //desc = `Tienes 500 pesos de regalo para agregar a una recarga o enviar como código durante las próximas ${horasRestantes} horas`;
-          } else if (idioma === "eng") {
-            title = "The Chest";
-            desc = `You have a double top-up to add. Don’t want to recharge now? You can share it with any of your contacts so they do and then collect the prize.`;
-          }
-        }
       default:
         break;
     }
@@ -426,32 +410,18 @@ const CobrarPremioContent = ({
             }}
           />
         );
-      case "TopUpBonus":
-        if (prizeSize === "Small") {
-          return (
-            <Image
-              source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
-              style={{
-                width: width / 3,
-                height: width / 3.1,
-                //width: width / 3.8,
-                //height: width / 3.9,
-              }}
-            />
-          );
-        }
-
-        if (prizeSize === "Big") {
-          return (
-            <Image
-              source={require("../../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
-              style={{
-                width: width / 3,
-                height: width / 3.1,
-              }}
-            />
-          );
-        }
+      case "DoublePrize":
+        return (
+          <Image
+            source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
+            style={{
+              width: width / 3,
+              height: width / 3.1,
+              //width: width / 3.8,
+              //height: width / 3.9,
+            }}
+          />
+        );
 
       default:
         return null;

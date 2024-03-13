@@ -93,9 +93,10 @@ const PrePagoScreen = ({ navigation, route }) => {
     return (
       <View
         style={{
-          height: 30,
+          height: 35,
           flexDirection: "row",
           justifyContent: "space-between",
+          width: "100%",
         }}
       >
         <TextMedium
@@ -107,7 +108,7 @@ const PrePagoScreen = ({ navigation, route }) => {
           style={{
             fontSize: normalize(25),
             //textTransform: "uppercase",
-            color: "#01f9d2",
+            color: buttonColor,
             //marginBottom: 6,
             //marginTop: 5,
           }}
@@ -117,12 +118,8 @@ const PrePagoScreen = ({ navigation, route }) => {
             <Image
               source={
                 item.prize != null
-                  ? item.prize.type === "TopUpBonus" &&
-                    item.prize.size === "Small"
-                    ? require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")
-                    : item.prize.type === "TopUpBonus" &&
-                      item.prize.size === "Big"
-                    ? require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")
+                  ? item.prize.type === "DoublePrize"
+                    ? require("../../assets/images/iconos/icono_premio.png")
                     : item.prize.type === "Jackpot"
                     ? require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")
                     : null
@@ -357,88 +354,97 @@ const PrePagoScreen = ({ navigation, route }) => {
           //justifyContent: "center",
           flex: 1,
           marginTop: 30,
+          width: width / 1.3,
         }}
       >
-        <View style={{ marginBottom: normalize(15, "height") }}>
-          <TextBold
-            text="TOTAL"
-            style={{
-              fontSize: normalize(34),
-              textTransform: "uppercase",
-              color: "#fffb00",
-              //marginBottom: 6,
-              //marginTop: 5,
-            }}
-          />
-        </View>
-
-        <View>
-          <TextBold
-            text={`$${amount}`}
-            style={{
-              //fontSize: 100,
-              fontSize: normalize(100),
-              textTransform: "uppercase",
-              color: "#01f9d2",
-              //marginBottom: 6,
-              //marginTop: 5,
-            }}
-          />
-        </View>
-
-        <View style={{ marginTop: normalize(20) }}>
-          <LargeFlatButton
-            text={ResolveText("pagar")}
-            onPress={() => {
-              navigation.navigate("PagoScreen", {
-                amount,
-                transaction_id_array,
-                productPriceUsd,
-                //recharge_amount_por_recarga: recharge_amount,
-              });
-            }}
-          />
-        </View>
-
         <View
           style={{
-            alignItems: "center",
-            marginTop: 50,
+            width: "100%",
+            justifyContent: "flex-start",
           }}
         >
-          <TextBold
-            text={ResolveText("valor")}
+          <View
             style={{
-              fontSize: 26,
-              textTransform: "uppercase",
-              color: "#fffb00",
-              //marginBottom: 6,
-              //marginTop: 5,
+              marginBottom: normalize(15, "height"),
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
             }}
-          />
-          <TextBold
-            text={`${productDescription}`}
+          >
+            <TextBold
+              text="TOTAL "
+              style={{
+                fontSize: normalize(34),
+                textTransform: "uppercase",
+                color: buttonColor,
+                //marginBottom: 6,
+                //marginTop: 5,
+              }}
+            />
+            <TextBold
+              //text={`$${amount}`}
+              text={`${amount} USD`}
+              style={{
+                //fontSize: 100,
+                fontSize: normalize(34),
+                textTransform: "uppercase",
+                //color: "#01f9d2",
+                color: "#fffb00",
+                //marginBottom: 6,
+                //marginTop: 5,
+              }}
+            />
+          </View>
+        </View>
+
+        <View
+          style={{
+            width: "100%",
+            justifyContent: "flex-start",
+          }}
+        >
+          <View
             style={{
-              fontSize: 26,
-              textTransform: "uppercase",
-              color: "#01f9d2",
-              //marginBottom: 6,
-              marginTop: 5,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginTop: 50,
+              width: "100%",
             }}
-          />
+          >
+            <TextBold
+              text={ResolveText("valor")}
+              style={{
+                fontSize: normalize(34), //26
+                textTransform: "uppercase",
+                color: buttonColor,
+                //marginBottom: 6,
+                //marginTop: 5,
+              }}
+            />
+            <TextBold
+              text={`${productDescription}`}
+              style={{
+                fontSize: normalize(34), //26
+                textTransform: "uppercase",
+                color: "#fffb00",
+                //marginBottom: 6,
+                //marginTop: 5,
+              }}
+            />
+          </View>
         </View>
         <View
           style={{
-            alignItems: "center",
-            marginTop: 20,
+            alignItems: "flex-start",
+            marginTop: 50,
           }}
         >
           <TextBold
             text={ResolveText("beneficiarios")}
             style={{
-              fontSize: 26,
+              fontSize: normalize(34),
               textTransform: "uppercase",
-              color: "#fffb00",
+              color: buttonColor,
               //marginBottom: 6,
               //marginTop: 5,
             }}
@@ -470,11 +476,11 @@ const PrePagoScreen = ({ navigation, route }) => {
               //disableVirtualization={false}
               //scrollIndicatorInsets={{ right: 1 }}
               showsVerticalScrollIndicator={true}
-              style={{ width: width / 1.5 }}
+              style={{ width: width / 1.3 }}
             />
           </View>
           {contactosSeleccionados.length >
-          Math.trunc(normalize(height / 4.5) / 30) ? (
+          Math.trunc(normalize(height / 4.5) / 35) ? (
             <View style={{ justifyContent: "center", marginTop: -5 }}>
               <TouchableOpacity
                 onPress={() => {
@@ -488,6 +494,19 @@ const PrePagoScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           ) : null}
+        </View>
+        <View style={{ position: "absolute", bottom: 40 }}>
+          <LargeFlatButton
+            text={ResolveText("pagar")}
+            onPress={() => {
+              navigation.navigate("PagoScreen", {
+                amount,
+                transaction_id_array,
+                productPriceUsd,
+                //recharge_amount_por_recarga: recharge_amount,
+              });
+            }}
+          />
         </View>
       </View>
     </ImageBackground>

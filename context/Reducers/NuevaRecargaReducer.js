@@ -55,7 +55,7 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
     case TOGGLE_VALIDATE_IN_PROCESS:
       return { ...state, validatetInProcess: action.inProcess };
 
-    case SELECT_CONTACT:
+    case SELECT_CONTACT: //add contact
       return {
         ...state,
         contactosSeleccionados: [

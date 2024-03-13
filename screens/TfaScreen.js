@@ -153,7 +153,7 @@ const TfaScreen = ({ navigation, route }) => {
         //console.log(result);
         //console.log(typeof result);
         const newUser = result;
-        console.log("newUser", newUser);
+        //console.log("newUser", newUser);
         if (newUser) {
           const token = newUser.accessToken;
           storeSacureValue("token", token);

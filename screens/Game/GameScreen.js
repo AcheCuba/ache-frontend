@@ -38,8 +38,7 @@ import {
 } from "../../components/CommonText";
 import { LinearGradient } from "expo-linear-gradient";
 import NadaDescriptionContentModal from "./components/NadaDescriptionContentModal";
-import MediaBolsaWonContentModal from "./components/MediaBolsaWonContentModal";
-import BolsaLlenaWonContentModal from "./components/BolsaLlenaWonContentModal";
+import DoublePrizeWonContentModal from "./components/DoublePrizeWonContentModal";
 import JoyaWonContentModal from "./components/JoyaWonContentModal";
 import { Text } from "react-native";
 import { getNetworkState } from "../../libs/networkState.lib";
@@ -75,11 +74,9 @@ const GameScreen = ({ navigation }) => {
   const [premioAcumulado, setPremioAcumulado] = React.useState(false);
   const [premioAcumuladoType, setPremioAcumuladoType] =
     React.useState(undefined);
-  const [premioAcumuladoSize, setPremioAcumuladoSize] =
-    React.useState(undefined);
+
   const [NadaWon, setNadaWon] = React.useState(false);
-  const [MediaBolsaWon, setMediaBolsaWon] = React.useState(false);
-  const [BolsaLlenaWon, setBolsaLlenaWon] = React.useState(false);
+  const [DoublePrizeWon, setDoublePrizeWon] = React.useState(false);
   const [JoyaWon, setJoyaWon] = React.useState(false);
   const [PremioExpirado, setPremioExpirado] = React.useState(false);
 
@@ -197,7 +194,7 @@ const GameScreen = ({ navigation }) => {
   }, [prizeInactiveError]);
 
   /* React.useEffect(() => {
-    console.log(userState.country);
+    console.log(userState);
   }); */
 
   async function playSoundImpulsoRuleta() {
@@ -307,7 +304,6 @@ const GameScreen = ({ navigation }) => {
 
   const ImagePrizePremioAcumulado = () => {
     const typeOfPrize = premioAcumuladoType;
-    const size = premioAcumuladoSize;
 
     //console.log(typeOfPrize);
     //console.log(amount);
@@ -323,31 +319,18 @@ const GameScreen = ({ navigation }) => {
             }}
           />
         );
-      case "TopUpBonus":
+      case "DoublePrize":
         //const amount = userState?.prize?.amount;
 
-        if (size === "Small") {
-          return (
-            <Image
-              source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
-              style={{
-                width: 105,
-                height: 101,
-              }}
-            />
-          );
-        }
-        if (size === "Big") {
-          return (
-            <Image
-              source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
-              style={{
-                width: 105,
-                height: 100,
-              }}
-            />
-          );
-        }
+        return (
+          <Image
+            source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
+            style={{
+              width: 105,
+              height: 100,
+            }}
+          />
+        );
 
       case "Nada":
         return (
@@ -378,33 +361,17 @@ const GameScreen = ({ navigation }) => {
             }}
           />
         );
-      case "TopUpBonus":
-        const size = userState?.prize?.size;
-
-        if (size === "Small") {
-          return (
-            <Image
-              source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
-              //resizeMode="center"
-              style={{
-                width: 73, //width: 60,
-                height: 70, //height: 92,
-              }}
-            />
-          );
-        }
-        if (size === "Big") {
-          return (
-            <Image
-              source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
-              //resizeMode="center"
-              style={{
-                width: 73, //width: 60,
-                height: 70, //height: 92,
-              }}
-            />
-          );
-        }
+      case "DoublePrize":
+        return (
+          <Image
+            source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
+            //resizeMode="center"
+            style={{
+              width: 73, //width: 60,
+              height: 70, //height: 92,
+            }}
+          />
+        );
 
       case "Nada":
         return (
@@ -427,7 +394,7 @@ const GameScreen = ({ navigation }) => {
         return (
           <View>
             <Image
-              source={require("../../assets/images/home/boton_recarga_premio.png")}
+              source={require("../../assets/images/home/boton_vacio.png")}
               style={{
                 width: 160,
                 height: 160,
@@ -443,7 +410,7 @@ const GameScreen = ({ navigation }) => {
     const random_seed = Math.random();
     // const random_seed = 0.1;
 
-    // menor que 0.25 - 3 posibles casillas (nada)
+    // ======== menor que 0.25 - 3 posibles casillas (nada)
     if (random_seed < 0.08) {
       setCasillaFinal("7313deg");
       setPremioAcumuladoType("Nada");
@@ -458,40 +425,33 @@ const GameScreen = ({ navigation }) => {
       setPremioAcumuladoType("Nada");
     }
 
-    // entre 0.25 y 0.5 - una posibilidad (jackpot)
+    // ====== entre 0.25 y 0.5 - una posibilidad (jackpot)
     if (random_seed >= 0.25 && random_seed < 0.5) {
       setCasillaFinal("7223deg");
       setPremioAcumuladoType("Jackpot");
     }
-    // entre 0.5 y 0.75 - 2 posibilidades (250 pesos)
-    // UBDATE 29/09/23: SIZE Small, KEY AMOUNT eliminado
 
+    // ======= mayor que 0.5 - 4 probabilidades (double prize)
     if (random_seed >= 0.5 && random_seed < 0.62) {
       setCasillaFinal("7268deg");
-      setPremioAcumuladoType("TopUpBonus");
-      setPremioAcumuladoSize("Small");
+      setPremioAcumuladoType("DoublePrize");
     }
     if (random_seed >= 0.62 && random_seed < 0.75) {
       setCasillaFinal("7358deg");
-      setPremioAcumuladoType("TopUpBonus");
-      setPremioAcumuladoSize("Small");
+      setPremioAcumuladoType("DoublePrize");
     }
-
-    // entre 0.75 y 1 - 2 posibilidades (500 pesos)
-    // UBDATE 29/09/23: SIZE Big
     if (random_seed >= 0.75 && random_seed < 0.87) {
       setCasillaFinal("7178deg");
-      setPremioAcumuladoType("TopUpBonus");
-      setPremioAcumuladoSize("Big");
+      setPremioAcumuladoType("DoublePrize");
     }
     if (random_seed >= 0.87 && random_seed <= 1) {
       setCasillaFinal("7088deg");
-      setPremioAcumuladoType("TopUpBonus");
-      setPremioAcumuladoSize("Big");
+      setPremioAcumuladoType("DoublePrize");
     }
   };
 
   const setCasilla = (prize) => {
+    let random_seed;
     //console.log("prize", prize);
 
     //switch(prize.type)
@@ -511,7 +471,7 @@ const GameScreen = ({ navigation }) => {
           }, 10000);
         }, 8000); */
 
-        const random_seed = Math.random();
+        random_seed = Math.random();
 
         if (random_seed < 0.33) {
           //setCasillaFinal("1913deg");
@@ -540,49 +500,35 @@ const GameScreen = ({ navigation }) => {
         setCasillaFinal("7223deg");
 
         break;
-      case "TopUpBonus":
-        if (prize.size === "Small") {
-          //console.log("sellama");
-          setTimeout(() => {
-            setMediaBolsaWon(true);
-            playSoundGanasPremioDigital();
-          }, ANIMATION_TIME);
-          //setCasillaFinal("1823deg");
+      case "DoublePrize":
+        //console.log("sellama");
+        setTimeout(() => {
+          setDoublePrizeWon(true);
+          playSoundGanasPremioDigital();
+        }, ANIMATION_TIME);
+        //setCasillaFinal("1823deg");
 
-          const random_seed = Math.random();
+        random_seed = Math.random();
 
-          if (random_seed < 0.5) {
-            //setCasillaFinal("1868deg"); // ref 1800
-            setCasillaFinal("7268deg");
-          }
-          if (random_seed >= 0.5) {
-            //setCasillaFinal("1958deg");
-            setCasillaFinal("7358deg");
-          }
+        if (random_seed < 0.25) {
+          //setCasillaFinal("1868deg"); // ref 1800
+          setCasillaFinal("7268deg");
         }
-        if (prize.size === "Big") {
-          setTimeout(() => {
-            setBolsaLlenaWon(true);
-            playSoundGanasPremioDigital();
-          }, ANIMATION_TIME);
+        if (random_seed >= 0.25 && random_seed < 0.5) {
+          //setCasillaFinal("1958deg");
+          setCasillaFinal("7358deg");
+        }
+        if (random_seed >= 0.5 && random_seed < 0.75) {
           //setCasillaFinal("1778deg");
-          const random_seed = Math.random();
-
-          if (random_seed < 0.5) {
-            //setCasillaFinal("1778deg");
-            setCasillaFinal("7178deg");
-          }
-          if (random_seed >= 0.5) {
-            //setCasillaFinal("1688deg");
-            setCasillaFinal("7088deg");
-          }
+          setCasillaFinal("7178deg");
+        }
+        if (random_seed >= 0.75) {
+          //setCasillaFinal("1688deg");
+          setCasillaFinal("7088deg");
         }
         break;
-
       default:
-        //setCasillaFinal("1800deg");
         setCasillaFinal("7200deg");
-        //setCasillaFinal("0deg");
         break;
     }
   };
@@ -674,14 +620,13 @@ const GameScreen = ({ navigation }) => {
     axios(config)
       .then((response) => {
         const prize_result = response.data;
+        console.log("PRIZE RESULT", prize_result);
 
         // probar premio falso para ver textos o whathever
         /* const prize_result = {
-          size: "Big",
-          //size: "Small",
           type: "Nada",
           //type: "Jackpot",
-          //type: "TopUpBonus",
+          //type: "DoublePrize",
         };
  */
         thereIsPrizeResult.current = true;
@@ -894,16 +839,10 @@ const GameScreen = ({ navigation }) => {
   React.useEffect(() => {
     //console.log("codigo generado game screen", codigoGenerado);
     //console.log(currentPrize?.type);
-    if (
-      !NadaWon &&
-      !BolsaLlenaWon &&
-      !MediaBolsaWon &&
-      !JoyaWon &&
-      !premioAcumulado
-    ) {
+    if (!NadaWon && !DoublePrizeWon && !JoyaWon && !premioAcumulado) {
       wheelValue.current.setValue(0);
     }
-  }, [NadaWon, BolsaLlenaWon, MediaBolsaWon, JoyaWon, premioAcumulado]);
+  }, [NadaWon, DoublePrizeWon, JoyaWon, premioAcumulado]);
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
@@ -1219,12 +1158,12 @@ const GameScreen = ({ navigation }) => {
           </LinearGradient>
         </Modal>
       ) : null}
-      {MediaBolsaWon ? (
+      {DoublePrizeWon ? (
         <Modal
           animationType="slide"
           transparent={true}
-          visible={MediaBolsaWon}
-          onRequestClose={() => setMediaBolsaWon(false)}
+          visible={DoublePrizeWon}
+          onRequestClose={() => setDoublePrizeWon(false)}
         >
           <LinearGradient
             colors={[generalBgColor, bgColorFinalGradient]}
@@ -1238,43 +1177,16 @@ const GameScreen = ({ navigation }) => {
                 backgroundColor: generalBgColorTrans5,
               }}
             >
-              <MediaBolsaWonContentModal
+              <DoublePrizeWonContentModal
                 navigation={navigation}
-                setModalVisible={setMediaBolsaWon}
+                setModalVisible={setDoublePrizeWon}
                 userState={userState}
               />
             </View>
           </LinearGradient>
         </Modal>
       ) : null}
-      {BolsaLlenaWon ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={BolsaLlenaWon}
-          onRequestClose={() => setBolsaLlenaWon(false)}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: generalBgColorTrans5,
-              }}
-            >
-              <BolsaLlenaWonContentModal
-                navigation={navigation}
-                setModalVisible={setBolsaLlenaWon}
-                userState={userState}
-              />
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
+
       {JoyaWon ? (
         <Modal
           animationType="slide"

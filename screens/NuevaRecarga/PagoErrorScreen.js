@@ -86,7 +86,8 @@ const PagoErrorScreen = ({ navigation }) => {
               style={{
                 fontSize: 22,
                 fontWeight: "bold",
-                color: "#01f9d2",
+                //color: "#01f9d2",
+                color: "#fffb00",
                 textAlign: "center",
                 //textTransform: "uppercase",
               }}

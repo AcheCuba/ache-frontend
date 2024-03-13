@@ -4,7 +4,7 @@
     "name": "Spin Recargas",
     "slug": "ache",
     "privacy": "unlisted",
-    "version": "1.0.12",
+    "version": "1.0.13",
     "orientation": "portrait",
     "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",

@@ -43,7 +43,7 @@ const CodigoRecargaModal = ({
         }}
       >
         <TextInput
-          width={width / 1.3}
+          width={width / 1.2}
           height={45}
           borderRadius={22}
           //style={styles.input}
@@ -56,7 +56,7 @@ const CodigoRecargaModal = ({
             backgroundColor: buttonColor,
             fontWeight: "bold",
             fontFamily: "bs-italic",
-            fontSize: 18,
+            fontSize: 16,
             textAlign: "center",
           }}
         />

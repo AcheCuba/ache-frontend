@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import { Image } from "react-native";
 import { View, Dimensions } from "react-native";
-import NeuButton from "../../../libs/neu_element/NeuButton";
 import { TextBold, TextItalic } from "../../../components/CommonText";
 import {
   GameScreenTextEnglish,
   GameScreenTextSpanish,
 } from "../../../constants/Texts";
-import { buttonColor } from "../../../constants/commonColors";
 import LargeFlatButton from "../../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
 
-const MediaBolsaWonContentModal = ({
+const DoublePrizeWonContentModal = ({
   navigation,
   setModalVisible,
   userState,
@@ -30,6 +28,10 @@ const MediaBolsaWonContentModal = ({
       return textEng[site];
     }
   };
+
+  React.useEffect(() => {
+    console.log("hello");
+  });
 
   const salir = () => {
     setModalVisible(false);
@@ -63,7 +65,7 @@ const MediaBolsaWonContentModal = ({
             marginTop: 30,
             textTransform: "uppercase",
           }}
-          text={ResolveText("MediaBolsaWonTitle")}
+          text={ResolveText("DoublePrizeWonTitle")}
         />
         <TextItalic
           style={{
@@ -73,7 +75,7 @@ const MediaBolsaWonContentModal = ({
             marginTop: 30,
             textAlign: "center",
           }}
-          text={ResolveText("MediaBolsaWonBody")}
+          text={ResolveText("DoublePrizeWonBody")}
         />
         <View
           style={{
@@ -103,4 +105,4 @@ const MediaBolsaWonContentModal = ({
     </View>
   );
 };
-export default MediaBolsaWonContentModal;
+export default DoublePrizeWonContentModal;

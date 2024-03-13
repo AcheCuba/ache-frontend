@@ -46,7 +46,7 @@ const PremioScreen = ({ navigation }) => {
           />
         );
         break;
-      case "mediaBolsa":
+      case "doublePrize":
         imagen = (
           <Image
             source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
@@ -57,17 +57,7 @@ const PremioScreen = ({ navigation }) => {
           />
         );
         break;
-      case "bolsaLlena":
-        imagen = (
-          <Image
-            source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
-            style={{
-              width: width / 5.9,
-              height: width / 6,
-            }}
-          />
-        );
-        break;
+
       case "calavera":
         imagen = (
           <Image
@@ -167,13 +157,13 @@ const PremioScreen = ({ navigation }) => {
               contentContainerStyle={{ width: width, alignItems: "center" }}
             >
               <PremioCard
-                type="mediaBolsa"
-                description={ResolveText("mediaBolsaDesc")}
+                type="doublePrize"
+                description={ResolveText("doublePrizeDesc")}
               />
-              <PremioCard
+              {/* <PremioCard
                 type="bolsaLlena"
                 description={ResolveText("bolsaLlenaDesc")}
-              />
+              /> */}
               <PremioCard
                 type="joyitas"
                 description={ResolveText("joyitasDesc")}

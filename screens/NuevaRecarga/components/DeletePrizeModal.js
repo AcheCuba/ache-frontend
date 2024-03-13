@@ -29,7 +29,7 @@ const DeletePrizeModal = ({ type, onPressDeletePrize, onPressCancelar }) => {
           />
         );
 
-      case "TopUpBonus":
+      case "DoublePrize":
         return (
           <Image
             //source={require("../../../assets/images/home/premios/capa102Copia.png")}

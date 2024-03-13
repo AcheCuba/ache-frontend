@@ -60,7 +60,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     }
   });
 
-  const onPressContact = (id, contactName, contactNumber) => {
+  const onPressContact = (contactId, contactName, contactNumber) => {
     nuevaRecargaDispatch(deleteContact(fieldInputId));
 
     let literalCountry;
@@ -153,7 +153,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
 
       nuevaRecargaDispatch(
         selectContact({
-          id,
+          contactId,
           contactName,
           contactNumber: finalContactNumber,
           fieldInputId,
@@ -316,7 +316,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       nuevaRecargaDispatch(deleteContact(fieldInputId));
       nuevaRecargaDispatch(
         selectContact({
-          id: undefined,
+          contactId: undefined,
           contactName: undefined,
           contactNumber: finalContactNumber,
           fieldInputId: fieldInputId,
@@ -345,7 +345,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
     /*  nuevaRecargaDispatch(deleteContact(fieldInputId));
     nuevaRecargaDispatch(
       selectContact({
-        id: undefined,
+        contactId: undefined,
         contactName: undefined,
         contactNumber: text,
         fieldInputId: fieldInputId,
@@ -380,7 +380,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       <Contact
         contactName={item.firstName}
         contactNumber={item.phoneNumber}
-        id={item.id}
+        contactId={item.id}
         navigation={navigation}
         onPressContact={onPressContact}
       />

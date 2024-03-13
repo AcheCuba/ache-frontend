@@ -33,7 +33,7 @@ const NuevoContactoInput = ({
   contactSelected,
   onPressBarcode,
   prizeByFieldId,
-  isFirstInput,
+  //isFirstInput,
   animacionPremioNoValido,
 }) => {
   const [text, setText] = useState("");
@@ -156,7 +156,7 @@ const NuevoContactoInput = ({
       return <ActivityIndicator size="small" color="#01f9d2" />;
     } else {
       switch (prizeByFieldId?.type) {
-        case "TopUpBonus":
+        case "DoublePrize":
           return (
             <Image
               source={require("../../../assets/images/iconos/icono_premio.png")}
@@ -348,7 +348,7 @@ const NuevoContactoInput = ({
               value={
                 contactSelected
                   ? contactSelected.contactName !== undefined &&
-                    contactSelected.id !== undefined
+                    contactSelected.contactId !== undefined
                     ? contactSelected.contactName
                     : contactSelected.contactNumber
                   : ""

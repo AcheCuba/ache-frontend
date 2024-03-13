@@ -452,6 +452,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
       let promisesForTransaction = [];
       contactosSeleccionados.forEach((contacto) => {
+        // POR CADA CONTACTO SE CREA UNA TRANSACCION
+        // NO SE CREA TRNASACCION DE PREMIO EN ESTE PUNTO
         promisesForTransaction.push(create_transaction(contacto, productId));
         // promisesForTransaction.push(create_transaction(contacto, "123")); //provocar error
       });
@@ -466,7 +468,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
             // const transaction_data = response.data.lol;
 
             // update 3 de mayo, 2023
-            // se mandan las transacciones normales aqui
+            // se mandan las transacciones normales (NO PREMIOS) aqui
             // se recibe un object
 
             transaction_id_array.push({
@@ -482,7 +484,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                   : undefined,
             });
 
-            // normales esperadas
+            // CREO QUE ESTO ES PARA EL SOCKET
+            // normales (NO PREMIOS) esperadas
             transacciones_normales_esperadas.push({
               mobile_number:
                 transaction_data.credit_party_identifier.mobile_number,

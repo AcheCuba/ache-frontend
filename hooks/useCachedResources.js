@@ -79,7 +79,6 @@ export default function useCachedResources() {
         user = await getData("user");
 
         //console.log(token);
-
         //===================== USO EN DEV: ELIMINAR PREMIO DE APP ===========================
         /* storeData("user", {
           ...user,

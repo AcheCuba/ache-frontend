@@ -86,9 +86,9 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   const [loadingProviders, setLoadingProviders] = React.useState(false);
   const [providerList, setProviderList] = React.useState([]);
 
-  /*   useEffect(() => {
-    console.log(providerMenuVisible);
-  }, [providerMenuVisible]); */
+  /* useEffect(() => {
+    console.log(contactosSeleccionados);
+  }, [contactosSeleccionados]); */
 
   useEffect(() => {
     setLoadingProviders(true);
@@ -104,6 +104,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       if (contactosSeleccionados.length === 0 && fields.length === 0) {
         const firstFieldId = makeid(15);
 
+        //console.log("no hay contacto agregado");
+
         // set first field
         nuevaRecargaDispatch(setFields(true, firstFieldId));
 
@@ -111,11 +113,10 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         if (inOrderToCobrarPremio === true) {
           const type = userState.prize.type;
           const uuid = userState.prize.uuid;
-          const size = userState.prize.size;
           const fieldId = firstFieldId;
 
           nuevaRecargaDispatch(
-            setPrize({ fieldId, uuid, type, size, loading: true })
+            setPrize({ fieldId, uuid, type, loading: true })
           );
 
           validate_prize(uuid)
@@ -125,14 +126,13 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                   fieldId,
                   uuid,
                   type,
-                  size,
                   loading: false,
                 })
               );
               nuevaRecargaDispatch(toggleValidateInProcess(false));
             })
             .catch((err) => {
-              //console.log(err.message);
+              console.log(err.message);
               nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
               nuevaRecargaDispatch(toggleValidateInProcess(false));
             });
@@ -140,6 +140,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       } else {
         // cuando no se trata del primer slot
         // cuando el usuario viene a cobrar premio
+
+        //console.log("hay contacto agregado");
 
         if (inOrderToCobrarPremio === true) {
           // verificar que el premio no esta agregado ya
@@ -155,7 +157,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             // si hay un slot vacio, solo agregar
             const type = userState.prize.type;
             const uuid = userState.prize.uuid;
-            const size = userState.prize.size;
 
             //let fieldId;
 
@@ -163,24 +164,25 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               const fieldId = fields[fields.length - 1].fieldId;
 
               nuevaRecargaDispatch(
-                setPrize({ fieldId, uuid, type, size, loading: true })
+                setPrize({ fieldId, uuid, type, loading: true })
               );
 
               validate_prize(uuid)
-                .then(() => {
+                .then((response) => {
+                  console.log(response.status);
+                  console.log(response.data);
                   nuevaRecargaDispatch(
                     updatePrize(uuid, {
                       fieldId,
                       uuid,
                       type,
-                      size,
                       loading: false,
                     })
                   );
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 })
                 .catch((err) => {
-                  //console.log(err.message);
+                  console.log(err.message);
                   nuevaRecargaDispatch(deletePrizeByFieldId(fieldId));
                   nuevaRecargaDispatch(toggleValidateInProcess(false));
                 });
@@ -191,7 +193,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               nuevaRecargaDispatch(setFields(true, fieldId));
 
               nuevaRecargaDispatch(
-                setPrize({ fieldId, uuid, type, size, loading: true })
+                setPrize({ fieldId, uuid, type, loading: true })
               );
 
               validate_prize(uuid)
@@ -201,7 +203,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                       fieldId,
                       uuid,
                       type,
-                      size,
                       loading: false,
                     })
                   );
@@ -260,7 +261,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
   const validate_prize = (prize_id) => {
     nuevaRecargaDispatch(toggleValidateInProcess(true));
-    //console.log("init validate");
+    // console.log("init validate");
     const user_token = userState.token;
     const url = `${BASE_URL}/prize/validate/${prize_id}`;
 
@@ -405,7 +406,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           fieldId,
           uuid,
           type: undefined,
-          size: undefined,
           loading: true,
         })
       );
@@ -413,22 +413,17 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       validate_prize(uuid)
         .then((response) => {
           const currentPrize = response.data;
+          //console.log(currentPrize);
           const type = currentPrize.type;
-          const size = currentPrize.size;
 
-          console.log("size", size);
-
-          /* Toast.show(ResolveText("codigoValido"), {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          }); */
           // actualizar lista de premios validados
           nuevaRecargaDispatch(
-            updatePrize(uuid, { fieldId, uuid, type, size, loading: false })
+            updatePrize(uuid, {
+              fieldId,
+              uuid,
+              type,
+              loading: false,
+            })
           );
           nuevaRecargaDispatch(toggleValidateInProcess(false));
         })
@@ -559,7 +554,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           Toast.show(
             userState?.idioma === "spa"
               ? "Antes de continuar, seleccione su operador"
-              : "Before proceeding, select your operator",
+              : "Before proceeding, select your carrier",
             {
               duaration: Toast.durations.LONG,
               position: Toast.positions.BOTTOM,
@@ -601,7 +596,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
                   updatePrizeForContact(prize.fieldId, {
                     uuid: prize.uuid,
                     type: prize.type,
-                    size: prize.size,
                   })
                 );
               });

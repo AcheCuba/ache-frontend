@@ -2,7 +2,8 @@ import React, { memo } from "react";
 import { StyleSheet, View, ActivityIndicator, Dimensions } from "react-native";
 import { WebView } from "react-native-webview";
 import { GlobalContext } from "../../context/GlobalProvider";
-import { BASE_URL } from "../../constants/domain";
+import { BASE_URL, frontend_url } from "../../constants/domain";
+
 import axios from "axios";
 import {
   deleteAllTransaccionesPremio,
@@ -11,8 +12,6 @@ import {
 } from "../../context/Actions/actions";
 import { storeData } from "../../libs/asyncStorage.lib";
 import { StatusBar } from "react-native";
-
-const frontend_url = "https://react-paymentsite.herokuapp.com/";
 
 // antes
 // `${server_url}/api/payments/mobile/create?amount=${input.amount}&name=${input.name}&email=${input.email}`,
@@ -154,6 +153,7 @@ const PagoScreen = ({ navigation, route }) => {
           console.log("TRANSACCION DE PREMIO ASOCIADA", transaccionDePremio);
           if (transaccionDePremio != undefined) {
             claim_prize(
+              transaccionDePremio.dtoneProductId,
               transaccionDePremio.beneficiary,
               transaccionDePremio.prize_uuid,
               transaccionDePremio.socketId
@@ -161,7 +161,7 @@ const PagoScreen = ({ navigation, route }) => {
               .then((resp) => {
                 console.log("CLAIM PRIZE");
                 //console.log(resp.data);
-                console.log(resp.status);
+                //console.log(resp.status);
 
                 // LIBERAR PREMIO COBRADO
                 prize_finish_checkout(transaccionDePremio.prize_uuid, true); // cobrado
@@ -217,7 +217,12 @@ const PagoScreen = ({ navigation, route }) => {
     }
   };
 
-  const claim_prize = async (beneficiary, prizeCode, socketId) => {
+  const claim_prize = async (
+    dtoneProductId,
+    beneficiary,
+    prizeCode,
+    socketId
+  ) => {
     const user_token = userState.token;
     const url = `${BASE_URL}/topup/claim-prize`;
 
@@ -230,6 +235,7 @@ const PagoScreen = ({ navigation, route }) => {
         beneficiary,
         prizeCode,
         countryIsoCode,
+        dtoneProductId,
         operatorId,
         socketId,
       },
@@ -238,13 +244,13 @@ const PagoScreen = ({ navigation, route }) => {
       },
     };
 
-    //console.log("create transaction prizes", config);
-    //console.log("create trnasaction prizes prize code", prizeCode);
+    //console.log("claim prize", config);
 
     return axios(config);
   };
 
-  const create_transaction_prizes = async (
+  // ahora se llama a TOPUP/CLAIM_PRIZE (SOLO CAMBIA EL NOMBRE)
+  /* const create_transaction_prizes = async (
     beneficiary,
     prizeCode,
     dtoneProductId,
@@ -275,7 +281,7 @@ const PagoScreen = ({ navigation, route }) => {
     //console.log("create trnasaction prizes prize code", prizeCode);
 
     return axios(config);
-  };
+  }; */
 
   const refund = () => {
     //console.log("se inicia refund si es necesario");
@@ -337,8 +343,10 @@ const PagoScreen = ({ navigation, route }) => {
   };
 
   const createPaymentSession = async () => {
+    console.log("amount", amount);
     const input = {
       amount: amount, // amount total
+      //amount: 1,
       name: name, // nombre del usuario actual
       email: email, // email del usuario actual
     };
