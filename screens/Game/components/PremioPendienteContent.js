@@ -8,15 +8,12 @@ import {
 } from "../../../constants/Texts";
 import LargeFlatButton from "../../../components/LargeFlatButton";
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
-const DoublePrizeWonContentModal = ({
-  navigation,
-  setModalVisible,
-  userState,
-}) => {
+const PremioPendienteContent = ({ setModalVisible, userState }) => {
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
+
     const textSpa = GameScreenTextSpanish();
     const textEng = GameScreenTextEnglish();
 
@@ -26,6 +23,38 @@ const DoublePrizeWonContentModal = ({
 
     if (idioma === "eng") {
       return textEng[site];
+    }
+  };
+
+  const RenderPrizeImage = () => {
+    const prizeType = userState?.prize.type;
+
+    switch (prizeType) {
+      case "Jackpot":
+        return (
+          <Image
+            source={require("../../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")}
+            style={{
+              width: width / 4,
+              height: width / 4,
+            }}
+          />
+        );
+      case "DoublePrize":
+        return (
+          <Image
+            source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
+            style={{
+              width: width / 3,
+              height: width / 3.1,
+              //width: width / 3.8,
+              //height: width / 3.9,
+            }}
+          />
+        );
+
+      default:
+        return null;
     }
   };
 
@@ -40,11 +69,7 @@ const DoublePrizeWonContentModal = ({
         marginTop: 150,
       }}
     >
-      <Image
-        source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
-        style={{ width: 105, height: 101 }}
-        //style={{ width: width / 3, height: width / 3.1 }}
-      />
+      <RenderPrizeImage />
       <View
         style={{
           alignItems: "center",
@@ -60,8 +85,9 @@ const DoublePrizeWonContentModal = ({
             fontSize: 30,
             marginTop: 30,
             textTransform: "uppercase",
+            textAlign: "center",
           }}
-          text={ResolveText("DoublePrizeWonTitle")}
+          text={ResolveText("PremioPendienteTitle")}
         />
         <TextItalic
           style={{
@@ -71,22 +97,12 @@ const DoublePrizeWonContentModal = ({
             marginTop: 30,
             textAlign: "center",
           }}
-          text={ResolveText("DoublePrizeWonBody")}
+          text={ResolveText("PremioPendienteBody")}
         />
         <View
           style={{
             height: 30,
             width: width,
-          }}
-        />
-        <LargeFlatButton
-          text={ResolveText("obtenerPremio")}
-          onPress={() => {
-            salir();
-            navigation.jumpTo("Nueva Recarga", {
-              screen: "NuevaRecargaScreen",
-              params: { inOrderToCobrarPremio: true },
-            });
           }}
         />
 
@@ -101,4 +117,4 @@ const DoublePrizeWonContentModal = ({
     </View>
   );
 };
-export default DoublePrizeWonContentModal;
+export default PremioPendienteContent;

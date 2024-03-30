@@ -169,8 +169,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
               validate_prize(uuid)
                 .then((response) => {
-                  console.log(response.status);
-                  console.log(response.data);
+                  //console.log(response.status);
+                  //console.log(response.data);
                   nuevaRecargaDispatch(
                     updatePrize(uuid, {
                       fieldId,

@@ -179,6 +179,9 @@ const TfaScreen = ({ navigation, route }) => {
               country: "CUB",
             })
           );
+          // se llama a useCachedResources() para
+          // actualizar la data de premios
+          // de este user
         }
 
         setLoadingTwo(false);

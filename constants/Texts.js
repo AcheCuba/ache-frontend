@@ -20,6 +20,8 @@ export const GameScreenTextSpanish = () => {
     CalaveraExpirada: "¡Ya puedes volver a jugar!",
     PremioExpiradoTitle: "Premio Expirado",
     PremioExpiradoBody: "Lo sentimos, su premio ha expirado",
+    PremioPendienteTitle: "Su premio está en camino",
+    PremioPendienteBody: "La transaccion de su premio aún está en progreso.",
   };
 };
 
@@ -42,6 +44,8 @@ export const GameScreenTextEnglish = () => {
     CalaveraExpirada: "You can play again!",
     PremioExpiradoTitle: "Prize Expired",
     PremioExpiradoBody: "Sorry, your prize has expired",
+    PremioPendienteTitle: "Your prize is on its way",
+    PremioPendienteBody: "Your prize transaction is still in progress.",
   };
 };
 

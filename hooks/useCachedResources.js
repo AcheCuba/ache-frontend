@@ -1,18 +1,23 @@
 import * as SecureStore from "expo-secure-store";
 import * as React from "react";
 import { GlobalContext } from "../context/GlobalProvider";
-import { restore_user } from "../context/Actions/actions";
+import {
+  restore_user,
+  setShowExpiredPrize,
+  setShowHasPendingPrize,
+  setShowInvisibleLoadData,
+} from "../context/Actions/actions";
 import moment from "moment";
 import { getData, storeData } from "../libs/asyncStorage.lib";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAssets } from "expo-asset";
 import { useFonts } from "expo-font";
 import { BASE_URL } from "../constants/domain";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-  const { userState, userDispatch } = React.useContext(GlobalContext);
+  const { userDispatch, interfaceDispatch } = React.useContext(GlobalContext);
 
   const [assets] = useAssets([
     require("../assets/images/home/fondoOscuro.png"),
@@ -34,10 +39,12 @@ export default function useCachedResources() {
     "bs-bold-italic": require("../assets/fonts/bloggerSans/BloggerSans-BoldItalic.ttf"),
   });
 
-  const verificarEstadoPremio = (user) => {
+  const actualizarEstadoPremio = (user) => {
     const user_token = user.token;
-    const prize_id = user.prize?.uuid;
-    const url = `${BASE_URL}/prize/status/${prize_id}`;
+    const userId = user.id;
+    //const prize_id = user.prize?.uuid;
+    //const url = `${BASE_URL}/prize/status/${prize_id}`;
+    const url = `${BASE_URL}/users/${userId}`;
 
     let config = {
       method: "get",
@@ -50,7 +57,7 @@ export default function useCachedResources() {
     return axios(config);
   };
 
-  const prize_finish_checkout = (user, uuid, success) => {
+  /* const prize_finish_checkout = (user, uuid, success) => {
     const user_token = user.token;
     const url = `${BASE_URL}/prize/finish-checkout/${uuid}`;
     let config = {
@@ -63,7 +70,7 @@ export default function useCachedResources() {
     };
 
     return axios(config);
-  };
+  }; */
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
@@ -101,89 +108,236 @@ export default function useCachedResources() {
         //console.log(user);
         //console.log(token);
 
+        if (user === null) {
+          console.log("user es null");
+          interfaceDispatch(setShowInvisibleLoadData(true));
+        }
+
         if (user != null && token != null) {
-          if (user.prize !== null && user.prize.exchanged === false) {
-            const currentPrizeState = user.prize;
+          //if (user.prize !== null && user.prize.exchanged === false) {
+          if (user.prize !== null) {
+            // const currentPrizeStorage = user.prize;
+            // console.log("useCachedResources.js", currentPrizeStorage);
 
-            const currentTime = moment();
-            const prizeEndTime = moment(currentPrizeState.prizeEndTime);
-            const minutos_restantes = prizeEndTime.diff(currentTime, "minutes");
-            //console.log(minutos_restantes);
-            if (minutos_restantes < 0) {
-              // premio expirado
-              storeData("user", {
-                ...user,
-                prize: null,
-              });
-              userDispatch(restore_user({ ...user, prize: null, token }));
-            } else {
-              storeData("user", {
-                ...user,
-                prize: {
-                  ...currentPrizeState,
-                  minutos_restantes,
-                },
-              });
-              userDispatch(
-                restore_user({
-                  ...user,
-                  prize: {
-                    ...currentPrizeState,
-                    minutos_restantes,
-                  },
-                  token,
-                })
-              );
+            actualizarEstadoPremio(user)
+              .then((response) => {
+                console.log("get user usedCachedResources", response.status);
+                if (response.status === 200) {
+                  const hasPrize = response.data.hasPrize;
+                  // console.log("hasPrize", hasPrize);
+                  const currentPrize = response.data.activePrize;
+                  // console.log("current prize get user", currentPrize);
+                  if (hasPrize) {
+                    // tiene premio
+                    // si es null, tiene skull
 
-              verificarEstadoPremio(user)
-                .then((response) => {
-                  if (response.status === 200) {
-                    const prizeStatus = response.data.status;
-                    // console.log(prizeStatus)
-                    if (prizeStatus === "pending") {
-                      // finalizar checkout con false
-                      const prize_id = currentPrizeState.uuid;
-                      prize_finish_checkout(user, prize_id, false)
-                        .then((response) => {
-                          if (response.status === 201) {
-                            // console.log("premio liberado")
-                          }
-                        })
-                        .catch((err) => {
-                          console.log(err);
+                    if (currentPrize === null) {
+                      // tiene skull
+                      const currentTime = moment();
+                      const expirationDate = moment(
+                        response.data.skullExpirationTime
+                      ).local();
+                      const minutos_restantes = expirationDate.diff(
+                        currentTime,
+                        "minutes"
+                      );
+                      if (minutos_restantes < 0) {
+                        // expiro la skull
+                        // puede cobrar premios otra vez
+                        storeData("user", {
+                          ...user,
+                          prize: null,
                         });
+                        userDispatch(
+                          restore_user({ ...user, prize: null, token })
+                        );
+                      } else {
+                        // aun tiene skull
+                        // actualizar tiempo restante
+                        storeData("user", {
+                          ...user,
+                          prize: {
+                            ...user.prize,
+                            minutos_restantes,
+                          },
+                        });
+                        userDispatch(
+                          restore_user({
+                            ...user,
+                            prize: {
+                              ...user.prize,
+                              minutos_restantes,
+                            },
+                            token,
+                          })
+                        );
+                      }
+                    } else {
+                      // tiene premio
+                      // actualizar en estado y storage de app:
+                      // sea cual sea
+                      const currentTime = moment();
+                      const expirationDate = moment(
+                        currentPrize.expirationDate
+                      ).local();
+                      const minutos_restantes = expirationDate.diff(
+                        currentTime,
+                        "minutes"
+                      );
+                      if (minutos_restantes < 0) {
+                        // premio expirado, eliminar de la app
+                        storeData("user", {
+                          ...user,
+                          prize: null,
+                        });
+                        userDispatch(
+                          restore_user({ ...user, prize: null, token })
+                        );
+
+                        //--- activar bandera: premio expirado---
+                        interfaceDispatch(setShowExpiredPrize(true));
+                      } else {
+                        // minutos_restantes > 0!
+                        // --- el premio esta vigente ---
+
+                        // actualizacion del premio en la app
+                        storeData("user", {
+                          ...user,
+                          prize: {
+                            ...currentPrize,
+                            minutos_restantes,
+                          },
+                        });
+                        userDispatch(
+                          restore_user({
+                            ...user,
+                            prize: {
+                              ...currentPrize,
+                              minutos_restantes,
+                            },
+                            token,
+                          })
+                        );
+
+                        console.log("premio actual en la app", {
+                          ...currentPrize,
+                          minutos_restantes,
+                        });
+
+                        // obtener estado estado
+                        const prizeStatus = currentPrize.status;
+
+                        if (prizeStatus === "pending") {
+                          // tiene un premio pendiente
+                          // notificar en el modal de la app
+                          interfaceDispatch(setShowHasPendingPrize(true));
+                        }
+                      }
                     }
-                    if (prizeStatus === "collected") {
-                      // finalizar checkout con true
-                      const prize_id = currentPrizeState.uuid;
-                      prize_finish_checkout(user, prize_id, true)
-                        .then((response) => {
-                          if (response.status === 201) {
-                            //console.log("premio liberado")
-                          }
-                        })
-                        .catch((err) => {
-                          //console.log(err)
-                        });
-                      // eliminar premio del storage
+                  } else {
+                    // no tiene premio, actualizar en app
+                    // sirve para el caso pending
+                    // tambien para skull
+                    storeData("user", {
+                      ...user,
+                      prize: null,
+                    });
+                    // eliminar premio del estado de la app
+                    userDispatch(restore_user({ ...user, prize: null, token }));
+                  }
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            // no hay premio guardado en la app
+            // se verifica si realmente no tiene premio
+            // sirve para el caso de desinstalacion de la app
+
+            actualizarEstadoPremio(user)
+              .then((response) => {
+                console.log("useCachedRes - get new user", response.status);
+                if (response.status === 200) {
+                  const hasPrize = response.data.hasPrize;
+                  const currentPrize = response.data.activePrize;
+                  if (hasPrize) {
+                    // tiene premio
+
+                    if (currentPrize === null) {
+                      // tiene skull y la app no lo sabia
+                      // dibujar skull
+                      const currentTime = moment();
+                      const expirationDate = moment(
+                        response.data.skullExpirationTime
+                      ).local();
+                      //const expirationDate = moment().add(1, "days");
+
+                      const minutos_restantes = expirationDate.diff(
+                        currentTime,
+                        "minutes"
+                      );
+
                       storeData("user", {
                         ...user,
-                        prize: null,
+                        prize: {
+                          type: "Nada",
+                          minutos_restantes,
+                          expirationDate,
+                        },
                       });
-                      // eliminar premio del estado de la app
                       userDispatch(
-                        restore_user({ ...user, prize: null, token })
+                        restore_user({
+                          ...user,
+                          prize: {
+                            type: "Nada",
+                            minutos_restantes,
+                            expirationDate,
+                          },
+                          token,
+                        })
+                      );
+                    } else {
+                      // tiene premio y la app no lo sabia
+                      // dibujar premio
+
+                      const currentTime = moment();
+                      const expirationDate = moment(
+                        currentPrize.expirationDate
+                      ).local();
+                      const minutos_restantes = expirationDate.diff(
+                        currentTime,
+                        "minutes"
+                      );
+                      storeData("user", {
+                        ...user,
+                        prize: {
+                          ...currentPrize,
+                          minutos_restantes,
+                        },
+                      });
+                      userDispatch(
+                        restore_user({
+                          ...user,
+                          prize: {
+                            ...currentPrize,
+                            minutos_restantes,
+                          },
+                          token,
+                        })
                       );
                     }
+                  } else {
+                    // no tiene premio, es consistente con la app
+                    // restaurar el storage del user en el estado de la app
+                    // el estado de la app recuerda lo almacenado
+                    userDispatch(restore_user({ ...user, token }));
                   }
-                })
-                .catch((err) => {
-                  // console.log(err)
-                });
-            }
-          } else {
-            // aqui se copia lo guardado en el storage para el estado actual de la app
-            userDispatch(restore_user({ ...user, token }));
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           }
         }
       } catch (e) {

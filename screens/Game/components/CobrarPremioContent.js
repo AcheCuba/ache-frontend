@@ -26,6 +26,7 @@ import {
 import normalize from "react-native-normalize";
 import { buttonColor } from "../../../constants/commonColors";
 import LargeFlatButton from "../../../components/LargeFlatButton";
+import useCachedResources from "../../../hooks/useCachedResources";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -43,7 +44,6 @@ const CobrarPremioContent = ({
 }) => {
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
-
   const currentPrize = userState.prize;
 
   const [loading, setLoading] = useState(false);
@@ -129,6 +129,7 @@ const CobrarPremioContent = ({
             generarCodigoRequest();
           }
           if (prizeStatus === "inactive") {
+            // --- esto no debe pasar ---
             // eliminar premio del storage
             storeData("user", {
               ...userState,
@@ -138,22 +139,11 @@ const CobrarPremioContent = ({
             userDispatch(setPrizeForUser(null));
             setLoading(false);
             setModalVisible(false);
-            // toast menssaje inactivo
+            // toast mensaje inactivo
             setPrizeInactiveError(true);
           }
           if (prizeStatus === "collected") {
-            // finish_checkout con true
-            const prize_id = currentPrize.uuid;
-            prize_finish_checkout(prize_id, true)
-              .then(() => {
-                //console.log("premio libre")
-              })
-              .catch(() => {
-                //console.log("error liberando el premio")
-              })
-              .finally(() => {
-                setLoading(false);
-              });
+            // --- esto no debe pasar ---
             // eliminar premio de la app
             storeData("user", {
               ...userState,
@@ -161,26 +151,16 @@ const CobrarPremioContent = ({
             });
             // eliminar premio del estado de la app
             userDispatch(setPrizeForUser(null));
-
             setModalVisible(false);
-
             // toast mensaje colleted
             setPrizeCollectedError(true);
           }
           if (prizeStatus === "pending") {
-            // finalizar checkout con false
-            const prize_id = currentPrize.uuid;
-            prize_finish_checkout(prize_id, false)
-              .then((response) => {
-                if (response.status === 201) {
-                  // tonce considerar activo e intentar cambiarlo por codigo
-                  generarCodigoRequest();
-                }
-              })
-              .catch(() => {
-                setModalVisible(false);
-                setPrizePendingError(true); //-> toast: no se pudo liberar
-              });
+            // --- esto no debe pasar ---
+            // --- el modal no abriria ---
+
+            setModalVisible(false);
+            setPrizePendingError(true); // este premio está en progreso
           }
         }
       })
@@ -246,13 +226,6 @@ const CobrarPremioContent = ({
             });
           }
           if (prizeStatus === "collected") {
-            const prize_id = currentPrize.uuid;
-            prize_finish_checkout(prize_id, true)
-              .then(() => {})
-              .catch(() => {})
-              .finally(() => {
-                setLoadingObtenerPremio(false);
-              });
             // eliminar premio del storage
             storeData("user", {
               ...userState,
@@ -260,37 +233,15 @@ const CobrarPremioContent = ({
             });
             // eliminar premio del estado de la app
             userDispatch(setPrizeForUser(null));
-
             setModalVisible(false);
-
             // mensaje de que el premio ya esta cobrado
             // esto activa el estado en GameScreen, se lanza un toast
             setPrizeCollectedError(true);
           }
           if (prizeStatus === "pending") {
-            console.log("pending");
-            const prize_id = currentPrize.uuid;
-            prize_finish_checkout(prize_id, false)
-              .then((response) => {
-                console.log(
-                  "response status finish checkout:",
-                  response.status
-                );
-                if (response.status === 201) {
-                  // continuar
-                  setLoadingObtenerPremio(false);
-                  setModalVisible(false);
-                  navigation.jumpTo("Nueva Recarga", {
-                    screen: "NuevaRecargaScreen",
-                    params: { inOrderToCobrarPremio: true },
-                  });
-                }
-              })
-              .catch(() => {
-                setModalVisible(false);
-                setLoadingObtenerPremio(false);
-                setPrizePendingError(true); //-> toast: no se pudo liberar
-              });
+            setModalVisible(false);
+            setLoadingObtenerPremio(false);
+            setPrizePendingError(true);
           }
           if (prizeStatus === "inactive") {
             setLoadingObtenerPremio(false);
@@ -311,21 +262,6 @@ const CobrarPremioContent = ({
         setModalVisible(false);
         setVerificationError(true);
       });
-  };
-
-  const prize_finish_checkout = (uuid, success) => {
-    const user_token = userState.token;
-    const url = `${BASE_URL}/prize/finish-checkout/${uuid}`;
-    let config = {
-      method: "post",
-      url: url,
-      params: { success },
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
-
-    return axios(config);
   };
 
   const ResolveText = (site) => {

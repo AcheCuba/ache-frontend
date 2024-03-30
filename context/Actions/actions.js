@@ -1,5 +1,29 @@
 import { actionTypes } from "./types";
 
+// ================================= ACTIONS FOR INTERFACE ===========================
+export const setShowHasPendingPrize = (isPending) => {
+  return {
+    type: actionTypes.SET_SHOW_HAS_PENDING_PRIZE,
+    isPending,
+  };
+};
+
+export const setShowExpiredPrize = (isExpired) => {
+  return {
+    type: actionTypes.SET_SHOW_EXPIRED_PRIZE,
+    isExpired,
+  };
+};
+
+export const setShowInvisibleLoadData = (isNewUser) => {
+  return {
+    type: actionTypes.SET_SHOW_INVISIBLE_LOAD_DATA,
+    isNewUser,
+  };
+};
+
+//export const setShowExpiredPrize =
+
 // ================================= ACTIONS FOR USER STATE ===========================
 export const signup = (user) => {
   return {

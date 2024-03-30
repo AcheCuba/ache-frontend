@@ -5,11 +5,13 @@ import { createContext, useReducer, useContext } from "react";
 import nuevaRecargaInitialState from "./initialStates/nuevaRecargaInitialState";
 import socketInitialState from "./initialStates/socketInitialState";
 import userInitialState from "./initialStates/userInitialState";
+import interfaceInitialState from "./initialStates/interfaceInitialState";
 
 // reducers
 import NuevaRecargaReducer from "./Reducers/NuevaRecargaReducer";
 import SocketReducer from "./Reducers/SocketReducer";
 import UserReducer from "./Reducers/UserReducer";
+import InterfaceReducer from "./Reducers/InterfaceReducer";
 
 const GlobalContext = createContext();
 
@@ -35,6 +37,10 @@ const GlobalProvider = ({ children }) => {
     SocketReducer,
     socketInitialState
   );
+  const [interfaceState, interfaceDispatch] = useReducer(
+    InterfaceReducer,
+    interfaceInitialState
+  );
 
   /*  const value = {
     authState,
@@ -50,6 +56,8 @@ const GlobalProvider = ({ children }) => {
         nuevaRecargaDispatch,
         socketState,
         socketDispatch,
+        interfaceState,
+        interfaceDispatch,
       }}
     >
       {children}

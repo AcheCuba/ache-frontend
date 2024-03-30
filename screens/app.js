@@ -279,6 +279,11 @@ function MainApp() {
             });
 
           const transaccionesDePremioArray = []; // para ver si debo esperar por los resultados de premios
+          /* ejemplo
+          {"beneficiary": "+18095550100", "dtoneProductId": 4874, 
+          "prize_uuid": "25e93ff3-5490-4ec0-8820-c7ae8e30fca4", 
+          "socketId": "zOUwFg4pgmrC7vSjAAJC", 
+          "topUpId": 2238397037} */
 
           transaccionesNormalesCompletadas.forEach(
             (transaccionNormalCompletada) => {
@@ -332,7 +337,7 @@ function MainApp() {
 
       socket.on("socketid", (sid) => {
         // guardar id
-        //console.log("socket id - app.js", sid);
+        console.log("socket id - app.js", sid);
         socketDispatch(setSocketId(sid));
       });
     }
@@ -340,6 +345,7 @@ function MainApp() {
     socket.on("transaction-update", (msg) => {
       //console.log("transaction result variable array ", transaction_result_arr);
 
+      // console.log("--- msg socket ---", msg);
       let transaction_result;
 
       // declined o completed
@@ -369,7 +375,7 @@ function MainApp() {
         if (alreadyExistentTransId == undefined) {
           // no existe
           transaction_result_arr.push(transaction_result);
-          //console.log("transaction_result_arr", transaction_result_arr);
+          console.log("--- transacciones socket ---", transaction_result_arr);
 
           if (!transaction_result.isTopUpBonus) {
             socketDispatch(
