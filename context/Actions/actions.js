@@ -1,12 +1,6 @@
 import { actionTypes } from "./types";
 
 // ================================= ACTIONS FOR INTERFACE ===========================
-export const setShowHasPendingPrize = (isPending) => {
-  return {
-    type: actionTypes.SET_SHOW_HAS_PENDING_PRIZE,
-    isPending,
-  };
-};
 
 export const setShowExpiredPrize = (isExpired) => {
   return {

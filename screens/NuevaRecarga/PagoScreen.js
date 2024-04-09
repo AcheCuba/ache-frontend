@@ -6,12 +6,12 @@ import { BASE_URL, frontend_url } from "../../constants/domain";
 
 import axios from "axios";
 import {
-  deleteAllTransaccionesPremio,
   resetNuevaRecargaState,
   setPrizeForUser,
 } from "../../context/Actions/actions";
 import { storeData } from "../../libs/asyncStorage.lib";
 import { StatusBar } from "react-native";
+import Toast from "react-native-root-toast";
 
 // antes
 // `${server_url}/api/payments/mobile/create?amount=${input.amount}&name=${input.name}&email=${input.email}`,
@@ -162,24 +162,6 @@ const PagoScreen = ({ navigation, route }) => {
           );
           if (transaccionDePremio != undefined) {
             // el usuario tiene algun premio
-            if (prizeInApp?.type != "Nada") {
-              if (prizeInApp?.uuid === transaccionDePremio.prize_uuid) {
-                // este el premio en la app
-                // nada más puede coincidir una vez
-
-                console.log(
-                  "PagoScreen.js -- cambia el estado del premio a pending en la app y storage"
-                );
-
-                storeData("user", {
-                  ...userState,
-                  prize: { ...userState.prize, status: "pending" },
-                });
-                userDispatch(
-                  setPrizeForUser({ ...userState.prize, status: "pending" })
-                );
-              }
-            }
 
             claim_prize(
               transaccionDePremio.dtoneProductId,
@@ -192,18 +174,43 @@ const PagoScreen = ({ navigation, route }) => {
                 // console.log(resp.data);
                 // console.log(resp.status);
 
-                // LIBERAR PREMIO COBRADO
-                // prize_finish_checkout(transaccionDePremio.prize_uuid, true); // cobrado
+                // SI ESTE PREMIO ES EL QUE TIENES EN LA APP:
+                // SE ELIMINA DEL BOTON DE PREMIO
+                // PARA ESTO SE ELIMINA DEL STORAGE Y DEL ESTADO DE LA APP
+                if (prizeInApp?.type != "Nada") {
+                  if (prizeInApp?.uuid === transaccionDePremio.prize_uuid) {
+                    // este el premio en la app
+                    // nada más puede coincidir una vez
+                    storeData("user", { ...userState, prize: null });
+                    userDispatch(setPrizeForUser(null));
+                  }
+                }
 
-                // SI ESTE PREMIO ES EL QUE TIENES EN LA APP
-                // SE ELIMINA DEL BOTON NARANJA
+                // AQUI NO SE RESETEA EL ESTADO DE LA RECARGA
+                // HA CAUSADO PROBLEMAS
+                // SE HACE EN PagoCompletadoScreen.js
               })
               .catch((err) => {
                 // ERROR EN EL CLAIM PRIZE
-                // NO SE LIBERA EL PREMIO
+                // SE LIBERA EL PREMIO: FINISH CHECKOUT FALSE
+                // EL PREMIO SE QUEDA EN LA APP
                 console.log("CLAIM PRIZE ERROR", err.response.status);
                 console.log(err.message);
-                // prize_finish_checkout(transaccionDePremio.prize_uuid, false);
+                prize_finish_checkout(transaccionDePremio.prize_uuid, false);
+                // se le dice al usuario que hubo un problema
+                Toast.show(
+                  userState?.idioma === "spa"
+                    ? "Hubo un error con la transacción de uno de tus premio"
+                    : "There was an error with the transaction of one of your prizes",
+                  {
+                    duaration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                  }
+                );
               });
           }
         }
@@ -213,6 +220,19 @@ const PagoScreen = ({ navigation, route }) => {
     // NO SE REALIZARON
 
     if (transaccionesNormalesNoCompletadas.length != 0) {
+      Toast.show(
+        userState?.idioma === "spa"
+          ? "Hubo un error con alguna de tus transacciones"
+          : "There was an error with one of your transactions",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
       transaccionesNormalesNoCompletadas.forEach(
         (transaccionNormalNoCompletada) => {
           const transaccionDePremio = transaction_id_array.find(
@@ -364,7 +384,7 @@ const PagoScreen = ({ navigation, route }) => {
     console.log("amount", amount);
     const input = {
       amount: amount, // amount total
-      //amount: 5,
+      //amount: 5, // amount preprod
       name: name, // nombre del usuario actual
       email: email, // email del usuario actual
     };

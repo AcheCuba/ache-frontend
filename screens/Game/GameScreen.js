@@ -15,9 +15,7 @@ import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import {
   resetNuevaRecargaState,
-  setShowHasPendingPrize,
   setPrizeForUser,
-  setShowExpiredPrize,
 } from "../../context/Actions/actions";
 import Toast from "react-native-root-toast";
 import moment from "moment";
@@ -49,8 +47,6 @@ import {
   generalBgColorTrans5,
 } from "../../constants/commonColors";
 import LargeFlatButton from "../../components/LargeFlatButton";
-import PremioPendienteContent from "./components/PremioPendienteContent";
-import useCachedResources from "../../hooks/useCachedResources";
 import LoadingUserDataDummyModal from "./components/LoadingUserDataDummyModal";
 
 const { width, height } = Dimensions.get("screen");
@@ -95,8 +91,7 @@ const GameScreen = ({ navigation }) => {
   const [prizePendingError, setPrizePendingError] = React.useState(false);
   const [prizeInactiveError, setPrizeInactiveError] = React.useState(false);
   const [verificationError, setVerificationError] = React.useState(false);
-  const [hasPendingPrizeModalVisible, setHasPendingPrizeModalVisible] =
-    React.useState(false);
+
   const [
     loadingUserDataDummyModalVisible,
     setLoadingUserDataDummyModalVisible,
@@ -110,7 +105,6 @@ const GameScreen = ({ navigation }) => {
     nuevaRecargaDispatch,
     nuevaRecargaState,
     interfaceState,
-    interfaceDispatch,
   } = React.useContext(GlobalContext);
   //const { socketDispatch, socketState } = React.useContext(GlobalContext);
 
@@ -124,20 +118,11 @@ const GameScreen = ({ navigation }) => {
   const SENSIBILITY_TIME = 4000; //mantener proporción con ANIMATION_TIME
   const TO_VALUE = 20;
 
-  const { transacciones_premio_confirmadas, transactions_id_array } =
-    nuevaRecargaState;
-  const { showHasPendingPrize, showExpiredPrize, showInvisibleLoadData } =
-    interfaceState;
+  const { showExpiredPrize, showInvisibleLoadData } = interfaceState;
 
-  React.useEffect(() => {
-    if (showHasPendingPrize) {
-      // se activa cuando se abre la app
-      // y se verifica que el premio actual está pending
-      // poner a true la variable de estado local que saca el cartel
-      setHasPendingPrizeModalVisible(true);
-      // este estado no se limpia a false
-    }
-  }, [showHasPendingPrize]);
+  /* React.useEffect(() => {
+    console.log(userState);
+  }, [userState]); */
 
   React.useEffect(() => {
     if (showInvisibleLoadData) {
@@ -156,7 +141,7 @@ const GameScreen = ({ navigation }) => {
     }
   }, [showExpiredPrize]);
 
-  React.useEffect(() => {
+  /*  React.useEffect(() => {
     if (
       userState.prize != null &&
       userState.prize?.type != "Nada" &&
@@ -184,7 +169,7 @@ const GameScreen = ({ navigation }) => {
       }
     }
     //const objetoEncontrado = arreglo.find(objeto => objeto.id === idABuscar);
-  }, [transacciones_premio_confirmadas, userState, transactions_id_array]);
+  }, [transacciones_premio_confirmadas, userState, transactions_id_array]); */
 
   React.useEffect(() => {
     if (verificationError) {
@@ -261,10 +246,6 @@ const GameScreen = ({ navigation }) => {
       setPrizeInactiveError(false);
     }
   }, [prizeInactiveError]);
-
-  /* React.useEffect(() => {
-    console.log(userState);
-  }); */
 
   async function playSoundImpulsoRuleta() {
     const _sound = new Audio.Sound();
@@ -703,14 +684,10 @@ const GameScreen = ({ navigation }) => {
         if (prize_result === "" || prize_result === undefined) {
           setCasilla({ type: "Nada" });
           // time
-          const prizeStartTime = moment();
+          //const prizeStartTime = moment();
           const expirationDate = moment().add(1, "days");
 
           //const expirationDate = moment().add(3, "minutes"); //test
-          const minutos_restantes = expirationDate.diff(
-            prizeStartTime,
-            "minutes"
-          );
 
           //console.log(minutos_restantes);
 
@@ -724,14 +701,12 @@ const GameScreen = ({ navigation }) => {
               prize: {
                 type: "Nada",
                 expirationDate,
-                minutos_restantes,
               },
             });
             userDispatch(
               setPrizeForUser({
                 type: "Nada",
                 expirationDate,
-                minutos_restantes,
               })
             );
           }, ANIMATION_TIME);
@@ -743,12 +718,7 @@ const GameScreen = ({ navigation }) => {
           const expirationDate = moment(prize_result.expirationDate).local();
           //const expirationDate = moment().add(3, "days");
           //const expirationDate = moment().add(3, "minutes"); //test
-          const minutos_restantes = expirationDate.diff(
-            prizeStartTime,
-            "minutes"
-          );
 
-          // console.log(minutos_restantes);
           nuevaRecargaDispatch(resetNuevaRecargaState());
 
           setTimeout(() => {
@@ -757,14 +727,12 @@ const GameScreen = ({ navigation }) => {
               prize: {
                 ...prize_result,
                 expirationDate,
-                minutos_restantes,
               },
             });
             userDispatch(
               setPrizeForUser({
                 ...prize_result,
                 expirationDate,
-                minutos_restantes,
               })
             );
           }, ANIMATION_TIME);
@@ -937,56 +905,6 @@ const GameScreen = ({ navigation }) => {
       });
   };
 
-  const checkIfCollected = () => {
-    // -- esto es solo para fajarnos con el pending pegao --
-    // verifico si ya se cobro
-
-    const user_token = userState.token;
-    const userId = userState.id;
-    const url = `${BASE_URL}/users/${userId}`;
-
-    let config = {
-      method: "get",
-      url: url,
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
-
-    axios(config)
-      .then((response) => {
-        console.log(response.status);
-        if (response.status === 200) {
-          console.log("GameScreen.js --- actualizacion del estado de premio");
-          const hasPrize = response.data.hasPrize;
-          if (!hasPrize) {
-            // el usuario tenia un premio en pending cuando esto se llamo
-            // por tanto,
-            // esto es que el usuario cobró el premio
-            // el premio esta "collected"
-            setHasPendingPrizeModalVisible(false);
-
-            // eliminar premio del storage
-            storeData("user", {
-              ...userState,
-              prize: null,
-            });
-            // eliminar premio del estado de la app
-            userDispatch(setPrizeForUser(null));
-            // si es el caso de que no se ha cerrado la app
-            // hay que resetear el estado
-            // si no lo es, esto no hace nada
-            // este caso no deberia darse, porque el socket debe funcionar
-            nuevaRecargaDispatch(resetNuevaRecargaState());
-          } else {
-          }
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   React.useEffect(() => {
     //console.log("codigo generado game screen", codigoGenerado);
     //console.log(currentPrize?.type);
@@ -1024,7 +942,7 @@ const GameScreen = ({ navigation }) => {
           animationType="slide"
           transparent={true}
           visible={loadingUserDataDummyModalVisible}
-          onRequestClose={() => setHasPendingPrizeModalVisible(false)}
+          onRequestClose={() => setLoadingUserDataDummyModalVisible(false)}
         >
           <View
             style={{
@@ -1036,34 +954,6 @@ const GameScreen = ({ navigation }) => {
           >
             <LoadingUserDataDummyModal />
           </View>
-        </Modal>
-      ) : null}
-
-      {hasPendingPrizeModalVisible ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={hasPendingPrizeModalVisible}
-          onRequestClose={() => setHasPendingPrizeModalVisible(false)}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: generalBgColorTrans5,
-              }}
-            >
-              <PremioPendienteContent
-                setModalVisible={setHasPendingPrizeModalVisible}
-                userState={userState}
-              />
-            </View>
-          </LinearGradient>
         </Modal>
       ) : null}
 
@@ -1471,89 +1361,74 @@ const GameScreen = ({ navigation }) => {
               alignItems: "center",
             }}
             onPress={() => {
-              if (
-                userState.prize !== null &&
-                userState.prize.type !== "Nada" &&
-                userState.prize.status === "pending"
-              ) {
-                // ---- hay premio pendiente: atender
-                setHasPendingPrizeModalVisible(true);
-                // actualizar datos del usuario
-                checkIfCollected();
-              } else {
-                // ---- no hay ningun premio pendiente
+              if (userState.prize !== null) {
+                // actualizar horas restantes
+                // tanto para nada como para los premios drntro del modal
+                const currentTime = moment();
+                const expirationDate = moment(userState.prize?.expirationDate);
+                const horas_restantes = expirationDate.diff(
+                  currentTime,
+                  "hours"
+                );
 
-                if (userState.prize !== null) {
-                  // actualizar horas restantes
-                  // tanto para nada como para los premios drntro del modal
-                  const currentTime = moment();
-                  const expirationDate = moment(
-                    userState.prize?.expirationDate
-                  );
-                  const horas_restantes = expirationDate.diff(
-                    currentTime,
-                    "hours"
-                  );
+                const minutos_restantes = expirationDate.diff(
+                  currentTime,
+                  "minutes"
+                );
 
-                  const minutos_restantes = expirationDate.diff(
-                    currentTime,
-                    "minutes"
-                  );
+                //console.log(segundos_restantes);
+                //console.log(minutos_restantes);
 
-                  //console.log(segundos_restantes);
-                  //console.log(minutos_restantes);
+                if (minutos_restantes < 0) {
+                  // ---- el premio ha expirado
 
-                  if (minutos_restantes < 0) {
-                    // ---- el premio ha expirado
-
-                    // ---- si es nada: Toast de que ya puedes jugar
-                    if (userState.prize.type === "Nada") {
-                      Toast.show(ResolveText("CalaveraExpirada"), {
-                        duaration: Toast.durations.LONG,
-                        position: Toast.positions.BOTTOM,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                      });
-                    } else {
-                      // ---- era un premio, MODAL de que ha EXPIRADO
-                      // abrir modal
-                      setPremioExpirado(true);
-                    }
-
-                    // ---- siendo nada o premio lo que expiró...
-                    // ---- eliminar del storage
-                    storeData("user", {
-                      ...userState,
-                      prize: null,
+                  // ---- si es nada: Toast de que ya puedes jugar
+                  if (userState.prize.type === "Nada") {
+                    Toast.show(ResolveText("CalaveraExpirada"), {
+                      duaration: Toast.durations.LONG,
+                      position: Toast.positions.BOTTOM,
+                      shadow: true,
+                      animation: true,
+                      hideOnPress: true,
+                      delay: 0,
                     });
-                    // ---- eliminar premio del estado de la app
-                    userDispatch(setPrizeForUser(null));
                   } else {
-                    // ---- el premio (o la skull) no ha expirado
-                    // flujo normal
-                    setHorasRestantes(horas_restantes);
-                    if (userState.prize.type === "Nada") {
-                      setNadaDescriptionModalVisible(true);
-                      checkIfSkullExpired();
-                    } else {
-                      enMovimiento.current = false;
-                      setModalCobrarPremioVisible(true);
-                    }
+                    // ---- era un premio, MODAL de que ha EXPIRADO
+                    // abrir modal
+                    setPremioExpirado(true);
                   }
-                } else {
-                  // ---- no hay premio en la app
-                  // ---- informar
-                  let toast = Toast.show(ResolveText("premioVacio"), {
-                    duaration: Toast.durations.LONG,
-                    position: Toast.positions.BOTTOM,
-                    shadow: true,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
+
+                  // ---- siendo nada o premio lo que expiró...
+                  // ---- eliminar del storage
+                  storeData("user", {
+                    ...userState,
+                    prize: null,
                   });
+                  // ---- eliminar premio del estado de la app
+                  userDispatch(setPrizeForUser(null));
+                } else {
+                  // ---- el premio (o la skull) no ha expirado
+                  // flujo normal
+                  setHorasRestantes(horas_restantes);
+                  if (userState.prize.type === "Nada") {
+                    setNadaDescriptionModalVisible(true);
+                    checkIfSkullExpired();
+                  } else {
+                    enMovimiento.current = false;
+                    setModalCobrarPremioVisible(true);
+                  }
                 }
+              } else {
+                // ---- no hay premio en la app
+                // ---- informar
+                let toast = Toast.show(ResolveText("premioVacio"), {
+                  duaration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0,
+                });
               }
             }}
           >

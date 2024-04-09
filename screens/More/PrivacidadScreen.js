@@ -1,15 +1,18 @@
 import React from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, Linking, TouchableOpacity } from "react-native";
 import { ImageBackground } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CommonHeader from "../../components/CommonHeader";
+import { TextMedium } from "../../components/CommonText";
 import { infoTextColor } from "../../constants/commonColors";
+import { GlobalContext } from "../../context/GlobalProvider";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const PrivacidadScreen = ({ navigation }) => {
+  const { userState } = React.useContext(GlobalContext);
   return (
     <ImageBackground
       source={require("../../assets/images/degradado_general.png")}
@@ -42,20 +45,41 @@ const PrivacidadScreen = ({ navigation }) => {
             }}
           >
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={styles.infoText}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-                {"\n"} {"\n"}
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo.
-              </Text>
+              {userState?.idioma === "spa" ? (
+                <TouchableOpacity
+                  activeOpacity={0.75}
+                  onPress={() =>
+                    Linking.openURL(
+                      "https://spinrecargas.com/es/politica-de-privacidad/"
+                    )
+                  }
+                >
+                  <TextMedium
+                    text={"Más sobre nuestra política de privacidad"}
+                    style={{
+                      color: infoTextColor,
+                      textDecorationLine: "underline",
+                      fontSize: 20,
+                    }}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  activeOpacity={0.75}
+                  onPress={() =>
+                    Linking.openURL("https://spinrecargas.com/privacy-policy/")
+                  }
+                >
+                  <TextMedium
+                    text={"More about our privacy policy"}
+                    style={{
+                      color: infoTextColor,
+                      textDecorationLine: "underline",
+                      fontSize: 20,
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
             </ScrollView>
           </View>
         </View>
