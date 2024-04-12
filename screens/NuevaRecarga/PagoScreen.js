@@ -381,7 +381,7 @@ const PagoScreen = ({ navigation, route }) => {
   };
 
   const createPaymentSession = async () => {
-    console.log("amount", amount);
+    // console.log("amount", amount);
     const input = {
       amount: amount, // amount total
       //amount: 5, // amount preprod

@@ -26,7 +26,8 @@ import {
 import normalize from "react-native-normalize";
 import { buttonColor } from "../../../constants/commonColors";
 import LargeFlatButton from "../../../components/LargeFlatButton";
-import useCachedResources from "../../../hooks/useCachedResources";
+// import useCachedResources from "../../../hooks/useCachedResources";
+import { getPrizeForUser } from "../../../libs/getPrizeForUser";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -41,6 +42,7 @@ const CobrarPremioContent = ({
   setPrizePendingError,
   setPrizeInactiveError,
   setVerificationError,
+  setPremioExpirado,
 }) => {
   const { userState, userDispatch, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
@@ -118,53 +120,71 @@ const CobrarPremioContent = ({
   const onPressGenerarCodigo = () => {
     setLoading(true);
 
-    verificarEstadoPremio()
+    getPrizeForUser(userState)
       .then((response) => {
-        // console.log(response.status)
         if (response.status === 200) {
-          const prizeStatus = response.data.status;
+          const hasPrize = response.data.hasPrize;
+          const currentPrize = response.data.activePrize;
+          if (hasPrize) {
+            // tiene algo (premio o skull)
 
-          if (prizeStatus === "active") {
-            // codigo actual
-            generarCodigoRequest();
-          }
-          if (prizeStatus === "inactive") {
-            // --- esto no debe pasar ---
+            if (currentPrize === null) {
+              // tiene skull, esto no podria pasar
+              setLoadingObtenerPremio(false);
+              setModalVisible(false);
+            } else {
+              // tiene premio
+              // si esta activo, el proceso continua
+
+              const prizeStatus = currentPrize.status;
+
+              if (prizeStatus === "active") {
+                // caso frecuente
+                console.log("tactivo");
+                generarCodigoRequest();
+              }
+
+              if (prizeStatus === "pending") {
+                setModalVisible(false);
+                setLoadingObtenerPremio(false);
+                // activar toast en home screen
+                setPrizePendingError(true);
+              }
+
+              if (prizeStatus === "collected") {
+                setModalVisible(false);
+                setLoadingObtenerPremio(false);
+                setPrizeCollectedError(true);
+              }
+
+              if (prizeStatus === "inactive") {
+                setLoadingObtenerPremio(false);
+                setModalVisible(false);
+                setPrizeInactiveError(true); //-> toast: el premio no está activo
+              }
+            }
+          } else {
+            // no tiene premio, expiró!
             // eliminar premio del storage
-            storeData("user", {
-              ...userState,
-              prize: null,
-            });
-            // eliminar premio del estado de la app
-            userDispatch(setPrizeForUser(null));
-            setLoading(false);
-            setModalVisible(false);
-            // toast mensaje inactivo
-            setPrizeInactiveError(true);
-          }
-          if (prizeStatus === "collected") {
-            // --- esto no debe pasar ---
-            // eliminar premio de la app
-            storeData("user", {
-              ...userState,
-              prize: null,
-            });
-            // eliminar premio del estado de la app
-            userDispatch(setPrizeForUser(null));
-            setModalVisible(false);
-            // toast mensaje colleted
-            setPrizeCollectedError(true);
-          }
-          if (prizeStatus === "pending") {
-            // --- esto no debe pasar ---
-            // --- el modal no abriria ---
 
+            setLoadingObtenerPremio(false);
             setModalVisible(false);
-            setPrizePendingError(true); // este premio está en progreso
+
+            storeData("user", {
+              ...userState,
+              prize: null,
+            });
+            // eliminar premio del estado de la app
+            userDispatch(setPrizeForUser(null));
+
+            setTimeout(() => {
+              setPremioExpirado(true);
+            }, 1000);
           }
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         setModalVisible(false);
         setVerificationError(true);
       });
@@ -193,7 +213,7 @@ const CobrarPremioContent = ({
     //setCodigoGenerado(false);
   };
 
-  const verificarEstadoPremio = () => {
+  /* const verificarEstadoPremio = () => {
     const user_token = userState.token;
     const prize_id = currentPrize.uuid;
     const url = `${BASE_URL}/prize/status/${prize_id}`;
@@ -207,58 +227,81 @@ const CobrarPremioContent = ({
     };
 
     return axios(config);
-  };
+  }; */
 
   const onPressObtenerPremio = () => {
     setLoadingObtenerPremio(true);
-    verificarEstadoPremio()
+
+    getPrizeForUser(userState)
       .then((response) => {
-        // console.log(response.status)
         if (response.status === 200) {
-          const prizeStatus = response.data.status;
-          if (prizeStatus === "active") {
-            setModalVisible(false);
-            setLoadingObtenerPremio(false);
-            // console.log(prizeStatus)
-            navigation.jumpTo("Nueva Recarga", {
-              screen: "NuevaRecargaScreen",
-              params: { inOrderToCobrarPremio: true },
-            });
-          }
-          if (prizeStatus === "collected") {
+          const hasPrize = response.data.hasPrize;
+          const currentPrize = response.data.activePrize;
+          if (hasPrize) {
+            // tiene algo (premio o skull)
+
+            if (currentPrize === null) {
+              // tiene skull, esto no podria pasar
+              setLoadingObtenerPremio(false);
+              setModalVisible(false);
+            } else {
+              // tiene premio
+              // si esta activo, el proceso continua
+
+              const prizeStatus = currentPrize.status;
+
+              if (prizeStatus === "active") {
+                console.log("tactivo");
+                setModalVisible(false);
+                setLoadingObtenerPremio(false);
+                // console.log(prizeStatus)
+                navigation.jumpTo("Nueva Recarga", {
+                  screen: "NuevaRecargaScreen",
+                  params: { inOrderToCobrarPremio: true },
+                });
+              }
+
+              if (prizeStatus === "pending") {
+                setModalVisible(false);
+                setLoadingObtenerPremio(false);
+                // activar toast en home screen
+                setPrizePendingError(true);
+              }
+
+              if (prizeStatus === "collected") {
+                setModalVisible(false);
+                setLoadingObtenerPremio(false);
+                setPrizeCollectedError(true);
+              }
+
+              if (prizeStatus === "inactive") {
+                setLoadingObtenerPremio(false);
+                setModalVisible(false);
+                setPrizeInactiveError(true); //-> toast: el premio no está activo
+              }
+            }
+          } else {
+            // no tiene premio, expiró!
             // eliminar premio del storage
+
+            setLoadingObtenerPremio(false);
+            setModalVisible(false);
+
             storeData("user", {
               ...userState,
               prize: null,
             });
             // eliminar premio del estado de la app
             userDispatch(setPrizeForUser(null));
-            setModalVisible(false);
-            // mensaje de que el premio ya esta cobrado
-            // esto activa el estado en GameScreen, se lanza un toast
-            setPrizeCollectedError(true);
-          }
-          if (prizeStatus === "pending") {
-            setModalVisible(false);
-            setLoadingObtenerPremio(false);
-            setPrizePendingError(true);
-          }
-          if (prizeStatus === "inactive") {
-            setLoadingObtenerPremio(false);
-            setModalVisible(false);
-            // eliminar premio del storage
-            storeData("user", {
-              ...userState,
-              prize: null,
-            });
-            // eliminar premio del estado de la app
-            userDispatch(setPrizeForUser(null));
-            setPrizeInactiveError(true); //-> toast: el premio no está activo
+
+            setTimeout(() => {
+              setPremioExpirado(true);
+            }, 1000);
           }
         }
       })
-      .catch(() => {
-        // error toast
+      .catch((err) => {
+        // console.log(err);
         setModalVisible(false);
         setVerificationError(true);
       });

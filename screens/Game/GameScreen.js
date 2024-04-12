@@ -48,6 +48,7 @@ import {
 } from "../../constants/commonColors";
 import LargeFlatButton from "../../components/LargeFlatButton";
 import LoadingUserDataDummyModal from "./components/LoadingUserDataDummyModal";
+import { getPrizeForUser } from "../../libs/getPrizeForUser";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -629,38 +630,44 @@ const GameScreen = ({ navigation }) => {
         if (current_prize === null) {
           makePlayRequest(config);
         } else {
-          // premio distinto de null
+          // hay algo en la app
 
           const currentTime = moment();
-          const expirationDate = moment(userState.prize?.expirationDate);
-
-          const minutos_restantes = expirationDate.diff(currentTime, "minutes"); // para determinar si ha expirado
+          const expirationDate = moment(
+            userState.prize?.expirationDate
+          ).local();
+          // para mostrar en pantalla (modal):
           const horas_restantes = expirationDate.diff(currentTime, "hours");
 
-          //console.log(minutos_restantes);
+          // verificar si el premio ha expirado
+          getPrizeForUser(userState)
+            .then((response) => {
+              const hasPrize = response.data.hasPrize;
+              if (hasPrize) {
+                // aun tiene algo
+                setCasillaRandom();
+                thereIsPrizeResult.current = true;
+                console.log("horas restantes", horas_restantes);
+                setHorasRestantes(horas_restantes);
+                setTimeout(() => {
+                  setPremioAcumulado(true);
+                }, ANIMATION_TIME);
+              } else {
+                // lo que tenia (premio o skull) expiro
+                storeData("user", {
+                  ...userState,
+                  prize: null,
+                });
+                userDispatch(setPrizeForUser(null));
 
-          if (minutos_restantes < 0) {
-            // el OBJETO ha expirado
-            // se elimina la skull si era skull, y si tenia premio lo pierde
-
-            storeData("user", {
-              ...userState,
-              prize: null,
+                // luego de eliminado el objeto se trata la app
+                // como si el usuario no tuviese premio
+                makePlayRequest(config);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
             });
-            userDispatch(setPrizeForUser(null));
-
-            // luego de eliminado el objeto se trata la app como si el usuario no tuviese premio
-            makePlayRequest(config);
-          } else {
-            // EL OBJETO no ha expirado
-            setCasillaRandom();
-            thereIsPrizeResult.current = true;
-            console.log(horas_restantes);
-            setHorasRestantes(horas_restantes);
-            setTimeout(() => {
-              setPremioAcumulado(true);
-            }, ANIMATION_TIME);
-          }
         }
       }
     }
@@ -684,13 +691,7 @@ const GameScreen = ({ navigation }) => {
         if (prize_result === "" || prize_result === undefined) {
           setCasilla({ type: "Nada" });
           // time
-          //const prizeStartTime = moment();
           const expirationDate = moment().add(1, "days");
-
-          //const expirationDate = moment().add(3, "minutes"); //test
-
-          //console.log(minutos_restantes);
-
           nuevaRecargaDispatch(resetNuevaRecargaState());
 
           setTimeout(() => {
@@ -711,11 +712,12 @@ const GameScreen = ({ navigation }) => {
             );
           }, ANIMATION_TIME);
         } else {
+          // se gana un premio
           setCasilla(prize_result);
 
           // time
-          const prizeStartTime = moment();
-          const expirationDate = moment(prize_result.expirationDate).local();
+
+          //const expirationDate = moment(prize_result.expirationDate).local();
           //const expirationDate = moment().add(3, "days");
           //const expirationDate = moment().add(3, "minutes"); //test
 
@@ -726,13 +728,11 @@ const GameScreen = ({ navigation }) => {
               ...userState,
               prize: {
                 ...prize_result,
-                expirationDate,
               },
             });
             userDispatch(
               setPrizeForUser({
                 ...prize_result,
-                expirationDate,
               })
             );
           }, ANIMATION_TIME);
@@ -829,35 +829,7 @@ const GameScreen = ({ navigation }) => {
       casillaFinal,
     ],
     //extrapolate: "extended",
-
-    /* inputRange: [0, 1],
-    outputRange: ["0deg", casillaFinal],
-    extrapolate: "clamp", */
-
-    /* inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
-    outputRange: [
-      "0deg",
-      "360deg",
-      "720deg",
-      "1080deg",
-      "1440deg",
-      casillaFinal,
-    ], */
   });
-
-  /* const wheel = wheelValue.current.interpolate({
-    // Next, interpolate beginning and end values (in this case 0 and 1)
-    
-    outputRange: [
-      "0deg",
-      "360deg",
-      "720deg",
-      "1080deg",
-      "1440deg",
-      casillaFinal,
-      //1800 complete
-    ],
-  }); */
 
   const Salir = () => {
     setCodigoGenerado(false);
@@ -884,19 +856,28 @@ const GameScreen = ({ navigation }) => {
 
     axios(config)
       .then((response) => {
-        //console.log("check skull", response.status);
-        console.log(userState.prize);
+        console.log("checkeo de si skull expiro", response.status);
+        // console.log(userState.prize);
         if (response.status === 200) {
           const hasPrize = response.data.hasPrize;
           if (!hasPrize) {
-            // no tiene premio
-            // o sea, no tiene skull
+            // la skull ha expirado
             storeData("user", {
               ...userState,
               prize: null,
             });
             // eliminar premio del estado de la app
             userDispatch(setPrizeForUser(null));
+
+            // informar
+            Toast.show(ResolveText("CalaveraExpirada"), {
+              duaration: Toast.durations.LONG,
+              position: Toast.positions.BOTTOM,
+              shadow: true,
+              animation: true,
+              hideOnPress: true,
+              delay: 0,
+            });
           }
         }
       })
@@ -1017,6 +998,7 @@ const GameScreen = ({ navigation }) => {
                   setPrizePendingError={setPrizePendingError}
                   setPrizeInactiveError={setPrizeInactiveError}
                   setVerificationError={setVerificationError}
+                  setPremioExpirado={setPremioExpirado}
                 />
               </RootSiblingParent>
             </View>
@@ -1362,65 +1344,31 @@ const GameScreen = ({ navigation }) => {
             }}
             onPress={() => {
               if (userState.prize !== null) {
-                // actualizar horas restantes
-                // tanto para nada como para los premios drntro del modal
                 const currentTime = moment();
-                const expirationDate = moment(userState.prize?.expirationDate);
+                const expirationDate = moment(
+                  userState.prize?.expirationDate
+                ).local();
                 const horas_restantes = expirationDate.diff(
                   currentTime,
                   "hours"
                 );
+                // actualizo horas respantes para mostrar
+                setHorasRestantes(horas_restantes);
 
-                const minutos_restantes = expirationDate.diff(
-                  currentTime,
-                  "minutes"
-                );
-
-                //console.log(segundos_restantes);
-                //console.log(minutos_restantes);
-
-                if (minutos_restantes < 0) {
-                  // ---- el premio ha expirado
-
-                  // ---- si es nada: Toast de que ya puedes jugar
-                  if (userState.prize.type === "Nada") {
-                    Toast.show(ResolveText("CalaveraExpirada"), {
-                      duaration: Toast.durations.LONG,
-                      position: Toast.positions.BOTTOM,
-                      shadow: true,
-                      animation: true,
-                      hideOnPress: true,
-                      delay: 0,
-                    });
-                  } else {
-                    // ---- era un premio, MODAL de que ha EXPIRADO
-                    // abrir modal
-                    setPremioExpirado(true);
-                  }
-
-                  // ---- siendo nada o premio lo que expiró...
-                  // ---- eliminar del storage
-                  storeData("user", {
-                    ...userState,
-                    prize: null,
-                  });
-                  // ---- eliminar premio del estado de la app
-                  userDispatch(setPrizeForUser(null));
+                if (userState.prize.type === "Nada") {
+                  // tiene skull
+                  setNadaDescriptionModalVisible(true);
+                  checkIfSkullExpired();
+                  // se elimina de la app si expiró
                 } else {
-                  // ---- el premio (o la skull) no ha expirado
-                  // flujo normal
-                  setHorasRestantes(horas_restantes);
-                  if (userState.prize.type === "Nada") {
-                    setNadaDescriptionModalVisible(true);
-                    checkIfSkullExpired();
-                  } else {
-                    enMovimiento.current = false;
-                    setModalCobrarPremioVisible(true);
-                  }
+                  // tiene un premio
+                  // mostrar modal
+                  enMovimiento.current = false;
+                  setModalCobrarPremioVisible(true);
                 }
               } else {
-                // ---- no hay premio en la app
-                // ---- informar
+                // no hay premio en la app
+                // informar
                 let toast = Toast.show(ResolveText("premioVacio"), {
                   duaration: Toast.durations.LONG,
                   position: Toast.positions.BOTTOM,

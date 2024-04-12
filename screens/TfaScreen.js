@@ -1,25 +1,25 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ActivityIndicator, TextInput, TouchableOpacity } from "react-native";
 import Toast from "react-native-root-toast";
-import { StyleSheet, View, Dimensions, Image, Platform } from "react-native";
+import { View, Dimensions } from "react-native";
 //import { NeuButton, NeuInput } from "react-native-neu-element";
-
 import { BASE_URL } from "../constants/domain";
 import { signup } from "../context/Actions/actions";
 import { GlobalContext } from "../context/GlobalProvider";
-import * as SecureStore from "expo-secure-store";
+// import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ImageBackground } from "react-native";
-import { TextBold, TextItalic, TextMedium } from "../components/CommonText";
+import { TextBold } from "../components/CommonText";
 import axios from "axios";
 import { buttonColor } from "../constants/commonColors";
 import { TouchableWithoutFeedback } from "react-native";
 import { Keyboard } from "react-native";
+// import { getPrizeForUser } from "../libs/getPrizeForUser";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
 
-const TfaScreen = ({ navigation, route }) => {
+const TfaScreen = ({ route }) => {
   const { userState, userDispatch } = useContext(GlobalContext);
   const { name, email, phone } = route.params;
 
@@ -37,9 +37,9 @@ const TfaScreen = ({ navigation, route }) => {
     [navigation]
   ); */
 
-  async function storeSacureValue(key, value) {
+  /* async function storeSacureValue(key, value) {
     await SecureStore.setItemAsync(key, value);
-  }
+  } */
 
   const storeData = async (value) => {
     try {
@@ -152,18 +152,22 @@ const TfaScreen = ({ navigation, route }) => {
       .then((result) => {
         //console.log(result);
         //console.log(typeof result);
+
         const newUser = result;
-        //console.log("newUser", newUser);
+
         if (newUser) {
-          const token = newUser.accessToken;
-          storeSacureValue("token", token);
+          setLoadingTwo(false);
+
+          // const token = newUser.accessToken;
+          // storeSacureValue("token", token);
           storeData({
-            //token: newUser.accessToken,
+            token: newUser.accessToken, //new
             id: newUser.id,
             name: newUser.name,
             email: newUser.email,
             phone: newUser.phone,
             prize: null,
+            idioma: idioma, //new
             country: "CUB",
           });
 
@@ -179,6 +183,7 @@ const TfaScreen = ({ navigation, route }) => {
               country: "CUB",
             })
           );
+
           // se llama a useCachedResources() para
           // actualizar la data de premios
           // de este user
@@ -231,7 +236,7 @@ const TfaScreen = ({ navigation, route }) => {
             //console.log(response.status);
             // valid code => signup
             fetchRegister(name, email, phone);
-            setLoadingTwo(false);
+            //setLoadingTwo(false);
           }
         })
         .catch((error) => {

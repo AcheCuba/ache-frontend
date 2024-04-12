@@ -8,6 +8,9 @@ import {
   generalBgColorTrans8,
 } from "../../../constants/commonColors";
 import LargeFlatButton from "../../../components/LargeFlatButton";
+import { getPrizeForUser } from "../../../libs/getPrizeForUser";
+import { storeData } from "../../../libs/asyncStorage.lib";
+import { setPrizeForUser } from "../../../context/Actions/actions";
 
 const CodigoRecargaModal = ({
   modalVisible,
@@ -19,7 +22,7 @@ const CodigoRecargaModal = ({
   fieldIdMatched,
 }) => {
   const [text, setText] = useState("");
-  const { userState } = React.useContext(GlobalContext);
+  const { userState, userDispatch } = React.useContext(GlobalContext);
   const idioma = userState?.idioma;
 
   React.useEffect(() => {
@@ -74,19 +77,21 @@ const CodigoRecargaModal = ({
           />
         </View>
 
-        <View
-          style={{
-            marginTop: 30,
-          }}
-        >
-          <LargeFlatButton
-            text={idioma === "spa" ? "Añadir mi premio" : "Add my prize"}
-            _width={width / 1.6}
-            onPress={() => {
-              onPressOkModal(fieldIdMatched, userState?.prize?.uuid);
+        {userState.prize?.type != "Nada" ? (
+          <View
+            style={{
+              marginTop: 30,
             }}
-          />
-        </View>
+          >
+            <LargeFlatButton
+              text={idioma === "spa" ? "Añadir mi premio" : "Add my prize"}
+              _width={width / 1.6}
+              onPress={() => {
+                onPressOkModal(fieldIdMatched, userState?.prize?.uuid);
+              }}
+            />
+          </View>
+        ) : null}
 
         <View
           style={{

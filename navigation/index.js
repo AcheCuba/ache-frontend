@@ -32,12 +32,12 @@ const Stack = createStackNavigator();
 
 //const onBoardingConsumed = true;
 
-function RootNavigator({ navigation, route }) {
+function RootNavigator() {
   const { userState } = React.useContext(GlobalContext);
 
-  //console.log(userState)
-  //console.log("userState index.js", userState);
-  //console.log("token", userState.token);
+  // console.log(userState)
+  // console.log("userState index.js", userState);
+  // console.log("token", userState.token);
 
   //Alert.alert(`token: ${userState.token}`)
 

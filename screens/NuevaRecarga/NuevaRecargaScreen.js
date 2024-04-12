@@ -22,6 +22,7 @@ import {
   setCountryForUser,
   setOperatorForUser,
   resetNuevaRecargaState,
+  setPrizeForUser,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import Toast from "react-native-root-toast";
@@ -40,6 +41,7 @@ import { storeData } from "../../libs/asyncStorage.lib";
 import ProviderMenuModal from "./components/ProviderMenuModal";
 import { buttonColor } from "../../constants/commonColors";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { getPrizeForUser } from "../../libs/getPrizeForUser";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -400,6 +402,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       );
       setModalVisible(false);
     } else {
+      // no esta repetico
       // actualizar loading
       nuevaRecargaDispatch(
         setPrize({
@@ -413,9 +416,11 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
       validate_prize(uuid)
         .then((response) => {
           const currentPrize = response.data;
+
           //console.log(currentPrize);
           const type = currentPrize.type;
 
+          // el premio es valido
           // actualizar lista de premios validados
           nuevaRecargaDispatch(
             updatePrize(uuid, {
@@ -428,6 +433,51 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           nuevaRecargaDispatch(toggleValidateInProcess(false));
         })
         .catch(() => {
+          // el premio no es valido
+          // para el caso add my prize
+          // si el user no tiene premio, eliminar de la app e informar
+          // es promise, el codigi invalido saldra en cualquier caso
+
+          if (uuid === userState.prize?.uuid) {
+            getPrizeForUser(userState)
+              .then((response) => {
+                if (response.status === 200) {
+                  const hasPrize = response.data.hasPrize;
+                  if (!hasPrize) {
+                    // el premio ha expirado
+
+                    //eliminar de storage y de app
+                    storeData("user", {
+                      ...userState,
+                      prize: null,
+                    });
+                    userDispatch(setPrizeForUser(null));
+
+                    // informar
+                    setTimeout(() => {
+                      Toast.show(
+                        userState?.idioma === "spa"
+                          ? "Lo sentimos, su premio ha expirado"
+                          : "Sorry, your prize has expired",
+                        {
+                          duaration: Toast.durations.LONG,
+                          position: Toast.positions.BOTTOM,
+                          shadow: true,
+                          animation: true,
+                          hideOnPress: true,
+                          delay: 0,
+                        }
+                      );
+                    }, 2000);
+                  }
+                }
+              })
+              .catch((err) => {
+                // errorcito no manejado
+                console.log("error en get user nueva recarga screen", err);
+              });
+          }
+
           Toast.show(ResolveText("codigoInvalido"), {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,

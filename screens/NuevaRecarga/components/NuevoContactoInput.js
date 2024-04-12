@@ -85,14 +85,19 @@ const NuevoContactoInput = ({
     if (contactoExistente !== undefined) {
       onPressBarcode(fieldInputId);
     } else {
-      Toast.show("Añade un contacto primero", {
-        duaration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
+      Toast.show(
+        userState?.idioma === "spa"
+          ? "Debes añadir un contacto primero"
+          : "First, you should add a contact",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
     }
   };
 
