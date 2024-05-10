@@ -20,9 +20,13 @@ import {
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
 import * as SplashScreen from "expo-splash-screen";
-import { View } from "react-native";
+import { ImageBackground, View } from "react-native";
 import LottieView from "lottie-react-native";
 import { Audio, Video, ResizeMode } from "expo-av";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -92,7 +96,15 @@ function AnimatedSplashScreen({ animationSource, children }) {
     <View style={{ flex: 1 }}>
       {isSplashAnimationComplete && children}
       {!isSplashAnimationComplete && (
-        <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <View
+          //source={require("../assets/images/first_screen_splash.png")}
+          style={{
+            flex: 1,
+            //backgroundColor: "#fff",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           {/* <Video
             ref={video}
             style={{
@@ -114,6 +126,11 @@ function AnimatedSplashScreen({ animationSource, children }) {
             loop={false}
             source={animationSource}
             ref={animation}
+            style={{
+              height: hp("105%"),
+              width: wp("100%"),
+            }}
+            resizeMode="cover"
             // onAnimationFinish={() => {
             // if (isAppReady) {
             //   setAnimationComplete(true);

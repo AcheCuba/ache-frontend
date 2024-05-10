@@ -6,8 +6,8 @@ import {
   Text,
   FlatList,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import normalize from "react-native-normalize";
 import { TextBold, TextMedium } from "../../../components/CommonText";
 import {

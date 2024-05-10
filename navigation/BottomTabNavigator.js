@@ -5,7 +5,7 @@ import { useNavigationState } from "@react-navigation/native";
 import * as React from "react";
 
 import "react-native-gesture-handler";
-import { PixelRatio, Text, TouchableOpacity } from "react-native";
+import { PixelRatio, Platform, Text, TouchableOpacity } from "react-native";
 
 // screens
 

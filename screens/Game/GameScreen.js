@@ -586,6 +586,7 @@ const GameScreen = ({ navigation }) => {
 
   const onPressWheel = async (touchOn) => {
     const networkState = await getNetworkState();
+    //console.log(networkState);
     if (!networkState.isConnected || !networkState.isInternetReachable) {
       playSoundError();
       let toast = Toast.show(ResolveText("errorConexion"), {
@@ -1149,6 +1150,17 @@ const GameScreen = ({ navigation }) => {
                     }}
                     text={ResolveText("cancelar")}
                   />
+                  {/* <TouchableOpacity
+                    onPress={() => {
+                      setPremioAcumulado(false);
+                    }}
+                    style={{
+                      height: 100,
+                      width: 300,
+                    }}
+                  >
+                    <Text>pruebita</Text>
+                  </TouchableOpacity> */}
                 </View>
               </View>
             </LinearGradient>

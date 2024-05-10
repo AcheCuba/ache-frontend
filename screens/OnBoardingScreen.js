@@ -17,6 +17,10 @@ import {
   generalBgColor,
   generalBgColorTrans5,
 } from "../constants/commonColors";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -209,10 +213,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       position: "absolute",
                       //top: 80,
-                      top:
-                        Platform.OS === "android"
-                          ? normalize(110)
-                          : normalize(80),
+                      top: Platform.OS === "android" ? hp("14%") : hp("10%"),
                       paddingHorizontal: 10,
                     }}
                   >
@@ -245,7 +246,7 @@ const OnBoardingScreen = ({ navigation }) => {
                       position: "absolute",
                       left: 0,
                       //top: normalize(height / 6, "height"),
-                      top: height / 6,
+                      top: Platform.OS === "android" ? hp("25%") : hp("20%"),
                     }}
                   >
                     <Image
@@ -260,7 +261,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       marginTop: 100,
                       position: "absolute",
-                      bottom: 80,
+                      bottom: Platform.OS === "android" ? hp("4%") : hp("9%"),
                       paddingHorizontal: 10,
                     }}
                   >
@@ -280,10 +281,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       position: "absolute",
                       //top: 60,
-                      top:
-                        Platform.OS === "android"
-                          ? normalize(110)
-                          : normalize(80),
+                      top: Platform.OS === "android" ? hp("14%") : hp("10%"),
                       paddingHorizontal: 10,
                     }}
                   >
@@ -318,7 +316,8 @@ const OnBoardingScreen = ({ navigation }) => {
                       position: "absolute",
                       left: 0,
                       //top: normalize(height / 6, "height"),
-                      top: height / 6,
+                      //top: height / 6,
+                      top: Platform.OS === "android" ? hp("25%") : hp("20%"),
                     }}
                   >
                     <Image
@@ -330,7 +329,7 @@ const OnBoardingScreen = ({ navigation }) => {
                     style={{
                       //marginTop: 100,
                       position: "absolute",
-                      bottom: 80,
+                      bottom: Platform.OS === "android" ? hp("4%") : hp("9%"),
                       paddingHorizontal: 10,
                     }}
                   >
@@ -410,7 +409,13 @@ const OnBoardingScreen = ({ navigation }) => {
                       alignItems: "center",
                     }}
                   >
-                    <View style={{ paddingHorizontal: 20 }}>
+                    <View
+                      style={{
+                        paddingHorizontal: 20,
+                        height: hp("60%"),
+                        justifyContent: "center",
+                      }}
+                    >
                       <Text
                         style={{
                           marginBottom: 30,
@@ -427,14 +432,23 @@ const OnBoardingScreen = ({ navigation }) => {
                         <Text> </Text>
                         <Text> </Text>
 
-                        <Image
-                          source={require("../assets/images/home/boton_recarga_premio.png")}
+                        <View
                           style={{
-                            marginTop: -13,
-                            width: 35,
-                            height: 35,
+                            width: 20,
+                            height: 20,
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}
-                        />
+                        >
+                          <Image
+                            source={require("../assets/images/home/boton_recarga_premio.png")}
+                            style={{
+                              marginTop: Platform.OS == "ios" ? 0 : 3,
+                              width: 35,
+                              height: 35,
+                            }}
+                          />
+                        </View>
                       </Text>
 
                       <TextMedium
@@ -464,7 +478,13 @@ const OnBoardingScreen = ({ navigation }) => {
                       alignItems: "center",
                     }}
                   >
-                    <View style={{ paddingHorizontal: 20 }}>
+                    <View
+                      style={{
+                        paddingHorizontal: 20,
+                        height: hp("60%"),
+                        justifyContent: "center",
+                      }}
+                    >
                       <Text
                         style={{
                           marginBottom: 30,
@@ -478,17 +498,27 @@ const OnBoardingScreen = ({ navigation }) => {
                             textAlign: "center",
                           }}
                         />
+
                         <Text> </Text>
                         <Text> </Text>
 
-                        <Image
-                          source={require("../assets/images/home/boton_recarga_premio.png")}
+                        <View
                           style={{
-                            marginTop: -13,
-                            width: 35,
-                            height: 35,
+                            width: 20,
+                            height: 20,
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}
-                        />
+                        >
+                          <Image
+                            source={require("../assets/images/home/boton_recarga_premio.png")}
+                            style={{
+                              marginTop: Platform.OS == "ios" ? 0 : 3,
+                              width: 35,
+                              height: 35,
+                            }}
+                          />
+                        </View>
                       </Text>
 
                       <TextMedium

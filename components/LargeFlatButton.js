@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import { Text, Pressable, Dimensions } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-//import NeuButton from "../libs/neu_element/NeuButton";
+import React from "react";
+import { Text, Dimensions, TouchableOpacity } from "react-native";
 import { buttonColor } from "../constants/commonColors";
 
 const { width } = Dimensions.get("screen");

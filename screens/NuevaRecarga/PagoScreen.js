@@ -384,7 +384,7 @@ const PagoScreen = ({ navigation, route }) => {
     // console.log("amount", amount);
     const input = {
       amount: amount, // amount total
-      //amount: 5, // amount preprod
+      // amount: 5, // amount preprod
       name: name, // nombre del usuario actual
       email: email, // email del usuario actual
     };
@@ -444,8 +444,8 @@ const PagoScreen = ({ navigation, route }) => {
 
     axios(config)
       .then((response) => {
-        //console.log(response.data);
-        //console.log(response.status);
+        // console.log(response.data);
+        // console.log("create payment session", response.status);
         const res = response.data;
         setSessionId(res.id);
         setPaymentIntentId(res.payment_intent);

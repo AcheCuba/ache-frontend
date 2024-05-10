@@ -39,25 +39,32 @@ function RootNavigator() {
   // console.log("userState index.js", userState);
   // console.log("token", userState.token);
 
+  /* const [userToken, setUserToken] = React.useState(undefined);
+
+  React.useEffect(() => {
+    if (userState.token !== undefined) {
+      setUserToken(userState.token);
+    }
+  }, [userState]); */
+
   //Alert.alert(`token: ${userState.token}`)
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {userState.token === undefined ? (
-        <>
-          <Stack.Screen name="Onboarding" component={OnBoardingScreen} />
-          <Stack.Screen name="Signup" component={SignupScreenUptd} />
-          <Stack.Screen name="Tfa" component={TfaScreen} />
-        </>
-      ) : (
+      {userState.token !== undefined ? (
         <>
           <Stack.Screen name="Root" component={BottomTabNavigator} />
-          {/* <Stack.Screen name="Root" component={BottomTabNavigator} /> */}
           <Stack.Screen
             name="NotFound"
             component={NotFoundScreen}
             options={{ title: "Oops!" }}
           />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Onboarding" component={OnBoardingScreen} />
+          <Stack.Screen name="Signup" component={SignupScreenUptd} />
+          <Stack.Screen name="Tfa" component={TfaScreen} />
         </>
       )}
     </Stack.Navigator>

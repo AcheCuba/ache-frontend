@@ -6,6 +6,7 @@ import {
   ScrollView,
   ActivityIndicator,
   PixelRatio,
+  Platform,
 } from "react-native";
 
 import NuevoContactoInput from "./components/NuevoContactoInput";
@@ -42,6 +43,7 @@ import ProviderMenuModal from "./components/ProviderMenuModal";
 import { buttonColor } from "../../constants/commonColors";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getPrizeForUser } from "../../libs/getPrizeForUser";
+import normalize from "react-native-normalize";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -715,13 +717,14 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
             width: width / 7,
             height: width / 7 - 20,
             borderRadius: 5,
+            paddingTop: 3,
           }}
         >
           <View
             style={{
               flex: 1,
               alignItems: "center",
-              justifyContent: "flex-end",
+              justifyContent: "center",
             }}
           >
             {userCountry == "CUB" ? (
@@ -744,9 +747,10 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
               text={userCountry}
               style={{
                 fontSize: 14 / PixelRatio.getFontScale(),
+                //fontSize: 14,
                 color: "#fffb00",
                 textTransform: "uppercase",
-                marginTop: 5,
+                marginTop: Platform.OS === "ios" ? 5 : 0,
               }}
             />
           </View>

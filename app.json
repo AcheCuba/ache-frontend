@@ -4,7 +4,7 @@
     "name": "Spin Recargas",
     "slug": "ache",
     "privacy": "unlisted",
-    "version": "1.0.16",
+    "version": "1.0.17",
     "orientation": "portrait",
     "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",
@@ -13,7 +13,7 @@
       "image": "./assets/images/first_screen_splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
-    }, 
+    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -32,7 +32,6 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app_icon_foreground.png",
         "backgroundImage": "./assets/images/app_icon_background.png"
-        //"backgroundColor": "#701c57"
       }
     },
     "web": {
@@ -45,19 +44,10 @@
       }
     },
     "plugins": [
-      "sentry-expo"
-    ],
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "achecuba",
-            "project": "react-native",
-            "authToken": "a637194858b54c9097e86ea88afe24f47e3ca9c400e345dbae49c5656ddaf489"
-          }
-        }
-      ]
-    }
+      "expo-asset",
+      "expo-font",
+      "expo-secure-store"
+    ]
+    
   }
 }

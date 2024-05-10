@@ -1,12 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { ActivityIndicator } from "react-native";
-import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
+import { StyleSheet, View, Dimensions, Image } from "react-native";
 import { generalBgColorTrans8 } from "../../../constants/commonColors";
 import { buttonColor } from "../../../constants/commonColors";
-
-import NeuButton from "../../../libs/neu_element/NeuButton";
-import NeuView from "../../../libs/neu_element/NeuView";
-
 import { GlobalContext } from "../../../context/GlobalProvider";
 import { TextBoldItalic } from "../../../components/CommonText";
 import LargeFlatButton from "../../../components/LargeFlatButton";

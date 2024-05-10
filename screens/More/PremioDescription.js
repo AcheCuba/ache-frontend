@@ -8,6 +8,10 @@ import { TextBold, TextItalic } from "../../components/CommonText";
 import LargeFlatButton from "../../components/LargeFlatButton";
 import { buttonColor, infoTextColor } from "../../constants/commonColors";
 import { GlobalContext } from "../../context/GlobalProvider";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -34,7 +38,7 @@ const PremioDescription = ({ navigation, route }) => {
         _onPress={() => navigation.navigate("MoreScreen")}
       />
       <View style={styles.container}>
-        <View style={{ flex: 1, marginTop: 250 }}>
+        <View style={{ flex: 1, marginTop: hp("20%") }}>
           <View style={{ alignItems: "center" }}>
             <TextBold
               style={{
@@ -68,7 +72,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    //backgroundColor: "rgba(112, 28, 87, 1)",
     marginHorizontal: marginGlobal,
   },
   title: {

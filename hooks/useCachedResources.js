@@ -112,9 +112,7 @@ export default function useCachedResources() {
         if (user === null) {
           console.log("user es null");
           interfaceDispatch(setShowInvisibleLoadData(true));
-        }
-
-        if (user != null) {
+        } else {
           getPrizeForUser(user)
             .then((response) => {
               if (response.status === 200) {
@@ -202,7 +200,9 @@ export default function useCachedResources() {
               }
             })
             .catch((err) => {
-              console.log(err);
+              console.log("error obteniendo info del usuario", err);
+              // carga la app con la info mas reciente
+              userDispatch(restore_user(user));
             });
         }
       } catch (e) {

@@ -7,6 +7,18 @@ import { LogBox } from "react-native";
 
 LogBox.ignoreLogs(["EventEmitter.removeListener"]);
 
+LogBox.ignoreLogs([
+  "Warning: TextButton: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.",
+]);
+
+LogBox.ignoreLogs([
+  "Warning: Page: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.",
+]);
+
+LogBox.ignoreLogs([
+  "Warning: SymbolButton: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.",
+]);
+
 /* Sentry.init({
   dsn: "https://7d4121e01a674daaa645b8c483a6f48d@o4504601837109248.ingest.sentry.io/4504601850216448",
   enableInExpoDevelopment: true,
