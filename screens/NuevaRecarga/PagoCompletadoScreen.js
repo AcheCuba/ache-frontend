@@ -1,5 +1,4 @@
 import React from "react";
-import { ActivityIndicator } from "react-native";
 import { Image } from "react-native";
 import { View, Dimensions, ImageBackground } from "react-native";
 import { TextBold } from "../../components/CommonText";
@@ -7,43 +6,28 @@ import {
   ResultadoPagoTextEnglish,
   ResultadoPagoTextSpanish,
 } from "../../constants/Texts";
-import {
-  resetNuevaRecargaState,
-  SetGlobalUpdateCompleted,
-} from "../../context/Actions/actions";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { Audio } from "expo-av";
 import { CommonActions } from "@react-navigation/native";
 import LargeFlatButton from "../../components/LargeFlatButton";
+import { useAndroidBackHandler } from "react-navigation-backhandler";
 
 const { width } = Dimensions.get("screen");
 
 const PagoCompletadoScreen = ({ navigation }) => {
   const { userState } = React.useContext(GlobalContext);
-  const { socketState, socketDispatch, nuevaRecargaDispatch } =
-    React.useContext(GlobalContext);
-  const { globalUpdateCompleted } = socketState;
-
   const [soundPagoConfirmado, setSoundPagoConfirmado] = React.useState();
   const [soundFbPositivo, setSoundFbPositivo] = React.useState();
-  const [updateForzado, setUpdateForzado] = React.useState(false);
 
-  // es posible que esto lo use mas adelante
-  /* React.useEffect(() => {
-    if (globalUpdateCompleted || updateForzado) {
-      // limpiar storage (user en proceso de recarga)
-    }
-
-  }, [globalUpdateCompleted, updateForzado]); */
-
-  React.useEffect(() => {
-    const timer_id = setTimeout(() => {
-      //console.log("update forzado");
-      setUpdateForzado(true);
-    }, 10000);
-
-    return () => clearTimeout(timer_id);
-  }, []);
+  useAndroidBackHandler(() => {
+    /*
+     *   Returning `true` denotes that we have handled the event,
+     *   and react-navigation's lister will not get called, thus not popping the screen.
+     *
+     *   Returning `false` will cause the event to bubble up and react-navigation's listener will pop the screen.
+     * */
+    return true;
+  });
 
   React.useEffect(() => {
     playSoundPagoConfirmado();
@@ -159,30 +143,23 @@ const PagoCompletadoScreen = ({ navigation }) => {
 
         <View style={{ width: "100%", alignItems: "center" }}>
           <View style={{ marginTop: 50 }}>
-            {globalUpdateCompleted || updateForzado ? (
-              <LargeFlatButton
-                text={ResolveText("inicio")}
-                onPress={async () => {
-                  //navigation.navigate("Juego");
-                  await playSoundFbPositivo();
-                  navigation.dispatch(
-                    CommonActions.reset({
-                      index: 0,
-                      routes: [{ name: "Juego" }],
-                    })
-                  );
-                  /* navigation.reset({
+            <LargeFlatButton
+              text={ResolveText("inicio")}
+              onPress={async () => {
+                //navigation.navigate("Juego");
+                await playSoundFbPositivo();
+                navigation.dispatch(
+                  CommonActions.reset({
                     index: 0,
                     routes: [{ name: "Juego" }],
-                  }); */
-                  nuevaRecargaDispatch(resetNuevaRecargaState());
-                  socketDispatch(SetGlobalUpdateCompleted(false));
-                }}
-                screenWidth={width}
-              />
-            ) : (
-              <ActivityIndicator size="large" color="#01f9d2" />
-            )}
+                  })
+                );
+
+                // nuevaRecargaDispatch(resetNuevaRecargaState());
+                // socketDispatch(SetGlobalUpdateCompleted(false));
+              }}
+              screenWidth={width}
+            />
           </View>
         </View>
       </View>

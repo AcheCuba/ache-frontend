@@ -63,6 +63,34 @@ export const setOperatorForUser = (operator) => {
 
 // ================================= ACTIONS FOR NUEVA RECARGA STATE ===========================
 
+export const setHayPremioCobradoModal = (hayPremioCobrado) => {
+  return {
+    type: actionTypes.SET_HAY_PREMIO_COBRADO_MODAL,
+    hayPremioCobrado,
+  };
+};
+
+export const setHayPremioFallidoModal = (hayPremioFallido) => {
+  return {
+    type: actionTypes.SET_HAY_PREMIO_FALLIDO_MODAL,
+    hayPremioFallido,
+  };
+};
+
+export const setPaymentPriceUsd = (productPriceUsd) => {
+  return {
+    type: actionTypes.SET_PAYMENT_PRICE_USD,
+    productPriceUsd,
+  };
+};
+
+export const setPaymentIntentId = (paymentIntentId) => {
+  return {
+    type: actionTypes.SET_PAYMENT_INTENT_ID,
+    paymentIntentId,
+  };
+};
+
 export const resetNuevaRecargaState = () => {
   return {
     type: actionTypes.RESET_NUEVA_RECARGA_STATE,
@@ -180,32 +208,6 @@ export const setFields = (isFirstField, fieldId) => {
   };
 };
 
-export const setTransaccionesNormalesConfirmadas = (transaccionesNormales) => {
-  return {
-    type: actionTypes.SET_TRANSACCIONES_NORMALES_CONFIRMADAS,
-    transaccionesNormales,
-  };
-};
-
-export const setTransaccionesPremioConfirmadas = (transaccionesPremio) => {
-  return {
-    type: actionTypes.SET_TRANSACCIONES_PREMIO_CONFIRMADAS,
-    transaccionesPremio,
-  };
-};
-
-export const deleteAllTransaccionesNormales = () => {
-  return {
-    type: actionTypes.DELETE_ALL_TRANSACCIONES_NORMALES,
-  };
-};
-
-export const deleteAllTransaccionesPremio = () => {
-  return {
-    type: actionTypes.DELETE_ALL_TRANSACCIONES_PREMIO,
-  };
-};
-
 export const setTransactionsIdArray = (transactionsIdArray) => {
   return {
     type: actionTypes.SET_TRANSACTIONS_ID_ARRAY,
@@ -215,17 +217,34 @@ export const setTransactionsIdArray = (transactionsIdArray) => {
 
 // ================================= ACTIONS for socket STATE ===========================
 
-export const openSocket = () => {
+export const setNewTransaccionNormalCompletada = (transaccion) => {
   return {
-    type: actionTypes.OPEN_SOCKET,
+    type: actionTypes.SET_NEW_TRANSACCION_NORMAL_COMPLETADA,
+    transaccion,
   };
 };
 
-export const closeSocket = () => {
+export const setNewTransaccionPremioCompletada = (transaccion) => {
   return {
-    type: actionTypes.CLOSE_SOCKET,
+    type: actionTypes.SET_NEW_TRANSACCION_PREMIO_COMPLETADA,
+    transaccion,
   };
 };
+
+export const setNewTransaccionNormalFallida = (transaccion) => {
+  return {
+    type: actionTypes.SET_NEW_TRANSACCION_NORMAL_FALLIDA,
+    transaccion,
+  };
+};
+
+export const setNewTransaccionPremioFallida = (transaccion) => {
+  return {
+    type: actionTypes.SET_NEW_TRANSACCION_PREMIO_FALLIDA,
+    transaccion,
+  };
+};
+
 export const setSocketId = (socketId) => {
   return {
     type: actionTypes.SET_SOCKET_ID,
@@ -247,38 +266,8 @@ export const setTransaccionesPremioEsperadas = (transactions) => {
   };
 };
 
-export const setTransaccionesNormalesResultado = (transactions) => {
+export const resetSocketState = () => {
   return {
-    type: actionTypes.SET_TRANSACCIONES_NORMALES_RESULTADO,
-    transactions,
-  };
-};
-
-export const setTransaccionesPremioResultado = (transactions) => {
-  return {
-    type: actionTypes.SET_TRANSACCIONES_PREMIO_RESULTADO,
-    transactions,
-  };
-};
-
-export const setNewTransaccionNormalResultado = (newTransaction) => {
-  return {
-    type: actionTypes.SET_NEW_TRANSACCION_NORMAL_RESULTADO,
-    newTransaction,
-  };
-};
-
-export const setNewTransaccionPremioResultado = (newTransaction) => {
-  return {
-    type: actionTypes.SET_NEW_TRANSACCION_PREMIO_RESULTADO,
-    newTransaction,
-  };
-};
-
-export const SetGlobalUpdateCompleted = (globalUpdateCompleted) => {
-  //espera boolean
-  return {
-    type: actionTypes.SET_UPDATE_COMPLETED,
-    globalUpdateCompleted,
+    type: actionTypes.RESET_SOCKET_STATE,
   };
 };

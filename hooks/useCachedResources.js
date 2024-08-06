@@ -57,21 +57,6 @@ export default function useCachedResources() {
     return axios(config);
   }; */
 
-  /* const prize_finish_checkout = (token, uuid, success) => {
-    const user_token = token;
-    const url = `${BASE_URL}/prize/finish-checkout/${uuid}`;
-    let config = {
-      method: "post",
-      url: url,
-      params: { success },
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
-
-    return axios(config);
-  }; */
-
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
@@ -118,6 +103,7 @@ export default function useCachedResources() {
               if (response.status === 200) {
                 const hasPrize = response.data.hasPrize;
                 const currentPrize = response.data.activePrize;
+
                 if (hasPrize) {
                   // tiene algo (premio o skull)
 

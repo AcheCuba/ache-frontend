@@ -3,15 +3,9 @@ import { StyleSheet, View, ActivityIndicator, Dimensions } from "react-native";
 import { WebView } from "react-native-webview";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { BASE_URL, frontend_url } from "../../constants/domain";
-
 import axios from "axios";
-import {
-  resetNuevaRecargaState,
-  setPrizeForUser,
-} from "../../context/Actions/actions";
-import { storeData } from "../../libs/asyncStorage.lib";
+import { setPaymentIntentId } from "../../context/Actions/actions";
 import { StatusBar } from "react-native";
-import Toast from "react-native-root-toast";
 
 // antes
 // `${server_url}/api/payments/mobile/create?amount=${input.amount}&name=${input.name}&email=${input.email}`,
@@ -25,58 +19,29 @@ const PagoScreen = ({ navigation, route }) => {
   const [paymentSucceded, setPaymentSucceded] = React.useState(false);
   const [url, setUrl] = React.useState(frontend_url + "payment-init");
   const [sessionId, setSessionId] = React.useState("empty");
-  const [paymentIntentId, setPaymentIntentId] = React.useState("");
 
   //console.log(url);
   const amount = route.params?.amount; //total price usd
-  const transaction_id_array = route.params?.transaction_id_array;
+  const transactions_id_array = route.params?.transactions_id_array;
   const productPriceUsd = route.params?.productPriceUsd;
   //const recharge_amount_por_recarga = route.params?.recharge_amount_por_recarga;
-
-  const {
-    userState,
-    userDispatch,
-    nuevaRecargaState,
-    nuevaRecargaDispatch,
-    socketDispatch,
-  } = React.useContext(GlobalContext);
+  const { userState, nuevaRecargaState, nuevaRecargaDispatch } =
+    React.useContext(GlobalContext);
   const { name, email } = userState;
-  const countryIsoCode = userState?.country;
-  const operatorId = userState?.operator?.id;
-
-  const {
-    transacciones_premio_confirmadas,
-    transacciones_normales_confirmadas,
-    validated_prizes,
-    contactosSeleccionados,
-  } = nuevaRecargaState;
-
-  React.useEffect(() => {
-    if (transacciones_normales_confirmadas.length !== 0) {
-      /* console.log(
-        "TRANSACCIONES CONFIRMADAS",
-        transacciones_normales_confirmadas
-      ); */
-      // confirm transaction de los premios que tienen recargas completadas
-      // finish checkout de premios cuyas recargas fallaron
-      // eliminar la nada de la app (si al menos una recarga sin premio salio bien)
-      managePrizes();
-
-      // devolver el dinero de las recargas que salieron mal
-      refund();
-      /* setTimeout(() => {
-        nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
-      }, 5000); */
-    }
-  }, [transacciones_normales_confirmadas]);
+  const { validated_prizes, contactosSeleccionados } = nuevaRecargaState;
 
   React.useEffect(() => {
     //console.log("paymentSucceded - pago", paymentSucceded);
     if (paymentSucceded) {
-      let confirmTransactionPromisesArray = [];
-      //console.log("transaction id array - pago screen", transaction_id_array);
+      // 1 obtener payment id para refund
+      // nota: esto solo funciona cuando se completa el pago
+      getPaymentIntentId(sessionId);
 
-      transaction_id_array.forEach((transaction) => {
+      // 2 confirmar transacciones
+
+      let confirmTransactionPromisesArray = [];
+
+      transactions_id_array.forEach((transaction) => {
         confirmTransactionPromisesArray.push(
           confirmTransactionRequest(transaction.topUpId, false)
         );
@@ -103,283 +68,6 @@ const PagoScreen = ({ navigation, route }) => {
     }
   }, [paymentSucceded]);
 
-  const managePrizes = () => {
-    console.log("--- manejando los premios ---");
-
-    // === logica === UPDATED 29/09/23
-    // filtrar las transacciones completadas en $transacciones_normales_confirmadas
-    // recorrer ese array
-    // buscar cada transaccion en transaction_id_array
-    // verificar si en esa transaccion prize_uuid es o no undefinded
-    // si no es "undefined": se llama a CLAIM PRIZE
-
-    const prizeInApp = userState.prize;
-    const prizeType = userState.prize?.type;
-
-    console.log(
-      "--- array de transacciones en app -- todas",
-      transaction_id_array
-    );
-
-    const transaccionesNormalesCompletadas =
-      transacciones_normales_confirmadas.filter((recarga) => {
-        return recarga.status === "COMPLETED";
-      });
-
-    console.log(
-      "transacciones completadas -- no-premios",
-      transaccionesNormalesCompletadas
-    );
-
-    const transaccionesNormalesNoCompletadas =
-      transacciones_normales_confirmadas.filter((recarga) => {
-        return recarga.status !== "COMPLETED";
-      });
-
-    if (transaccionesNormalesCompletadas.length != 0) {
-      // alguna se completo exitosamente
-      if (prizeInApp != null && prizeType === "Nada") {
-        // console.log("se entro a eliminar la nada");
-        // elimina la Nada de la app
-        storeData("user", { ...userState, prize: null });
-        userDispatch(setPrizeForUser(null));
-      }
-      transaccionesNormalesCompletadas.forEach(
-        (transaccionNormalCompletada) => {
-          //console.log("transaccion completada", transaccionNormalCompletada);
-          const transaccionDePremio = transaction_id_array.find(
-            (transaccion) => {
-              return (
-                transaccion.topUpId ===
-                  transaccionNormalCompletada.transactionId &&
-                transaccion.prize_uuid != undefined
-              );
-            }
-          );
-          console.log(
-            "--- transaccion de premio asociada: ",
-            transaccionDePremio
-          );
-          if (transaccionDePremio != undefined) {
-            // el usuario tiene algun premio
-
-            claim_prize(
-              transaccionDePremio.dtoneProductId,
-              transaccionDePremio.beneficiary,
-              transaccionDePremio.prize_uuid,
-              transaccionDePremio.socketId
-            )
-              .then((resp) => {
-                console.log("CLAIM PRIZE", resp.status);
-                // console.log(resp.data);
-                // console.log(resp.status);
-
-                // SI ESTE PREMIO ES EL QUE TIENES EN LA APP:
-                // SE ELIMINA DEL BOTON DE PREMIO
-                // PARA ESTO SE ELIMINA DEL STORAGE Y DEL ESTADO DE LA APP
-                if (prizeInApp?.type != "Nada") {
-                  if (prizeInApp?.uuid === transaccionDePremio.prize_uuid) {
-                    // este el premio en la app
-                    // nada más puede coincidir una vez
-                    storeData("user", { ...userState, prize: null });
-                    userDispatch(setPrizeForUser(null));
-                  }
-                }
-
-                // AQUI NO SE RESETEA EL ESTADO DE LA RECARGA
-                // HA CAUSADO PROBLEMAS
-                // SE HACE EN PagoCompletadoScreen.js
-              })
-              .catch((err) => {
-                // ERROR EN EL CLAIM PRIZE
-                // SE LIBERA EL PREMIO: FINISH CHECKOUT FALSE
-                // EL PREMIO SE QUEDA EN LA APP
-                console.log("CLAIM PRIZE ERROR", err.response.status);
-                console.log(err.message);
-                prize_finish_checkout(transaccionDePremio.prize_uuid, false);
-                // se le dice al usuario que hubo un problema
-                Toast.show(
-                  userState?.idioma === "spa"
-                    ? "Hubo un error con la transacción de uno de tus premio"
-                    : "There was an error with the transaction of one of your prizes",
-                  {
-                    duaration: Toast.durations.LONG,
-                    position: Toast.positions.BOTTOM,
-                    shadow: true,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
-                  }
-                );
-              });
-          }
-        }
-      );
-    }
-    // FINALIZA CHECKOUT DE PREMIOS CUYAS TRANSACCIONES
-    // NO SE REALIZARON
-
-    if (transaccionesNormalesNoCompletadas.length != 0) {
-      Toast.show(
-        userState?.idioma === "spa"
-          ? "Hubo un error con alguna de tus transacciones"
-          : "There was an error with one of your transactions",
-        {
-          duaration: Toast.durations.LONG,
-          position: Toast.positions.BOTTOM,
-          shadow: true,
-          animation: true,
-          hideOnPress: true,
-          delay: 0,
-        }
-      );
-      transaccionesNormalesNoCompletadas.forEach(
-        (transaccionNormalNoCompletada) => {
-          const transaccionDePremio = transaction_id_array.find(
-            (transaccion) => {
-              return (
-                transaccion.topUpId ===
-                  transaccionNormalNoCompletada.transactionId &&
-                transaccion.prize_uuid != undefined
-              );
-            }
-          );
-          if (transaccionDePremio != undefined) {
-            /* console.log(
-              "prize finish checkout de premio cuya recarga no se completo"
-            ); */
-            prize_finish_checkout(transaccionDePremio.prize_uuid, false);
-          }
-        }
-      );
-    }
-  };
-
-  const claim_prize = async (
-    dtoneProductId,
-    beneficiary,
-    prizeCode,
-    socketId
-  ) => {
-    const user_token = userState.token;
-    const url = `${BASE_URL}/topup/claim-prize`;
-
-    let config;
-
-    config = {
-      method: "post",
-      url,
-      data: {
-        beneficiary,
-        prizeCode,
-        countryIsoCode,
-        dtoneProductId,
-        operatorId,
-        socketId,
-      },
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
-
-    //console.log("claim prize", config);
-
-    return axios(config);
-  };
-
-  // ahora se llama a TOPUP/CLAIM_PRIZE (SOLO CAMBIA EL NOMBRE)
-  /* const create_transaction_prizes = async (
-    beneficiary,
-    prizeCode,
-    dtoneProductId,
-    socketId
-  ) => {
-    const user_token = userState.token;
-    const url = `${BASE_URL}/topup/create-transaction`;
-    //console.log("socket id pasado al endpoint", socketId);
-
-    let config;
-
-    config = {
-      method: "post",
-      url,
-      data: {
-        beneficiary,
-        prizeCode,
-        dtoneProductId,
-        socketId,
-        countryIsoCode,
-      },
-      headers: {
-        Authorization: `Bearer ${user_token}`,
-      },
-    };
-
-    //console.log("create transaction prizes", config);
-    //console.log("create trnasaction prizes prize code", prizeCode);
-
-    return axios(config);
-  }; */
-
-  const refund = () => {
-    //console.log("se inicia refund si es necesario");
-
-    const user_token = userState.token;
-    const _url = `${BASE_URL}/payments/refund/${paymentIntentId}`;
-
-    let amount_refund = 0;
-    const productPrice = parseFloat(productPriceUsd);
-
-    for (let i = 0; i < transacciones_normales_confirmadas.length; i++) {
-      //const element = array[index];
-      if (transacciones_normales_confirmadas[i].status !== "COMPLETED") {
-        amount_refund = amount_refund + productPrice;
-      }
-    }
-    //console.log(typeof productPrice);
-    //console.log(typeof productPriceUsd);
-    //console.log(typeof amount_refund);
-
-    if (amount_refund != 0) {
-      //console.log("amount refund - pago screen", amount_refund);
-
-      let config = {
-        method: "post",
-        url: _url,
-        params: { amount: amount_refund },
-        headers: {
-          Authorization: `Bearer ${user_token}`,
-        },
-      };
-
-      axios(config)
-        .then((response) => {
-          //console.log("==== refund response =====");
-          //console.log("refund status", response.status);
-          //console.log("request", response.request);
-        })
-        .catch((error) => {
-          //console.log("=== refund error ===");
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            //console.log(error.response.data);
-            //console.log(error.response.status);
-            //console.log(error.response.headers);
-          } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            //console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            //console.log("Error", error.message);
-          }
-          //console.log(error.config);
-        });
-    }
-  };
-
   const createPaymentSession = async () => {
     // console.log("amount", amount);
     const input = {
@@ -404,7 +92,7 @@ const PagoScreen = ({ navigation, route }) => {
           price: undefined,
           isPrize: true,
         });
-      } // si tiene premio, 2 recargas por contacto
+      } // si tiene premio, se crean 2 recargas por contacto
 
       return {
         [contacto.contactNumber]: {
@@ -415,13 +103,8 @@ const PagoScreen = ({ navigation, route }) => {
     });
 
     const description = Object.assign(...createPaymentDescArray);
-
-    // console.log("description", description);
-
     const user_token = userState.token;
     const _url = `${BASE_URL}/payments/create-payment`;
-
-    //console.log(url);
 
     let config = {
       method: "post",
@@ -437,23 +120,42 @@ const PagoScreen = ({ navigation, route }) => {
       },
     };
 
-    //console.log("DATA CREATE PAYMENT", config.data);
-
-    //console.log(config);
-    //console.log("Se ha iniciado el pago");
-
     axios(config)
       .then((response) => {
-        // console.log(response.data);
-        // console.log("create payment session", response.status);
-        const res = response.data;
-        setSessionId(res.id);
-        setPaymentIntentId(res.payment_intent);
-        setUrl(initUrl + "payment?session=" + res.id);
+        const data = response.data;
+        setSessionId(data.id);
+        //setLocalPaymentIntentId(data.payment_intent);
+        setUrl(initUrl + "payment?session=" + data.id);
         setLoading(false);
       })
       .catch((e) => {
-        //console.log("error", e.message);
+        console.log("error", e.message);
+      });
+  };
+
+  const getPaymentIntentId = (id) => {
+    // nota: id -> sessionId
+    // console.log("session id", id);
+
+    const user_token = userState.token;
+    const url = `${BASE_URL}/payments/get-payment-intent-id/${id}`;
+
+    let config = {
+      method: "get",
+      url,
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    axios(config)
+      .then((response) => {
+        // console.log("payment intent id", response.data);
+        const paymentIntentId = response.data;
+        nuevaRecargaDispatch(setPaymentIntentId(paymentIntentId));
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   };
 
@@ -496,14 +198,15 @@ const PagoScreen = ({ navigation, route }) => {
         Authorization: `Bearer ${user_token}`,
       },
     };
-    //console.log("finish checkout url - pago screen", config.url);
-    console.log("FINISH CHECKOUT -- PAGO SCREEN", uuid);
-    console.log("COBRADO EXITOSAMENTE?", success);
+
+    // console.log("finish checkout url - pago screen", config.url);
+    // console.log("FINISH CHECKOUT -- PAGO SCREEN", uuid);
+    // console.log("COBRADO EXITOSAMENTE?", success);
     return axios(config);
   };
 
-  const finish_checkout_all_prizes_noCobrados = () => {
-    //setPrize({ fieldId, uuid, type, loading: true })
+  const finish_checkout_all_prizes = () => {
+    // solo se llama cuando falla el pago de stripe
 
     let primisesForFinish = [];
 
@@ -512,7 +215,7 @@ const PagoScreen = ({ navigation, route }) => {
     });
 
     Promise.all(primisesForFinish)
-      .then(() => {})
+      .then((r) => {})
       .catch((e) => {
         //console.log(e.message);
       });
@@ -531,10 +234,10 @@ const PagoScreen = ({ navigation, route }) => {
 
     if (webViewState.url === initUrl + "payment-failure") {
       //console.log("failure");
-      finish_checkout_all_prizes_noCobrados();
+      finish_checkout_all_prizes(); // pago fallido
       let cancelTransactionPromisesArray = [];
 
-      transaction_id_array.forEach((transaction) => {
+      transactions_id_array.forEach((transaction) => {
         cancelTransactionPromisesArray.push(
           cancelTransactionRequest(transaction.topUpId)
         );
@@ -548,8 +251,6 @@ const PagoScreen = ({ navigation, route }) => {
           //console.log(err.message)
         });
 
-      nuevaRecargaDispatch(resetNuevaRecargaState());
-      // se pasa amount y payment intent id pa refound en caso de fallo
       navigation.navigate("PagoErrorScreen");
     }
   };

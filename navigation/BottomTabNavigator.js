@@ -529,6 +529,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
         options={{
           headerShown: false,
           gestureDirection: "horizontal",
+          gestureEnabled: false,
           cardStyleInterpolator: forHorizontal,
         }}
       />
@@ -538,6 +539,7 @@ function NuevaRecargaNavigator({ navigation, route }) {
         options={{
           headerShown: false,
           gestureDirection: "horizontal",
+          gestureEnabled: false,
           cardStyleInterpolator: forHorizontal,
         }}
       />

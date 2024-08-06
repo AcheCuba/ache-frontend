@@ -19,7 +19,6 @@ import {
   toggleValidateInProcess,
   toogleAddContactAvaiable,
   updatePrize,
-  openSocket,
   setCountryForUser,
   setOperatorForUser,
   resetNuevaRecargaState,
@@ -74,8 +73,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   const { userState, userDispatch } = React.useContext(GlobalContext);
 
   const userCountry = userState?.country;
-
-  const { socketState, socketDispatch } = React.useContext(GlobalContext);
 
   const [loadingContinuar, setLoadingContinuar] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -311,7 +308,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         }
       })
       .catch((err) => {
-        //console.log(err.message);
+        // console.log(err.message);
         setProviderList([]);
         Toast.show(
           userState?.idioma === "spa"
@@ -618,15 +615,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           );
           setLoadingContinuar(false);
         } else {
-          /*   console.log(
-          "socket state - nueva recarga screen",
-          socketState.socketOpen
-        ); */
-
-          if (!socketState.socketIsOpen) {
-            socketDispatch(openSocket());
-          }
-
           // init checkout de los premios validados
           // si un premio está asociado a un contacto, es que está en checkout
 

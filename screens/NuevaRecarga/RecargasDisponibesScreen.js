@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
-import NeuButton from "../../libs/neu_element/NeuButton";
 import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import Toast from "react-native-root-toast";
@@ -15,12 +14,10 @@ import axios from "axios";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
 import {
   resetNuevaRecargaState,
-  setTransaccionesNormalesConfirmadas,
+  resetSocketState,
+  setPaymentPriceUsd,
   setTransaccionesNormalesEsperadas,
-  setTransaccionesNormalesResultado,
-  setTransaccionesPremioConfirmadas,
   setTransaccionesPremioEsperadas,
-  setTransaccionesPremioResultado,
   setTransactionsIdArray,
 } from "../../context/Actions/actions";
 import { TextBold, TextMedium } from "../../components/CommonText";
@@ -63,13 +60,9 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
   //const [price_usd, setPrice_usd] = React.useState("");
 
-  React.useEffect(() => {
-    //console.log("pressedProductId", pressedProductId);
-    //console.log("price_usd", price_usd);
-    //console.log(esDirecta);
-    //console.log("validated prizes rec disp", validated_prizes);
+  /* React.useEffect(() => {
     console.log("CONTACTOS SELECCIONADOS", contactosSeleccionados);
-  }, [contactosSeleccionados]);
+  }, [contactosSeleccionados]); */
 
   React.useEffect(() => {
     return soundError
@@ -111,7 +104,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     }
   };
 
-  const getlocalCurrency = (countryIsoCode) => {
+  /*  const getlocalCurrency = (countryIsoCode) => {
     switch (countryIsoCode) {
       case "CUB":
         return "CUP";
@@ -122,7 +115,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       default:
         return null;
     }
-  };
+  }; */
 
   const prize_finish_checkout = (uuid) => {
     const user_token = userState.token;
@@ -311,6 +304,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
   };
 
   const getProducts = async (cancelToken) => {
+    // console.log("get products");
     setLoadingProducts(true);
     const networkState = await getNetworkState();
     if (!networkState.isConnected || !networkState.isInternetReachable) {
@@ -355,10 +349,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           setLoadingProducts(false);
         })
         .catch((err) => {
-          //console.log(err.message);
+          // console.log(err.message);
           /* if (err.response) {
             console.log(err.response.message);
-          } */
+          }  */
           playSoundError();
           setLoadingProducts(false);
           Toast.show(ResolveText("errorDesconocido"), {
@@ -386,7 +380,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       url,
       data: {
         beneficiary: contacto.contactNumber,
-        //prizeCode: "",
         dtoneProductId: productId,
         socketId: socketId,
         countryIsoCode,
@@ -395,24 +388,6 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         Authorization: `Bearer ${user_token}`,
       },
     };
-
-    /*     if (contacto.prize != null) {
-      config = {
-        method: "post",
-        url,
-        data: {
-          beneficiary: contacto.contactNumber,
-          prizeCode: contacto.prize.uuid,
-          dtoneProductId: productId,
-          socketId: socketId,
-        },
-        headers: {
-          Authorization: `Bearer ${user_token}`,
-        },
-      };
-    } else { */
-    //console.log("contacto", contacto);
-    //console.log("productId", productId);
 
     return axios(config);
   };
@@ -424,7 +399,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     // por cada contacto, se crea una transaccion
     // endpoint: create-transacition
 
-    let transaction_id_array = [];
+    let transactions_id_array = [];
     setLoadingContinuar(true);
 
     const networkState = await getNetworkState();
@@ -444,8 +419,8 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       let transacciones_normales_esperadas = []; // [{mobile_number, transaction_id}, ...]
       let transacciones_premio_esperadas = [];
 
-      socketDispatch(setTransaccionesNormalesResultado([]));
-      socketDispatch(setTransaccionesPremioResultado([]));
+      // por si acasso
+      socketDispatch(resetSocketState());
 
       let contador_contactos = 0;
       let transaction_error = false;
@@ -471,7 +446,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
             // se mandan las transacciones normales (NO PREMIOS) aqui
             // se recibe un object
 
-            transaction_id_array.push({
+            transactions_id_array.push({
               topUpId: transaction_data.id,
               //prizeId: undefined, //transactionId
               dtoneProductId: productId,
@@ -484,16 +459,18 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                   : undefined,
             });
 
-            // CREO QUE ESTO ES PARA EL SOCKET
-            // normales (NO PREMIOS) esperadas
+            // SOCKET: NORMALES ESPERADAS
             transacciones_normales_esperadas.push({
               mobile_number:
                 transaction_data.credit_party_identifier.mobile_number,
               transaction_id: transaction_data.id,
             });
 
+            // SOCKET: PREMIOS ESPERADAS
             if (contactosSeleccionados[contador_contactos].prize != null) {
-              transacciones_premio_esperadas.push(1); //solo uso la cantidad
+              transacciones_premio_esperadas.push(
+                contactosSeleccionados[contador_contactos].prize.uuid
+              );
             }
 
             contador_contactos += 1;
@@ -544,14 +521,18 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
           setTransaccionesPremioEsperadas(transacciones_premio_esperadas)
         );
 
-        nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
-        nuevaRecargaDispatch(setTransaccionesPremioConfirmadas([]));
-        nuevaRecargaDispatch(setTransactionsIdArray(transaction_id_array));
+        // se limpia. nueva recarga.
+        // nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
+        // nuevaRecargaDispatch(setTransaccionesPremioConfirmadas([]));
+
+        nuevaRecargaDispatch(setTransactionsIdArray(transactions_id_array));
+
+        nuevaRecargaDispatch(setPaymentPriceUsd(productPriceUsd));
 
         navigation.navigate("PrePagoScreen", {
           productPriceUsd,
           productDescription,
-          transaction_id_array,
+          transactions_id_array,
         });
       }
     }

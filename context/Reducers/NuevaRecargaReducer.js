@@ -19,9 +19,13 @@ const DELETE_FIELD = actionTypes.DELETE_FIELD;
 const DELETE_ALL_VALIDATED_PRIZES = actionTypes.DELETE_ALL_VALIDATED_PRIZES;
 const SET_TRANSACTIONS_ID_ARRAY = actionTypes.SET_TRANSACTIONS_ID_ARRAY;
 const DELETE_ALL_FIELDS = actionTypes.DELETE_ALL_FIELDS;
+const SET_PAYMENT_PRICE_USD = actionTypes.SET_PAYMENT_PRICE_USD;
+const SET_PAYMENT_INTENT_ID = actionTypes.SET_PAYMENT_INTENT_ID;
+const SET_HAY_PREMIO_COBRADO_MODAL = actionTypes.SET_HAY_PREMIO_COBRADO_MODAL;
+const SET_HAY_PREMIO_FALLIDO_MODAL = actionTypes.SET_HAY_PREMIO_FALLIDO_MODAL;
 
 //socket
-const SET_TRANSACCIONES_NORMALES_CONFIRMADAS =
+/* const SET_TRANSACCIONES_NORMALES_CONFIRMADAS =
   actionTypes.SET_TRANSACCIONES_NORMALES_CONFIRMADAS;
 const SET_TRANSACCIONES_PREMIO_CONFIRMADAS =
   actionTypes.SET_TRANSACCIONES_PREMIO_CONFIRMADAS;
@@ -29,7 +33,7 @@ const SET_TRANSACCIONES_PREMIO_CONFIRMADAS =
 const DELETE_ALL_TRANSACCIONES_NORMALES =
   actionTypes.DELETE_ALL_TRANSACCIONES_NORMALES;
 const DELETE_ALL_TRANSACCIONES_PREMIO =
-  actionTypes.DELETE_ALL_TRANSACCIONES_PREMIO;
+  actionTypes.DELETE_ALL_TRANSACCIONES_PREMIO; */
 
 const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
   switch (action.type) {
@@ -39,6 +43,7 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
 
     // preservar premio y primer field.
     case RESET_NUEVA_RECARGA_STATE:
+      console.log("nueva recarga reset state");
       return {
         ...state,
         addContactAvaiable: false,
@@ -46,6 +51,33 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
         validated_prizes: [],
         fields: [],
         validatetInProcess: false,
+        paymentIntentId: undefined,
+        productPriceUsd: undefined,
+        transactions_id_array: [],
+      };
+
+    case SET_HAY_PREMIO_COBRADO_MODAL:
+      return {
+        ...state,
+        hayPremioCobrado: action.hayPremioCobrado,
+      };
+
+    case SET_HAY_PREMIO_FALLIDO_MODAL:
+      return {
+        ...state,
+        hayPremioFallido: action.hayPremioFallido,
+      };
+
+    case SET_PAYMENT_INTENT_ID:
+      return {
+        ...state,
+        paymentIntentId: action.paymentIntentId,
+      };
+
+    case SET_PAYMENT_PRICE_USD:
+      return {
+        ...state,
+        productPriceUsd: action.productPriceUsd,
       };
 
     // contacts
@@ -164,35 +196,6 @@ const NuevaRecargaReducer = (state = nuevaRecargaInitialState, action) => {
           ...state.fields,
           { isFirstField: action.isFirstField, fieldId: action.fieldId },
         ],
-      };
-
-    // resultados de las transacciones por socket
-
-    case SET_TRANSACCIONES_NORMALES_CONFIRMADAS:
-      return {
-        ...state,
-        transacciones_normales_confirmadas: action.transaccionesNormales,
-      };
-
-    case SET_TRANSACCIONES_PREMIO_CONFIRMADAS:
-      return {
-        ...state,
-        //premiosConfirmadosSocket: action.premiosConfirmados,
-        transacciones_premio_confirmadas: action.transaccionesPremio,
-      };
-
-    case DELETE_ALL_TRANSACCIONES_NORMALES:
-      return {
-        ...state,
-        //premiosConfirmadosSocket: action.premiosConfirmados,
-        transacciones_normales_confirmadas: [],
-      };
-
-    case DELETE_ALL_TRANSACCIONES_PREMIO:
-      return {
-        ...state,
-        //premiosConfirmadosSocket: action.premiosConfirmados,
-        transacciones_premio_confirmadas: [],
       };
 
     case SET_TRANSACTIONS_ID_ARRAY:

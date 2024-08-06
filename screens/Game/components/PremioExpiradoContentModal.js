@@ -7,14 +7,14 @@ import {
   GameScreenTextSpanish,
 } from "../../../constants/Texts";
 import LargeFlatButton from "../../../components/LargeFlatButton";
+import { setShowExpiredPrize } from "../../../context/Actions/actions";
+import { GlobalContext } from "../../../context/GlobalProvider";
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
-const PremioExpiradoContentModal = ({
-  navigation,
-  setModalVisible,
-  userState,
-}) => {
+const PremioExpiradoContentModal = ({ userState }) => {
+  const { interfaceDispatch } = React.useContext(GlobalContext);
+
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
     const textSpa = GameScreenTextSpanish();
@@ -30,7 +30,7 @@ const PremioExpiradoContentModal = ({
   };
 
   const salir = () => {
-    setModalVisible(false);
+    interfaceDispatch(setShowExpiredPrize(false));
   };
   return (
     <View

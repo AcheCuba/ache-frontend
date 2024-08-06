@@ -3,7 +3,10 @@ import { Alert } from "react-native";
 import { Dimensions, View, Text, TouchableOpacity } from "react-native";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { useAndroidBackHandler } from "react-navigation-backhandler";
-import { resetNuevaRecargaState } from "../../context/Actions/actions";
+import {
+  resetNuevaRecargaState,
+  resetSocketState,
+} from "../../context/Actions/actions";
 import Toast from "react-native-root-toast";
 import { BASE_URL } from "../../constants/domain";
 import axios from "axios";
@@ -21,11 +24,12 @@ const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const PrePagoScreen = ({ navigation, route }) => {
-  const { productPriceUsd, transaction_id_array, productDescription } =
+  const { productPriceUsd, transactions_id_array, productDescription } =
     route.params;
 
   const { userState } = React.useContext(GlobalContext);
-  const { nuevaRecargaState, nuevaRecargaDispatch } = useContext(GlobalContext);
+  const { nuevaRecargaState, nuevaRecargaDispatch, socketDispatch } =
+    useContext(GlobalContext);
   const { contactosSeleccionados } = nuevaRecargaState;
 
   const quantity = contactosSeleccionados.length;
@@ -42,22 +46,9 @@ const PrePagoScreen = ({ navigation, route }) => {
     //console.log(esDirecta);
   }, []);
 
-  /*  React.useEffect(() => {
-    console.log(userState);
-  }, [userState]); */
-
-  const getlocalCurrency = (countryIsoCode) => {
-    switch (countryIsoCode) {
-      case "CUB":
-        return "CUP";
-      case "MEX":
-        return "MXN";
-      case "DOM":
-        return "DOP";
-      default:
-        return null;
-    }
-  };
+  React.useEffect(() => {
+    console.log(transactions_id_array);
+  }, []);
 
   useAndroidBackHandler(() => {
     /*
@@ -149,51 +140,6 @@ const PrePagoScreen = ({ navigation, route }) => {
     );
   };
 
-  //opcion 2
-  /*   const renderItemContact = ({ item }) => {
-    return (
-      <View
-        style={{
-          height: 30,
-          flexDirection: "row",
-          justifyContent: "center",
-        }}
-      >
-        <TextMedium
-          text={
-            item.contactName != undefined
-              ? item.contactName + " "
-              : item.contactNumber + " "
-          }
-          style={{
-            fontSize: normalize(25),
-            //textTransform: "uppercase",
-            color: "#01f9d2",
-            //marginBottom: 6,
-            //marginTop: 5,
-          }}
-        />
-        {item.prize != null ? (
-          <Image
-            source={
-              item.prize != null
-                ? item.prize.type === "TopUpBonus" && item.prize.size === "Small"
-                  ? require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")
-                  : item.prize.type === "TopUpBonus" &&
-                    item.prize.size === "Big"
-                  ? require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")
-                  : item.prize.type === "Jackpot"
-                  ? require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")
-                  : null
-                : null
-            }
-            style={item.prize != null ? { width: 15.5, height: 15 } : null}
-          />
-        ) : null}
-      </View>
-    );
-  }; */
-
   const renderEmptyList = () => {
     return (
       <View style={{ alignItems: "center", marginTop: 10 }}>
@@ -280,6 +226,7 @@ const PrePagoScreen = ({ navigation, route }) => {
   const onPressCancelarRecargaOnAlert = () => {
     finish_checkout_all_prizes();
     nuevaRecargaDispatch(resetNuevaRecargaState());
+    socketDispatch(resetSocketState());
     navigation.navigate("NuevaRecargaScreen");
   };
 
@@ -501,7 +448,7 @@ const PrePagoScreen = ({ navigation, route }) => {
             onPress={() => {
               navigation.navigate("PagoScreen", {
                 amount,
-                transaction_id_array,
+                transactions_id_array,
                 productPriceUsd,
                 //recharge_amount_por_recarga: recharge_amount,
               });

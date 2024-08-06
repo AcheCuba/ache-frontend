@@ -15,7 +15,10 @@ import { BASE_URL } from "../../constants/domain";
 import { GlobalContext } from "../../context/GlobalProvider";
 import {
   resetNuevaRecargaState,
+  setHayPremioCobradoModal,
+  setHayPremioFallidoModal,
   setPrizeForUser,
+  setShowExpiredPrize,
 } from "../../context/Actions/actions";
 import Toast from "react-native-root-toast";
 import moment from "moment";
@@ -49,6 +52,9 @@ import {
 import LargeFlatButton from "../../components/LargeFlatButton";
 import LoadingUserDataDummyModal from "./components/LoadingUserDataDummyModal";
 import { getPrizeForUser } from "../../libs/getPrizeForUser";
+import PremioCobradoModal from "./components/PremioCobradoModal";
+import PremioFallidoModal from "./components/PremioFallidoModal";
+import PremioEnCaminoModal from "./components/PremioEnCaminoModal";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -71,15 +77,17 @@ const GameScreen = ({ navigation }) => {
   const [premioAcumuladoType, setPremioAcumuladoType] =
     React.useState(undefined);
 
+  // ======
+  // modals
   const [NadaWon, setNadaWon] = React.useState(false);
   const [DoublePrizeWon, setDoublePrizeWon] = React.useState(false);
   const [JoyaWon, setJoyaWon] = React.useState(false);
-  const [PremioExpirado, setPremioExpirado] = React.useState(false);
-
   const [horasRestantes, setHorasRestantes] = React.useState("24");
-
   const [nadaDescriptionModalVisible, setNadaDescriptionModalVisible] =
     React.useState(false);
+  //const [premioCobrado, setPremioCobrado] = React.useState(false);
+  //const [premioFallido, setPremioFallido] = React.useState(false);
+  const [premioEnCamino, setPremioEnCamino] = React.useState(false);
 
   //sonidos
   const [soundError, setSoundError] = React.useState();
@@ -106,6 +114,8 @@ const GameScreen = ({ navigation }) => {
     nuevaRecargaDispatch,
     nuevaRecargaState,
     interfaceState,
+    interfaceDispatch,
+    socketState,
   } = React.useContext(GlobalContext);
   //const { socketDispatch, socketState } = React.useContext(GlobalContext);
 
@@ -121,9 +131,8 @@ const GameScreen = ({ navigation }) => {
 
   const { showExpiredPrize, showInvisibleLoadData } = interfaceState;
 
-  /* React.useEffect(() => {
-    console.log(userState);
-  }, [userState]); */
+  const { hayPremioCobrado } = nuevaRecargaState;
+  const { hayPremioFallido } = nuevaRecargaState;
 
   React.useEffect(() => {
     if (showInvisibleLoadData) {
@@ -133,44 +142,6 @@ const GameScreen = ({ navigation }) => {
       }, 500);
     }
   }, [showInvisibleLoadData]);
-
-  React.useState(() => {
-    if (showExpiredPrize) {
-      // mostrar al user que su premio ha expirado
-      setPremioExpirado(true);
-      // este estado no se limpia a false
-    }
-  }, [showExpiredPrize]);
-
-  /*  React.useEffect(() => {
-    if (
-      userState.prize != null &&
-      userState.prize?.type != "Nada" &&
-      transactions_id_array.length != 0
-    ) {
-      console.log("GameScreen.js, ---transaccion en curso---");
-      if (transacciones_premio_confirmadas.length != 0) {
-        const uuidPremioEnApp = userState.prize.uuid;
-        const premioEnApp = transacciones_premio_confirmadas.find(
-          (transPrem) => transPrem.uuid === uuidPremioEnApp
-        );
-
-        if (premioEnApp) {
-          console.log("--GameScreen.js--");
-          console.log("--- Premio en App confirmado", premioEnApp);
-          // se elimina el premio del storage
-          storeData("user", { ...userState, prize: null });
-          // se elimina el premio del estado de la app
-          userDispatch(setPrizeForUser(null));
-          // reset del estado de la recarga
-          nuevaRecargaDispatch(resetNuevaRecargaState());
-        } else {
-          console.log("--- No se ha confirmado el premio de la app");
-        }
-      }
-    }
-    //const objetoEncontrado = arreglo.find(objeto => objeto.id === idABuscar);
-  }, [transacciones_premio_confirmadas, userState, transactions_id_array]); */
 
   React.useEffect(() => {
     if (verificationError) {
@@ -678,7 +649,7 @@ const GameScreen = ({ navigation }) => {
     axios(config)
       .then((response) => {
         const prize_result = response.data;
-        console.log("PRIZE RESULT", prize_result);
+        console.log("prize result", prize_result);
 
         // probar premio falso para ver textos o whathever
         /* const prize_result = {
@@ -999,7 +970,6 @@ const GameScreen = ({ navigation }) => {
                   setPrizePendingError={setPrizePendingError}
                   setPrizeInactiveError={setPrizeInactiveError}
                   setVerificationError={setVerificationError}
-                  setPremioExpirado={setPremioExpirado}
                 />
               </RootSiblingParent>
             </View>
@@ -1299,12 +1269,12 @@ const GameScreen = ({ navigation }) => {
         </Modal>
       ) : null}
 
-      {PremioExpirado ? (
+      {showExpiredPrize ? (
         <Modal
           animationType="slide"
           transparent={true}
-          visible={PremioExpirado}
-          onRequestClose={() => setPremioExpirado(false)}
+          visible={showExpiredPrize}
+          onRequestClose={() => interfaceDispatch(setShowExpiredPrize(false))}
         >
           <LinearGradient
             colors={[generalBgColor, bgColorFinalGradient]}
@@ -1320,7 +1290,88 @@ const GameScreen = ({ navigation }) => {
             >
               <PremioExpiradoContentModal
                 navigation={navigation}
-                setModalVisible={setPremioExpirado}
+                userState={userState}
+              />
+            </View>
+          </LinearGradient>
+        </Modal>
+      ) : null}
+
+      {hayPremioCobrado ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={hayPremioCobrado}
+          onRequestClose={() =>
+            nuevaRecargaDispatch(setHayPremioCobradoModal(false))
+          }
+        >
+          <LinearGradient
+            colors={[generalBgColor, bgColorFinalGradient]}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+                height: "100%",
+                backgroundColor: generalBgColorTrans5,
+              }}
+            >
+              <PremioCobradoModal userState={userState} />
+            </View>
+          </LinearGradient>
+        </Modal>
+      ) : null}
+
+      {hayPremioFallido ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={hayPremioFallido}
+          onRequestClose={() =>
+            nuevaRecargaDispatch(setHayPremioFallidoModal(false))
+          }
+        >
+          <LinearGradient
+            colors={[generalBgColor, bgColorFinalGradient]}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+                height: "100%",
+                backgroundColor: generalBgColorTrans5,
+              }}
+            >
+              <PremioFallidoModal userState={userState} />
+            </View>
+          </LinearGradient>
+        </Modal>
+      ) : null}
+
+      {premioEnCamino ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={premioEnCamino}
+          onRequestClose={() => setPremioEnCamino(false)}
+        >
+          <LinearGradient
+            colors={[generalBgColor, bgColorFinalGradient]}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "generalBgColorTrans5",
+              }}
+            >
+              <PremioEnCaminoModal
+                setModalVisible={setPremioEnCamino}
                 userState={userState}
               />
             </View>
@@ -1356,27 +1407,47 @@ const GameScreen = ({ navigation }) => {
             }}
             onPress={() => {
               if (userState.prize !== null) {
-                const currentTime = moment();
-                const expirationDate = moment(
-                  userState.prize?.expirationDate
-                ).local();
-                const horas_restantes = expirationDate.diff(
-                  currentTime,
-                  "hours"
-                );
-                // actualizo horas respantes para mostrar
-                setHorasRestantes(horas_restantes);
+                // caso de presion del boton justo cuando esta en camino
+                if (
+                  userState.prize.type != "Nada" &&
+                  transacciones_premio_esperadas != 0
+                ) {
+                  const hayPremioDeAppEnCamino =
+                    transacciones_premio_esperadas.find(
+                      (transaccion_premio_esperada) => {
+                        return (
+                          transaccion_premio_esperada.uuid ===
+                          userState.prize.uuid
+                        );
+                      }
+                    );
 
-                if (userState.prize.type === "Nada") {
-                  // tiene skull
-                  setNadaDescriptionModalVisible(true);
-                  checkIfSkullExpired();
-                  // se elimina de la app si expiró
+                  if (hayPremioDeAppEnCamino != undefined) {
+                    setPremioEnCamino(true);
+                  }
                 } else {
-                  // tiene un premio
-                  // mostrar modal
-                  enMovimiento.current = false;
-                  setModalCobrarPremioVisible(true);
+                  const currentTime = moment();
+                  const expirationDate = moment(
+                    userState.prize?.expirationDate
+                  ).local();
+                  const horas_restantes = expirationDate.diff(
+                    currentTime,
+                    "hours"
+                  );
+                  // actualizo horas respantes para mostrar
+                  setHorasRestantes(horas_restantes);
+
+                  if (userState.prize.type === "Nada") {
+                    // tiene skull
+                    setNadaDescriptionModalVisible(true);
+                    checkIfSkullExpired();
+                    // se elimina de la app si expiró
+                  } else {
+                    // tiene un premio
+                    // mostrar modal
+                    enMovimiento.current = false;
+                    setModalCobrarPremioVisible(true);
+                  }
                 }
               } else {
                 // no hay premio en la app

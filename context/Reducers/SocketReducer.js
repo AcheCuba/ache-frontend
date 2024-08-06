@@ -18,23 +18,71 @@ const SET_NEW_TRANSACCION_NORMAL_RESULTADO =
   actionTypes.SET_NEW_TRANSACCION_NORMAL_RESULTADO;
 const SET_NEW_TRANSACCION_PREMIO_RESULTADO =
   actionTypes.SET_NEW_TRANSACCION_PREMIO_RESULTADO;
+const SET_NEW_TRANSACCION_NORMAL_FALLIDA =
+  actionTypes.SET_NEW_TRANSACCION_NORMAL_FALLIDA;
+const SET_NEW_TRANSACCION_PREMIO_FALLIDA =
+  actionTypes.SET_NEW_TRANSACCION_PREMIO_FALLIDA;
+const SET_NEW_TRANSACCION_PREMIO_COMPLETADA =
+  actionTypes.SET_NEW_TRANSACCION_PREMIO_COMPLETADA;
+const SET_NEW_TRANSACCION_NORMAL_COMPLETADA =
+  actionTypes.SET_NEW_TRANSACCION_NORMAL_COMPLETADA;
+const RESET_SOCKET_STATE = actionTypes.RESET_SOCKET_STATE;
+const SET_UPDATE_NORMALES_COMPLETED = actionTypes.SET_UPDATE_NORMALES_COMPLETED;
 
 //const SET_TRANSACCIONES_RESULTADO = actionTypes.SET_TRANSACCIONES_RESULTADO;
 //const SET_NEW_TRANSACCION_RESULTADO = actionTypes.SET_NEW_TRANSACCION_RESULTADO;
 
 const SocketReducer = (state = socketInitialState, action) => {
   switch (action.type) {
-    case OPEN_SOCKET:
+    case RESET_SOCKET_STATE:
+      console.log("socket reset state");
       return {
         ...state,
-        socketIsOpen: true,
+        transacciones_normales_completadas: [],
+        transacciones_normales_fallidas: [],
+        transacciones_premio_completadas: [],
+        transacciones_premio_fallidas: [],
+        // ===
+        transacciones_normales_esperadas: [],
+        transacciones_premio_esperadas: [],
       };
-    case CLOSE_SOCKET:
-      //console.log("close socket - reducer");
+
+    case SET_NEW_TRANSACCION_NORMAL_COMPLETADA:
       return {
         ...state,
-        socketIsOpen: false,
+        transacciones_normales_completadas: [
+          ...state.transacciones_normales_completadas,
+          action.transaccion,
+        ],
       };
+
+    case SET_NEW_TRANSACCION_PREMIO_COMPLETADA:
+      return {
+        ...state,
+        transacciones_premio_completadas: [
+          ...state.transacciones_premio_completadas,
+          action.transaccion,
+        ],
+      };
+
+    case SET_NEW_TRANSACCION_NORMAL_FALLIDA:
+      return {
+        ...state,
+        transacciones_normales_fallidas: [
+          ...state.transacciones_normales_fallidas,
+          action.transaccion,
+        ],
+      };
+
+    case SET_NEW_TRANSACCION_PREMIO_FALLIDA:
+      return {
+        ...state,
+        transacciones_premio_fallidas: [
+          ...state.transacciones_premio_fallidas,
+          action.transaccion,
+        ],
+      };
+
     case SET_SOCKET_ID:
       return {
         ...state,
@@ -49,40 +97,6 @@ const SocketReducer = (state = socketInitialState, action) => {
       return {
         ...state,
         transacciones_premio_esperadas: action.transactions,
-      };
-    case SET_TRANSACCIONES_NORMALES_RESULTADO:
-      return {
-        ...state,
-        transacciones_normales_resultado: action.transactions,
-      };
-
-    case SET_TRANSACCIONES_PREMIO_RESULTADO:
-      return {
-        ...state,
-        transacciones_premio_resultado: action.transactions,
-      };
-
-    case SET_NEW_TRANSACCION_NORMAL_RESULTADO:
-      return {
-        ...state,
-        transacciones_normales_resultado: [
-          ...state.transacciones_normales_resultado,
-          action.newTransaction,
-        ],
-      };
-    case SET_NEW_TRANSACCION_PREMIO_RESULTADO:
-      return {
-        ...state,
-        transacciones_premio_resultado: [
-          ...state.transacciones_premio_resultado,
-          action.newTransaction,
-        ],
-      };
-
-    case SET_UPDATE_COMPLETED:
-      return {
-        ...state,
-        globalUpdateCompleted: action.globalUpdateCompleted,
       };
   }
 };

@@ -10,18 +10,23 @@ import {
 import { GlobalContext } from "../../context/GlobalProvider";
 import { CommonActions } from "@react-navigation/native";
 import LargeFlatButton from "../../components/LargeFlatButton";
+import {
+  resetNuevaRecargaState,
+  resetSocketState,
+} from "../../context/Actions/actions";
 
 const { width } = Dimensions.get("screen");
 
 const PagoErrorScreen = ({ navigation }) => {
-  const { userState, nuevaRecargaState } = React.useContext(GlobalContext);
+  const { userState, socketDispatch, nuevaRecargaDispatch } =
+    React.useContext(GlobalContext);
 
   // es posible que esto lo use mas adelante
-  /* React.useEffect(() => {
-    console.log("useEffect pago error")
-    // limpiar storage (user en proceso de recarga)
-
-  }) */
+  React.useEffect(() => {
+    console.log("error en el pago");
+    socketDispatch(resetSocketState());
+    nuevaRecargaDispatch(resetNuevaRecargaState());
+  }, []);
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;

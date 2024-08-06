@@ -15,6 +15,7 @@ import { BASE_URL } from "../../../constants/domain";
 import {
   resetNuevaRecargaState,
   setPrizeForUser,
+  setShowExpiredPrize,
 } from "../../../context/Actions/actions";
 import { ActivityIndicator } from "react-native";
 import { storeData } from "../../../libs/asyncStorage.lib";
@@ -42,9 +43,8 @@ const CobrarPremioContent = ({
   setPrizePendingError,
   setPrizeInactiveError,
   setVerificationError,
-  setPremioExpirado,
 }) => {
-  const { userState, userDispatch, nuevaRecargaDispatch } =
+  const { userState, userDispatch, nuevaRecargaDispatch, interfaceDispatch } =
     React.useContext(GlobalContext);
   const currentPrize = userState.prize;
 
@@ -178,7 +178,8 @@ const CobrarPremioContent = ({
             userDispatch(setPrizeForUser(null));
 
             setTimeout(() => {
-              setPremioExpirado(true);
+              //setPremioExpirado(true);
+              interfaceDispatch(setShowExpiredPrize(true));
             }, 1000);
           }
         }
@@ -295,7 +296,8 @@ const CobrarPremioContent = ({
             userDispatch(setPrizeForUser(null));
 
             setTimeout(() => {
-              setPremioExpirado(true);
+              // setPremioExpirado(true);
+              interfaceDispatch(setShowExpiredPrize(true));
             }, 1000);
           }
         }

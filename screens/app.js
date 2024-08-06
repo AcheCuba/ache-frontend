@@ -1,32 +1,33 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
+import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import useCachedResources from "../hooks/useCachedResources";
 import Navigation from "../navigation";
 import io from "socket.io-client";
 import { GlobalContext } from "../context/GlobalProvider";
 import {
-  closeSocket,
-  setNewTransaccionNormalResultado,
-  setNewTransaccionPremioResultado,
   setSocketId,
-  setTransaccionesNormalesConfirmadas,
-  setTransaccionesPremioConfirmadas,
-  setTransaccionesNormalesEsperadas,
-  setTransaccionesNormalesResultado,
-  setTransaccionesPremioEsperadas,
-  setTransaccionesPremioResultado,
-  setTransactionsIdArray,
-  SetGlobalUpdateCompleted,
+  setNewTransaccionNormalFallida,
+  setNewTransaccionPremioFallida,
+  setNewTransaccionNormalCompletada,
+  setNewTransaccionPremioCompletada,
+  resetNuevaRecargaState,
+  resetSocketState,
+  setPrizeForUser,
+  setHayPremioCobradoModal,
+  setHayPremioFallidoModal,
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
 import * as SplashScreen from "expo-splash-screen";
-import { ImageBackground, View } from "react-native";
 import LottieView from "lottie-react-native";
-import { Audio, Video, ResizeMode } from "expo-av";
+import { Audio } from "expo-av";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import axios from "axios";
+import { storeData } from "../libs/asyncStorage.lib";
+import Toast from "react-native-root-toast";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,13 +48,6 @@ function AnimatedSplashScreen({ animationSource, children }) {
   const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
   const animation = useRef(null);
   const [soundInicio, setSoundInicio] = React.useState();
-
-  const splashVideoDir = require("../assets/animaciones/spinRecargasSplash.mp4");
-  const video = React.useRef(null);
-
-  /* const onEndf = () => {
-    videoRef.current.pause();
-  }; */
 
   async function playSoundInicio() {
     //console.log("Loading Sound");
@@ -148,11 +142,9 @@ function AnimatedSplashScreen({ animationSource, children }) {
 function MainApp() {
   // for socket communication
 
-  let transaction_result_arr = [];
-
   const [updateNormalesCompleted, setUpdateNormalesCompleted] = useState(false);
-  const [updatePremiosCompleted, setUpdatePremiosCompleted] = useState(false);
   const [updateCompleted, setUpdateCompleted] = useState(false);
+  const [localSocket, setLocalSocket] = useState(null);
 
   //const colorScheme = useColorScheme();
 
@@ -161,253 +153,443 @@ function MainApp() {
     socketState,
     nuevaRecargaState,
     nuevaRecargaDispatch,
+    userState,
+    userDispatch,
   } = useContext(GlobalContext);
+
   const {
-    socketIsOpen,
     transacciones_normales_esperadas,
     transacciones_premio_esperadas,
-    transacciones_normales_resultado,
-    transacciones_premio_resultado,
+
+    // ======
+    transacciones_normales_completadas,
+    transacciones_premio_completadas,
+    transacciones_normales_fallidas,
+    transacciones_premio_fallidas,
   } = socketState;
 
   const { transactions_id_array } = nuevaRecargaState;
+  const paymentIntentId = nuevaRecargaState.paymentIntentId;
+  const productPriceUsd = nuevaRecargaState.productPriceUsd;
 
-  //const [socketCurrentlyOpen, setSocketCurrentlyOpen] = useState(false);
+  const updateUserSocket = (socketId) => {
+    const userToken = userState.token;
+    const userId = userState.id;
+    const url = `${BASE_URL}/users/${userId}/socket`;
+    let config = {
+      method: "put",
+      url: url,
+      params: { socketId },
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
 
-  //const [newUpdate, setNewUpdate] = React.useState()
+    return axios(config);
+  };
 
-  let socket = io.connect(`${BASE_URL}`);
+  const claim_prize = async (
+    dtoneProductId,
+    beneficiary,
+    prizeCode,
+    socketId
+  ) => {
+    const user_token = userState.token;
+    const url = `${BASE_URL}/topup/claim-prize`;
+
+    let config;
+
+    config = {
+      method: "post",
+      url,
+      data: {
+        beneficiary,
+        prizeCode,
+        countryIsoCode,
+        dtoneProductId,
+        operatorId,
+        socketId,
+      },
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+
+    return axios(config);
+  };
+
+  const prize_finish_checkout = (uuid, success) => {
+    const user_token = userState.token;
+    const url = `${BASE_URL}/prize/finish-checkout/${uuid}`;
+    let config = {
+      method: "post",
+      url: url,
+      params: { success: success },
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+    return axios(config);
+  };
+
+  // =======================================
+
+  const finish_checkout_fallidas = (transaccionesNormalesFallidasSocket) => {
+    // 1 notificar que algunas fallaron
+    // 2 finish checkout false si tieen premios asociados
+
+    if (transaccionesNormalesFallidasSocket.length != 0) {
+      // 1
+
+      Toast.show(
+        userState?.idioma === "spa"
+          ? "Una o varias de tus transacciones fallaron"
+          : "One or more of your transactions failed",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
+
+      // 2
+      transaccionesNormalesFallidasSocket.forEach(
+        (transaccionNormalFallida) => {
+          const transaccionDePremioAsociada = transactions_id_array.find(
+            (transaccion) => {
+              return (
+                transaccion.topUpId ===
+                  transaccionNormalFallida.transactionId &&
+                transaccion.prize_uuid != undefined
+              );
+            }
+          );
+          if (transaccionDePremioAsociada != undefined) {
+            prize_finish_checkout(
+              transaccionDePremioAsociada.prize_uuid,
+              false
+            );
+          }
+        }
+      );
+    }
+  };
+
+  const create_prize_transaction = (transaccionesNormalesCompletadasSocket) => {
+    // 1 eliminar la nada si una salio bien
+    // 2 crear transacciones de premios (claime prize)
+    // nota: no se hace finish ckeckout
+
+    // 1
+    const prizeInApp = userState.prize;
+    const prizeType = userState.prize?.type;
+
+    if (prizeInApp != null && prizeType === "Nada") {
+      // console.log("se entro a eliminar la nada");
+      // elimina la Nada de la app
+      storeData("user", { ...userState, prize: null });
+      userDispatch(setPrizeForUser(null));
+    }
+
+    // 2
+    transaccionesNormalesCompletadasSocket.forEach(
+      (transaccionNormalCompletada) => {
+        //console.log("transaccion completada", transaccionNormalCompletada);
+        const transaccionDePremio = transactions_id_array.find(
+          (transaccion) => {
+            return (
+              transaccion.topUpId ===
+                transaccionNormalCompletada.transactionId &&
+              transaccion.prize_uuid != undefined
+            );
+          }
+        );
+
+        if (transaccionDePremio != undefined) {
+          // el usuario tiene algun premio
+
+          console.log("premio a reclamar", transaccionDePremio);
+
+          claim_prize(
+            transaccionDePremio.dtoneProductId,
+            transaccionDePremio.beneficiary,
+            transaccionDePremio.prize_uuid,
+            transaccionDePremio.socketId
+          )
+            .then((resp) => {
+              console.log("claim prize status", resp.status);
+
+              /* 
+                // SI ESTE PREMIO ES EL QUE TIENES EN LA APP:
+                // SE ELIMINA DEL BOTON DE PREMIO
+                // PARA ESTO SE ELIMINA DEL STORAGE Y DEL ESTADO DE LA APP
+                if (prizeInApp?.type != "Nada") {
+                  if (prizeInApp?.uuid === transaccionDePremio.prize_uuid) {
+                    // este el premio en la app
+                    // nada más puede coincidir una vez
+                    storeData("user", { ...userState, prize: null });
+                    userDispatch(setPrizeForUser(null));
+
+                  }
+                } */
+            })
+            .catch((err) => {
+              // ERROR EN EL CLAIM PRIZE
+              // SE LIBERA EL PREMIO: FINISH CHECKOUT FALSE
+              // EL PREMIO SE QUEDA EN LA APP
+              console.log("CLAIM PRIZE ERROR", err.response.status);
+              console.log(err.message);
+              prize_finish_checkout(transaccionDePremio.prize_uuid, false);
+              // se le dice al usuario que hubo un problema
+              Toast.show(
+                userState?.idioma === "spa"
+                  ? "Hubo un error con la transacción de uno de tus premio"
+                  : "There was an error with the transaction of one of your prizes",
+                {
+                  duaration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0,
+                }
+              );
+            });
+        }
+      }
+    );
+  };
+
+  /*   const sacarModal = () => {
+    console.log("sacar modal premio fallido");
+    nuevaRecargaDispatch(setHayPremioFallidoModal(true));
+  };
+ */
+  const gestionar_nuevo_premio_completado = (prize_completed) => {
+    // 1 si es el de la app, eliminarlo y notificar con modal
+    // 2 si no está en la app, no hago nada (el finish checkout true lo hace backend)
+
+    const prizeInApp = userState.prize;
+    console.log("prize transaction completed", prize_completed);
+
+    // 1
+    if (prizeInApp?.uuid === prize_completed.uuid) {
+      // elimino
+      storeData("user", { ...userState, prize: null });
+      userDispatch(setPrizeForUser(null));
+      // modal notificacion
+      nuevaRecargaDispatch(setHayPremioCobradoModal(true));
+    }
+  };
+
+  const gestionar_nuevo_premio_fallido = (prize_fallido) => {
+    // en cualquier caso finalizar ce=heckout con false
+    // si es el de la app notificar con modal
+
+    console.log("prize transaction fallida", prize_fallido);
+    const prizeInApp = userState.prize;
+
+    // finish checkout
+
+    prize_finish_checkout(prize_fallido.uuid)
+      .then((response) => {
+        console.log("finish checkout premio fallido", response.status);
+      })
+      .catch((err) => {
+        console.log("error en finish checkout recarga fallida", err.message);
+      });
+
+    // notificar si está en la app
+    if (prizeInApp?.uuid === prize_fallido.uuid) {
+      nuevaRecargaDispatch(setHayPremioFallidoModal(true));
+    }
+  };
+
+  const refund = (paymentIntentId, productPriceUsd) => {
+    const user_token = userState.token;
+    const _url = `${BASE_URL}/payments/refund/${paymentIntentId}`;
+
+    let amount_refund = 0;
+    const productPrice = parseFloat(productPriceUsd);
+
+    for (let i = 0; i < transacciones_normales_fallidas.length; i++) {
+      //const element = array[index];
+      amount_refund = amount_refund + productPrice;
+    }
+    //console.log(typeof productPrice);
+    //console.log(typeof productPriceUsd);
+    //console.log(typeof amount_refund);
+
+    if (amount_refund != 0) {
+      console.log("reembolso", amount_refund);
+
+      let config = {
+        method: "post",
+        url: _url,
+        params: { amount: amount_refund },
+        headers: {
+          Authorization: `Bearer ${user_token}`,
+        },
+      };
+
+      axios(config)
+        .then((response) => {
+          console.log("refund status", response.status);
+        })
+        .catch((error) => {
+          console.log("refund error");
+          console.log(error.message);
+        });
+    }
+  };
 
   useEffect(() => {
-    //console.log("update completed? ", updateCompleted);
+    let num_total_transacciones_esperadas;
+    let num_total_transacciones_resultado;
 
+    let num_transacciones_normales_esperadas;
+    let num_transacciones_normales_resultado;
+
+    if (transacciones_normales_esperadas.length != 0) {
+      num_transacciones_normales_esperadas =
+        transacciones_normales_esperadas.length;
+      num_transacciones_normales_resultado =
+        transacciones_normales_completadas.length +
+        transacciones_normales_fallidas.length;
+
+      num_total_transacciones_esperadas =
+        transacciones_normales_esperadas.length +
+        transacciones_premio_esperadas.length;
+
+      num_total_transacciones_resultado =
+        transacciones_normales_completadas.length +
+        transacciones_normales_fallidas.length +
+        transacciones_premio_completadas.length +
+        transacciones_premio_fallidas.length;
+      // solo se cuentan las transacciones "normales"
+      // porque los premios se gestionan luego del claim prize
+
+      if (
+        !updateNormalesCompleted &&
+        num_transacciones_normales_esperadas ===
+          num_transacciones_normales_resultado
+      ) {
+        setUpdateNormalesCompleted(true);
+        console.log("update normales completed");
+        // crear transacciones de premio (claim prize)
+        if (transacciones_normales_completadas.length != 0) {
+          create_prize_transaction(transacciones_normales_completadas);
+        }
+        // FINISH CHECKOUT FALSE PREMIOS DE RECARGAS FALLIDAS
+        finish_checkout_fallidas(transacciones_normales_fallidas);
+        // DEVOLVER DINERO DE LAS QUE FALLARON
+        if (transacciones_normales_fallidas.length != 0) {
+          refund(paymentIntentId, productPriceUsd);
+        }
+      }
+
+      if (
+        !updateCompleted &&
+        updateNormalesCompleted &&
+        num_total_transacciones_esperadas === num_total_transacciones_resultado
+      ) {
+        setUpdateCompleted(true);
+        console.log("update completed");
+
+        // resetear variables relacionadas a la transaccion
+        // aqui estoy seguro de que se hizo lo demas, pues updateNormalesCompleted es true
+        socketDispatch(resetSocketState());
+        nuevaRecargaDispatch(resetNuevaRecargaState());
+      }
+    }
+  }, [
+    transacciones_normales_esperadas,
+    transacciones_premio_esperadas,
+    // ====
+    transacciones_normales_completadas,
+    transacciones_normales_fallidas,
+    transacciones_premio_completadas,
+    transacciones_premio_fallidas,
+    transactions_id_array,
+    // ====
+    updateCompleted,
+    updateNormalesCompleted,
+  ]);
+
+  useEffect(() => {
+    const newSocket = io.connect(`${BASE_URL}`);
+
+    newSocket.on("connect", () => {
+      console.log("connected to server, socket saved");
+      setLocalSocket(newSocket);
+      // actualizar a backend
+      socketDispatch(setSocketId(newSocket.id));
+      updateUserSocket(newSocket.id)
+        .then((response) => {
+          if (response.status === 200) {
+            console.log("socket id actualizado en backend exitosamente");
+          }
+        })
+        .catch((err) => {
+          console.log("no se pudo actualizar el socketid en backend", err.msg);
+        });
+    });
+  }, []);
+
+  useEffect(() => {
+    if (localSocket != null) {
+      console.log("eventos establecidos con el id:", localSocket.id);
+
+      // ahora se definen los eventos a escuchar
+
+      localSocket.on("disconnect", () => {
+        console.log("socket disconnected");
+      });
+
+      localSocket.on("topup-completed", (transaccion_msg) => {
+        console.log("normal completed", transaccion_msg);
+
+        socketDispatch(setNewTransaccionNormalCompletada(transaccion_msg));
+      });
+
+      localSocket.on("topup-failed", (transaccion_msg) => {
+        console.log("normal failed", transaccion_msg);
+        socketDispatch(setNewTransaccionNormalFallida(transaccion_msg));
+      });
+
+      localSocket.on("prize-topup-completed", (transaccion_msg) => {
+        console.log("premio completada", transaccion_msg);
+        gestionar_nuevo_premio_completado(transaccion_msg);
+        socketDispatch(setNewTransaccionPremioCompletada(transaccion_msg));
+      });
+
+      localSocket.on("prize-topup-failed", (transaccion_msg) => {
+        console.log("premio fallida", transaccion_msg);
+        gestionar_nuevo_premio_fallido(transaccion_msg);
+        socketDispatch(setNewTransaccionPremioFallida(transaccion_msg));
+      });
+    }
+  }, [localSocket]);
+
+  useEffect(() => {
     if (updateCompleted) {
-      //console.log("update completed!");
-      transaction_result_arr = [];
-      socketDispatch(closeSocket()); // socketIsOpen: false
       setUpdateCompleted(false);
       setUpdateNormalesCompleted(false);
-      setUpdatePremiosCompleted(false);
-
-      // limpiar estados sockets
-      socketDispatch(setTransaccionesPremioEsperadas([]));
-      socketDispatch(setTransaccionesPremioResultado([]));
-      socketDispatch(setTransaccionesNormalesEsperadas([]));
-      socketDispatch(setTransaccionesNormalesResultado([]));
-      nuevaRecargaDispatch(setTransactionsIdArray([]));
     }
   }, [updateCompleted]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     //console.log("update normales completed? ", updateNormalesCompleted);
     //console.log("update premios completed? ", updatePremiosCompleted);
 
     if (updatePremiosCompleted && updateNormalesCompleted) {
       setUpdateCompleted(true);
-      socketDispatch(SetGlobalUpdateCompleted(true));
+      //socketDispatch(SetGlobalUpdateCompleted(true));
     }
-  }, [updateNormalesCompleted, updatePremiosCompleted]);
-
-  useEffect(() => {
-    //console.log("updateNormalesCompleted", updateNormalesCompleted);
-
-    async function updateTransaccionesPremioCompleted() {
-      //recordar: el bono (premio) se considera una recarga independiente
-      //console.log("entro a updateTransaccionesPremioCompleted");
-      if (!updatePremiosCompleted) {
-        nuevaRecargaDispatch(
-          setTransaccionesPremioConfirmadas(transacciones_premio_resultado)
-        );
-
-        //socketDispatch(setTransaccionesPremioEsperadas([]));
-        //socketDispatch(setTransaccionesPremioResultado([]));
-      }
-      setUpdatePremiosCompleted(true);
-    }
-
-    async function updateTransaccionesNormalesCompleted() {
-      // en esta funcion
-      // se programa la notificacion con los numeros fallidos
-      // se actualiza el estado de la informacion recibida por socket
-      // en el Screen de Pago se utiliza esa info para:
-      // - devolver el dinero
-      // - cancelar los premios cobrados y dejar los no cobrados
-
-      //console.log("transacciones_resultado final", transacciones_resultado);
-      // crear arreglo de declinadas
-      // cerrar socket
-      // console.log("close socket - update completed - app.js");
-
-      // cerrar socket
-      //socketDispatch(closeSocket()); // socketIsOpen: false
-
-      if (!updateNormalesCompleted) {
-        //console.log("entra a updateTransaccionesNormalesCompleted");
-        let resultadosConNumeros = [];
-
-        transacciones_normales_resultado.forEach((e) => {
-          const id = e.transactionId;
-          const elementWithId = transacciones_normales_esperadas.find(
-            (elem) => {
-              //console.log("elem", elem);
-              //console.log("id", id);
-              return elem.transaction_id === id;
-            }
-            //console.log(elementWithId);
-          );
-
-          if (elementWithId != undefined) {
-            const numb = elementWithId.mobile_number;
-            const newObjectResultado = { ...e, mobile_number: numb };
-            resultadosConNumeros.push(newObjectResultado);
-          }
-        });
-
-        // actualizar estado de Nueva recarga para accionar segun resultados en Pantalla de Pago
-        nuevaRecargaDispatch(
-          setTransaccionesNormalesConfirmadas(transacciones_normales_resultado)
-        );
-
-        // reiniciar estado socket
-        //socketDispatch(setTransaccionesNormalesEsperadas([]));
-        //socketDispatch(setTransaccionesNormalesResultado([]));
-        //transaction_result_arr = [];
-      }
-      setUpdateNormalesCompleted(true);
-    }
-
-    if (
-      transacciones_normales_resultado.length ===
-      transacciones_normales_esperadas.length
-    ) {
-      if (transacciones_normales_resultado.length !== 0) {
-        updateTransaccionesNormalesCompleted();
-
-        //console.log("transacciones NORM dist de cero");
-
-        if (transacciones_premio_esperadas.length !== 0) {
-          // si se espera alguna y ya tengo los resultados de las normales
-          //console.log("transacciones PREMIO dist de cero");
-
-          //codigo nuevo
-          const transaccionesNormalesCompletadas =
-            transacciones_normales_resultado.filter((recarga) => {
-              return recarga.status === "COMPLETED";
-            });
-
-          const transaccionesDePremioArray = []; // para ver si debo esperar por los resultados de premios
-          /* ejemplo
-          {"beneficiary": "+18095550100", "dtoneProductId": 4874, 
-          "prize_uuid": "25e93ff3-5490-4ec0-8820-c7ae8e30fca4", 
-          "socketId": "zOUwFg4pgmrC7vSjAAJC", 
-          "topUpId": 2238397037} */
-
-          transaccionesNormalesCompletadas.forEach(
-            (transaccionNormalCompletada) => {
-              const transaccionDePremio = transactions_id_array.find(
-                (transaccion) => {
-                  return (
-                    transaccion.topUpId ===
-                      transaccionNormalCompletada.transactionId &&
-                    transaccion.prize_uuid != undefined
-                  );
-                }
-              );
-              if (transaccionDePremio != undefined) {
-                //console.log("transaccionDePremio", transaccionDePremio);
-                transaccionesDePremioArray.push(transaccionDePremio);
-              }
-            }
-          );
-
-          if (transaccionesDePremioArray.length !== 0) {
-            if (transacciones_premio_resultado.length !== 0) {
-              updateTransaccionesPremioCompleted();
-            }
-          } else {
-            // no esperar por los resultados de premios
-            setUpdatePremiosCompleted(true);
-          }
-        } else {
-          // no se esperan premios
-          setUpdatePremiosCompleted(true);
-        }
-      }
-    }
-  }, [
-    transacciones_normales_resultado,
-    transacciones_normales_esperadas,
-    transacciones_premio_esperadas,
-    transacciones_premio_resultado,
-    transactions_id_array,
-    updateNormalesCompleted,
-    updatePremiosCompleted,
-  ]);
-
-  useEffect(() => {
-    //if (socketIsOpen && !socketCurrentlyOpen) {
-    //console.log("socket open", socketIsOpen);
-
-    if (socketIsOpen) {
-      //abrir socket
-      //setSocketCurrentlyOpen(true);
-
-      socket.on("socketid", (sid) => {
-        // guardar id
-        console.log("socket id - app.js", sid);
-        socketDispatch(setSocketId(sid));
-      });
-    }
-
-    socket.on("transaction-update", (msg) => {
-      //console.log("transaction result variable array ", transaction_result_arr);
-
-      // console.log("--- msg socket ---", msg);
-      let transaction_result;
-
-      // declined o completed
-      let isCompleted = false;
-      let isDeclined = false;
-      //console.info(msg);
-      transaction_result = msg;
-      // comprobar que el status es definitivo
-      const status = transaction_result.status.split("-")[0];
-      if (status === "COMPLETED") {
-        isCompleted = true;
-      } else if (status === "DECLINED") {
-        isDeclined = true;
-      }
-
-      //console.log("status - app.js", status);
-
-      if (isCompleted || isDeclined) {
-        // es resultado final, verificar que no esta repetido
-        const transIdActual = transaction_result.transactionId;
-        const alreadyExistentTransId = transaction_result_arr.find(
-          (t) => t.transactionId === transIdActual
-        );
-
-        //console.log("alreadyExistentTransId - app.js", alreadyExistentTransId);
-
-        if (alreadyExistentTransId == undefined) {
-          // no existe
-          transaction_result_arr.push(transaction_result);
-          console.log("--- transacciones socket ---", transaction_result_arr);
-
-          if (!transaction_result.isTopUpBonus) {
-            socketDispatch(
-              setNewTransaccionNormalResultado(transaction_result)
-            );
-          } else {
-            //console.log("transaction de premio socket result");
-            socketDispatch(
-              setNewTransaccionPremioResultado(transaction_result)
-            );
-          }
-        }
-      }
-    });
-  }, [socketIsOpen]);
+  }, [updateNormalesCompleted, updatePremiosCompleted]); */
 
   return (
     <View style={{ flex: 1 }}>
