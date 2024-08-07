@@ -122,12 +122,6 @@ const TfaScreen = ({ route }) => {
       phone: phone.replace(/-/g, "").replace(/ /g, ""),
       lang: idioma,
     };
-    /* let data = {
-      name: "elias",
-      email: "elias@sab.com",
-      phone: "+34695082384",
-      lang: "esp",
-    }; */
 
     //console.log(data);
 

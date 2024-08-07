@@ -133,6 +133,7 @@ const GameScreen = ({ navigation }) => {
 
   const { hayPremioCobrado } = nuevaRecargaState;
   const { hayPremioFallido } = nuevaRecargaState;
+  const { transacciones_premio_esperadas } = socketState;
 
   React.useEffect(() => {
     if (showInvisibleLoadData) {
@@ -161,6 +162,10 @@ const GameScreen = ({ navigation }) => {
       setVerificationError(false);
     }
   }, [verificationError]);
+
+  /*  React.useEffect(() => {
+    console.log("game", userState.prize);
+  }, [userState]); */
 
   React.useEffect(() => {
     if (prizeCollectedError) {
@@ -1408,23 +1413,12 @@ const GameScreen = ({ navigation }) => {
             onPress={() => {
               if (userState.prize !== null) {
                 // caso de presion del boton justo cuando esta en camino
+
                 if (
                   userState.prize.type != "Nada" &&
-                  transacciones_premio_esperadas != 0
+                  userState.prize.status === "pending"
                 ) {
-                  const hayPremioDeAppEnCamino =
-                    transacciones_premio_esperadas.find(
-                      (transaccion_premio_esperada) => {
-                        return (
-                          transaccion_premio_esperada.uuid ===
-                          userState.prize.uuid
-                        );
-                      }
-                    );
-
-                  if (hayPremioDeAppEnCamino != undefined) {
-                    setPremioEnCamino(true);
-                  }
+                  setPremioEnCamino(true);
                 } else {
                   const currentTime = moment();
                   const expirationDate = moment(

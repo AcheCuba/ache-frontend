@@ -6,6 +6,8 @@ export default {
   transacciones_premio_completadas: [],
   transacciones_normales_fallidas: [],
   transacciones_premio_fallidas: [],
+  actual_transaccion_premio_completada: null,
+  actual_transaccion_premio_fallida: null,
 };
 
 /* transacciones_normales_esperadas.push({

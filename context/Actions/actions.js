@@ -61,6 +61,13 @@ export const setOperatorForUser = (operator) => {
   };
 };
 
+export const setUserRecuperado = (isUserRecuperado) => {
+  return {
+    type: actionTypes.SET_USER_RECUPERADO,
+    isUserRecuperado,
+  };
+};
+
 // ================================= ACTIONS FOR NUEVA RECARGA STATE ===========================
 
 export const setHayPremioCobradoModal = (hayPremioCobrado) => {
@@ -269,5 +276,19 @@ export const setTransaccionesPremioEsperadas = (transactions) => {
 export const resetSocketState = () => {
   return {
     type: actionTypes.RESET_SOCKET_STATE,
+  };
+};
+
+export const setActualTransaccionPremioCompletada = (transaccion) => {
+  return {
+    type: actionTypes.SET_ACTUAL_TRANSACCION_PREMIO_COMPLETADA,
+    transaccion,
+  };
+};
+
+export const setActualTransaccionPremioFallida = (transaccion) => {
+  return {
+    type: actionTypes.SET_ACTUAL_TRANSACCION_PREMIO_FALLIDA,
+    transaccion,
   };
 };

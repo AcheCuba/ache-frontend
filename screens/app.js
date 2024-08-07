@@ -16,6 +16,9 @@ import {
   setPrizeForUser,
   setHayPremioCobradoModal,
   setHayPremioFallidoModal,
+  setTransaccionesPremioEsperadas,
+  setActualTransaccionPremioCompletada,
+  setActualTransaccionPremioFallida,
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
 import * as SplashScreen from "expo-splash-screen";
@@ -160,6 +163,8 @@ function MainApp() {
   const {
     transacciones_normales_esperadas,
     transacciones_premio_esperadas,
+    actual_transaccion_premio_completada,
+    actual_transaccion_premio_fallida,
 
     // ======
     transacciones_normales_completadas,
@@ -168,6 +173,9 @@ function MainApp() {
     transacciones_premio_fallidas,
   } = socketState;
 
+  const countryIsoCode = userState?.country;
+  const operatorId = userState?.operator.id;
+  const isUserRecuperado = userState?.isUserRecuperado;
   const { transactions_id_array } = nuevaRecargaState;
   const paymentIntentId = nuevaRecargaState.paymentIntentId;
   const productPriceUsd = nuevaRecargaState.productPriceUsd;
@@ -283,6 +291,8 @@ function MainApp() {
     // 2 crear transacciones de premios (claime prize)
     // nota: no se hace finish ckeckout
 
+    let transacciones_premio_esperadas_array = [];
+
     // 1
     const prizeInApp = userState.prize;
     const prizeType = userState.prize?.type;
@@ -310,6 +320,8 @@ function MainApp() {
 
         if (transaccionDePremio != undefined) {
           // el usuario tiene algun premio
+          // añadir transaccion de premio esperada
+          transacciones_premio_esperadas_array.push(transaccionDePremio);
 
           console.log("premio a reclamar", transaccionDePremio);
 
@@ -322,26 +334,17 @@ function MainApp() {
             .then((resp) => {
               console.log("claim prize status", resp.status);
 
-              /* 
-                // SI ESTE PREMIO ES EL QUE TIENES EN LA APP:
-                // SE ELIMINA DEL BOTON DE PREMIO
-                // PARA ESTO SE ELIMINA DEL STORAGE Y DEL ESTADO DE LA APP
-                if (prizeInApp?.type != "Nada") {
-                  if (prizeInApp?.uuid === transaccionDePremio.prize_uuid) {
-                    // este el premio en la app
-                    // nada más puede coincidir una vez
-                    storeData("user", { ...userState, prize: null });
-                    userDispatch(setPrizeForUser(null));
-
-                  }
-                } */
+              // premio en pending
+              storeData("user", {
+                ...userState,
+                prize: { ...prizeInApp, status: "pending" },
+              });
+              userDispatch(
+                setPrizeForUser({ ...prizeInApp, status: "pending" })
+              );
             })
             .catch((err) => {
-              // ERROR EN EL CLAIM PRIZE
-              // SE LIBERA EL PREMIO: FINISH CHECKOUT FALSE
-              // EL PREMIO SE QUEDA EN LA APP
-              console.log("CLAIM PRIZE ERROR", err.response.status);
-              console.log(err.message);
+              console.log("claim prize error", err.message);
               prize_finish_checkout(transaccionDePremio.prize_uuid, false);
               // se le dice al usuario que hubo un problema
               Toast.show(
@@ -361,6 +364,14 @@ function MainApp() {
         }
       }
     );
+
+    console.log(
+      "numero de transacciones premio esperadas",
+      transacciones_premio_esperadas_array.length
+    );
+    socketDispatch(
+      setTransaccionesPremioEsperadas(transacciones_premio_esperadas_array)
+    );
   };
 
   /*   const sacarModal = () => {
@@ -368,45 +379,6 @@ function MainApp() {
     nuevaRecargaDispatch(setHayPremioFallidoModal(true));
   };
  */
-  const gestionar_nuevo_premio_completado = (prize_completed) => {
-    // 1 si es el de la app, eliminarlo y notificar con modal
-    // 2 si no está en la app, no hago nada (el finish checkout true lo hace backend)
-
-    const prizeInApp = userState.prize;
-    console.log("prize transaction completed", prize_completed);
-
-    // 1
-    if (prizeInApp?.uuid === prize_completed.uuid) {
-      // elimino
-      storeData("user", { ...userState, prize: null });
-      userDispatch(setPrizeForUser(null));
-      // modal notificacion
-      nuevaRecargaDispatch(setHayPremioCobradoModal(true));
-    }
-  };
-
-  const gestionar_nuevo_premio_fallido = (prize_fallido) => {
-    // en cualquier caso finalizar ce=heckout con false
-    // si es el de la app notificar con modal
-
-    console.log("prize transaction fallida", prize_fallido);
-    const prizeInApp = userState.prize;
-
-    // finish checkout
-
-    prize_finish_checkout(prize_fallido.uuid)
-      .then((response) => {
-        console.log("finish checkout premio fallido", response.status);
-      })
-      .catch((err) => {
-        console.log("error en finish checkout recarga fallida", err.message);
-      });
-
-    // notificar si está en la app
-    if (prizeInApp?.uuid === prize_fallido.uuid) {
-      nuevaRecargaDispatch(setHayPremioFallidoModal(true));
-    }
-  };
 
   const refund = (paymentIntentId, productPriceUsd) => {
     const user_token = userState.token;
@@ -447,8 +419,8 @@ function MainApp() {
   };
 
   useEffect(() => {
-    let num_total_transacciones_esperadas;
-    let num_total_transacciones_resultado;
+    let num_transacciones_premio_esperadas;
+    let num_transacciones_premio_resultado;
 
     let num_transacciones_normales_esperadas;
     let num_transacciones_normales_resultado;
@@ -460,17 +432,12 @@ function MainApp() {
         transacciones_normales_completadas.length +
         transacciones_normales_fallidas.length;
 
-      num_total_transacciones_esperadas =
-        transacciones_normales_esperadas.length +
+      num_transacciones_premio_esperadas =
         transacciones_premio_esperadas.length;
 
-      num_total_transacciones_resultado =
-        transacciones_normales_completadas.length +
-        transacciones_normales_fallidas.length +
+      num_transacciones_premio_resultado =
         transacciones_premio_completadas.length +
         transacciones_premio_fallidas.length;
-      // solo se cuentan las transacciones "normales"
-      // porque los premios se gestionan luego del claim prize
 
       if (
         !updateNormalesCompleted &&
@@ -494,8 +461,11 @@ function MainApp() {
       if (
         !updateCompleted &&
         updateNormalesCompleted &&
-        num_total_transacciones_esperadas === num_total_transacciones_resultado
+        num_transacciones_premio_esperadas ===
+          num_transacciones_premio_resultado
       ) {
+        // si habian, se completaron las transacciones de premios
+
         setUpdateCompleted(true);
         console.log("update completed");
 
@@ -513,6 +483,7 @@ function MainApp() {
     transacciones_normales_fallidas,
     transacciones_premio_completadas,
     transacciones_premio_fallidas,
+    // ===
     transactions_id_array,
     // ====
     updateCompleted,
@@ -520,24 +491,66 @@ function MainApp() {
   ]);
 
   useEffect(() => {
+    // 1 si es el de la app, eliminarlo y notificar con modal
+    // 2 si no está en la app, no hago nada (el finish checkout true lo hace backend)
+
+    if (actual_transaccion_premio_completada != null) {
+      const prize_completed = actual_transaccion_premio_completada;
+      const prizeInApp = userState.prize;
+
+      if (prizeInApp != null) {
+        // console.log("prize transaction completed", prize_completed.uuid);
+        // console.log("uuid del premio en la app", prizeInApp.uuid);
+
+        // 1
+        if (prizeInApp?.uuid === prize_completed.uuid) {
+          // elimino
+          storeData("user", { ...userState, prize: null });
+          userDispatch(setPrizeForUser(null));
+          console.log("premio eliminado de app");
+          // modal notificacion
+          nuevaRecargaDispatch(setHayPremioCobradoModal(true));
+        }
+      }
+    }
+  }, [actual_transaccion_premio_completada]);
+
+  useEffect(() => {
+    // el finish checkout false lo hace backend
+    // si es el de la app notificar con modal
+
+    if (actual_transaccion_premio_fallida != null) {
+      const prizeInApp = userState.prize;
+      const prize_fallido = actual_transaccion_premio_fallida;
+
+      // notificar si está en la app
+      if (prizeInApp?.uuid === prize_fallido.uuid) {
+        nuevaRecargaDispatch(setHayPremioFallidoModal(true));
+      }
+    }
+  }, [actual_transaccion_premio_fallida]);
+
+  useEffect(() => {
     const newSocket = io.connect(`${BASE_URL}`);
 
-    newSocket.on("connect", () => {
-      console.log("connected to server, socket saved");
-      setLocalSocket(newSocket);
-      // actualizar a backend
-      socketDispatch(setSocketId(newSocket.id));
-      updateUserSocket(newSocket.id)
-        .then((response) => {
-          if (response.status === 200) {
-            console.log("socket id actualizado en backend exitosamente");
-          }
-        })
-        .catch((err) => {
-          console.log("no se pudo actualizar el socketid en backend", err.msg);
-        });
-    });
-  }, []);
+    if (isUserRecuperado) {
+      newSocket.on("connect", () => {
+        console.log("connected to server, socket saved");
+        setLocalSocket(newSocket);
+        // actualizar a backend
+        socketDispatch(setSocketId(newSocket.id));
+        updateUserSocket(newSocket.id)
+          .then((response) => {
+            if (response.status === 200) {
+              console.log("socket id actualizado en backend exitosamente");
+            }
+          })
+          .catch((err) => {
+            console.log("no se pudo actualizar el socketid en backend");
+          });
+      });
+    }
+  }, [isUserRecuperado]);
 
   useEffect(() => {
     if (localSocket != null) {
@@ -552,6 +565,8 @@ function MainApp() {
       localSocket.on("topup-completed", (transaccion_msg) => {
         console.log("normal completed", transaccion_msg);
 
+        // lo añado solo si no existe
+
         socketDispatch(setNewTransaccionNormalCompletada(transaccion_msg));
       });
 
@@ -562,13 +577,15 @@ function MainApp() {
 
       localSocket.on("prize-topup-completed", (transaccion_msg) => {
         console.log("premio completada", transaccion_msg);
-        gestionar_nuevo_premio_completado(transaccion_msg);
+        // gestionar_nuevo_premio_completado(transaccion_msg);
+        socketDispatch(setActualTransaccionPremioCompletada(transaccion_msg));
         socketDispatch(setNewTransaccionPremioCompletada(transaccion_msg));
       });
 
       localSocket.on("prize-topup-failed", (transaccion_msg) => {
         console.log("premio fallida", transaccion_msg);
-        gestionar_nuevo_premio_fallido(transaccion_msg);
+        // gestionar_nuevo_premio_fallido(transaccion_msg);
+        socketDispatch(setActualTransaccionPremioFallida(transaccion_msg));
         socketDispatch(setNewTransaccionPremioFallida(transaccion_msg));
       });
     }

@@ -8,6 +8,7 @@ export default {
   idioma: "eng",
   country: "CUB",
   operator: { name: undefined, id: undefined },
+  isUserRecuperado: false,
 };
 
 // actions que lo modifican:

@@ -417,7 +417,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     } else {
       // para comunicacion socket
       let transacciones_normales_esperadas = []; // [{mobile_number, transaction_id}, ...]
-      let transacciones_premio_esperadas = [];
+      // let transacciones_premio_esperadas = [];
 
       // por si acasso
       socketDispatch(resetSocketState());
@@ -467,11 +467,11 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
             });
 
             // SOCKET: PREMIOS ESPERADAS
-            if (contactosSeleccionados[contador_contactos].prize != null) {
-              transacciones_premio_esperadas.push(
-                contactosSeleccionados[contador_contactos].prize.uuid
-              );
-            }
+            /* if (contactosSeleccionados[contador_contactos].prize != null) {
+              transacciones_premio_esperadas.push({
+                uuid: contactosSeleccionados[contador_contactos].prize.uuid,
+              });
+            } */
 
             contador_contactos += 1;
           })
@@ -514,16 +514,17 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
       } else {
         setLoadingContinuar(false);
 
+        /* console.log(
+          "transacciones_premio_esperadas",
+          transacciones_premio_esperadas
+        ); */
+
         socketDispatch(
           setTransaccionesNormalesEsperadas(transacciones_normales_esperadas)
         );
-        socketDispatch(
+        /* socketDispatch(
           setTransaccionesPremioEsperadas(transacciones_premio_esperadas)
-        );
-
-        // se limpia. nueva recarga.
-        // nuevaRecargaDispatch(setTransaccionesNormalesConfirmadas([]));
-        // nuevaRecargaDispatch(setTransaccionesPremioConfirmadas([]));
+        ); */
 
         nuevaRecargaDispatch(setTransactionsIdArray(transactions_id_array));
 

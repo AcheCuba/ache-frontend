@@ -3,8 +3,10 @@ import * as React from "react";
 import { GlobalContext } from "../context/GlobalProvider";
 import {
   restore_user,
+  setHayPremioCobradoModal,
   setShowExpiredPrize,
   setShowInvisibleLoadData,
+  setUserRecuperado,
 } from "../context/Actions/actions";
 import moment from "moment";
 import { getData, storeData } from "../libs/asyncStorage.lib";
@@ -17,7 +19,8 @@ import { getPrizeForUser } from "../libs/getPrizeForUser";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-  const { userDispatch, interfaceDispatch } = React.useContext(GlobalContext);
+  const { userDispatch, interfaceDispatch, nuevaRecargaDispatch } =
+    React.useContext(GlobalContext);
 
   const [assets] = useAssets([
     require("../assets/images/home/fondoOscuro.png"),
@@ -101,6 +104,7 @@ export default function useCachedResources() {
           getPrizeForUser(user)
             .then((response) => {
               if (response.status === 200) {
+                userDispatch(setUserRecuperado(true));
                 const hasPrize = response.data.hasPrize;
                 const currentPrize = response.data.activePrize;
 
@@ -138,9 +142,26 @@ export default function useCachedResources() {
                     // actualizacion del premio en frontend
                     // si está activo, lo dibujo en la app
 
-                    const prizeStatus = currentPrize.status;
+                    // const prizeStatus = currentPrize.status;
 
-                    if (prizeStatus === "active") {
+                    // console.log(currentPrize);
+
+                    storeData("user", {
+                      ...user,
+                      prize: {
+                        ...currentPrize,
+                      },
+                    });
+                    userDispatch(
+                      restore_user({
+                        ...user,
+                        prize: {
+                          ...currentPrize,
+                        },
+                      })
+                    );
+
+                    /* if (prizeStatus === "active") {
                       storeData("user", {
                         ...user,
                         prize: {
@@ -157,7 +178,7 @@ export default function useCachedResources() {
                       );
                     } else {
                       userDispatch(restore_user(user));
-                    }
+                    } */
                   }
                 } else {
                   // el usuario no tiene premio
@@ -167,9 +188,16 @@ export default function useCachedResources() {
                   //console.log("hasPrize es false");
 
                   if (user.prize != null) {
-                    // si no es skull, mostrar modal de que expiro
+                    // si no es skull, o se cobró o expiró
                     if (user.prize.type !== "Nada") {
-                      interfaceDispatch(setShowExpiredPrize(true));
+                      // recupero el ultimo status
+                      const prize_status = user.prize.status;
+                      if (prize_status === "pending") {
+                        nuevaRecargaDispatch(setHayPremioCobradoModal(true));
+                      } else {
+                        // si no estaba pending es que expiró
+                        interfaceDispatch(setShowExpiredPrize(true));
+                      }
                     }
                   }
 

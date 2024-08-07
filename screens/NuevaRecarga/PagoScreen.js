@@ -31,7 +31,7 @@ const PagoScreen = ({ navigation, route }) => {
   const { validated_prizes, contactosSeleccionados } = nuevaRecargaState;
 
   React.useEffect(() => {
-    //console.log("paymentSucceded - pago", paymentSucceded);
+    // console.log("paymentSucceded", paymentSucceded);
     if (paymentSucceded) {
       // 1 obtener payment id para refund
       // nota: esto solo funciona cuando se completa el pago
@@ -124,7 +124,7 @@ const PagoScreen = ({ navigation, route }) => {
       .then((response) => {
         const data = response.data;
         setSessionId(data.id);
-        //setLocalPaymentIntentId(data.payment_intent);
+        // setLocalPaymentIntentId(data.payment_intent);
         setUrl(initUrl + "payment?session=" + data.id);
         setLoading(false);
       })

@@ -8,6 +8,7 @@ const SET_IDIOMA = actionTypes.SET_IDIOMA;
 const SET_COUNTRY_FOR_USER = actionTypes.SET_COUNTRY_FOR_USER;
 const SET_OPERATOR_FOR_USER = actionTypes.SET_OPERATOR_FOR_USER;
 const SET_HAS_PENDING_PRIZE = actionTypes.SET_HAS_PENDING_PRIZE;
+const SET_USER_RECUPERADO = actionTypes.SET_USER_RECUPERADO;
 
 const UserReducer = (state = userInitialState, action) => {
   switch (action.type) {
@@ -48,6 +49,13 @@ const UserReducer = (state = userInitialState, action) => {
         ...state,
         hasPendingPrize: action.isPending,
       };
+
+    case SET_USER_RECUPERADO:
+      return {
+        ...state,
+        isUserRecuperado: action.isUserRecuperado,
+      };
+
     default:
       //console.log("Default case (in user reducer):", state);
       return state;

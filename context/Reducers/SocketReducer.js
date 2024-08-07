@@ -1,23 +1,11 @@
 import { actionTypes } from "../Actions/types";
 import socketInitialState from "../initialStates/socketInitialState";
 
-const OPEN_SOCKET = actionTypes.OPEN_SOCKET;
-const CLOSE_SOCKET = actionTypes.CLOSE_SOCKET;
 const SET_SOCKET_ID = actionTypes.SET_SOCKET_ID;
-const SET_UPDATE_COMPLETED = actionTypes.SET_UPDATE_COMPLETED;
-
 const SET_TRANSACCIONES_NORMALES_ESPERADAS =
   actionTypes.SET_TRANSACCIONES_NORMALES_ESPERADAS;
 const SET_TRANSACCIONES_PREMIO_ESPERADAS =
   actionTypes.SET_TRANSACCIONES_PREMIO_ESPERADAS;
-const SET_TRANSACCIONES_NORMALES_RESULTADO =
-  actionTypes.SET_TRANSACCIONES_NORMALES_RESULTADO;
-const SET_TRANSACCIONES_PREMIO_RESULTADO =
-  actionTypes.SET_TRANSACCIONES_PREMIO_RESULTADO;
-const SET_NEW_TRANSACCION_NORMAL_RESULTADO =
-  actionTypes.SET_NEW_TRANSACCION_NORMAL_RESULTADO;
-const SET_NEW_TRANSACCION_PREMIO_RESULTADO =
-  actionTypes.SET_NEW_TRANSACCION_PREMIO_RESULTADO;
 const SET_NEW_TRANSACCION_NORMAL_FALLIDA =
   actionTypes.SET_NEW_TRANSACCION_NORMAL_FALLIDA;
 const SET_NEW_TRANSACCION_PREMIO_FALLIDA =
@@ -27,10 +15,10 @@ const SET_NEW_TRANSACCION_PREMIO_COMPLETADA =
 const SET_NEW_TRANSACCION_NORMAL_COMPLETADA =
   actionTypes.SET_NEW_TRANSACCION_NORMAL_COMPLETADA;
 const RESET_SOCKET_STATE = actionTypes.RESET_SOCKET_STATE;
-const SET_UPDATE_NORMALES_COMPLETED = actionTypes.SET_UPDATE_NORMALES_COMPLETED;
-
-//const SET_TRANSACCIONES_RESULTADO = actionTypes.SET_TRANSACCIONES_RESULTADO;
-//const SET_NEW_TRANSACCION_RESULTADO = actionTypes.SET_NEW_TRANSACCION_RESULTADO;
+const SET_ACTUAL_TRANSACCION_PREMIO_COMPLETADA =
+  actionTypes.SET_ACTUAL_TRANSACCION_PREMIO_COMPLETADA;
+const SET_ACTUAL_TRANSACCION_PREMIO_FALLIDA =
+  actionTypes.SET_ACTUAL_TRANSACCION_PREMIO_FALLIDA;
 
 const SocketReducer = (state = socketInitialState, action) => {
   switch (action.type) {
@@ -45,6 +33,8 @@ const SocketReducer = (state = socketInitialState, action) => {
         // ===
         transacciones_normales_esperadas: [],
         transacciones_premio_esperadas: [],
+        actual_transaccion_premio_completada: null,
+        actual_transaccion_premio_fallida: null,
       };
 
     case SET_NEW_TRANSACCION_NORMAL_COMPLETADA:
@@ -97,6 +87,17 @@ const SocketReducer = (state = socketInitialState, action) => {
       return {
         ...state,
         transacciones_premio_esperadas: action.transactions,
+      };
+
+    case SET_ACTUAL_TRANSACCION_PREMIO_COMPLETADA:
+      return {
+        ...state,
+        actual_transaccion_premio_completada: action.transaccion,
+      };
+    case SET_ACTUAL_TRANSACCION_PREMIO_FALLIDA:
+      return {
+        ...state,
+        actual_transaccion_premio_fallida: action.transaccion,
       };
   }
 };
