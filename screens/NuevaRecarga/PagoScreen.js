@@ -4,7 +4,12 @@ import { WebView } from "react-native-webview";
 import { GlobalContext } from "../../context/GlobalProvider";
 import { BASE_URL, frontend_url } from "../../constants/domain";
 import axios from "axios";
-import { setPaymentIntentId } from "../../context/Actions/actions";
+import {
+  deleteAllContacts,
+  deleteAllFields,
+  deleteAllValidatedPrizes,
+  setPaymentIntentId,
+} from "../../context/Actions/actions";
 import { StatusBar } from "react-native";
 
 // antes
@@ -230,6 +235,11 @@ const PagoScreen = ({ navigation, route }) => {
     if (webViewState.url === initUrl + "payment-success") {
       //console.log("success");
       setPaymentSucceded(true);
+
+      // limpiar la pantalla de nueva recarga
+      nuevaRecargaDispatch(deleteAllContacts());
+      nuevaRecargaDispatch(deleteAllValidatedPrizes());
+      nuevaRecargaDispatch(deleteAllFields());
     }
 
     if (webViewState.url === initUrl + "payment-failure") {

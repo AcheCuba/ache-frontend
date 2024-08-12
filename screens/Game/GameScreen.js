@@ -65,9 +65,14 @@ const { width, height } = Dimensions.get("screen");
 const GameScreen = ({ navigation }) => {
   //const expoPushToken = useExpoPushToken();
 
+  // =====
+  // animations
+  const fadeAnim = React.useRef(new Animated.Value(0)).current; // Valor inicial de opacidad 0 (invisible)
   const [animate, SetAnimate] = React.useState(false);
   const [clickEvent, SetClickEvent] = React.useState(false);
 
+  // ======
+  // modals
   const [modalCobrarPremioVisible, setModalCobrarPremioVisible] =
     React.useState(false);
   //const [codigo, setCodigo] = React.useState("");
@@ -76,9 +81,6 @@ const GameScreen = ({ navigation }) => {
   const [premioAcumulado, setPremioAcumulado] = React.useState(false);
   const [premioAcumuladoType, setPremioAcumuladoType] =
     React.useState(undefined);
-
-  // ======
-  // modals
   const [NadaWon, setNadaWon] = React.useState(false);
   const [DoublePrizeWon, setDoublePrizeWon] = React.useState(false);
   const [JoyaWon, setJoyaWon] = React.useState(false);
@@ -133,7 +135,15 @@ const GameScreen = ({ navigation }) => {
 
   const { hayPremioCobrado } = nuevaRecargaState;
   const { hayPremioFallido } = nuevaRecargaState;
-  const { transacciones_premio_esperadas } = socketState;
+
+  React.useEffect(() => {
+    console.log("fade anim");
+    Animated.timing(fadeAnim, {
+      toValue: 1, // Opacidad al 1 (completamente visible)
+      duration: 500, // Duración de la animación
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   React.useEffect(() => {
     if (showInvisibleLoadData) {
@@ -886,133 +896,44 @@ const GameScreen = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground
-      source={require("../../assets/images/degradado_general.png")}
-      style={{
-        width: "100%",
-        height: "100%",
-        flex: 1,
-      }}
-      transition={false}
+    <Animated.View
+      style={{ flex: 1, opacity: fadeAnim, backgroundColor: generalBgColor }}
     >
-      {loadingUserDataDummyModalVisible ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={loadingUserDataDummyModalVisible}
-          onRequestClose={() => setLoadingUserDataDummyModalVisible(false)}
-        >
-          <View
-            style={{
-              flex: 1,
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(0,0,0,0)",
-            }}
-          >
-            <LoadingUserDataDummyModal />
-          </View>
-        </Modal>
-      ) : null}
-
-      {nadaDescriptionModalVisible ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={nadaDescriptionModalVisible}
-          onRequestClose={() => setNadaDescriptionModalVisible(false)}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
+      <ImageBackground
+        source={require("../../assets/images/degradado_general.png")}
+        style={{
+          width: "100%",
+          height: "100%",
+          flex: 1,
+        }}
+        transition={false}
+      >
+        {loadingUserDataDummyModalVisible ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={loadingUserDataDummyModalVisible}
+            onRequestClose={() => setLoadingUserDataDummyModalVisible(false)}
           >
             <View
               style={{
                 flex: 1,
                 width: "100%",
                 height: "100%",
-                backgroundColor: generalBgColorTrans5,
+                backgroundColor: "rgba(0,0,0,0)",
               }}
             >
-              <NadaDescriptionContentModal
-                navigation={navigation}
-                setModalVisible={setNadaDescriptionModalVisible}
-                userState={userState}
-                horasRestantes={horasRestantes}
-              />
+              <LoadingUserDataDummyModal />
             </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-      {modalCobrarPremioVisible ? ( //cobrar premio modal
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalCobrarPremioVisible}
-          onRequestClose={() => setModalCobrarPremioVisible(false)}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: generalBgColorTrans5,
-              }}
-            >
-              <RootSiblingParent>
-                <CobrarPremioContent
-                  navigation={navigation}
-                  setModalVisible={setModalCobrarPremioVisible}
-                  Salir={Salir}
-                  setCodigoGenerado={setCodigoGenerado}
-                  codigoGenerado={codigoGenerado}
-                  horasRestantes={horasRestantes}
-                  setPrizeCollectedError={setPrizeCollectedError}
-                  setPrizePendingError={setPrizePendingError}
-                  setPrizeInactiveError={setPrizeInactiveError}
-                  setVerificationError={setVerificationError}
-                />
-              </RootSiblingParent>
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-      {animate ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={animate}
-          onRequestClose={() => SetAnimate(false)}
-        >
-          <View
-            style={{
-              zIndex: 10,
-              flex: 1,
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
-          </View>
-        </Modal>
-      ) : null}
+          </Modal>
+        ) : null}
 
-      {premioAcumulado ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={premioAcumulado}
-          onRequestClose={() => setPremioAcumulado(false)}
-        >
-          <View
-          /* onPress={() => {
-              setPremioAcumulado(false);
-              setPremioAcumuladoType(undefined); 
-            }} */
+        {nadaDescriptionModalVisible ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={nadaDescriptionModalVisible}
+            onRequestClose={() => setNadaDescriptionModalVisible(false)}
           >
             <LinearGradient
               colors={[generalBgColor, bgColorFinalGradient]}
@@ -1020,112 +941,204 @@ const GameScreen = ({ navigation }) => {
             >
               <View
                 style={{
-                  // zIndex: 2,
                   flex: 1,
                   width: "100%",
                   height: "100%",
                   backgroundColor: generalBgColorTrans5,
-                  alignItems: "center",
                 }}
               >
-                <View style={{ marginTop: 150, height: 150 }}>
-                  <ImagePrizePremioAcumulado />
-                </View>
+                <NadaDescriptionContentModal
+                  navigation={navigation}
+                  setModalVisible={setNadaDescriptionModalVisible}
+                  userState={userState}
+                  horasRestantes={horasRestantes}
+                />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+        {modalCobrarPremioVisible ? ( //cobrar premio modal
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalCobrarPremioVisible}
+            onRequestClose={() => setModalCobrarPremioVisible(false)}
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: generalBgColorTrans5,
+                }}
+              >
+                <RootSiblingParent>
+                  <CobrarPremioContent
+                    navigation={navigation}
+                    setModalVisible={setModalCobrarPremioVisible}
+                    Salir={Salir}
+                    setCodigoGenerado={setCodigoGenerado}
+                    codigoGenerado={codigoGenerado}
+                    horasRestantes={horasRestantes}
+                    setPrizeCollectedError={setPrizeCollectedError}
+                    setPrizePendingError={setPrizePendingError}
+                    setPrizeInactiveError={setPrizeInactiveError}
+                    setVerificationError={setVerificationError}
+                  />
+                </RootSiblingParent>
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+        {animate ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={animate}
+            onRequestClose={() => SetAnimate(false)}
+          >
+            <View
+              style={{
+                zIndex: 10,
+                flex: 1,
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
+            </View>
+          </Modal>
+        ) : null}
+
+        {premioAcumulado ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={premioAcumulado}
+            onRequestClose={() => setPremioAcumulado(false)}
+          >
+            <View
+            /* onPress={() => {
+              setPremioAcumulado(false);
+              setPremioAcumuladoType(undefined); 
+            }} */
+            >
+              <LinearGradient
+                colors={[generalBgColor, bgColorFinalGradient]}
+                style={{ width: "100%", height: "100%" }}
+              >
                 <View
                   style={{
-                    width: width / 1.5,
-                    justifyContent: "center",
+                    // zIndex: 2,
+                    flex: 1,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: generalBgColorTrans5,
                     alignItems: "center",
-                    //marginTop: -30,
                   }}
                 >
-                  <View style={{}}>
-                    {userState.prize?.type === "Nada" ? (
-                      <TextBold
-                        text={
-                          userState?.idioma === "spa"
-                            ? "Ruleta Bloqueada"
-                            : "WHEEL BLOCKED"
-                        }
-                        style={{
-                          fontSize: 26,
-                          color: "#01f9d2",
-                          textTransform: "uppercase",
-                        }}
-                      />
-                    ) : (
-                      <TextBold
-                        text={
-                          userState?.idioma === "spa"
-                            ? "Premio Pendiente"
-                            : "PRIZE ON HOLD"
-                        }
-                        style={{
-                          fontSize: 26,
-                          color: "#01f9d2",
-                          textTransform: "uppercase",
-                        }}
-                      />
-                    )}
+                  <View style={{ marginTop: 150, height: 150 }}>
+                    <ImagePrizePremioAcumulado />
+                  </View>
+                  <View
+                    style={{
+                      width: width / 1.5,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      //marginTop: -30,
+                    }}
+                  >
+                    <View style={{}}>
+                      {userState.prize?.type === "Nada" ? (
+                        <TextBold
+                          text={
+                            userState?.idioma === "spa"
+                              ? "Ruleta Bloqueada"
+                              : "WHEEL BLOCKED"
+                          }
+                          style={{
+                            fontSize: 26,
+                            color: "#01f9d2",
+                            textTransform: "uppercase",
+                          }}
+                        />
+                      ) : (
+                        <TextBold
+                          text={
+                            userState?.idioma === "spa"
+                              ? "Premio Pendiente"
+                              : "PRIZE ON HOLD"
+                          }
+                          style={{
+                            fontSize: 26,
+                            color: "#01f9d2",
+                            textTransform: "uppercase",
+                          }}
+                        />
+                      )}
+                    </View>
+
+                    <View style={{ marginTop: 30 }}>
+                      {userState.prize?.type === "Nada" ? (
+                        <TextItalic
+                          text={
+                            userState?.idioma === "spa"
+                              ? `lo sentimos... tienes calavera. Espera ${horasRestantes} horas para que se elimine o envía una recarga y vuelve a jugar`
+                              : `sorry... you have the skull. Wait ${horasRestantes} hours for it to go away on its own or send a recharge and play again`
+                          }
+                          style={{
+                            fontSize: 20,
+                            color: "#01f9d2",
+                            textAlign: "center",
+                            //textTransform: "uppercase",
+                          }}
+                        />
+                      ) : (
+                        <TextItalic
+                          text={
+                            userState?.idioma === "spa"
+                              ? "Ya tienes un premio guardado. Para poder cobrar otro premio que ganes en la ruleta debes agregar el premio actual a una recarga o compartirlo usando el botón de la esquina superior derecha de la pantalla."
+                              : "You already have a saved prize. To be able to collect another prize from the fortune wheel add the existing one to a top up or share it using the icon on the top right corner of the screen."
+                          }
+                          style={{
+                            fontSize: 20,
+                            color: "#01f9d2",
+                            textAlign: "center",
+                            //textTransform: "uppercase",
+                          }}
+                        />
+                      )}
+                    </View>
                   </View>
 
                   <View style={{ marginTop: 30 }}>
-                    {userState.prize?.type === "Nada" ? (
-                      <TextItalic
-                        text={
-                          userState?.idioma === "spa"
-                            ? `lo sentimos... tienes calavera. Espera ${horasRestantes} horas para que se elimine o envía una recarga y vuelve a jugar`
-                            : `sorry... you have the skull. Wait ${horasRestantes} hours for it to go away on its own or send a recharge and play again`
-                        }
-                        style={{
-                          fontSize: 20,
-                          color: "#01f9d2",
-                          textAlign: "center",
-                          //textTransform: "uppercase",
+                    {userState.prize?.type !== "Nada" ? (
+                      <LargeFlatButton
+                        text={ResolveText("obtenerPremio")}
+                        btStyle={{ marginBottom: 30 }}
+                        onPress={() => {
+                          setPremioAcumulado(false);
+                          if (userState.prize?.type !== "Nada") {
+                            navigation.jumpTo("Nueva Recarga", {
+                              screen: "NuevaRecargaScreen",
+                              params: { inOrderToCobrarPremio: true },
+                            });
+                          }
                         }}
                       />
-                    ) : (
-                      <TextItalic
-                        text={
-                          userState?.idioma === "spa"
-                            ? "Ya tienes un premio guardado. Para poder cobrar otro premio que ganes en la ruleta debes agregar el premio actual a una recarga o compartirlo usando el botón de la esquina superior derecha de la pantalla."
-                            : "You already have a saved prize. To be able to collect another prize from the fortune wheel add the existing one to a top up or share it using the icon on the top right corner of the screen."
-                        }
-                        style={{
-                          fontSize: 20,
-                          color: "#01f9d2",
-                          textAlign: "center",
-                          //textTransform: "uppercase",
-                        }}
-                      />
-                    )}
-                  </View>
-                </View>
+                    ) : null}
 
-                <View style={{ marginTop: 30 }}>
-                  {userState.prize?.type !== "Nada" ? (
                     <LargeFlatButton
-                      text={ResolveText("obtenerPremio")}
-                      btStyle={{ marginBottom: 30 }}
                       onPress={() => {
                         setPremioAcumulado(false);
-                        if (userState.prize?.type !== "Nada") {
-                          navigation.jumpTo("Nueva Recarga", {
-                            screen: "NuevaRecargaScreen",
-                            params: { inOrderToCobrarPremio: true },
-                          });
-                        }
                       }}
+                      text={ResolveText("cancelar")}
                     />
-                  ) : null}
-
-                  <LargeFlatButton
-                    onPress={() => {
-                      setPremioAcumulado(false);
-                    }}
-                    text={ResolveText("cancelar")}
-                  />
-                  {/* <TouchableOpacity
+                    {/* <TouchableOpacity
                     onPress={() => {
                       setPremioAcumulado(false);
                     }}
@@ -1136,494 +1149,497 @@ const GameScreen = ({ navigation }) => {
                   >
                     <Text>pruebita</Text>
                   </TouchableOpacity> */}
+                  </View>
                 </View>
-              </View>
-            </LinearGradient>
-          </View>
-        </Modal>
-      ) : null}
+              </LinearGradient>
+            </View>
+          </Modal>
+        ) : null}
 
-      {NadaWon ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={NadaWon}
-          onRequestClose={() => setNadaWon(false)}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{
-              width: "100%",
-              height: "100%",
-              flex: 1,
-              alignItems: "center",
-            }}
+        {NadaWon ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={NadaWon}
+            onRequestClose={() => setNadaWon(false)}
           >
-            <View style={{ marginTop: 150 }}>
-              {/*  <Image
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{
+                width: "100%",
+                height: "100%",
+                flex: 1,
+                alignItems: "center",
+              }}
+            >
+              <View style={{ marginTop: 150 }}>
+                {/*  <Image
                 source={require("../../assets/images/home/calavera_roja.png")}
                 style={{ width: 160, height: 180 }}
               /> */}
-              <Image
-                source={require("../../assets/animaciones/calavera-roja.gif")}
-                style={{ width: 120, height: 140 }}
-              />
-            </View>
-            <View
-              style={{
-                width: width / 1.5,
-                justifyContent: "center",
-                alignItems: "center",
-                //marginTop: 10,
-              }}
-            >
-              <TextBold
-                text={userState?.idioma === "spa" ? "La Calavera" : "The Skull"}
-                //text={ResolveText("nadaWonTitle")}
+                <Image
+                  source={require("../../assets/animaciones/calavera-roja.gif")}
+                  style={{ width: 120, height: 140 }}
+                />
+              </View>
+              <View
                 style={{
-                  fontSize: 30,
-                  color: "#01f9d2",
-                  textTransform: "uppercase",
-                  textAlign: "center",
-                  //fontStyle: "italic",
+                  width: width / 1.5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  //marginTop: 10,
                 }}
-              />
-              <Text style={{ marginTop: 30 }}>
-                <TextItalic
+              >
+                <TextBold
                   text={
-                    userState?.idioma === "spa"
-                      ? "Lo sentimos... Mala suerte esta vez. Inténtalo de nuevo en 24 horas o envía una recarga rápida con El Rayo para que puedas volver a probar tu suerte de inmediato."
-                      : "Oops... bad luck this time. You can try again in 24 hours or send a quick recharge with The Lightning to try again right away!"
+                    userState?.idioma === "spa" ? "La Calavera" : "The Skull"
                   }
+                  //text={ResolveText("nadaWonTitle")}
                   style={{
-                    fontSize: 18,
+                    fontSize: 30,
                     color: "#01f9d2",
+                    textTransform: "uppercase",
                     textAlign: "center",
-                    fontWeight: "bold",
+                    //fontStyle: "italic",
                   }}
                 />
-              </Text>
-            </View>
+                <Text style={{ marginTop: 30 }}>
+                  <TextItalic
+                    text={
+                      userState?.idioma === "spa"
+                        ? "Lo sentimos... Mala suerte esta vez. Inténtalo de nuevo en 24 horas o envía una recarga rápida con El Rayo para que puedas volver a probar tu suerte de inmediato."
+                        : "Oops... bad luck this time. You can try again in 24 hours or send a quick recharge with The Lightning to try again right away!"
+                    }
+                    style={{
+                      fontSize: 18,
+                      color: "#01f9d2",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}
+                  />
+                </Text>
+              </View>
 
-            <View style={{ marginTop: 30 }}>
-              <LargeFlatButton
-                text={ResolveText("volverAJugar")}
-                onPress={() => {
-                  setNadaWon(false);
-                }}
-              />
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-      {DoublePrizeWon ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={DoublePrizeWon}
-          onRequestClose={() => setDoublePrizeWon(false)}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: generalBgColorTrans5,
-              }}
-            >
-              <DoublePrizeWonContentModal
-                navigation={navigation}
-                setModalVisible={setDoublePrizeWon}
-                userState={userState}
-              />
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-
-      {JoyaWon ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={JoyaWon}
-          onRequestClose={() => setJoyaWon(false)}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: generalBgColorTrans5,
-              }}
-            >
-              <JoyaWonContentModal
-                navigation={navigation}
-                setModalVisible={setJoyaWon}
-                userState={userState}
-              />
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-
-      {showExpiredPrize ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={showExpiredPrize}
-          onRequestClose={() => interfaceDispatch(setShowExpiredPrize(false))}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: generalBgColorTrans5,
-              }}
-            >
-              <PremioExpiradoContentModal
-                navigation={navigation}
-                userState={userState}
-              />
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-
-      {hayPremioCobrado ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={hayPremioCobrado}
-          onRequestClose={() =>
-            nuevaRecargaDispatch(setHayPremioCobradoModal(false))
-          }
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: generalBgColorTrans5,
-              }}
-            >
-              <PremioCobradoModal userState={userState} />
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-
-      {hayPremioFallido ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={hayPremioFallido}
-          onRequestClose={() =>
-            nuevaRecargaDispatch(setHayPremioFallidoModal(false))
-          }
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: generalBgColorTrans5,
-              }}
-            >
-              <PremioFallidoModal userState={userState} />
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-
-      {premioEnCamino ? (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={premioEnCamino}
-          onRequestClose={() => setPremioEnCamino(false)}
-        >
-          <LinearGradient
-            colors={[generalBgColor, bgColorFinalGradient]}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                height: "100%",
-                backgroundColor: "generalBgColorTrans5",
-              }}
-            >
-              <PremioEnCaminoModal
-                setModalVisible={setPremioEnCamino}
-                userState={userState}
-              />
-            </View>
-          </LinearGradient>
-        </Modal>
-      ) : null}
-
-      <View style={styles.containerGame}>
-        <View
-          key={1}
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            width: "80%",
-            //marginTop: -height / 15,
-            zIndex: 1,
-            position: "absolute",
-            top: 90,
-
-            //marginRight: width / 10,
-          }}
-        >
-          <TouchableOpacity
-            //activeOpacity={0.6}
-
-            style={{
-              backgroundColor: btPremioColor,
-              width: width / 3.5,
-              height: width / 3.5,
-              borderRadius: width / 7,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={() => {
-              if (userState.prize !== null) {
-                // caso de presion del boton justo cuando esta en camino
-
-                if (
-                  userState.prize.type != "Nada" &&
-                  userState.prize.status === "pending"
-                ) {
-                  setPremioEnCamino(true);
-                } else {
-                  const currentTime = moment();
-                  const expirationDate = moment(
-                    userState.prize?.expirationDate
-                  ).local();
-                  const horas_restantes = expirationDate.diff(
-                    currentTime,
-                    "hours"
-                  );
-                  // actualizo horas respantes para mostrar
-                  setHorasRestantes(horas_restantes);
-
-                  if (userState.prize.type === "Nada") {
-                    // tiene skull
-                    setNadaDescriptionModalVisible(true);
-                    checkIfSkullExpired();
-                    // se elimina de la app si expiró
-                  } else {
-                    // tiene un premio
-                    // mostrar modal
-                    enMovimiento.current = false;
-                    setModalCobrarPremioVisible(true);
-                  }
-                }
-              } else {
-                // no hay premio en la app
-                // informar
-                let toast = Toast.show(ResolveText("premioVacio"), {
-                  duaration: Toast.durations.LONG,
-                  position: Toast.positions.BOTTOM,
-                  shadow: true,
-                  animation: true,
-                  hideOnPress: true,
-                  delay: 0,
-                });
-              }
-            }}
-          >
-            <ImageConditional typeOfPrize={userState?.prize?.type} />
-          </TouchableOpacity>
-        </View>
-
-        <View
-          key={2}
-          style={{
-            position: "absolute",
-            zIndex: 2,
-            left: -height / 3.2,
-            top: height / 6.4,
-          }}
-        >
-          <ImageBackground
-            source={require("../../assets/images/home/fondo.png")}
-            //source={require("../../assets/images/home/ruleta/bordeysombra_sinluz.png")}
-            style={{
-              width: height / 1.6,
-              height: height / 1.6,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            transition={false}
-          >
-            <View
-              style={{
-                position: "absolute",
-                right: -6.4,
-                zIndex: 1,
-                //zIndex: 5
-              }}
-            >
-              <TouchableWithoutFeedback
-                onPress={() => onPressWheel("selector")}
-              >
-                <Image
-                  source={require("../../assets/images/home/selector.png")}
-                  style={{ height: 95, width: 80 }}
+              <View style={{ marginTop: 30 }}>
+                <LargeFlatButton
+                  text={ResolveText("volverAJugar")}
+                  onPress={() => {
+                    setNadaWon(false);
+                  }}
                 />
-              </TouchableWithoutFeedback>
-            </View>
-            <View
-              style={{
-                position: "absolute",
-                top: height / 3.6,
-                zIndex: 1,
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+        {DoublePrizeWon ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={DoublePrizeWon}
+            onRequestClose={() => setDoublePrizeWon(false)}
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: generalBgColorTrans5,
+                }}
+              >
+                <DoublePrizeWonContentModal
+                  navigation={navigation}
+                  setModalVisible={setDoublePrizeWon}
+                  userState={userState}
+                />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
 
-                //right: 3,
+        {JoyaWon ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={JoyaWon}
+            onRequestClose={() => setJoyaWon(false)}
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: generalBgColorTrans5,
+                }}
+              >
+                <JoyaWonContentModal
+                  navigation={navigation}
+                  setModalVisible={setJoyaWon}
+                  userState={userState}
+                />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+
+        {showExpiredPrize ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showExpiredPrize}
+            onRequestClose={() => interfaceDispatch(setShowExpiredPrize(false))}
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: generalBgColorTrans5,
+                }}
+              >
+                <PremioExpiradoContentModal
+                  navigation={navigation}
+                  userState={userState}
+                />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+
+        {hayPremioCobrado ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={hayPremioCobrado}
+            onRequestClose={() =>
+              nuevaRecargaDispatch(setHayPremioCobradoModal(false))
+            }
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: generalBgColorTrans5,
+                }}
+              >
+                <PremioCobradoModal userState={userState} />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+
+        {hayPremioFallido ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={hayPremioFallido}
+            onRequestClose={() =>
+              nuevaRecargaDispatch(setHayPremioFallidoModal(false))
+            }
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: generalBgColorTrans5,
+                }}
+              >
+                <PremioFallidoModal userState={userState} />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+
+        {premioEnCamino ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={premioEnCamino}
+            onRequestClose={() => setPremioEnCamino(false)}
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "generalBgColorTrans5",
+                }}
+              >
+                <PremioEnCaminoModal
+                  setModalVisible={setPremioEnCamino}
+                  userState={userState}
+                />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+
+        <View style={styles.containerGame}>
+          <View
+            key={1}
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              width: "80%",
+              //marginTop: -height / 15,
+              zIndex: 1,
+              position: "absolute",
+              top: 90,
+
+              //marginRight: width / 10,
+            }}
+          >
+            <TouchableOpacity
+              //activeOpacity={0.6}
+
+              style={{
+                backgroundColor: btPremioColor,
+                width: width / 3.5,
+                height: width / 3.5,
+                borderRadius: width / 7,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                if (userState.prize !== null) {
+                  // caso de presion del boton justo cuando esta en camino
+
+                  if (
+                    userState.prize.type != "Nada" &&
+                    userState.prize.status === "pending"
+                  ) {
+                    setPremioEnCamino(true);
+                  } else {
+                    const currentTime = moment();
+                    const expirationDate = moment(
+                      userState.prize?.expirationDate
+                    ).local();
+                    const horas_restantes = expirationDate.diff(
+                      currentTime,
+                      "hours"
+                    );
+                    // actualizo horas respantes para mostrar
+                    setHorasRestantes(horas_restantes);
+
+                    if (userState.prize.type === "Nada") {
+                      // tiene skull
+                      setNadaDescriptionModalVisible(true);
+                      checkIfSkullExpired();
+                      // se elimina de la app si expiró
+                    } else {
+                      // tiene un premio
+                      // mostrar modal
+                      enMovimiento.current = false;
+                      setModalCobrarPremioVisible(true);
+                    }
+                  }
+                } else {
+                  // no hay premio en la app
+                  // informar
+                  let toast = Toast.show(ResolveText("premioVacio"), {
+                    duaration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                  });
+                }
               }}
             >
-              <Image
-                source={require("../../assets/images/home/centro.png")}
-                style={{
-                  width: width / 5.2,
-                  height: width / 5.2,
-                }}
-                transition={false}
-              />
-            </View>
+              <ImageConditional typeOfPrize={userState?.prize?.type} />
+            </TouchableOpacity>
+          </View>
 
+          <View
+            key={2}
+            style={{
+              position: "absolute",
+              zIndex: 2,
+              left: -height / 3.2,
+              top: height / 6.4,
+            }}
+          >
             <ImageBackground
-              source={require("../../assets/images/home/bisel.png")}
+              source={require("../../assets/images/home/fondo.png")}
+              //source={require("../../assets/images/home/ruleta/bordeysombra_sinluz.png")}
               style={{
-                width: height / 2.1 + 8,
-                height: height / 2.1 + 8,
+                width: height / 1.6,
+                height: height / 1.6,
                 justifyContent: "center",
                 alignItems: "center",
               }}
               transition={false}
             >
-              <TouchableWithoutFeedback onPress={() => onPressWheel("slots")}>
-                <Image
-                  source={require("../../assets/images/home/sombra.png")}
-                  style={{
-                    width: height / 2.1,
-                    height: height / 2.1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    zIndex: 1,
-                    position: "absolute",
-                    //top: 30,
-                  }}
-                  transition={false}
-                />
-              </TouchableWithoutFeedback>
-
-              <Animated.View
+              <View
                 style={{
-                  transform: [
-                    //{ rotate: !thereIsPrizeResult ? wheelLoop : wheel },
-                    { rotate: wheelLoop },
-                  ],
+                  position: "absolute",
+                  right: -6.4,
+                  zIndex: 1,
+                  //zIndex: 5
                 }}
               >
-                <ImageBackground
-                  //source={require("../../assets/images/home/casillas2.png")}
-                  source={require("../../assets/images/home/ruleta/Mueve_slots.png")}
+                <TouchableWithoutFeedback
+                  onPress={() => onPressWheel("selector")}
+                >
+                  <Image
+                    source={require("../../assets/images/home/selector.png")}
+                    style={{ height: 95, width: 80 }}
+                  />
+                </TouchableWithoutFeedback>
+              </View>
+              <View
+                style={{
+                  position: "absolute",
+                  top: height / 3.6,
+                  zIndex: 1,
+
+                  //right: 3,
+                }}
+              >
+                <Image
+                  source={require("../../assets/images/home/centro.png")}
                   style={{
-                    width: height / 2.1,
-                    height: height / 2.1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    //zIndex: 3,
+                    width: width / 5.2,
+                    height: width / 5.2,
                   }}
                   transition={false}
                 />
-              </Animated.View>
-            </ImageBackground>
-          </ImageBackground>
-        </View>
+              </View>
 
-        {/*  <View style={{ height: 40, width: 100, backgroundColor: "pink" }}>
+              <ImageBackground
+                source={require("../../assets/images/home/bisel.png")}
+                style={{
+                  width: height / 2.1 + 8,
+                  height: height / 2.1 + 8,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                transition={false}
+              >
+                <TouchableWithoutFeedback onPress={() => onPressWheel("slots")}>
+                  <Image
+                    source={require("../../assets/images/home/sombra.png")}
+                    style={{
+                      width: height / 2.1,
+                      height: height / 2.1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      zIndex: 1,
+                      position: "absolute",
+                      //top: 30,
+                    }}
+                    transition={false}
+                  />
+                </TouchableWithoutFeedback>
+
+                <Animated.View
+                  style={{
+                    transform: [
+                      //{ rotate: !thereIsPrizeResult ? wheelLoop : wheel },
+                      { rotate: wheelLoop },
+                    ],
+                  }}
+                >
+                  <ImageBackground
+                    //source={require("../../assets/images/home/casillas2.png")}
+                    source={require("../../assets/images/home/ruleta/Mueve_slots.png")}
+                    style={{
+                      width: height / 2.1,
+                      height: height / 2.1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      //zIndex: 3,
+                    }}
+                    transition={false}
+                  />
+                </Animated.View>
+              </ImageBackground>
+            </ImageBackground>
+          </View>
+
+          {/*  <View style={{ height: 40, width: 100, backgroundColor: "pink" }}>
               <Button
                 title="toggle socket"
                 onPress={() => onPressToggleSocket()}
               />
             </View> */}
-        <View
-          key={3}
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            //marginBottom: -height / 15,
-            zIndex: 10,
-            width: "80%",
-            //backgroundColor: "pink",
-            position: "absolute",
-            bottom: 130,
-          }}
-        >
-          <TouchableOpacity
-            //activeOpacity={0.6}
-
+          <View
+            key={3}
             style={{
-              backgroundColor: btPremioColor,
-              width: width / 3.5,
-              height: width / 3.5,
-              borderRadius: width / 7,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={() => {
-              //const pushAction = StackActions.push("Nueva Recarga");
-              //navigation.dispatch(pushAction);
-              enMovimiento.current = false;
-
-              navigation.jumpTo("Nueva Recarga", {
-                screen: "NuevaRecargaScreen",
-                params: { inOrderToCobrarPremio: false },
-              });
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              //marginBottom: -height / 15,
+              zIndex: 10,
+              width: "80%",
+              //backgroundColor: "pink",
+              position: "absolute",
+              bottom: 130,
             }}
           >
-            <Image
-              //source={require("../../assets/animaciones/moneda-recarga-rapida.gif")}
-              source={require("../../assets/images/home/boton_recarga_directa.png")}
-              //resizeMode="center"
+            <TouchableOpacity
+              //activeOpacity={0.6}
+
               style={{
-                //width: 90,
-                //height: 110,
-                width: 160,
-                height: 160,
+                backgroundColor: btPremioColor,
+                width: width / 3.5,
+                height: width / 3.5,
+                borderRadius: width / 7,
+                justifyContent: "center",
+                alignItems: "center",
               }}
-            />
-          </TouchableOpacity>
+              onPress={() => {
+                //const pushAction = StackActions.push("Nueva Recarga");
+                //navigation.dispatch(pushAction);
+                enMovimiento.current = false;
+
+                navigation.jumpTo("Nueva Recarga", {
+                  screen: "NuevaRecargaScreen",
+                  params: { inOrderToCobrarPremio: false },
+                });
+              }}
+            >
+              <Image
+                //source={require("../../assets/animaciones/moneda-recarga-rapida.gif")}
+                source={require("../../assets/images/home/boton_recarga_directa.png")}
+                //resizeMode="center"
+                style={{
+                  //width: 90,
+                  //height: 110,
+                  width: 160,
+                  height: 160,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </Animated.View>
   );
 };
 

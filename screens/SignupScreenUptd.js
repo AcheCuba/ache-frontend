@@ -127,13 +127,14 @@ const SignupScreenUptd = ({ navigation }) => {
               }
             })
             .catch((error) => {
+              // console.log(error.message);
               if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
                 // console.log(error.response.data);
                 // console.log(error.response.status);
 
-                Toast.show(error.response.data.message, {
+                Toast.show(error.message, {
                   duaration: Toast.durations.LONG,
                   position: Toast.positions.BOTTOM,
                   shadow: true,

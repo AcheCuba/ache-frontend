@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { View } from "react-native";
+import { View, Animated } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import useCachedResources from "../hooks/useCachedResources";
 import Navigation from "../navigation";
@@ -31,6 +31,7 @@ import {
 import axios from "axios";
 import { storeData } from "../libs/asyncStorage.lib";
 import Toast from "react-native-root-toast";
+import { generalBgColor } from "../constants/commonColors";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -51,6 +52,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
   const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
   const animation = useRef(null);
   const [soundInicio, setSoundInicio] = React.useState();
+  const fadeAnim = useRef(new Animated.Value(1)).current; // Valor inicial de opacidad 1 (completamente visible)
 
   async function playSoundInicio() {
     //console.log("Loading Sound");
@@ -84,40 +86,36 @@ function AnimatedSplashScreen({ animationSource, children }) {
     }
   }, [isAppReady]);
 
+  const handleFadeOut = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0, // Opacidad al 0 (completamente invisible)
+      duration: 500, // Duración de la animación
+      useNativeDriver: true,
+    }).start(() => {
+      // navigate se ejecuta desde el manejo del usuario
+      // puede ser hacia el home o hacia el onboarding
+    });
+  };
+
   setTimeout(() => {
-    setAnimationComplete(true);
-    //video.current.pauseAsync();
-  }, 8300); //8300
+    handleFadeOut();
+    setTimeout(() => {
+      setAnimationComplete(true);
+    }, 500);
+  }, 8000); //8300
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: generalBgColor }}>
       {isSplashAnimationComplete && children}
       {!isSplashAnimationComplete && (
-        <View
-          //source={require("../assets/images/first_screen_splash.png")}
+        <Animated.View
           style={{
             flex: 1,
-            //backgroundColor: "#fff",
             justifyContent: "center",
             alignItems: "center",
+            opacity: fadeAnim,
           }}
         >
-          {/* <Video
-            ref={video}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-            }}
-            source={splashVideoDir}
-            useNativeControls
-            resizeMode={ResizeMode.COVER}
-            isLooping={false}
-            shouldPlay
-            //onPlaybackStatusUpdate={status => setStatus(() => status)}
-          /> */}
           <LottieView
             autoPlay
             loop={false}
@@ -128,15 +126,8 @@ function AnimatedSplashScreen({ animationSource, children }) {
               width: wp("100%"),
             }}
             resizeMode="cover"
-            // onAnimationFinish={() => {
-            // if (isAppReady) {
-            //   setAnimationComplete(true);
-            // } else {
-            //   animation.current?.play();
-            // }
-            //}}
           />
-        </View>
+        </Animated.View>
       )}
     </View>
   );
@@ -148,6 +139,7 @@ function MainApp() {
   const [updateNormalesCompleted, setUpdateNormalesCompleted] = useState(false);
   const [updateCompleted, setUpdateCompleted] = useState(false);
   const [localSocket, setLocalSocket] = useState(null);
+  // const [isSocketDisconnected, setIsSocketDisconnected] = useState(false);
 
   //const colorScheme = useColorScheme();
 
@@ -374,12 +366,6 @@ function MainApp() {
     );
   };
 
-  /*   const sacarModal = () => {
-    console.log("sacar modal premio fallido");
-    nuevaRecargaDispatch(setHayPremioFallidoModal(true));
-  };
- */
-
   const refund = (paymentIntentId, productPriceUsd) => {
     const user_token = userState.token;
     const _url = `${BASE_URL}/payments/refund/${paymentIntentId}`;
@@ -531,9 +517,9 @@ function MainApp() {
   }, [actual_transaccion_premio_fallida]);
 
   useEffect(() => {
-    const newSocket = io.connect(`${BASE_URL}`);
-
     if (isUserRecuperado) {
+      const newSocket = io.connect(`${BASE_URL}`);
+
       newSocket.on("connect", () => {
         console.log("connected to server, socket saved");
         setLocalSocket(newSocket);
