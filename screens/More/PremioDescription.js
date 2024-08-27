@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
@@ -12,14 +12,51 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import {
+  PremioDescriptionTextEnglish,
+  PremioDescriptionTextSpanish,
+} from "../../constants/Texts";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
 
 const PremioDescription = ({ navigation, route }) => {
-  const { type, description } = route.params;
+  const { type } = route.params;
   const { userState } = React.useContext(GlobalContext);
   const idioma = userState?.idioma;
+
+  const [prizeDescription, setPrizeDescription] = useState("");
+
+  const ResolveText = (site) => {
+    const idioma = userState?.idioma;
+    const textSpa = PremioDescriptionTextSpanish();
+    const textEng = PremioDescriptionTextEnglish();
+
+    if (idioma === "spa") {
+      return textSpa[site];
+    }
+
+    if (idioma === "eng") {
+      return textEng[site];
+    }
+  };
+
+  React.useEffect(() => {
+    switch (type) {
+      case "doublePrize":
+        setPrizeDescription(ResolveText("doublePrizeDesc"));
+        break;
+      case "joyitas":
+        setPrizeDescription(ResolveText("joyitasDesc"));
+        break;
+      case "calavera":
+        setPrizeDescription(ResolveText("calaveraDesc"));
+        break;
+
+      default:
+        break;
+    }
+  }, [type, idioma]);
 
   return (
     <ImageBackground
@@ -35,7 +72,7 @@ const PremioDescription = ({ navigation, route }) => {
       <CommonHeader
         width={width}
         height={height}
-        _onPress={() => navigation.navigate("MoreScreen")}
+        _onPress={() => navigation.navigate("PremioScreen")}
       />
       <View style={styles.container}>
         <View style={{ flex: 1, marginTop: hp("20%") }}>
@@ -46,7 +83,7 @@ const PremioDescription = ({ navigation, route }) => {
                 fontSize: 22,
                 color: "#fff800",
               }}
-              text={type}
+              text={ResolveText(type)}
             />
           </View>
 
@@ -57,7 +94,7 @@ const PremioDescription = ({ navigation, route }) => {
                 color: infoTextColor, //"#01f9d2",
                 textAlign: "left",
               }}
-              text={description}
+              text={prizeDescription}
             />
           </View>
         </View>

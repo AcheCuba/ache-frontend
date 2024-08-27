@@ -35,7 +35,7 @@ const LargeFlatButton = ({
         style={[
           {
             color: "#fffc00", //"#01f9d2",
-            //fontWeight: "bold",
+            // fontWeight: "bold",
             fontSize: 20,
             textTransform: "uppercase",
             fontFamily: "bs-bold",

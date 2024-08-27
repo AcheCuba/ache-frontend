@@ -18,6 +18,8 @@ import normalize from "react-native-normalize";
 import axios from "axios";
 import { buttonColor } from "../constants/commonColors";
 import { PixelRatio } from "react-native";
+import { storeData } from "../libs/asyncStorage.lib";
+import { signup } from "../context/Actions/actions";
 
 const { width, height } = Dimensions.get("screen");
 //console.log(height / 7);
@@ -93,6 +95,91 @@ const SignupScreenUptd = ({ navigation }) => {
     return axios(config);
   };
 
+  const fetchRegister = async (name, email, phone) => {
+    let data = {
+      name: name,
+      email: email.trim(),
+      phone: phone.replace(/-/g, "").replace(/ /g, ""),
+      lang: idioma,
+    };
+
+    //console.log(data);
+
+    let requestOptions = {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    };
+
+    const url = `${BASE_URL}/auth/register`;
+
+    fetch(url, requestOptions)
+      .then((response) => {
+        console.log(response.ok);
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw Error(`Request rejected with status ${response.status}`);
+          //throw Error("No se pudo registrar a este usuario");
+        }
+      })
+      .then((result) => {
+        //console.log(result);
+        //console.log(typeof result);
+
+        const newUser = result;
+        // console.log(newUser);
+
+        if (newUser) {
+          setLoading(false);
+
+          // const token = newUser.accessToken;
+          // storeSacureValue("token", token);
+          storeData("user", {
+            token: newUser.accessToken, //new
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            phone: newUser.phone,
+            prize: null,
+            idioma: idioma, //new
+            country: "CUB",
+          });
+
+          userDispatch(
+            signup({
+              token: newUser.accessToken,
+              id: newUser.id,
+              name: newUser.name,
+              email: newUser.email,
+              phone: newUser.phone,
+              prize: null,
+              idioma: idioma,
+              country: "CUB",
+            })
+          );
+
+          // se llama a useCachedResources() para
+          // actualizar la data de premios
+          // de este user
+        }
+
+        setLoading(false);
+      })
+      .catch((error) => {
+        //console.log("error", error);
+        Toast.show(error.message, {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        });
+        setLoading(false);
+      });
+  };
+
   const onSubmit = async () => {
     // set data
     // console.log(data);
@@ -110,42 +197,44 @@ const SignupScreenUptd = ({ navigation }) => {
           setPhoneError("Invalid Phone");
         } else {
           // todo ok
-          //await fetchRegister(name, email, phone);
 
-          // navigation.navigate("Tfa", { name, email, phone }); // quitar cuando este la api
-          // cuando este lista la api
+          // cuenta demo
+          if (phone === "+11111111111") {
+            setLoading(true);
+            fetchRegister(name, email, phone);
+          } else {
+            setLoading(true);
+            sendVerificationCode(phone)
+              .then((response) => {
+                console.log(response.status);
+                if (response.status === 200 || response.status == 201) {
+                  // code sent
+                  //+34695082384
+                  setLoading(false);
+                  navigation.navigate("Tfa", { name, email, phone });
+                }
+              })
+              .catch((error) => {
+                // console.log(error.message);
+                if (error.response) {
+                  // The request was made and the server responded with a status code
+                  // that falls out of the range of 2xx
+                  // console.log(error.response.data);
+                  // console.log(error.response.status);
 
-          setLoading(true);
-          sendVerificationCode(phone)
-            .then((response) => {
-              console.log(response.status);
-              if (response.status === 200 || response.status == 201) {
-                // code sent
-                //+34695082384
-                setLoading(false);
-                navigation.navigate("Tfa", { name, email, phone });
-              }
-            })
-            .catch((error) => {
-              // console.log(error.message);
-              if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                // console.log(error.response.data);
-                // console.log(error.response.status);
+                  Toast.show(error.message, {
+                    duaration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                  });
 
-                Toast.show(error.message, {
-                  duaration: Toast.durations.LONG,
-                  position: Toast.positions.BOTTOM,
-                  shadow: true,
-                  animation: true,
-                  hideOnPress: true,
-                  delay: 0,
-                });
-
-                setLoading(false);
-              }
-            });
+                  setLoading(false);
+                }
+              });
+          }
         }
       }
     }

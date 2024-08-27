@@ -49,7 +49,9 @@ const TermUsoScreen = ({ navigation }) => {
                 <TouchableOpacity
                   activeOpacity={0.75}
                   onPress={() =>
-                    Linking.openURL("https://spinrecargas.com/terminos")
+                    Linking.openURL(
+                      "https://spinrecargas.com/?page_id=2227&lang=es"
+                    )
                   }
                 >
                   <TextMedium
@@ -65,7 +67,7 @@ const TermUsoScreen = ({ navigation }) => {
                 <TouchableOpacity
                   activeOpacity={0.75}
                   onPress={() =>
-                    Linking.openURL("https://spinrecargas.com/terms")
+                    Linking.openURL("https://spinrecargas.com/?page_id=2217")
                   }
                 >
                   <TextMedium

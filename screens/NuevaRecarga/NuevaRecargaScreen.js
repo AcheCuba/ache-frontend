@@ -91,6 +91,10 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     console.log(contactosSeleccionados);
   }, [contactosSeleccionados]); */
 
+  /* useEffect(() => {
+    console.log(nuevaRecargaState);
+  }, [nuevaRecargaState]); */
+
   useEffect(() => {
     setLoadingProviders(true);
     getOperators(userState?.country);
@@ -563,7 +567,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   };
 
   const onPressContinuar = () => {
-    if (!addContactAvaiable) {
+    // if (!addContactAvaiable) {
+    if (contactosSeleccionados.length === 0) {
       Toast.show(
         userState?.idioma === "spa"
           ? "Selecciona al menos a un contacto para recargar"

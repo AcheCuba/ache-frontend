@@ -102,7 +102,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
     setTimeout(() => {
       setAnimationComplete(true);
     }, 500);
-  }, 8000); //8300
+  }, 6800);
 
   return (
     <View style={{ flex: 1, backgroundColor: generalBgColor }}>
@@ -327,13 +327,23 @@ function MainApp() {
               console.log("claim prize status", resp.status);
 
               // premio en pending
-              storeData("user", {
-                ...userState,
-                prize: { ...prizeInApp, status: "pending" },
-              });
-              userDispatch(
-                setPrizeForUser({ ...prizeInApp, status: "pending" })
-              );
+              // si hay premio en la app y no es la Nada...
+              if (prizeInApp != null && prizeType != "Nada") {
+                // si ESTE premio que estoy clameando
+                // es el que tengo en la app
+                // cambiar su estado a pending
+                if (prizeInApp.uuid === transaccionDePremio.prize_uuid) {
+                  console.log("premio de la app cambiado a pending");
+
+                  storeData("user", {
+                    ...userState,
+                    prize: { ...prizeInApp, status: "pending" },
+                  });
+                  userDispatch(
+                    setPrizeForUser({ ...prizeInApp, status: "pending" })
+                  );
+                }
+              }
             })
             .catch((err) => {
               console.log("claim prize error", err.message);

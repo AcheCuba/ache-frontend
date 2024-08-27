@@ -32,7 +32,7 @@ const PremioScreen = ({ navigation }) => {
     }
   };
 
-  const PremioCard = ({ type, description }) => {
+  const PremioCard = ({ type }) => {
     let imagen;
     switch (type) {
       case "joyitas":
@@ -81,8 +81,7 @@ const PremioScreen = ({ navigation }) => {
           activeOpacity={0.6}
           onPress={() => {
             navigation.navigate("PremioDescription", {
-              type: ResolveText(type),
-              description,
+              type: type,
             });
           }}
           style={{
@@ -158,20 +157,17 @@ const PremioScreen = ({ navigation }) => {
             >
               <PremioCard
                 type="doublePrize"
-                description={ResolveText("doublePrizeDesc")}
+                // description={ResolveText("doublePrizeDesc")}
               />
-              {/* <PremioCard
-                type="bolsaLlena"
-                description={ResolveText("bolsaLlenaDesc")}
-              /> */}
+
               <PremioCard
                 type="joyitas"
-                description={ResolveText("joyitasDesc")}
+                // description={ResolveText("joyitasDesc")}
               />
 
               <PremioCard
                 type="calavera"
-                description={ResolveText("calaveraDesc")}
+                // description={ResolveText("calaveraDesc")}
               />
             </ScrollView>
           </View>

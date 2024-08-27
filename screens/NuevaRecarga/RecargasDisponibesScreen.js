@@ -60,7 +60,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
 
   //const [price_usd, setPrice_usd] = React.useState("");
 
-  /* React.useEffect(() => {
+  /*  React.useEffect(() => {
     console.log("CONTACTOS SELECCIONADOS", contactosSeleccionados);
   }, [contactosSeleccionados]); */
 

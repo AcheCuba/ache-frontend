@@ -136,6 +136,10 @@ const GameScreen = ({ navigation }) => {
   const { hayPremioCobrado } = nuevaRecargaState;
   const { hayPremioFallido } = nuevaRecargaState;
 
+  /* React.useEffect(() => {
+    console.log(userState.prize);
+  }, [userState]); */
+
   React.useEffect(() => {
     console.log("fade anim");
     Animated.timing(fadeAnim, {
@@ -708,7 +712,7 @@ const GameScreen = ({ navigation }) => {
           //const expirationDate = moment().add(3, "days");
           //const expirationDate = moment().add(3, "minutes"); //test
 
-          nuevaRecargaDispatch(resetNuevaRecargaState());
+          // nuevaRecargaDispatch(resetNuevaRecargaState());
 
           setTimeout(() => {
             storeData("user", {

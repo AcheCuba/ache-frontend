@@ -7,6 +7,7 @@ import CommonHeader from "../../components/CommonHeader";
 import { TextMedium } from "../../components/CommonText";
 import { infoTextColor } from "../../constants/commonColors";
 import { GlobalContext } from "../../context/GlobalProvider";
+import { WebView } from "react-native-webview";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -50,7 +51,7 @@ const PrivacidadScreen = ({ navigation }) => {
                   activeOpacity={0.75}
                   onPress={() =>
                     Linking.openURL(
-                      "https://spinrecargas.com/es/politica-de-privacidad/"
+                      "https://spinrecargas.com/?page_id=2180&lang=es"
                     )
                   }
                 >
@@ -67,7 +68,7 @@ const PrivacidadScreen = ({ navigation }) => {
                 <TouchableOpacity
                   activeOpacity={0.75}
                   onPress={() =>
-                    Linking.openURL("https://spinrecargas.com/privacy-policy/")
+                    Linking.openURL("https://spinrecargas.com/?page_id=773")
                   }
                 >
                   <TextMedium

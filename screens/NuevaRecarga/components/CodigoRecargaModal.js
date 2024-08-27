@@ -11,6 +11,7 @@ import LargeFlatButton from "../../../components/LargeFlatButton";
 import { getPrizeForUser } from "../../../libs/getPrizeForUser";
 import { storeData } from "../../../libs/asyncStorage.lib";
 import { setPrizeForUser } from "../../../context/Actions/actions";
+import Toast from "react-native-root-toast";
 
 const CodigoRecargaModal = ({
   modalVisible,
@@ -28,6 +29,29 @@ const CodigoRecargaModal = ({
   React.useEffect(() => {
     setText("");
   }, [fieldIdMatched]);
+
+  const onPressUsarMiPremio = () => {
+    // console.log(userState.prize?.uuid);
+
+    if (useState.prize?.uuid != undefined) {
+      onPressOkModal(fieldIdMatched, userState.prize?.uuid);
+    } else {
+      Toast.show(
+        userState?.idioma === "spa"
+          ? "No tienes ningún premio en el app ahora mismo"
+          : "You don’t have any prize one the app right now",
+        {
+          duaration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        }
+      );
+      setModalVisible(false);
+    }
+  };
 
   return (
     <Modal
@@ -77,21 +101,19 @@ const CodigoRecargaModal = ({
           />
         </View>
 
-        {userState.prize?.type != "Nada" ? (
-          <View
-            style={{
-              marginTop: 30,
+        <View
+          style={{
+            marginTop: 30,
+          }}
+        >
+          <LargeFlatButton
+            text={idioma === "spa" ? "Usar mi premio" : "Add my prize"}
+            _width={width / 1.6}
+            onPress={() => {
+              onPressUsarMiPremio();
             }}
-          >
-            <LargeFlatButton
-              text={idioma === "spa" ? "Añadir mi premio" : "Add my prize"}
-              _width={width / 1.6}
-              onPress={() => {
-                onPressOkModal(fieldIdMatched, userState?.prize?.uuid);
-              }}
-            />
-          </View>
-        ) : null}
+          />
+        </View>
 
         <View
           style={{
@@ -99,7 +121,7 @@ const CodigoRecargaModal = ({
           }}
         >
           <LargeFlatButton
-            text={idioma === "spa" ? "Atrás" : "Back"}
+            text={idioma === "spa" ? "Cerrar" : "Close"}
             _width={width / 1.6}
             onPress={() => setModalVisible(false)}
           />

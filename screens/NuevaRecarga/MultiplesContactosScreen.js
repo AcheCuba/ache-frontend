@@ -81,9 +81,12 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       literalCountry = "Cuba";
       literalCountryEng = "Cuba";
 
-      const CubanOfficialNumberRegex =
+      /* const CubanOfficialNumberRegex =
         /^\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
-      const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
+      const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/; */
+
+      const CubanOfficialNumberRegex = /^\+53[0-9]{8}/;
+      const CubanNumberRegex = /^[0-9]{8}/;
 
       const matchOfficialNumber = contactNumber.match(CubanOfficialNumberRegex);
       const matchNumber = text.match(CubanNumberRegex);
@@ -245,9 +248,11 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       literalCountry = "Cuba";
       literalCountryEng = "Cuba";
 
-      const CubanOfficialNumberRegex =
+      /* const CubanOfficialNumberRegex =
         /^\(?\+53\)? ?5 ?-?[0-9]{3} ?-?[0-9]{2} ?-?[0-9]{2}/;
-      const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/;
+      const CubanNumberRegex = /^5-?[0-9]{3}-?[0-9]{2}-?[0-9]{2}/; */
+      const CubanOfficialNumberRegex = /^\+53[0-9]{8}/;
+      const CubanNumberRegex = /^[0-9]{8}/;
 
       const matchOfficialNumber = text.match(CubanOfficialNumberRegex);
       const matchNumber = text.match(CubanNumberRegex);
