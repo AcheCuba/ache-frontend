@@ -72,7 +72,7 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       .replace(/\(/g, "")
       .replace(/\)/g, "");
 
-    //console.log(cleanText);
+    console.log(cleanText);
 
     let isOfficialNumberMatched;
     let isNumberMatched;
@@ -88,8 +88,8 @@ const MultiplesContactosScreen = ({ navigation, route }) => {
       const CubanOfficialNumberRegex = /^\+53[0-9]{8}/;
       const CubanNumberRegex = /^[0-9]{8}/;
 
-      const matchOfficialNumber = contactNumber.match(CubanOfficialNumberRegex);
-      const matchNumber = text.match(CubanNumberRegex);
+      const matchOfficialNumber = cleanText.match(CubanOfficialNumberRegex);
+      const matchNumber = cleanText.match(CubanNumberRegex);
 
       isOfficialNumberMatched =
         matchOfficialNumber !== null && cleanText.length === 11;

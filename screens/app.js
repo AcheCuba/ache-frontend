@@ -102,7 +102,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
     setTimeout(() => {
       setAnimationComplete(true);
     }, 500);
-  }, 6800);
+  }, 6200);
 
   return (
     <View style={{ flex: 1, backgroundColor: generalBgColor }}>
