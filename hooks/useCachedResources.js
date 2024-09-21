@@ -100,6 +100,9 @@ export default function useCachedResources() {
         if (user === null) {
           console.log("user es null");
           interfaceDispatch(setShowInvisibleLoadData(true));
+          // esto se activa solo cuando el usuario se loggea por primera vez
+          // es util para saber esto
+          // lo se, el nombre es pesimo para el resto de usos
         } else {
           getPrizeForUser(user)
             .then((response) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { View, Animated } from "react-native";
+import { View, Animated, Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import useCachedResources from "../hooks/useCachedResources";
 import Navigation from "../navigation";
@@ -32,6 +32,10 @@ import axios from "axios";
 import { storeData } from "../libs/asyncStorage.lib";
 import Toast from "react-native-root-toast";
 import { generalBgColor } from "../constants/commonColors";
+
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
+import Constants from "expo-constants";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -139,9 +143,12 @@ function MainApp() {
   const [updateNormalesCompleted, setUpdateNormalesCompleted] = useState(false);
   const [updateCompleted, setUpdateCompleted] = useState(false);
   const [localSocket, setLocalSocket] = useState(null);
-  // const [isSocketDisconnected, setIsSocketDisconnected] = useState(false);
 
-  //const colorScheme = useColorScheme();
+  // push notification
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(undefined);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const {
     socketDispatch,
@@ -171,6 +178,183 @@ function MainApp() {
   const { transactions_id_array } = nuevaRecargaState;
   const paymentIntentId = nuevaRecargaState.paymentIntentId;
   const productPriceUsd = nuevaRecargaState.productPriceUsd;
+
+  useEffect(() => {
+    if (isUserRecuperado) {
+      registerForPushNotificationsAsync()
+        .then((token) => {
+          setExpoPushToken(token ?? "");
+
+          console.log("--- expo push token logs ---");
+          console.log("expo push token", token);
+          // aqui ya tengo token y permiso
+          // si no tengo permiso, bakend pondra eso en null, no tengo que decirle nada
+          // cada vez que abra la app, esto se va a ejecutar si hay permiso
+          // si es null o diferente del que tengo, lo actualizo con el de la app
+          // si es igual que el que tengo, no hago nada
+
+          /* getExpoPushToken()
+          .then((response) => {
+            console.log(response.data);
+            console.log(response.data == token);
+            console.log(response.status);
+          })
+          .catch((error) => console.log("error al obtener expo push token")); */
+
+          getExpoPushToken()
+            .then((resp1) => {
+              // buscar status valido
+              if (resp1.status === 200) {
+                console.log("token actual en backend", resp1.data);
+                if (resp1.data != token) {
+                  updateExpoPushToken(token)
+                    .then((resp2) => {
+                      // buscar status valido
+                      if (resp2.status === 200) {
+                        console.log(
+                          "token actualizado en backend exitosamente"
+                        );
+                      }
+                    })
+                    .catch((err) => {
+                      console.log("no se pudo actualizar el expo push token");
+                    });
+                }
+              }
+            })
+            .catch((error) => console.log("error al obtener expo push token"));
+        })
+        .catch((error) => {
+          console.log(error);
+          setExpoPushToken(`${error}`);
+        });
+
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true, // Muestra la notificación como una alerta
+          shouldPlaySound: true, // Reproduce sonido cuando llegue la notificación
+          shouldSetBadge: true, // Actualiza el ícono de la app con una insignia
+        }),
+      });
+
+      notificationListener.current =
+        Notifications.addNotificationReceivedListener((notification) => {
+          // console.log(notification);
+          setNotification(notification);
+        });
+
+      responseListener.current =
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          console.log(response);
+        });
+
+      return () => {
+        notificationListener.current &&
+          Notifications.removeNotificationSubscription(
+            notificationListener.current
+          );
+        responseListener.current &&
+          Notifications.removeNotificationSubscription(
+            responseListener.current
+          );
+      };
+    }
+  }, [isUserRecuperado]);
+
+  function handleRegistrationError(errorMessage) {
+    Toast.show(errorMessage, {
+      duaration: Toast.durations.LONG,
+      position: Toast.positions.BOTTOM,
+      shadow: true,
+      animation: true,
+      hideOnPress: true,
+      delay: 0,
+    });
+
+    // alert(errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  async function registerForPushNotificationsAsync() {
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        handleRegistrationError(
+          "Permission not granted to get push token for push notification!"
+        );
+        return;
+      }
+      const projectId =
+        Constants?.expoConfig?.extra?.eas?.projectId ??
+        Constants?.easConfig?.projectId;
+
+      // console.log(projectId);
+      if (!projectId) {
+        handleRegistrationError("Project ID not found");
+      }
+      try {
+        const pushTokenString = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId,
+          })
+        ).data;
+        //console.log(pushTokenString);
+        return pushTokenString;
+      } catch (e) {
+        console.log(e.message);
+        handleRegistrationError(`${e}`);
+      }
+    } else {
+      handleRegistrationError(
+        "Must use physical device for push notifications"
+      );
+    }
+  }
+  const getExpoPushToken = () => {
+    const userToken = userState.token;
+    const userId = userState.id;
+    const url = `${BASE_URL}/users/${userId}/expo-token`;
+    let config = {
+      method: "get",
+      url: url,
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return axios(config);
+  };
+
+  const updateExpoPushToken = (expoToken) => {
+    const userToken = userState.token;
+    const userId = userState.id;
+    const url = `${BASE_URL}/users/${userId}/expo-token`;
+    let config = {
+      method: "put",
+      url: url,
+      params: { expoToken },
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return axios(config);
+  };
 
   const updateUserSocket = (socketId) => {
     const userToken = userState.token;
@@ -531,6 +715,7 @@ function MainApp() {
       const newSocket = io.connect(`${BASE_URL}`);
 
       newSocket.on("connect", () => {
+        console.log("--- socket logs ---");
         console.log("connected to server, socket saved");
         setLocalSocket(newSocket);
         // actualizar a backend
