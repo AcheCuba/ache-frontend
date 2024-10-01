@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "521277491275",
+    "project_id": "spin-recargas",
+    "storage_bucket": "spin-recargas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521277491275:android:e3e0deedc067128b5ce5ce",
+        "android_client_info": {
+          "package_name": "com.marole.ache"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARJ6WLyKdIN-1HuvaL2Yr4Z83KjVMwJxU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
