@@ -32,7 +32,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app_icon_foreground.png",
         "backgroundImage": "./assets/images/app_icon_background.png"
-      }
+      },
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
