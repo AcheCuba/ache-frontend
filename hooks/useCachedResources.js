@@ -71,6 +71,7 @@ export default function useCachedResources() {
         //token = await SecureStore.getItemAsync("token");
 
         let user = null;
+        // let token = undefined;
 
         // el token esta dentro del object user
         user = await getData("user");
@@ -100,7 +101,7 @@ export default function useCachedResources() {
         if (user === null) {
           console.log("user es null");
           interfaceDispatch(setShowInvisibleLoadData(true));
-          // esto se activa solo cuando el usuario se loggea por primera vez
+          // esto se activa solo cuando el usuario no tiene datos guardados y esta en login
           // es util para saber esto
           // lo se, el nombre es pesimo para el resto de usos
         } else {

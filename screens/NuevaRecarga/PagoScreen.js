@@ -12,9 +12,6 @@ import {
 } from "../../context/Actions/actions";
 import { StatusBar } from "react-native";
 
-// antes
-// `${server_url}/api/payments/mobile/create?amount=${input.amount}&name=${input.name}&email=${input.email}`,
-
 // ngrok
 // const server_url = "http://48e33416ac70.ngrok.io";
 
@@ -26,14 +23,20 @@ const PagoScreen = ({ navigation, route }) => {
   const [sessionId, setSessionId] = React.useState("empty");
 
   //console.log(url);
-  const amount = route.params?.amount; //total price usd
+  const amountTotal = route.params?.amount; //total price usd
   const transactions_id_array = route.params?.transactions_id_array;
   const productPriceUsd = route.params?.productPriceUsd;
-  //const recharge_amount_por_recarga = route.params?.recharge_amount_por_recarga;
+  const productDescription = route.params?.productDescription;
   const { userState, nuevaRecargaState, nuevaRecargaDispatch } =
     React.useContext(GlobalContext);
   const { name, email } = userState;
   const { validated_prizes, contactosSeleccionados } = nuevaRecargaState;
+
+  React.useEffect(() => {
+    // console.log(amountTotal);
+    // console.log(productPriceUsd);
+    // console.log(transactions_id_array);
+  }, []);
 
   React.useEffect(() => {
     // console.log("paymentSucceded", paymentSucceded);
@@ -74,18 +77,36 @@ const PagoScreen = ({ navigation, route }) => {
   }, [paymentSucceded]);
 
   const createPaymentSession = async () => {
-    // console.log("amount", amount);
+    /*     {
+      "amount": 0,
+      "name": "string",
+      "email": "string",
+      "lang": {},
+      "description": [
+        {
+          "phoneNumber": "string",
+          "beneficiaryName": "string",
+          "topups": [
+            {
+              "topupName": 0,
+              "price": 0,
+              "isPrize": true
+            }
+          ]
+        }
+      ]
+    } */
+
     const input = {
-      amount: amount, // amount total
-      // amount: 5, // amount preprod
+      amount: amountTotal, //  total
       name: name, // nombre del usuario actual
       email: email, // email del usuario actual
     };
 
-    const createPaymentDescArray = contactosSeleccionados.map((contacto) => {
+    const description = contactosSeleccionados.map((contacto) => {
       const topups_array = [
         {
-          amount: undefined, // aqui decidir que poner (22/09/23)
+          topupName: productDescription,
           price: parseFloat(productPriceUsd),
           isPrize: false,
         },
@@ -93,21 +114,24 @@ const PagoScreen = ({ navigation, route }) => {
 
       if (contacto.prize != null) {
         topups_array.push({
-          amount: undefined,
-          price: undefined,
+          topupName: productDescription,
+          price: 0,
           isPrize: true,
         });
       } // si tiene premio, se crean 2 recargas por contacto
 
+      // console.log("topups", topups_array);
+
       return {
-        [contacto.contactNumber]: {
-          name: contacto.contactName,
-          topups: topups_array,
-        },
+        phoneNumber: contacto.contactNumber,
+        beneficiaryName: contacto.contactName,
+        topups: topups_array,
       };
     });
 
-    const description = Object.assign(...createPaymentDescArray);
+    // console.log("===");
+    // console.log("description array", description);
+    // console.log("topups", description[0].topups);
     const user_token = userState.token;
     const _url = `${BASE_URL}/payments/create-payment`;
 
@@ -118,12 +142,16 @@ const PagoScreen = ({ navigation, route }) => {
         amount: input.amount,
         name: input.name,
         email: input.email,
+        lang: userState.idioma,
         description,
       },
       headers: {
         Authorization: `Bearer ${user_token}`,
       },
     };
+
+    // console.log("description", config.data.description);
+    // console.log("data", config.data);
 
     axios(config)
       .then((response) => {

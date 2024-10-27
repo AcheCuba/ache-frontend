@@ -465,6 +465,7 @@ const SignupScreenUptd = ({ navigation }) => {
                   placeholderTextColor="gray"
                   color={"#fff"}
                   keyboardType="phone-pad"
+                  onFocus={() => setPhone("+")}
                 />
               </View>
 

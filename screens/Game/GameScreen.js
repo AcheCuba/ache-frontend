@@ -75,7 +75,6 @@ const GameScreen = ({ navigation }) => {
   // modals
   const [modalCobrarPremioVisible, setModalCobrarPremioVisible] =
     React.useState(false);
-  //const [codigo, setCodigo] = React.useState("");
   const [codigoGenerado, setCodigoGenerado] = React.useState(false);
 
   const [premioAcumulado, setPremioAcumulado] = React.useState(false);
@@ -87,8 +86,6 @@ const GameScreen = ({ navigation }) => {
   const [horasRestantes, setHorasRestantes] = React.useState("24");
   const [nadaDescriptionModalVisible, setNadaDescriptionModalVisible] =
     React.useState(false);
-  //const [premioCobrado, setPremioCobrado] = React.useState(false);
-  //const [premioFallido, setPremioFallido] = React.useState(false);
   const [premioEnCamino, setPremioEnCamino] = React.useState(false);
 
   //sonidos
@@ -141,7 +138,7 @@ const GameScreen = ({ navigation }) => {
   }, [userState]); */
 
   React.useEffect(() => {
-    console.log("fade anim");
+    // console.log("fade anim");
     Animated.timing(fadeAnim, {
       toValue: 1, // Opacidad al 1 (completamente visible)
       duration: 500, // Duración de la animación
@@ -1226,7 +1223,7 @@ const GameScreen = ({ navigation }) => {
 
               <View style={{ marginTop: 30 }}>
                 <LargeFlatButton
-                  text={ResolveText("volverAJugar")}
+                  text={ResolveText("gotit")}
                   onPress={() => {
                     setNadaWon(false);
                   }}
@@ -1490,8 +1487,12 @@ const GameScreen = ({ navigation }) => {
             }}
           >
             <ImageBackground
-              source={require("../../assets/images/home/fondo.png")}
-              //source={require("../../assets/images/home/ruleta/bordeysombra_sinluz.png")}
+              // source={require("../../assets/images/home/fondo.png")}
+              source={
+                userState.prize?.type === "Nada"
+                  ? require("../../assets/images/home/fondo_gris.png")
+                  : require("../../assets/images/home/fondo.png")
+              }
               style={{
                 width: height / 1.6,
                 height: height / 1.6,
@@ -1509,10 +1510,18 @@ const GameScreen = ({ navigation }) => {
                 }}
               >
                 <TouchableWithoutFeedback
-                  onPress={() => onPressWheel("selector")}
+                  onPress={() => {
+                    if (userState.prize.type != "Nada") {
+                      onPressWheel("selector");
+                    }
+                  }}
                 >
                   <Image
-                    source={require("../../assets/images/home/selector.png")}
+                    source={
+                      userState.prize?.type === "Nada"
+                        ? require("../../assets/images/home/selector_gris.png")
+                        : require("../../assets/images/home/selector.png")
+                    }
                     style={{ height: 95, width: 80 }}
                   />
                 </TouchableWithoutFeedback>
@@ -1527,7 +1536,11 @@ const GameScreen = ({ navigation }) => {
                 }}
               >
                 <Image
-                  source={require("../../assets/images/home/centro.png")}
+                  source={
+                    userState.prize?.type === "Nada"
+                      ? require("../../assets/images/home/centro_gris.png")
+                      : require("../../assets/images/home/centro.png")
+                  }
                   style={{
                     width: width / 5.2,
                     height: width / 5.2,
@@ -1537,7 +1550,11 @@ const GameScreen = ({ navigation }) => {
               </View>
 
               <ImageBackground
-                source={require("../../assets/images/home/bisel.png")}
+                source={
+                  userState.prize?.type === "Nada"
+                    ? require("../../assets/images/home/bisel_gris.png")
+                    : require("../../assets/images/home/bisel.png")
+                }
                 style={{
                   width: height / 2.1 + 8,
                   height: height / 2.1 + 8,
@@ -1546,9 +1563,19 @@ const GameScreen = ({ navigation }) => {
                 }}
                 transition={false}
               >
-                <TouchableWithoutFeedback onPress={() => onPressWheel("slots")}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    if (userState.prize?.type != "Nada") {
+                      onPressWheel("slots");
+                    }
+                  }}
+                >
                   <Image
-                    source={require("../../assets/images/home/sombra.png")}
+                    source={
+                      userState.prize?.type === "Nada"
+                        ? require("../../assets/images/home/sombra_gris.png")
+                        : require("../../assets/images/home/sombra.png")
+                    }
                     style={{
                       width: height / 2.1,
                       height: height / 2.1,
@@ -1571,8 +1598,11 @@ const GameScreen = ({ navigation }) => {
                   }}
                 >
                   <ImageBackground
-                    //source={require("../../assets/images/home/casillas2.png")}
-                    source={require("../../assets/images/home/ruleta/Mueve_slots.png")}
+                    source={
+                      userState.prize?.type === "Nada"
+                        ? require("../../assets/images/home/ruleta/Mueve_slots_gris.png")
+                        : require("../../assets/images/home/ruleta/Mueve_slots.png")
+                    }
                     style={{
                       width: height / 2.1,
                       height: height / 2.1,

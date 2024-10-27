@@ -19,6 +19,7 @@ import {
   setTransaccionesPremioEsperadas,
   setActualTransaccionPremioCompletada,
   setActualTransaccionPremioFallida,
+  setIsAppOutdated,
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
 import * as SplashScreen from "expo-splash-screen";
@@ -36,8 +37,23 @@ import { generalBgColor } from "../constants/commonColors";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
+import * as Application from "expo-application";
 
+import AppOutdatedScreen from "./AppOutdatedScreen";
+import compareVersions from "compare-versions";
+
+const versionAppActual = Application.nativeApplicationVersion; // Ejemplo: '1.0.0'
 SplashScreen.preventAutoHideAsync();
+
+const verificarAppVersion = () => {
+  const url = `${BASE_URL}/auth/version`;
+  let config = {
+    method: "get",
+    url: url,
+  };
+
+  return axios(config);
+};
 
 export default function MainAppWrapper() {
   return (
@@ -52,11 +68,16 @@ export default function MainAppWrapper() {
 }
 
 function AnimatedSplashScreen({ animationSource, children }) {
+  const { interfaceState, interfaceDispatch } = useContext(GlobalContext);
+  const { isAppOutdated } = interfaceState;
+
   const isAppReady = useCachedResources();
   const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
   const animation = useRef(null);
   const [soundInicio, setSoundInicio] = React.useState();
   const fadeAnim = useRef(new Animated.Value(1)).current; // Valor inicial de opacidad 1 (completamente visible)
+  const [storeLinkIos, setStoreLinkIos] = useState(undefined);
+  const [storeLinkAndroid, setStoreLinkAndroid] = useState(undefined);
 
   async function playSoundInicio() {
     //console.log("Loading Sound");
@@ -69,14 +90,43 @@ function AnimatedSplashScreen({ animationSource, children }) {
     await sound.playAsync();
   }
 
+  async function stopSoundInicio() {
+    await soundInicio.stopAsync();
+  }
+
+  React.useEffect(() => {
+    // console.log(versionAppActual);
+    verificarAppVersion()
+      .then((response) => {
+        const data = response.data;
+        // console.log(data);
+        const versionAppMinima = data.version;
+        setStoreLinkIos(data.linkIOS);
+        setStoreLinkAndroid(data.linkAndroid);
+
+        if (compareVersions.compare(versionAppActual, versionAppMinima, "<")) {
+          // console.log("solicitar actualizacion");
+          interfaceDispatch(setIsAppOutdated(true));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
   React.useEffect(() => {
     return soundInicio
       ? () => {
-          //console.log("Unloading Sound");
           soundInicio.unloadAsync();
         }
       : undefined;
   }, [soundInicio]);
+
+  React.useEffect(() => {
+    if (isAppOutdated && soundInicio != undefined) {
+      stopSoundInicio();
+    }
+  }, [isAppOutdated, soundInicio]);
 
   React.useEffect(() => {
     async function hideFirstScreen() {
@@ -110,8 +160,14 @@ function AnimatedSplashScreen({ animationSource, children }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: generalBgColor }}>
-      {isSplashAnimationComplete && children}
-      {!isSplashAnimationComplete && (
+      {isAppOutdated && (
+        <AppOutdatedScreen
+          storeLinkIos={storeLinkIos}
+          storeLinkAndroid={storeLinkAndroid}
+        />
+      )}
+      {!isAppOutdated && isSplashAnimationComplete && children}
+      {!isAppOutdated && !isSplashAnimationComplete && (
         <Animated.View
           style={{
             flex: 1,
@@ -317,7 +373,10 @@ function MainApp() {
         return pushTokenString;
       } catch (e) {
         console.log(e.message);
-        handleRegistrationError(`${e}`);
+        // handleRegistrationError(`${e.message}`);
+        handleRegistrationError(
+          "An error occurred while setting up notifications"
+        );
       }
     } else {
       handleRegistrationError(
@@ -778,16 +837,6 @@ function MainApp() {
       setUpdateNormalesCompleted(false);
     }
   }, [updateCompleted]);
-
-  /* useEffect(() => {
-    //console.log("update normales completed? ", updateNormalesCompleted);
-    //console.log("update premios completed? ", updatePremiosCompleted);
-
-    if (updatePremiosCompleted && updateNormalesCompleted) {
-      setUpdateCompleted(true);
-      //socketDispatch(SetGlobalUpdateCompleted(true));
-    }
-  }, [updateNormalesCompleted, updatePremiosCompleted]); */
 
   return (
     <View style={{ flex: 1 }}>

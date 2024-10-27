@@ -450,6 +450,7 @@ const PrePagoScreen = ({ navigation, route }) => {
                 amount,
                 transactions_id_array,
                 productPriceUsd,
+                productDescription,
                 //recharge_amount_por_recarga: recharge_amount,
               });
             }}

@@ -1,5 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
-import { ActivityIndicator, TextInput, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import Toast from "react-native-root-toast";
 import { View, Dimensions } from "react-native";
 //import { NeuButton, NeuInput } from "react-native-neu-element";
@@ -25,9 +30,60 @@ const TfaScreen = ({ route }) => {
 
   const [loadingTwo, setLoadingTwo] = useState(false);
   const [codeIn, setCodeIn] = useState("");
-  const [resendOption, setResendOption] = useState(false);
+
+  const [resendOption, setResendOption] = useState(false); // opcion de resend para el usuario
+  const [tiempoRestante, setTiempoRestante] = useState(60);
+  const [esperandoCodigo, setEsperandoCodigo] = useState(true);
+  const [mensaje, setMensaje] = useState("");
 
   const { idioma } = userState;
+
+  const resetCounter = () => {
+    setEsperandoCodigo(true);
+    setTiempoRestante(60);
+  };
+
+  const setMensajeErrorServer = () => {
+    setEsperandoCodigo(false);
+    setResendOption(true);
+    if (userState.idioma === "spa") {
+      setMensaje("Error del servidor. Intente de nuevo");
+    } else {
+      setMensaje("Server error. Try again");
+    }
+  };
+
+  const setMensajeCodigoInvalido = () => {
+    setEsperandoCodigo(false);
+    setResendOption(true);
+    if (userState.idioma === "spa") {
+      setMensaje("Código inválido");
+    } else {
+      setMensaje("Invalid code");
+    }
+  };
+
+  const setMensajeCodigoExpirado = () => {
+    setEsperandoCodigo(false);
+    setResendOption(true);
+    if (userState.idioma === "eng") {
+      setMensaje("Código expirado");
+    } else {
+      setMensaje("Expired code");
+    }
+  };
+
+  useEffect(() => {
+    if (tiempoRestante === 0) {
+      setMensajeCodigoExpirado();
+    } else {
+      if (esperandoCodigo) {
+        setTimeout(() => {
+          setTiempoRestante(tiempoRestante - 1);
+        }, 1000);
+      }
+    }
+  }, [tiempoRestante]);
 
   /*  useEffect(
     () =>
@@ -61,6 +117,7 @@ const TfaScreen = ({ route }) => {
   const onPressResend = (phoneNumber) => {
     //const user_token = userState.token;
 
+    setLoadingTwo(true);
     const url = `${BASE_URL}/auth/send-verification-code`;
 
     let config = {
@@ -73,6 +130,7 @@ const TfaScreen = ({ route }) => {
         if (response.status === 200 || response.status == 201) {
           // code sent
           console.log("code sent");
+          resetCounter();
           setLoadingTwo(false);
           setCodeIn("");
           setResendOption(false);
@@ -239,7 +297,12 @@ const TfaScreen = ({ route }) => {
             // that falls out of the range of 2xx
 
             if (error.response.status === 500) {
+              setMensajeErrorServer();
               setResendOption(true);
+            }
+
+            if (error.response.status === 401) {
+              setMensajeCodigoInvalido();
             }
 
             setLoadingTwo(false);
@@ -247,14 +310,14 @@ const TfaScreen = ({ route }) => {
             //console.log(error.response.data);
             //console.log(error.response.status);
             //console.log(error.response.headers);
-            Toast.show(error.response.data.message, {
+            /*   Toast.show(error.response.data.message, {
               duaration: Toast.durations.LONG,
               position: Toast.positions.BOTTOM,
               shadow: true,
               animation: true,
               hideOnPress: true,
               delay: 0,
-            });
+            }); */
           }
         });
     }
@@ -279,11 +342,7 @@ const TfaScreen = ({ route }) => {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <View
-            style={{
-              marginBottom: 30,
-            }}
-          >
+          <View>
             <TextInput
               style={{
                 backgroundColor: buttonColor,
@@ -305,9 +364,34 @@ const TfaScreen = ({ route }) => {
             />
           </View>
 
+          {esperandoCodigo ? (
+            <Text
+              style={{
+                fontFamily: "bs-medium",
+                fontSize: 16,
+                color: "gray",
+                marginTop: 5,
+              }}
+            >
+              Su código expira en {tiempoRestante} segundos
+            </Text>
+          ) : (
+            <Text
+              style={{
+                fontFamily: "bs-medium",
+                fontSize: 16,
+                color: "gray",
+                marginTop: 5,
+              }}
+            >
+              {mensaje}
+            </Text>
+          )}
+
           <View
             style={{
               zIndex: 0,
+              marginTop: 30,
               //flex: 1,
               //alignItems: "center",
               //marginTop: normalize(-40),

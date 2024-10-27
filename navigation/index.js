@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as React from "react";
 
-import NotFoundScreen from "../screens/NotFoundScreen";
+import NotFoundScreen from "../screens/AppOutdatedScreen";
 import OnBoardingScreen from "../screens/OnBoardingScreen";
 import SignupScreenUptd from "../screens/SignupScreenUptd";
 
@@ -54,11 +54,11 @@ function RootNavigator() {
       {userState.token !== undefined ? (
         <>
           <Stack.Screen name="Root" component={BottomTabNavigator} />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="NotFound"
             component={NotFoundScreen}
             options={{ title: "Oops!" }}
-          />
+          /> */}
         </>
       ) : (
         <>

@@ -4,6 +4,7 @@ import interfaceInitialState from "../initialStates/interfaceInitialState";
 
 const SET_SHOW_EXPIRED_PRIZE = actionTypes.SET_SHOW_EXPIRED_PRIZE;
 const SET_SHOW_INVISIBLE_LOAD_DATA = actionTypes.SET_SHOW_INVISIBLE_LOAD_DATA;
+const SET_IS_APP_OUTDATED = actionTypes.SET_IS_APP_OUTDATED;
 
 const InterfaceReducer = (state = interfaceInitialState, action) => {
   switch (action.type) {
@@ -17,6 +18,12 @@ const InterfaceReducer = (state = interfaceInitialState, action) => {
         ...state,
         showInvisibleLoadData: action.isNewUser,
       };
+    case SET_IS_APP_OUTDATED:
+      return {
+        ...state,
+        isAppOutdated: action.isOutdated,
+      };
+
     default:
       //console.log("Default case (in user reducer):", state);
       return state;

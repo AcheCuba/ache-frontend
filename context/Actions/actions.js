@@ -16,6 +16,13 @@ export const setShowInvisibleLoadData = (isNewUser) => {
   };
 };
 
+export const setIsAppOutdated = (isOutdated) => {
+  return {
+    type: actionTypes.SET_IS_APP_OUTDATED,
+    isOutdated,
+  };
+};
+
 //export const setShowExpiredPrize =
 
 // ================================= ACTIONS FOR USER STATE ===========================

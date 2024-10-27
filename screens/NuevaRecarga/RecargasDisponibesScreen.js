@@ -437,7 +437,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         await promise
           .then((response) => {
             const transaction_data = response.data;
-            //console.log(transaction_data);
+            // console.log(transaction_data);
 
             // test - bad request
             // const transaction_data = response.data.lol;

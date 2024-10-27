@@ -33,7 +33,7 @@ const CodigoRecargaModal = ({
   const onPressUsarMiPremio = () => {
     // console.log(userState.prize?.uuid);
 
-    if (useState.prize?.uuid != undefined) {
+    if (userState.prize?.uuid != undefined) {
       onPressOkModal(fieldIdMatched, userState.prize?.uuid);
     } else {
       Toast.show(
