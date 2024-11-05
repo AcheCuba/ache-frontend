@@ -35,6 +35,7 @@ import { View } from "react-native";
 import PremioDescription from "../screens/More/PremioDescription";
 import { Audio } from "expo-av";
 import { navBarColor } from "../constants/commonColors";
+import ContactUsScreen from "../screens/More/ContactUsScreen";
 
 //const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -629,6 +630,17 @@ function MoreNavigator({ navigation, route }) {
       <MoreStack.Screen
         name="PremioDescription"
         component={PremioDescription}
+        options={{
+          headerShown: false,
+
+          headerTitle: "",
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: forHorizontal,
+        }}
+      />
+      <MoreStack.Screen
+        name="ContactUs"
+        component={ContactUsScreen}
         options={{
           headerShown: false,
 

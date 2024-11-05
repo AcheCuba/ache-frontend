@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   PixelRatio,
   Platform,
+  AppState,
 } from "react-native";
 
 import NuevoContactoInput from "./components/NuevoContactoInput";
@@ -23,6 +24,9 @@ import {
   setOperatorForUser,
   resetNuevaRecargaState,
   setPrizeForUser,
+  setIosLinkUpdate,
+  setAndroidLinkUpdate,
+  setIsAppOutdated,
 } from "../../context/Actions/actions";
 import CodigoRecargaModal from "./components/CodigoRecargaModal";
 import Toast from "react-native-root-toast";
@@ -43,6 +47,8 @@ import { buttonColor } from "../../constants/commonColors";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getPrizeForUser } from "../../libs/getPrizeForUser";
 import normalize from "react-native-normalize";
+import compareVersions from "compare-versions";
+import * as Application from "expo-application";
 
 const { width, height } = Dimensions.get("screen");
 const marginGlobal = width / 10;
@@ -62,7 +68,8 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   const inOrderToCobrarPremio = route.params?.inOrderToCobrarPremio;
   //console.log("inOrderToCobrarPremio", inOrderToCobrarPremio);
 
-  const { nuevaRecargaDispatch, nuevaRecargaState } = useContext(GlobalContext);
+  const { nuevaRecargaDispatch, nuevaRecargaState, interfaceDispatch } =
+    useContext(GlobalContext);
   const {
     addContactAvaiable,
     contactosSeleccionados,
@@ -86,14 +93,23 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
   const [providerMenuVisible, setProviderMenuVisible] = React.useState(false);
   const [loadingProviders, setLoadingProviders] = React.useState(false);
   const [providerList, setProviderList] = React.useState([]);
+  const [appState, setAppState] = useState(AppState.currentState);
 
-  /* useEffect(() => {
-    console.log(contactosSeleccionados);
-  }, [contactosSeleccionados]); */
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
 
-  /* useEffect(() => {
-    console.log(nuevaRecargaState);
-  }, [nuevaRecargaState]); */
+    return () => {
+      // Limpiar el evento al desmontar el componente
+      subscription.remove();
+    };
+  }, []);
+
+  /*  useEffect(() => {
+    console.log(appState);
+  }, [appState]); */
 
   useEffect(() => {
     setLoadingProviders(true);
@@ -236,10 +252,6 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     ])
   );
 
-  /* React.useEffect(() => {
-    console.log(contactosSeleccionados);
-  }, [contactosSeleccionados]); */
-
   React.useEffect(() => {
     const unsub = navigation.addListener("blur", () => {
       navigation.setParams({ inOrderToCobrarPremio: false });
@@ -248,6 +260,56 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
 
     return unsub;
   }, [navigation]);
+
+  React.useEffect(() => {
+    verificarAppVersion()
+      .then((response) => {
+        const versionAppActual = Application.nativeApplicationVersion; // Ejemplo: '1.0.0'
+        const data = response.data;
+        const versionAppMinima = data.version;
+        interfaceDispatch(setIosLinkUpdate(data.linkIOS));
+        interfaceDispatch(setAndroidLinkUpdate(data.linkAndroid));
+
+        if (compareVersions.compare(versionAppActual, versionAppMinima, "<")) {
+          // console.log("solicitar actualizacion");
+          interfaceDispatch(setIsAppOutdated(true));
+        }
+      })
+      .catch((e) => {
+        console.log(e.message);
+      });
+  }, []);
+
+  const handleAppStateChange = (nextAppState) => {
+    // console.log("next", nextAppState);
+
+    if (nextAppState === "active") {
+      // console.log("La aplicación ha vuelto a primer plano");
+      // Aquí puedes ejecutar la lógica que desees cuando la app se reactive
+      verificarAppVersion()
+        .then((response) => {
+          const versionAppActual = Application.nativeApplicationVersion; // Ejemplo: '1.0.0'
+          const data = response.data;
+          const versionAppMinima = data.version;
+          interfaceDispatch(setIosLinkUpdate(data.linkIOS));
+          interfaceDispatch(setAndroidLinkUpdate(data.linkAndroid));
+
+          if (
+            compareVersions.compare(versionAppActual, versionAppMinima, "<")
+          ) {
+            // console.log("solicitar actualizacion");
+            interfaceDispatch(setIsAppOutdated(true));
+          }
+        })
+        .catch((e) => {
+          console.log(e.message);
+        });
+    } else if (nextAppState.match(/inactive|background/)) {
+      // console.log("La aplicación se ha minimizado o ido al fondo");
+      // Aquí puedes ejecutar la lógica que desees cuando la app se minimice
+    }
+    setAppState(nextAppState);
+  };
 
   const prize_init_checkout = (prize_id) => {
     //console.log("init checkout");
@@ -566,8 +628,17 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     }
   };
 
+  const verificarAppVersion = () => {
+    const url = `${BASE_URL}/auth/version`;
+    let config = {
+      method: "get",
+      url: url,
+    };
+
+    return axios(config);
+  };
+
   const onPressContinuar = () => {
-    // if (!addContactAvaiable) {
     if (contactosSeleccionados.length === 0) {
       Toast.show(
         userState?.idioma === "spa"
@@ -585,82 +656,103 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
     } else {
       setLoadingContinuar(true);
 
-      if (validatetInProcess) {
-        Toast.show(
-          userState?.idioma === "spa"
-            ? "Se están validando tus premios"
-            : "Your prizes are being validated",
-          {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          }
-        );
-        setLoadingContinuar(false);
-      } else {
-        if (
-          userState.operator.id == undefined ||
-          userState.operator.name == undefined
-        ) {
-          Toast.show(
-            userState?.idioma === "spa"
-              ? "Antes de continuar, seleccione su operador"
-              : "Before proceeding, select your carrier",
-            {
-              duaration: Toast.durations.LONG,
-              position: Toast.positions.BOTTOM,
-              shadow: true,
-              animation: true,
-              hideOnPress: true,
-              delay: 0,
-            }
-          );
-          setLoadingContinuar(false);
-        } else {
-          // init checkout de los premios validados
-          // si un premio está asociado a un contacto, es que está en checkout
+      // verificar app version
+      verificarAppVersion()
+        .then((response) => {
+          const versionAppActual = Application.nativeApplicationVersion; // Ejemplo: '1.0.0'
+          const data = response.data;
+          const versionAppMinima = data.version;
+          interfaceDispatch(setIosLinkUpdate(data.linkIOS));
+          interfaceDispatch(setAndroidLinkUpdate(data.linkAndroid));
 
-          let prizesForInitCheckoutPromise = [];
-
-          validated_prizes.forEach((prize_validado) => {
-            prizesForInitCheckoutPromise.push(
-              prize_init_checkout(prize_validado.uuid)
-            );
-          });
-
-          Promise.all(prizesForInitCheckoutPromise)
-            .then(() => {
-              // antes de CONTINUAR
-              // se actualiza el arreglo de contactos seleccionados
-              // con los premios correspondientes
-              validated_prizes.forEach((prize) => {
-                nuevaRecargaDispatch(
-                  updatePrizeForContact(prize.fieldId, {
-                    uuid: prize.uuid,
-                    type: prize.type,
-                  })
+          if (
+            compareVersions.compare(versionAppActual, versionAppMinima, "<")
+          ) {
+            // console.log("solicitar actualizacion");
+            setLoadingContinuar(false);
+            interfaceDispatch(setIsAppOutdated(true));
+          } else {
+            if (validatetInProcess) {
+              Toast.show(
+                userState?.idioma === "spa"
+                  ? "Se están validando tus premios"
+                  : "Your prizes are being validated",
+                {
+                  duaration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0,
+                }
+              );
+              setLoadingContinuar(false);
+            } else {
+              if (
+                userState.operator.id == undefined ||
+                userState.operator.name == undefined
+              ) {
+                Toast.show(
+                  userState?.idioma === "spa"
+                    ? "Antes de continuar, seleccione su operador"
+                    : "Before proceeding, select your carrier",
+                  {
+                    duaration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                  }
                 );
-              });
-              setLoadingContinuar(false);
-              //console.log(BASE_URL);
-              navigation.navigate("RecargasDisponiblesScreen");
-            })
-            .catch((err) => {
-              setLoadingContinuar(false);
-              Toast.show(err.message, {
-                duaration: Toast.durations.LONG,
-                position: Toast.positions.BOTTOM,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-              });
-            });
-        }
-      }
+                setLoadingContinuar(false);
+              } else {
+                // init checkout de los premios validados
+                // si un premio está asociado a un contacto, es que está en checkout
+
+                let prizesForInitCheckoutPromise = [];
+
+                validated_prizes.forEach((prize_validado) => {
+                  prizesForInitCheckoutPromise.push(
+                    prize_init_checkout(prize_validado.uuid)
+                  );
+                });
+
+                Promise.all(prizesForInitCheckoutPromise)
+                  .then(() => {
+                    // antes de CONTINUAR
+                    // se actualiza el arreglo de contactos seleccionados
+                    // con los premios correspondientes
+                    validated_prizes.forEach((prize) => {
+                      nuevaRecargaDispatch(
+                        updatePrizeForContact(prize.fieldId, {
+                          uuid: prize.uuid,
+                          type: prize.type,
+                        })
+                      );
+                    });
+                    setLoadingContinuar(false);
+                    //console.log(BASE_URL);
+                    navigation.navigate("RecargasDisponiblesScreen");
+                  })
+                  .catch((err) => {
+                    setLoadingContinuar(false);
+                    Toast.show(err.message, {
+                      duaration: Toast.durations.LONG,
+                      position: Toast.positions.BOTTOM,
+                      shadow: true,
+                      animation: true,
+                      hideOnPress: true,
+                      delay: 0,
+                    });
+                  });
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 

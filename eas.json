@@ -9,12 +9,20 @@
         "buildType": "apk"
       }
     },
-    "production": {
+    "beta": {
       "ios": {
         "resourceClass": "m-medium"
       }, 
       "android": {
         "buildType": "apk"
+      }
+    },
+    "production": {
+      "ios": {
+        "resourceClass": "m-medium"
+      }, 
+      "android": {
+        "buildType": "app-bundle"
       }
     }
   },

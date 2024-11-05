@@ -23,6 +23,20 @@ export const setIsAppOutdated = (isOutdated) => {
   };
 };
 
+export const setAndroidLinkUpdate = (androidLink) => {
+  return {
+    type: actionTypes.SET_ANDROID_LINK_UPDATE,
+    androidLink,
+  };
+};
+
+export const setIosLinkUpdate = (iosLink) => {
+  return {
+    type: actionTypes.SET_IOS_LINK_UPDATE,
+    iosLink,
+  };
+};
+
 //export const setShowExpiredPrize =
 
 // ================================= ACTIONS FOR USER STATE ===========================

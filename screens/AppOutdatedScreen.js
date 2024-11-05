@@ -9,12 +9,18 @@ import {
 import { GlobalContext } from "../context/GlobalProvider";
 
 //  StackScreenProps<RootStackParamList, 'NotFound'>
-export default function AppOutdatedScreen({ storeLinkIos, storeLinkAndroid }) {
+export default function AppOutdatedScreen() {
   // console.log(storeLinkAndroid);
   const { userState } = React.useContext(GlobalContext);
+  const { interfaceState } = React.useContext(GlobalContext);
+
+  const { androidLinkUpdate } = interfaceState;
+  const { iosLinkUpdate } = interfaceState;
 
   React.useEffect(() => {
     // console.log(userState);
+    console.log(iosLinkUpdate);
+    console.log(androidLinkUpdate);
     sacarAlerta();
   }, []);
 
@@ -33,7 +39,7 @@ export default function AppOutdatedScreen({ storeLinkIos, storeLinkAndroid }) {
           style: "default",
           onPress: () => {
             const storeUrl =
-              Platform.OS === "ios" ? storeLinkIos : storeLinkAndroid;
+              Platform.OS === "ios" ? iosLinkUpdate : androidLinkUpdate;
             Linking.openURL(storeUrl);
           },
         },

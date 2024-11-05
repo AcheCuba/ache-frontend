@@ -79,6 +79,12 @@ const MoreScreen = ({ navigation }) => {
             onPress={() => navigation.navigate("ModoUsoScreen")}
           />
         </View>
+        <View style={styles.buttons}>
+          <LargeFlatButton
+            text={userState?.idioma === "spa" ? "Contáctanos" : "Contact us"}
+            onPress={() => navigation.navigate("ContactUs")}
+          />
+        </View>
       </View>
     </ImageBackground>
   );

@@ -55,6 +55,8 @@ import { getPrizeForUser } from "../../libs/getPrizeForUser";
 import PremioCobradoModal from "./components/PremioCobradoModal";
 import PremioFallidoModal from "./components/PremioFallidoModal";
 import PremioEnCaminoModal from "./components/PremioEnCaminoModal";
+import HasPrizeModal from "./components/HasPrizeModal";
+import HasSkullModal from "./components/HasSkullModal";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -77,9 +79,6 @@ const GameScreen = ({ navigation }) => {
     React.useState(false);
   const [codigoGenerado, setCodigoGenerado] = React.useState(false);
 
-  const [premioAcumulado, setPremioAcumulado] = React.useState(false);
-  const [premioAcumuladoType, setPremioAcumuladoType] =
-    React.useState(undefined);
   const [NadaWon, setNadaWon] = React.useState(false);
   const [DoublePrizeWon, setDoublePrizeWon] = React.useState(false);
   const [JoyaWon, setJoyaWon] = React.useState(false);
@@ -87,6 +86,8 @@ const GameScreen = ({ navigation }) => {
   const [nadaDescriptionModalVisible, setNadaDescriptionModalVisible] =
     React.useState(false);
   const [premioEnCamino, setPremioEnCamino] = React.useState(false);
+  const [hasPrizeModal, setHasPrizeModal] = React.useState(false);
+  const [hasSkullModal, setHasSkullModal] = React.useState(false);
 
   //sonidos
   const [soundError, setSoundError] = React.useState();
@@ -340,50 +341,6 @@ const GameScreen = ({ navigation }) => {
     }, 5000);
   };
 
-  const ImagePrizePremioAcumulado = () => {
-    const typeOfPrize = premioAcumuladoType;
-
-    //console.log(typeOfPrize);
-    //console.log(amount);
-
-    switch (typeOfPrize) {
-      case "Jackpot":
-        return (
-          <Image
-            source={require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")}
-            style={{
-              width: 120,
-              height: 100,
-            }}
-          />
-        );
-      case "DoublePrize":
-        //const amount = userState?.prize?.amount;
-
-        return (
-          <Image
-            source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
-            style={{
-              width: 105,
-              height: 100,
-            }}
-          />
-        );
-
-      case "Nada":
-        return (
-          <View>
-            <Image
-              source={require("../../assets/animaciones/calavera-roja.gif")}
-              style={{ width: 120, height: 140 }}
-            />
-          </View>
-        );
-      default:
-        return null;
-    }
-  };
-
   const ImageConditional = ({ typeOfPrize }) => {
     //console.log(typeOfPrize);
 
@@ -440,51 +397,6 @@ const GameScreen = ({ navigation }) => {
             />
           </View>
         );
-    }
-  };
-
-  const setCasillaRandom = () => {
-    // Para premio Acumulado
-    const random_seed = Math.random();
-    // const random_seed = 0.1;
-
-    // ======== menor que 0.25 - 3 posibles casillas (nada)
-    if (random_seed < 0.08) {
-      setCasillaFinal("7313deg");
-      setPremioAcumuladoType("Nada");
-    }
-    if (random_seed >= 0.08 && random_seed < 0.16) {
-      setCasillaFinal("7403deg");
-      setPremioAcumuladoType("Nada");
-    }
-
-    if (random_seed >= 0.16 && random_seed < 0.25) {
-      setCasillaFinal("7493deg");
-      setPremioAcumuladoType("Nada");
-    }
-
-    // ====== entre 0.25 y 0.5 - una posibilidad (jackpot)
-    if (random_seed >= 0.25 && random_seed < 0.5) {
-      setCasillaFinal("7223deg");
-      setPremioAcumuladoType("Jackpot");
-    }
-
-    // ======= mayor que 0.5 - 4 probabilidades (double prize)
-    if (random_seed >= 0.5 && random_seed < 0.62) {
-      setCasillaFinal("7268deg");
-      setPremioAcumuladoType("DoublePrize");
-    }
-    if (random_seed >= 0.62 && random_seed < 0.75) {
-      setCasillaFinal("7358deg");
-      setPremioAcumuladoType("DoublePrize");
-    }
-    if (random_seed >= 0.75 && random_seed < 0.87) {
-      setCasillaFinal("7178deg");
-      setPremioAcumuladoType("DoublePrize");
-    }
-    if (random_seed >= 0.87 && random_seed <= 1) {
-      setCasillaFinal("7088deg");
-      setPremioAcumuladoType("DoublePrize");
     }
   };
 
@@ -571,6 +483,38 @@ const GameScreen = ({ navigation }) => {
     }
   };
 
+  const verificarPremioActual = () => {
+    // hay algo en la app
+    const currentTime = moment();
+    const expirationDate = moment(userState.prize?.expirationDate).local();
+    // para mostrar en pantalla (modal):
+    const horas_restantes = expirationDate.diff(currentTime, "hours");
+
+    // verificar si el premio ha expirado
+    getPrizeForUser(userState)
+      .then((response) => {
+        const hasPrize = response.data.hasPrize;
+        if (hasPrize) {
+          // aun tiene algo
+          console.log("horas restantes", horas_restantes);
+          setHorasRestantes(horas_restantes);
+        } else {
+          console.log("premio expirado");
+          // lo que tenia (premio o skull) expiro
+          // se elimina de la app
+          // deja de estar gris cuando el modal caiga.
+          storeData("user", {
+            ...userState,
+            prize: null,
+          });
+          userDispatch(setPrizeForUser(null));
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const onPressWheel = async (touchOn) => {
     const networkState = await getNetworkState();
     //console.log(networkState);
@@ -617,45 +561,6 @@ const GameScreen = ({ navigation }) => {
 
         if (current_prize === null) {
           makePlayRequest(config);
-        } else {
-          // hay algo en la app
-
-          const currentTime = moment();
-          const expirationDate = moment(
-            userState.prize?.expirationDate
-          ).local();
-          // para mostrar en pantalla (modal):
-          const horas_restantes = expirationDate.diff(currentTime, "hours");
-
-          // verificar si el premio ha expirado
-          getPrizeForUser(userState)
-            .then((response) => {
-              const hasPrize = response.data.hasPrize;
-              if (hasPrize) {
-                // aun tiene algo
-                setCasillaRandom();
-                thereIsPrizeResult.current = true;
-                console.log("horas restantes", horas_restantes);
-                setHorasRestantes(horas_restantes);
-                setTimeout(() => {
-                  setPremioAcumulado(true);
-                }, ANIMATION_TIME);
-              } else {
-                // lo que tenia (premio o skull) expiro
-                storeData("user", {
-                  ...userState,
-                  prize: null,
-                });
-                userDispatch(setPrizeForUser(null));
-
-                // luego de eliminado el objeto se trata la app
-                // como si el usuario no tuviese premio
-                makePlayRequest(config);
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            });
         }
       }
     }
@@ -877,10 +782,10 @@ const GameScreen = ({ navigation }) => {
   React.useEffect(() => {
     //console.log("codigo generado game screen", codigoGenerado);
     //console.log(currentPrize?.type);
-    if (!NadaWon && !DoublePrizeWon && !JoyaWon && !premioAcumulado) {
+    if (!NadaWon && !DoublePrizeWon && !JoyaWon) {
       wheelValue.current.setValue(0);
     }
-  }, [NadaWon, DoublePrizeWon, JoyaWon, premioAcumulado]);
+  }, [NadaWon, DoublePrizeWon, JoyaWon]);
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
@@ -1011,148 +916,6 @@ const GameScreen = ({ navigation }) => {
               }}
             >
               <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
-            </View>
-          </Modal>
-        ) : null}
-
-        {premioAcumulado ? (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={premioAcumulado}
-            onRequestClose={() => setPremioAcumulado(false)}
-          >
-            <View
-            /* onPress={() => {
-              setPremioAcumulado(false);
-              setPremioAcumuladoType(undefined); 
-            }} */
-            >
-              <LinearGradient
-                colors={[generalBgColor, bgColorFinalGradient]}
-                style={{ width: "100%", height: "100%" }}
-              >
-                <View
-                  style={{
-                    // zIndex: 2,
-                    flex: 1,
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: generalBgColorTrans5,
-                    alignItems: "center",
-                  }}
-                >
-                  <View style={{ marginTop: 150, height: 150 }}>
-                    <ImagePrizePremioAcumulado />
-                  </View>
-                  <View
-                    style={{
-                      width: width / 1.5,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      //marginTop: -30,
-                    }}
-                  >
-                    <View style={{}}>
-                      {userState.prize?.type === "Nada" ? (
-                        <TextBold
-                          text={
-                            userState?.idioma === "spa"
-                              ? "Ruleta Bloqueada"
-                              : "WHEEL BLOCKED"
-                          }
-                          style={{
-                            fontSize: 26,
-                            color: "#01f9d2",
-                            textTransform: "uppercase",
-                          }}
-                        />
-                      ) : (
-                        <TextBold
-                          text={
-                            userState?.idioma === "spa"
-                              ? "Premio Pendiente"
-                              : "PRIZE ON HOLD"
-                          }
-                          style={{
-                            fontSize: 26,
-                            color: "#01f9d2",
-                            textTransform: "uppercase",
-                          }}
-                        />
-                      )}
-                    </View>
-
-                    <View style={{ marginTop: 30 }}>
-                      {userState.prize?.type === "Nada" ? (
-                        <TextItalic
-                          text={
-                            userState?.idioma === "spa"
-                              ? `lo sentimos... tienes calavera. Espera ${horasRestantes} horas para que se elimine o envía una recarga y vuelve a jugar`
-                              : `sorry... you have the skull. Wait ${horasRestantes} hours for it to go away on its own or send a recharge and play again`
-                          }
-                          style={{
-                            fontSize: 20,
-                            color: "#01f9d2",
-                            textAlign: "center",
-                            //textTransform: "uppercase",
-                          }}
-                        />
-                      ) : (
-                        <TextItalic
-                          text={
-                            userState?.idioma === "spa"
-                              ? "Ya tienes un premio guardado. Para poder cobrar otro premio que ganes en la ruleta debes agregar el premio actual a una recarga o compartirlo usando el botón de la esquina superior derecha de la pantalla."
-                              : "You already have a saved prize. To be able to collect another prize from the fortune wheel add the existing one to a top up or share it using the icon on the top right corner of the screen."
-                          }
-                          style={{
-                            fontSize: 20,
-                            color: "#01f9d2",
-                            textAlign: "center",
-                            //textTransform: "uppercase",
-                          }}
-                        />
-                      )}
-                    </View>
-                  </View>
-
-                  <View style={{ marginTop: 30 }}>
-                    {userState.prize?.type !== "Nada" ? (
-                      <LargeFlatButton
-                        text={ResolveText("obtenerPremio")}
-                        btStyle={{ marginBottom: 30 }}
-                        onPress={() => {
-                          setPremioAcumulado(false);
-                          if (userState.prize?.type !== "Nada") {
-                            navigation.jumpTo("Nueva Recarga", {
-                              screen: "NuevaRecargaScreen",
-                              params: { inOrderToCobrarPremio: true },
-                            });
-                          }
-                        }}
-                      />
-                    ) : null}
-
-                    <LargeFlatButton
-                      onPress={() => {
-                        setPremioAcumulado(false);
-                      }}
-                      text={ResolveText("cancelar")}
-                    />
-                    {/* <TouchableOpacity
-                    onPress={() => {
-                      setPremioAcumulado(false);
-                    }}
-                    style={{
-                      height: 100,
-                      width: 300,
-                    }}
-                  >
-                    <Text>pruebita</Text>
-                  </TouchableOpacity> */}
-                  </View>
-                </View>
-              </LinearGradient>
             </View>
           </Modal>
         ) : null}
@@ -1400,6 +1163,63 @@ const GameScreen = ({ navigation }) => {
           </Modal>
         ) : null}
 
+        {hasPrizeModal ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={hasPrizeModal}
+            onRequestClose={() => setHasPrizeModal(false)}
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "generalBgColorTrans5",
+                }}
+              >
+                <HasPrizeModal
+                  setModalVisible={setHasPrizeModal}
+                  userState={userState}
+                />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+
+        {hasSkullModal ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={hasSkullModal}
+            onRequestClose={() => setHasSkullModal(false)}
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "generalBgColorTrans5",
+                }}
+              >
+                <HasSkullModal
+                  setModalVisible={setHasSkullModal}
+                  userState={userState}
+                  horasRestantes={horasRestantes}
+                />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+
         <View style={styles.containerGame}>
           <View
             key={1}
@@ -1489,7 +1309,7 @@ const GameScreen = ({ navigation }) => {
             <ImageBackground
               // source={require("../../assets/images/home/fondo.png")}
               source={
-                userState.prize?.type === "Nada"
+                userState.prize != null
                   ? require("../../assets/images/home/fondo_gris.png")
                   : require("../../assets/images/home/fondo.png")
               }
@@ -1511,14 +1331,38 @@ const GameScreen = ({ navigation }) => {
               >
                 <TouchableWithoutFeedback
                   onPress={() => {
-                    if (userState.prize.type != "Nada") {
+                    if (userState.prize == null) {
                       onPressWheel("selector");
+                    } else {
+                      // tiene premio o skull
+                      verificarPremioActual();
+                      if (userState.prize.type !== "Nada") {
+                        // abrir modal de que tiene premio
+                        setHasPrizeModal(true);
+                      } else {
+                        // tiene skull
+                        // actualizar horas
+
+                        const currentTime = moment();
+                        const expirationDate = moment(
+                          userState.prize?.expirationDate
+                        ).local();
+                        const horas_restantes = expirationDate.diff(
+                          currentTime,
+                          "hours"
+                        );
+                        // actualizo horas respantes para mostrar
+                        setHorasRestantes(horas_restantes);
+
+                        // abrir modal
+                        setHasSkullModal(true);
+                      }
                     }
                   }}
                 >
                   <Image
                     source={
-                      userState.prize?.type === "Nada"
+                      userState.prize != null
                         ? require("../../assets/images/home/selector_gris.png")
                         : require("../../assets/images/home/selector.png")
                     }
@@ -1537,7 +1381,7 @@ const GameScreen = ({ navigation }) => {
               >
                 <Image
                   source={
-                    userState.prize?.type === "Nada"
+                    userState.prize != null
                       ? require("../../assets/images/home/centro_gris.png")
                       : require("../../assets/images/home/centro.png")
                   }
@@ -1551,7 +1395,7 @@ const GameScreen = ({ navigation }) => {
 
               <ImageBackground
                 source={
-                  userState.prize?.type === "Nada"
+                  userState.prize != null
                     ? require("../../assets/images/home/bisel_gris.png")
                     : require("../../assets/images/home/bisel.png")
                 }
@@ -1565,14 +1409,38 @@ const GameScreen = ({ navigation }) => {
               >
                 <TouchableWithoutFeedback
                   onPress={() => {
-                    if (userState.prize?.type != "Nada") {
+                    if (userState.prize == null) {
                       onPressWheel("slots");
+                    } else {
+                      // tiene premio o skull
+                      verificarPremioActual();
+                      if (userState.prize.type !== "Nada") {
+                        // abrir modal de que tiene premio
+                        setHasPrizeModal(true);
+                      } else {
+                        // tiene skull
+                        // actualizar horas
+
+                        const currentTime = moment();
+                        const expirationDate = moment(
+                          userState.prize?.expirationDate
+                        ).local();
+                        const horas_restantes = expirationDate.diff(
+                          currentTime,
+                          "hours"
+                        );
+                        // actualizo horas respantes para mostrar
+                        setHorasRestantes(horas_restantes);
+
+                        // abrir modal
+                        setHasSkullModal(true);
+                      }
                     }
                   }}
                 >
                   <Image
                     source={
-                      userState.prize?.type === "Nada"
+                      userState.prize != null
                         ? require("../../assets/images/home/sombra_gris.png")
                         : require("../../assets/images/home/sombra.png")
                     }
@@ -1599,7 +1467,7 @@ const GameScreen = ({ navigation }) => {
                 >
                   <ImageBackground
                     source={
-                      userState.prize?.type === "Nada"
+                      userState.prize != null
                         ? require("../../assets/images/home/ruleta/Mueve_slots_gris.png")
                         : require("../../assets/images/home/ruleta/Mueve_slots.png")
                     }
@@ -1704,41 +1572,3 @@ const styles = StyleSheet.create({
     //height: width / 3.5,
   },
 });
-
-// onPressWheel function - para testear
-
-/*  const fakePrize = { type: "Jackpot", amount: 250 };
-
-        if (current_prize === null) {
-          setCasilla(fakePrize);
-          thereIsPrizeResult.current = true;
-
-          setTimeout(() => {
-            // demora del server simulacion
-
-            const prizeStartTime = moment();
-            const expirationDate = moment().add(3, "days");
-            //const horas_restantes = expirationDate.diff(prizeStartTime, "hours");
-
-            userDispatch(
-              setPrizeForUser({
-                type: "Jackpot",
-                exchanged: false, // no se puede cambiar
-                amount: 250,
-                prizeStartTime,
-                expirationDate,
-                //minutos_restantes,
-              })
-            );
-          }, ANIMATION_TIME);
-        } else {
-          setCasillaRandom();
-          setTimeout(() => {
-            thereIsPrizeResult.current = true;
-            const currentTime = moment();
-            const { expirationDate } = userState.prize;
-            const horas_restantes = expirationDate.diff(currentTime, "hours");
-            setHorasRestantes(horas_restantes);
-            setPremioAcumulado(true);
-          }, ANIMATION_TIME);
-        } */

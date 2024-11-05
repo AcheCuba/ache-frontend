@@ -20,6 +20,8 @@ import {
   setActualTransaccionPremioCompletada,
   setActualTransaccionPremioFallida,
   setIsAppOutdated,
+  setIosLinkUpdate,
+  setAndroidLinkUpdate,
 } from "../context/Actions/actions";
 import { BASE_URL } from "../constants/domain";
 import * as SplashScreen from "expo-splash-screen";
@@ -76,8 +78,6 @@ function AnimatedSplashScreen({ animationSource, children }) {
   const animation = useRef(null);
   const [soundInicio, setSoundInicio] = React.useState();
   const fadeAnim = useRef(new Animated.Value(1)).current; // Valor inicial de opacidad 1 (completamente visible)
-  const [storeLinkIos, setStoreLinkIos] = useState(undefined);
-  const [storeLinkAndroid, setStoreLinkAndroid] = useState(undefined);
 
   async function playSoundInicio() {
     //console.log("Loading Sound");
@@ -101,8 +101,8 @@ function AnimatedSplashScreen({ animationSource, children }) {
         const data = response.data;
         // console.log(data);
         const versionAppMinima = data.version;
-        setStoreLinkIos(data.linkIOS);
-        setStoreLinkAndroid(data.linkAndroid);
+        interfaceDispatch(setIosLinkUpdate(data.linkIOS));
+        interfaceDispatch(setAndroidLinkUpdate(data.linkAndroid));
 
         if (compareVersions.compare(versionAppActual, versionAppMinima, "<")) {
           // console.log("solicitar actualizacion");
@@ -160,12 +160,7 @@ function AnimatedSplashScreen({ animationSource, children }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: generalBgColor }}>
-      {isAppOutdated && (
-        <AppOutdatedScreen
-          storeLinkIos={storeLinkIos}
-          storeLinkAndroid={storeLinkAndroid}
-        />
-      )}
+      {isAppOutdated && <AppOutdatedScreen />}
       {!isAppOutdated && isSplashAnimationComplete && children}
       {!isAppOutdated && !isSplashAnimationComplete && (
         <Animated.View

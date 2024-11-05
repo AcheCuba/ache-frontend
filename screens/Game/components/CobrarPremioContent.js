@@ -57,21 +57,6 @@ const CobrarPremioContent = ({
     //console.log(currentPrize?.type);
   }, []);
 
-  /* React.useEffect(() => {
-    const getData_ = async () => {
-      const userData = await getData("user");
-      console.log("user data en storage", userData);
-    };
-
-    getData_();
-  }); */
-
-  /*   React.useEffect(() => {
-    //console.log("codigo generado", codigoGenerado);
-    //console.log(currentPrize?.type);
-    console.log("userState cobrar premio", userState);
-  }, [userState]); */
-
   const copyToClipboard = (code) => {
     Clipboard.setStringAsync(code);
   };
