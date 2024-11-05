@@ -28,6 +28,7 @@
   },
   "cli": {
     "promptToConfigurePushNotifications": true,
-    "appVersionSource": "local"
+    "appVersionSource": "local",
+    "version": "12.6.2"
   }
 }
