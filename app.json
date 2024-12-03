@@ -23,7 +23,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.marole.ache",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.0",
+      
     },
     "android": {
       "package": "com.marole.ache",
@@ -45,6 +46,12 @@
       }
     },
     "plugins": [
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "By giving us access to your Contacts, we’ll be able to provide a list of familiar names and numbers you can send recharges to. We won’t store, manipulate or other wise distribute any information saved in your Contacts."
+        }
+      ],
       "expo-asset",
       "expo-font",
       "expo-secure-store"
