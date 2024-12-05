@@ -197,6 +197,9 @@ export const ModoDeUsoTextSpanish = () => {
     tiempo: "tiempo",
     tiempoDesc:
       "Tienes 72 horas para cobrar o compartir cualquier premio, de lo contrario se pierde.",
+    origen: "Origen de los premios",
+    origenDesc:
+      "Todos los fondos dedicados a cubrir el costo de los premios de esta app proceden de nuestros inversionistas y de los ingresos de la app. Apple no es un patrocinador y no está involucrado de ninguna manera en el proceso de concesión o financiamiento de los premios.",
   };
 };
 
@@ -214,5 +217,8 @@ export const ModoDeUsoTextEnglish = () => {
     tiempo: "time",
     tiempoDesc:
       "You have up to 72 hours to cash or share your prize, otherwise you’ll lose it.",
+    origen: "Prize Sources",
+    origenDesc:
+      "All funds dedicated to cover the cost of the prizes in this app are coming from our investors and app revenue. Apple is not a sponsor and is not in any way involved with the process for granting or funding the prizes",
   };
 };

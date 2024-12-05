@@ -3,8 +3,7 @@
     "owner": "marole_pte",
     "name": "Spin Recargas",
     "slug": "ache",
-    // "privacy": "unlisted",
-    "version": "1.0.24",
+    "version": "1.0.25",
     "orientation": "portrait",
     "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",
@@ -33,7 +32,11 @@
         "foregroundImage": "./assets/images/app_icon_foreground.png",
         "backgroundImage": "./assets/images/app_icon_background.png"
       },
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS"
+      ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -55,6 +58,5 @@
       "expo-font",
       "expo-secure-store"
     ]
-    
   }
 }

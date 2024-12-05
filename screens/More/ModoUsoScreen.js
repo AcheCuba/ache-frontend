@@ -139,6 +139,25 @@ const ModoUsoScreen = ({ navigation }) => {
                   text={ResolveText("tiempoDesc")}
                 />
               </View>
+              <View style={{ marginBottom: 20 }}>
+                <TextBold
+                  style={{
+                    fontSize: 20,
+                    textTransform: "uppercase",
+                    color: infoTextColor,
+                    marginBottom: 5,
+                  }}
+                  text={ResolveText("origen")}
+                />
+                <TextItalic
+                  style={{
+                    fontSize: 20,
+                    color: infoTextColor,
+                    textAlign: "left",
+                  }}
+                  text={ResolveText("origenDesc")}
+                />
+              </View>
             </ScrollView>
           </View>
         </View>
