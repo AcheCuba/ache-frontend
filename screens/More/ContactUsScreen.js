@@ -17,7 +17,7 @@ const ContactUsScreen = ({ navigation }) => {
   const { userState } = React.useContext(GlobalContext);
 
   const openPhoneApp = async () => {
-    const url = `tel:+447774167352`;
+    const url = `tel:+971585515461`;
     const supported = await Linking.canOpenURL(url);
     // console.log(supported);
 
@@ -57,7 +57,7 @@ const ContactUsScreen = ({ navigation }) => {
   };
 
   const openMessagesApp = async () => {
-    const url = `sms:+447774167352`;
+    const url = `sms:+971585515461`;
     const supported = await Linking.canOpenURL(url);
     if (supported) {
       Linking.openURL(url).catch((err) => {
@@ -223,7 +223,7 @@ const ContactUsScreen = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
               <ButtonContact
                 title={userState.idioma === "spa" ? "LLAMAR" : "CALL US"}
-                subt={"+44 7774 167352"}
+                subt={"+971 58 551 5461"}
                 onPressContact={() => {
                   openPhoneApp();
                 }}
@@ -232,7 +232,7 @@ const ContactUsScreen = ({ navigation }) => {
                 title={
                   userState.idioma === "spa" ? "ENVIAR MENSAJE" : "TEXT US"
                 }
-                subt={"+44 7774 167352"}
+                subt={"+971 58 551 5461"}
                 onPressContact={() => openMessagesApp()}
               />
 
