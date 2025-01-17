@@ -1,0 +1,28 @@
+diff --git a/node_modules/cliui/build/index.cjs b/node_modules/cliui/build/index.cjs
+index 82126b6..974ec46 100644
+--- a/node_modules/cliui/build/index.cjs
++++ b/node_modules/cliui/build/index.cjs
+@@ -288,9 +288,20 @@ function cliui(opts, _mixin) {
+ }
+ 
+ // Bootstrap cliui with CommonJS dependencies:
+-const stringWidth = require('string-width');
+-const stripAnsi = require('strip-ansi');
+-const wrap = require('wrap-ansi');
++let stringWidth, stripAnsi, wrap;
++
++import('string-width').then(mod => {
++  stringWidth = mod.default || mod;
++});
++
++import('strip-ansi').then(mod => {
++  stripAnsi = mod.default || mod;
++});
++
++import('wrap-ansi').then(mod => {
++  wrap = mod.default || mod;
++});
++
+ function ui(opts) {
+     return cliui(opts, {
+         stringWidth,
