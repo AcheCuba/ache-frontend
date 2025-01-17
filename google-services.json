@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:521277491275:android:e3e0deedc067128b5ce5ce",
+        "mobilesdk_app_id": "1:521277491275:android:8b6ca0ee86fd03e45ce5ce",
         "android_client_info": {
-          "package_name": "com.marole.ache"
+          "package_name": "com.marole.spin"
         }
       },
       "oauth_client": [],
