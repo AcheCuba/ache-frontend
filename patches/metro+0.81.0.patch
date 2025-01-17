@@ -1,5 +1,5 @@
 diff --git a/node_modules/metro/src/lib/reporting.js b/node_modules/metro/src/lib/reporting.js
-index b0d7b91..3ab2982 100644
+index b0d7b91..b0eb8ce 100644
 --- a/node_modules/metro/src/lib/reporting.js
 +++ b/node_modules/metro/src/lib/reporting.js
 @@ -1,7 +1,7 @@
@@ -7,7 +7,7 @@ index b0d7b91..3ab2982 100644
  
  const chalk = require("chalk");
 -const stripAnsi = require("strip-ansi");
-+import stripAnsi from 'strip-ansi';
++const stripAnsi = await import('strip-ansi').then(mod => mod.default || mod);
  const util = require("util");
  function logWarning(terminal, format, ...args) {
    const str = util.format(format, ...args);
