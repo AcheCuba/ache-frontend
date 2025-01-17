@@ -114,7 +114,7 @@
           "strip-ansi": "6.0.1"
         },
         "scripts": {
-          "preinstall": "node -e \"require('events').EventEmitter.defaultMaxListeners = 20\""
+          "preinstall": "yarn add strip-ansi@6.0.1"
         }
       }
     }
