@@ -29,6 +29,6 @@
   "cli": {
     "promptToConfigurePushNotifications": true,
     "appVersionSource": "local",
-    "version": "12.6.2"
+    "version": "14.4.1"
   }
 }
