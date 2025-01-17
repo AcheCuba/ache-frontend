@@ -12,6 +12,9 @@
   "jest": {
     "preset": "jest-expo"
   },
+  "resolutions": {
+    "@isaacs/cliui": "npm:cliui@8.0.1"
+  },
   "dependencies": {
     "@expo/config-plugins": "~9.0.0",
     "@expo/prebuild-config": "~8.0.0",
@@ -113,8 +116,6 @@
           "yup"
         ],
         "listUnknownPackages": false
-       
-        
       }
     }
   }
