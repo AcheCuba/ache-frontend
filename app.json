@@ -8,6 +8,7 @@
     "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/first_screen_splash.png",
       "resizeMode": "cover",

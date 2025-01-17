@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "521277491275",
     "project_id": "spin-recargas",
-    "storage_bucket": "spin-recargas.appspot.com"
+    "storage_bucket": "spin-recargas.firebasestorage.app"
   },
   "client": [
     {
