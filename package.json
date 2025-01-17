@@ -50,6 +50,8 @@
     "global": "^4.4.0",
     "lottie-react-native": "7.1.0",
     "moment": "^2.29.1",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "^7.2.1",
@@ -114,7 +116,9 @@
           "strip-ansi": "6.0.1"
         },
         "scripts": {
-          "preinstall": "yarn add strip-ansi@6.0.1"
+          "preinstall": "yarn add strip-ansi@6.0.1",
+          "postinstall": "patch-package"
+
         }
       }
     }

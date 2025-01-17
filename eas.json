@@ -20,11 +20,9 @@
     "production": {
       "ios": {
         "resourceClass": "m-medium",
-        "preInstall": "yarn add strip-ansi@6.0.1"
-      }, 
+        }, 
       "android": {
         "buildType": "app-bundle",
-        "preInstall": "yarn add strip-ansi@6.0.1"
 
       }
     }
