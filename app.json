@@ -55,6 +55,14 @@
           "contactsPermission": "By giving us access to your Contacts, we’ll be able to provide a list of familiar names and numbers you can send recharges to. We won’t store, manipulate or other wise distribute any information saved in your Contacts"
         }
       ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/first_screen_splash.png",
+          "resizeMode": "cover",
+          "backgroundColor": "#ffffff"
+        }
+      ],
       "expo-asset",
       "expo-font",
       "expo-secure-store"
