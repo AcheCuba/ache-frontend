@@ -10,7 +10,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/first_screen_splash_resized.png",
+      "image": "./assets/images/first_screen_splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
@@ -58,7 +58,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/first_screen_splash_resized.png",
+          "image": "./assets/images/first_screen_splash.png",
           "resizeMode": "cover",
           "backgroundColor": "#ffffff"
         }
