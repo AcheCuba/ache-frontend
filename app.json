@@ -5,7 +5,7 @@
     "slug": "spin-recargas",
     "version": "1.0.26",
     "orientation": "portrait",
-    "icon": "./assets/images/app_icon.png",
+    "icon": "./assets/images/app_icon.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -31,7 +31,7 @@
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app_icon_foreground.png",
-        "backgroundImage": "./assets/images/app_icon_background.png"
+        "backgroundImage": "./assets/images/app_icon_background.jpg"
       },
       "googleServicesFile": "./google-services.json",
       "permissions": [
