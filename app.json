@@ -27,7 +27,7 @@
     },
     "android": {
       "package": "com.marole.spin",
-      "versionCode": 0,
+      "versionCode": 1,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app_icon_foreground.png",
