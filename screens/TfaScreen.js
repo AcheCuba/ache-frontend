@@ -193,7 +193,7 @@ const TfaScreen = ({ route }) => {
 
     fetch(url, requestOptions)
       .then((response) => {
-        console.log(response.ok);
+        // console.log(response.ok);
         if (response.ok) {
           return response.json();
         } else {
@@ -285,7 +285,7 @@ const TfaScreen = ({ route }) => {
       checkVerificationCode()
         .then((response) => {
           if (response.status === 200) {
-            //console.log(response.status);
+            console.log("valid code");
             // valid code => signup
             fetchRegister(name, email, phone);
             //setLoadingTwo(false);

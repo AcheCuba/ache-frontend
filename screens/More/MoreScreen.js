@@ -1,15 +1,34 @@
+import axios from "axios";
+import { LinearGradient } from "expo-linear-gradient";
 import * as React from "react";
-import { ImageBackground } from "react-native";
+import { ImageBackground, Modal, ScrollView } from "react-native";
 import { Image } from "react-native";
 import { StyleSheet, View, Dimensions } from "react-native";
+import Toast from "react-native-root-toast";
 import LargeFlatButton from "../../components/LargeFlatButton";
+import {
+  bgColorFinalGradient,
+  generalBgColor,
+  generalBgColorTrans5,
+  generalBgColorTrans8,
+} from "../../constants/commonColors";
+import { BASE_URL } from "../../constants/domain";
+import {
+  resetSocketState,
+  restoreNuevaRecargaInitialState,
+  restore_user,
+} from "../../context/Actions/actions";
 import { GlobalContext } from "../../context/GlobalProvider";
+import DeleteUserContentModal from "./components/DeleteUserContentModal";
 
 const { width, height } = Dimensions.get("screen");
 //const marginGlobal = width / 10;
 
 const MoreScreen = ({ navigation }) => {
   const { userState } = React.useContext(GlobalContext);
+
+  const [DeleteUserModal, setDeleteUserModal] = React.useState(false);
+
   return (
     <ImageBackground
       source={require("../../assets/images/degradado_general.png")}
@@ -42,7 +61,37 @@ const MoreScreen = ({ navigation }) => {
           }}
         />
       </View>
-      <View style={styles.containerButtons}>
+
+      {DeleteUserModal ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={DeleteUserModal}
+          onRequestClose={() => setDeleteUserModal(false)}
+        >
+          <View
+            style={{
+              flex: 1,
+              width: "100%",
+              height: "100%",
+              backgroundColor: generalBgColor,
+            }}
+          >
+            <DeleteUserContentModal
+              navigation={navigation}
+              setModalVisible={setDeleteUserModal}
+            />
+          </View>
+        </Modal>
+      ) : null}
+
+      <ScrollView
+        contentContainerStyle={{
+          width: width,
+          alignItems: "center",
+          marginTop: "5%",
+        }}
+      >
         <View style={styles.buttons}>
           <LargeFlatButton
             text={userState?.idioma === "spa" ? "Sobre Nosotros" : "About Us"}
@@ -85,7 +134,15 @@ const MoreScreen = ({ navigation }) => {
             onPress={() => navigation.navigate("ContactUs")}
           />
         </View>
-      </View>
+        <View style={styles.buttons}>
+          <LargeFlatButton
+            text={
+              userState?.idioma === "spa" ? "Eliminar Cuenta" : "Delete Account"
+            }
+            onPress={() => setDeleteUserModal(true)}
+          />
+        </View>
+      </ScrollView>
     </ImageBackground>
   );
 };

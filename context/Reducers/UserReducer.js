@@ -9,6 +9,7 @@ const SET_COUNTRY_FOR_USER = actionTypes.SET_COUNTRY_FOR_USER;
 const SET_OPERATOR_FOR_USER = actionTypes.SET_OPERATOR_FOR_USER;
 const SET_HAS_PENDING_PRIZE = actionTypes.SET_HAS_PENDING_PRIZE;
 const SET_USER_RECUPERADO = actionTypes.SET_USER_RECUPERADO;
+const RESET_USER_STATE = actionTypes.RESET_USER_STATE;
 
 const UserReducer = (state = userInitialState, action) => {
   switch (action.type) {
@@ -17,6 +18,8 @@ const UserReducer = (state = userInitialState, action) => {
       //console.log("signup or restore case (in user reducer):", state);
       //console.log("action user", action.user);
       return { ...state, ...action.user };
+    case RESET_USER_STATE:
+      return userInitialState;
     case SET_PRIZE_FOR_USER:
       // console.log("========================== reducer", action.prize);
       return {

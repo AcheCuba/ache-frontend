@@ -47,6 +47,12 @@ export const signup = (user) => {
   };
 };
 
+export const resetUserState = () => {
+  return {
+    type: actionTypes.RESET_USER_STATE,
+  };
+};
+
 export const restore_user = (user) => {
   return {
     type: actionTypes.RESTORE_USER,
