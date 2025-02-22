@@ -25,7 +25,7 @@
     },
     "android": {
       "package": "com.marole.ache",
-      "versionCode": 1,
+      "versionCode": 3,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app_icon_foreground.png",
