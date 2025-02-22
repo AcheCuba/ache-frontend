@@ -2,17 +2,15 @@
   "expo": {
     "owner": "marole_pte",
     "name": "Spin Recargas",
-    "slug": "spin-recargas",
-    "version": "1.0.27",
+    "slug": "ache",
+    "version": "1.0.26",
     "orientation": "portrait",
     "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/first_screen_splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#32283d"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,11 +20,11 @@
     ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.marole.spin",
+      "bundleIdentifier": "com.marole.ache",
       "buildNumber": "1.0.0"
     },
     "android": {
-      "package": "com.marole.spin",
+      "package": "com.marole.ache",
       "versionCode": 1,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
@@ -45,7 +43,7 @@
     "description": "",
     "extra": {
       "eas": {
-        "projectId": "b0d9fd87-dbe0-4ed6-bcf9-eb4617220633"
+        "projectId": "52b4b6ce-aa56-494c-bba7-3e8d9d98445c"
       }
     },
     "plugins": [

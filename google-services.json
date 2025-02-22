@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "521277491275",
-    "project_id": "spin-recargas",
-    "storage_bucket": "spin-recargas.firebasestorage.app"
+    "project_number": "795532472975",
+    "project_id": "spin-recargas-ache",
+    "storage_bucket": "spin-recargas-ache.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:521277491275:android:8b6ca0ee86fd03e45ce5ce",
+        "mobilesdk_app_id": "1:795532472975:android:a1f68c5988f95baca1f6fa",
         "android_client_info": {
-          "package_name": "com.marole.spin"
+          "package_name": "com.marole.ache"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyARJ6WLyKdIN-1HuvaL2Yr4Z83KjVMwJxU"
+          "current_key": "AIzaSyA5bluY8KWZmhEShqwx8gcU8R7PBNEmgiw"
         }
       ],
       "services": {
