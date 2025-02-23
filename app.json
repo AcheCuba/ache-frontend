@@ -11,6 +11,7 @@
     "newArchEnabled": true,
     "splash": {
       "backgroundColor": "#32283d"
+
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -51,6 +52,14 @@
         "expo-contacts",
         {
           "contactsPermission": "By giving us access to your Contacts, we’ll be able to provide a list of familiar names and numbers you can send recharges to. We won’t store, manipulate or other wise distribute any information saved in your Contacts"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#32283d",
+          "image": "./assets/images/app_icon.png",
+          "imageWidth": 0
         }
       ],
       "expo-asset",
