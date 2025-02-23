@@ -76,7 +76,7 @@ const MoreScreen = ({ navigation }) => {
           width: width,
           alignItems: "center",
           marginTop: "5%",
-          height: height * (5 / 6),
+          height: height,
         }}
       >
         <View style={styles.buttons}>
