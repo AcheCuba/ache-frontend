@@ -74,7 +74,7 @@ export default function useCachedResources() {
         // let token = undefined;
 
         // el token esta dentro del object user
-        // user = await getData("user");
+        user = await getData("user");
 
         //===================== USO EN DEV: ELIMINAR PREMIO DE APP ===========================
         /* storeData("user", {

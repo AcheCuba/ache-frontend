@@ -1,23 +1,9 @@
-import axios from "axios";
-import { LinearGradient } from "expo-linear-gradient";
 import * as React from "react";
 import { ImageBackground, Modal, ScrollView } from "react-native";
 import { Image } from "react-native";
 import { StyleSheet, View, Dimensions } from "react-native";
-import Toast from "react-native-root-toast";
 import LargeFlatButton from "../../components/LargeFlatButton";
-import {
-  bgColorFinalGradient,
-  generalBgColor,
-  generalBgColorTrans5,
-  generalBgColorTrans8,
-} from "../../constants/commonColors";
-import { BASE_URL } from "../../constants/domain";
-import {
-  resetSocketState,
-  restoreNuevaRecargaInitialState,
-  restore_user,
-} from "../../context/Actions/actions";
+import { generalBgColor } from "../../constants/commonColors";
 import { GlobalContext } from "../../context/GlobalProvider";
 import DeleteUserContentModal from "./components/DeleteUserContentModal";
 
@@ -90,6 +76,7 @@ const MoreScreen = ({ navigation }) => {
           width: width,
           alignItems: "center",
           marginTop: "5%",
+          height: height * (5 / 6),
         }}
       >
         <View style={styles.buttons}>
