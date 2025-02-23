@@ -59,7 +59,7 @@
         {
           "backgroundColor": "#32283d",
           "image": "./assets/images/transparent_splash_icon.png",
-          "imageWidth": 0
+          "imageWidth": 1
         }
       ],
       "expo-asset",
