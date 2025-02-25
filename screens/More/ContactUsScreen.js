@@ -16,18 +16,22 @@ const marginGlobal = width / 10;
 const ContactUsScreen = ({ navigation }) => {
   const { userState } = React.useContext(GlobalContext);
 
-  const openPhoneApp = async () => {
-    const url = `tel:+971585515461`;
-    const supported = await Linking.canOpenURL(url);
-    // console.log(supported);
+  const openWhatsapp = async () => {
+    const phoneNumber = "+971585515461";
+    const url = `whatsapp://send?phone=${phoneNumber}`;
 
-    if (supported) {
-      Linking.openURL(url).catch((err) => {
+    try {
+      // Intenta abrir WhatsApp
+      const supported = await Linking.canOpenURL(url);
+
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        // Si WhatsApp no está instalado, muestra un toast
         Toast.show(
           userState?.idioma === "spa"
-            ? "No se pudo abrir la aplicación de teléfono"
-            : "Phone application could not be opened",
-
+            ? "WhatsApp no está instalado en tu teléfono"
+            : "WhatsApp is not installed on your phone",
           {
             duaration: Toast.durations.LONG,
             position: Toast.positions.BOTTOM,
@@ -37,60 +41,9 @@ const ContactUsScreen = ({ navigation }) => {
             delay: 0,
           }
         );
-      });
-    } else {
-      Toast.show(
-        userState?.idioma === "spa"
-          ? "El dispositivo no soporta la URL solicitada"
-          : "The device does not support the requested URL",
-
-        {
-          duaration: Toast.durations.LONG,
-          position: Toast.positions.BOTTOM,
-          shadow: true,
-          animation: true,
-          hideOnPress: true,
-          delay: 0,
-        }
-      );
-    }
-  };
-
-  const openMessagesApp = async () => {
-    const url = `sms:+971585515461`;
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      Linking.openURL(url).catch((err) => {
-        Toast.show(
-          userState?.idioma === "spa"
-            ? "No se pudo abrir la aplicación de mensajes"
-            : "Could not open the messaging application",
-
-          {
-            duaration: Toast.durations.LONG,
-            position: Toast.positions.BOTTOM,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          }
-        );
-      });
-    } else {
-      Toast.show(
-        userState?.idioma === "spa"
-          ? "El dispositivo no soporta la URL solicitada"
-          : "The device does not support the requested URL",
-
-        {
-          duaration: Toast.durations.LONG,
-          position: Toast.positions.BOTTOM,
-          shadow: true,
-          animation: true,
-          hideOnPress: true,
-          delay: 0,
-        }
-      );
+      }
+    } catch (error) {
+      console.error("Error al abrir WhatsApp:", error);
     }
   };
 
@@ -222,18 +175,11 @@ const ContactUsScreen = ({ navigation }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
               <ButtonContact
-                title={userState.idioma === "spa" ? "LLAMAR" : "CALL US"}
+                title={"WHATSAPP"}
                 subt={"+971 58 551 5461"}
                 onPressContact={() => {
-                  openPhoneApp();
+                  openWhatsapp();
                 }}
-              />
-              <ButtonContact
-                title={
-                  userState.idioma === "spa" ? "ENVIAR MENSAJE" : "TEXT US"
-                }
-                subt={"+971 58 551 5461"}
-                onPressContact={() => openMessagesApp()}
               />
 
               <ButtonContact
