@@ -22,11 +22,11 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.marole.ache",
-      "buildNumber": "1.0.2"
+      "buildNumber": "1.0.3"
     },
     "android": {
       "package": "com.marole.ache",
-      "versionCode": 3,
+      "versionCode": 4,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app_icon_foreground.png",
