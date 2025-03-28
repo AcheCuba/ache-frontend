@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ImageBackground, Modal, ScrollView } from "react-native";
+import { ImageBackground, Modal, Platform, ScrollView } from "react-native";
 import { Image } from "react-native";
 import { StyleSheet, View, Dimensions } from "react-native";
 import LargeFlatButton from "../../components/LargeFlatButton";
@@ -111,7 +111,11 @@ const MoreScreen = ({ navigation }) => {
         </View>
         <View style={styles.buttons}>
           <LargeFlatButton
-            text={userState?.idioma === "spa" ? "Modo de uso" : "Mode of Use"}
+            text={
+              userState?.idioma === "spa"
+                ? "MODO Y REGLAS OFICIALES DE USO"
+                : "MODE & OFFCIAL RULES OF USE"
+            }
             onPress={() => navigation.navigate("ModoUsoScreen")}
           />
         </View>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, Platform } from "react-native";
 import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -7,8 +7,10 @@ import CommonHeader from "../../components/CommonHeader";
 import { TextBold, TextItalic } from "../../components/CommonText";
 import { infoTextColor } from "../../constants/commonColors";
 import {
-  ModoDeUsoTextEnglish,
-  ModoDeUsoTextSpanish,
+  ModoDeUsoTextEnglishAndroid,
+  ModoDeUsoTextEnglishIos,
+  ModoDeUsoTextSpanishAndroid,
+  ModoDeUsoTextSpanishIos,
 } from "../../constants/Texts";
 import { GlobalContext } from "../../context/GlobalProvider";
 
@@ -20,8 +22,18 @@ const ModoUsoScreen = ({ navigation }) => {
 
   const ResolveText = (site) => {
     const idioma = userState?.idioma;
-    const textSpa = ModoDeUsoTextSpanish();
-    const textEng = ModoDeUsoTextEnglish();
+    let textSpa;
+    let textEng;
+
+    if (Platform.OS === "ios") {
+      textSpa = ModoDeUsoTextSpanishIos();
+      textEng = ModoDeUsoTextEnglishIos();
+    }
+
+    if (Platform.OS === "android") {
+      textSpa = ModoDeUsoTextSpanishAndroid();
+      textEng = ModoDeUsoTextEnglishAndroid();
+    }
 
     if (idioma === "spa") {
       return textSpa[site];
@@ -62,6 +74,21 @@ const ModoUsoScreen = ({ navigation }) => {
               marginHorizontal: 20,
             }}
           >
+            <View style={{ marginBottom: 20, alignItems: "center" }}>
+              <TextBold
+                style={{
+                  fontSize: 22,
+                  textTransform: "uppercase",
+                  color: infoTextColor,
+                  marginBottom: 5,
+                }}
+                text={
+                  userState.idioma === "spa"
+                    ? "REGLAS OFICIALES DE SPIN"
+                    : "OFFICIAL RULES OF SPIN"
+                }
+              />
+            </View>
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={{ marginBottom: 20 }}>
                 <TextBold
@@ -158,6 +185,28 @@ const ModoUsoScreen = ({ navigation }) => {
                   text={ResolveText("origenDesc")}
                 />
               </View>
+
+              {Platform.OS === "ios" ? (
+                <View style={{ marginBottom: 20 }}>
+                  <TextBold
+                    style={{
+                      fontSize: 20,
+                      textTransform: "uppercase",
+                      color: infoTextColor,
+                      marginBottom: 5,
+                    }}
+                    text={ResolveText("consultas")}
+                  />
+                  <TextItalic
+                    style={{
+                      fontSize: 20,
+                      color: infoTextColor,
+                      textAlign: "left",
+                    }}
+                    text={ResolveText("consultasDesc")}
+                  />
+                </View>
+              ) : null}
             </ScrollView>
           </View>
         </View>

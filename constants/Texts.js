@@ -183,7 +183,7 @@ export const PremioDescriptionTextEnglish = () => {
   };
 };
 
-export const ModoDeUsoTextSpanish = () => {
+export const ModoDeUsoTextSpanishAndroid = () => {
   return {
     juega: "juega",
     juegaDesc:
@@ -199,11 +199,11 @@ export const ModoDeUsoTextSpanish = () => {
       "Tienes 72 horas para cobrar o compartir cualquier premio, de lo contrario se pierde.",
     origen: "Origen de los premios",
     origenDesc:
-      "Todos los fondos dedicados a cubrir el costo de los premios de esta app proceden de nuestros inversionistas y de los ingresos de la app. Apple no es un patrocinador y no está involucrado de ninguna manera en el proceso de concesión o financiamiento de los premios.",
+      "Todos los fondos dedicados a cubrir el costo de los premios de esta app proceden de nuestros inversionistas y de los ingresos de la app. Google no es un patrocinador y no está involucrado de ninguna manera en el proceso de concesión o financiamiento de los premios.",
   };
 };
 
-export const ModoDeUsoTextEnglish = () => {
+export const ModoDeUsoTextEnglishAndroid = () => {
   return {
     juega: "play",
     juegaDesc:
@@ -219,6 +219,52 @@ export const ModoDeUsoTextEnglish = () => {
       "You have up to 72 hours to cash or share your prize, otherwise you’ll lose it.",
     origen: "Prize Sources",
     origenDesc:
-      "All funds dedicated to cover the cost of the prizes in this app are coming from our investors and app revenue. Apple is not a sponsor and is not in any way involved with the process for granting or funding the prizes",
+      "All funds dedicated to cover the cost of the prizes in this app are coming from our investors and app revenue. Google is not a sponsor and is not in any way involved with the process for granting or funding the prizes",
+  };
+};
+
+export const ModoDeUsoTextSpanishIos = () => {
+  return {
+    juega: "juega",
+    juegaDesc:
+      "Puedes girar la ruleta incluso si no has recargado. Si ganas un premio, lo encontrarás guardado en la esquina superior derecha de la pantalla. Para cobrar cualquier premio nuevo ganado en la ruleta, primero debes usar el premio guardado.",
+    recarga: "recarga",
+    recargaDesc:
+      "Puedes recargar a más de un contacto a la vez y añadir un premio si tienes uno. También puedes compartir un premio con alguien o quedártelo. Si no quieres comprar una recarga, puedes compartir el premio con cualquiera de tus contactos y esa persona, usando SPIN, podrá añadir un premio a una recarga y enviártelo a ti o a cualquier otro contacto.",
+    premios: "premios",
+    premiosDesc:
+      "Hay tres premios ganadores y un premio perdedor (la Calavera) en la ruleta. Las recompensas son una recarga extra gratis, una recarga doble gratis o un gran premio de 500 dólares que depositaremos en la cuenta bancaria que elijas. Los premios de recarga gratis no se pagan en efectivo. Si te sale la Calavera, significa que necesitaras más suerte la próxima vez en SPIN.",
+    tiempo: "tiempo",
+    tiempoDesc:
+      "Tienes hasta 72 horas para cobrar o compartir tu premio; de lo contrario, lo perderás.",
+    origen: "Origen de los premios",
+    origenDesc:
+      "Todos los fondos destinados a cubrir el coste de los premios de esta app provienen de nuestros inversores y de los ingresos de la app. Apple no es patrocinador ni participa de ninguna manera en el proceso de concesión o financiación de los premios.",
+    consultas: "consultas",
+    consultasDesc:
+      "Todas las preguntas deben dirigirse a contact@spinrecargas y no a Apple.",
+  };
+};
+
+export const ModoDeUsoTextEnglishIos = () => {
+  return {
+    juega: "play",
+    juegaDesc:
+      "You can spin the wheel even if you haven't recharged. If you win a prize, you will find it saved on the top right corner of the screen. To collect any new prize won in the wheel, you must first use the saved prize.",
+    recarga: "top-up",
+    recargaDesc:
+      "You can top-up more than one contact at a time and choose to add a prize if you have one. You can also share a prize with someone or keep it for yourself. If you don't want to buy a top-up, you can share the prize with any of your contacts and that person, using SPIN, will be able to add a prize to a recharge and send it back to you or any other contact.",
+    premios: "prizes",
+    premiosDesc:
+      "There are three winning prizes and one losing spot (the Skull) on the Wheel. The rewards are an extra free top-up, a free double top-up or one 500-dollar jackpot that we will deposit in a bank account of your choice. Free recharge prizes are not payable in cash. If you get The Skull it means you need better luck next time on SPIN.",
+    tiempo: "time",
+    tiempoDesc:
+      "You have up to 72 hours to cash or share your prize, otherwise you will lose it.",
+    origen: "Prize Sources",
+    origenDesc:
+      "All funds dedicated to cover the cost of the prizes in this app are coming from our investors and app revenue. Apple is not a sponsor and is not in any way involved with the process for granting or funding the prizes.",
+    consultas: "enquiries",
+    consultasDesc:
+      "All questions should be directed to contact@spinrecargas and not Apple.",
   };
 };
