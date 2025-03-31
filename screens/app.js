@@ -61,8 +61,9 @@ export default function MainAppWrapper() {
   return (
     <AnimatedSplashScreen
       //animationSource={require("../assets/animaciones/cocodrilo.lottie.json")}
-      animationSource={require("../assets/animaciones/spinSplash.mp4.lottie.json")}
       //animationSource={require("../assets/animaciones/loading.json")}
+      //animationSource={require("../assets/animaciones/spinSplash.mp4.lottie.json")}
+      animationSource={require("../assets/animaciones/Spin_Recargas_Video_2K.json")}
     >
       <MainApp />
     </AnimatedSplashScreen>
