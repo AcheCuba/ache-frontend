@@ -64,6 +64,10 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
     console.log("CONTACTOS SELECCIONADOS", contactosSeleccionados);
   }, [contactosSeleccionados]); */
 
+  /*   React.useEffect(() => {
+    console.log(promoTitle);
+  }, [promoTitle]); */
+
   React.useEffect(() => {
     return soundError
       ? () => {
@@ -278,7 +282,7 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
         const data = response.data;
         // console.log(data.length);
         if (data.length !== 0) {
-          //console.log(response.data);
+          console.log(response.data);
           //console.log(data[0].productsIds);
           setProductsWithPromo(data[0].productsIds);
           //console.log(data[0].title);
@@ -651,7 +655,11 @@ const RecargasDisponiblesScreen = ({ navigation, route }) => {
                         paddingHorizontal: 30,
                         marginBottom: 25,
                         width: width / 1.3,
-                        height: height / 5,
+                        height:
+                          promoTitle != undefined &&
+                          productsWithPromo.includes(product.id)
+                            ? height / 4
+                            : height / 5,
                         borderRadius: 10,
                         backgroundColor: buttonColor,
                       }}

@@ -4,8 +4,9 @@ export const GameScreenTextSpanish = () => {
     DoublePrizeWonTitle: "Recarga Doble",
     DoublePrizeWonBody:
       "¡Felicidades, has ganado una recarga adicional! Simplemente agrégala a una recarga o compártelo con quien desees. Tu premio quedará guardado por 72 horas",
-    //PremioWonButtonObtenerPremio: "obtener premio",
-    //PremioWonButtonSalir: "salir",
+    TopUpBonusWonTitle: "Bono Extra",
+    TopUpBonusWonBody:
+      "¡Felicidades, acabas de ganar un Bono Exta! Puedes agregarlo a una recarga o compartirlo con cualquiera de tus contactos. Debes cobrar tu premio en las próximas 72 horas.",
     JoyaWonTitle: "El Diamante",
     JoyaWonBody:
       "¡Felicidades, has ganado El Diamante! ¡Tienes derecho a un premio de $500 en efectivo! Para cobrar el premio agrégalo a una recarga y un representante de Spin se pondrá en contacto contigo rápidamente mediante un correo para entregártelo. Tu premio quedará guardado por 72 horas",
@@ -30,6 +31,9 @@ export const GameScreenTextEnglish = () => {
     DoublePrizeWonTitle: "Double Top-Up",
     DoublePrizeWonBody:
       "Congrats! You’ve won an extra top-up. Simply add it to a top-up or share it with anyone. Your prize will be saved for 72 hours.",
+    TopUpBonusWonTitle: "Recharge Treat",
+    TopUpBonusWonBody:
+      "Congrats! You've won a recharge treat to add or share with any of your contacts. Your prize will be saved for 72 hours.",
     JoyaWonTitle: "GEMS",
     JoyaWonBody:
       "Congratulations, you won The Diamond! You are entitled to a $500 cash prize! To collect the prize add it to a top-up and a Spin representative will contact you promptly by mail to deliver it to you. Your prize will be saved for 72 hours",
@@ -158,7 +162,10 @@ export const PremioDescriptionTextSpanish = () => {
     ruletaFortuna: "Rueda de la fortuna",
     doublePrize: "Recarga Doble",
     doublePrizeDesc:
-      "¿Te ganaste este premio cuando giraste la ruleta? ¡Acabas de ganar una recarga adicional. Puedes agregarlo a una recarga o compartirlo con cualquiera de tus contactos. Debes cobrar tu premio en las próximas 72 horas.",
+      "¿Te ganaste este premio cuando giraste la ruleta? ¡Acabas de ganar una recarga adicional! Puedes agregarlo a una recarga o compartirlo con cualquiera de tus contactos. Debes cobrar tu premio en las próximas 72 horas.",
+    topUpBonus: "Bono Extra",
+    topUpBonusPrizeDesc:
+      "¿Te ganaste este premio cuando giraste la ruleta? ¡Acabas de ganar un Bono Exta! Puedes agregarlo a una recarga o compartirlo con cualquiera de tus contactos. Debes cobrar tu premio en las próximas 72 horas.",
     joyitas: "El diamante",
     joyitasDesc:
       "Giraste la ruleta y te salió El Diamante... ¡Acabas de ganar el gran premio de 500 dólares! Para poder cobrarlo debes comprar antes una recarga y revisa después tu correo y sigue las instrucciones. Recuerda que debes cobrar el premio en las próximas 72 horas",
@@ -174,6 +181,9 @@ export const PremioDescriptionTextEnglish = () => {
     doublePrize: "Double Top-Up",
     doublePrizeDesc:
       "Did you spin the wheel and get this prize? It means that you’ve won an extra top-up to add or share with any of your contacts. You must collect the prize within the next 72 hours.",
+    topUpBonus: "Recharge Treat",
+    topUpBonusPrizeDesc:
+      "Did you spin the wheel and get this prize? It means that you've won a recharge treat to add or share with any of your contacts. You must collect the prize within the next 72 hours",
     joyitas: "The Diamond",
     joyitasDesc:
       "If you spin the wheel and get The Diamond... You’ve won our 500 dollars Jackpot! To collect it you must buy a top- up first and check your mail for further instructions. Don’t forget you must collect the prize within the next 72 hours.",

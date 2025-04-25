@@ -482,6 +482,9 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
         .then((response) => {
           const currentPrize = response.data;
 
+          console.log("validado");
+          console.log(currentPrize);
+
           //console.log(currentPrize);
           const type = currentPrize.type;
 
@@ -497,7 +500,7 @@ const NuevaRecargaScreen = ({ navigation, route }) => {
           );
           nuevaRecargaDispatch(toggleValidateInProcess(false));
         })
-        .catch(() => {
+        .catch((e) => {
           // el premio no es valido
           // para el caso add my prize
           // si el user no tiene premio, eliminar de la app e informar

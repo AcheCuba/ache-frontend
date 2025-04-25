@@ -10,7 +10,7 @@ import LargeFlatButton from "../../../components/LargeFlatButton";
 
 const { width, height } = Dimensions.get("screen");
 
-const DoublePrizeWonContentModal = ({
+const TopUpBonusWonContentModal = ({
   navigation,
   setModalVisible,
   userState,
@@ -41,7 +41,7 @@ const DoublePrizeWonContentModal = ({
       }}
     >
       <Image
-        source={require("../../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
+        source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
         style={{ width: 105, height: 101 }}
         //style={{ width: width / 3, height: width / 3.1 }}
       />
@@ -61,7 +61,7 @@ const DoublePrizeWonContentModal = ({
             marginTop: 30,
             textTransform: "uppercase",
           }}
-          text={ResolveText("DoublePrizeWonTitle")}
+          text={ResolveText("TopUpBonusWonTitle")}
         />
         <TextItalic
           style={{
@@ -71,7 +71,7 @@ const DoublePrizeWonContentModal = ({
             marginTop: 30,
             textAlign: "center",
           }}
-          text={ResolveText("DoublePrizeWonBody")}
+          text={ResolveText("TopUpBonusWonBody")}
         />
         <View
           style={{
@@ -101,4 +101,4 @@ const DoublePrizeWonContentModal = ({
     </View>
   );
 };
-export default DoublePrizeWonContentModal;
+export default TopUpBonusWonContentModal;

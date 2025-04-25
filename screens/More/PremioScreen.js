@@ -49,6 +49,18 @@ const PremioScreen = ({ navigation }) => {
       case "doublePrize":
         imagen = (
           <Image
+            source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
+            style={{
+              width: width / 5.8,
+              height: width / 6,
+            }}
+          />
+        );
+        break;
+
+      case "topUpBonus":
+        imagen = (
+          <Image
             source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
             style={{
               width: width / 5.8,
@@ -56,6 +68,7 @@ const PremioScreen = ({ navigation }) => {
             }}
           />
         );
+
         break;
 
       case "calavera":
@@ -155,20 +168,13 @@ const PremioScreen = ({ navigation }) => {
             <ScrollView
               contentContainerStyle={{ width: width, alignItems: "center" }}
             >
-              <PremioCard
-                type="doublePrize"
-                // description={ResolveText("doublePrizeDesc")}
-              />
+              <PremioCard type="topUpBonus" />
 
-              <PremioCard
-                type="joyitas"
-                // description={ResolveText("joyitasDesc")}
-              />
+              <PremioCard type="doublePrize" />
 
-              <PremioCard
-                type="calavera"
-                // description={ResolveText("calaveraDesc")}
-              />
+              <PremioCard type="joyitas" />
+
+              <PremioCard type="calavera" />
             </ScrollView>
           </View>
         </View>

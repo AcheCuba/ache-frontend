@@ -164,12 +164,14 @@ const NuevoContactoInput = ({
     } else {
       switch (prizeByFieldId?.type) {
         case "DoublePrize":
+        case "TopUpBonus":
           return (
             <Image
               source={require("../../../assets/images/iconos/icono_premio.png")}
               style={{ height: 26, width: 26 }}
             />
           );
+
         case "Jackpot":
           return (
             <Image

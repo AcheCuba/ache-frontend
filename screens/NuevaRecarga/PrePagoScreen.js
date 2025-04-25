@@ -47,7 +47,7 @@ const PrePagoScreen = ({ navigation, route }) => {
   }, []);
 
   React.useEffect(() => {
-    console.log(transactions_id_array);
+    // console.log(transactions_id_array);
   }, []);
 
   useAndroidBackHandler(() => {
@@ -81,6 +81,7 @@ const PrePagoScreen = ({ navigation, route }) => {
 
   // opcion 1
   const renderItemContact = ({ item }) => {
+    // console.log(item);
     return (
       <View
         style={{
@@ -109,7 +110,8 @@ const PrePagoScreen = ({ navigation, route }) => {
             <Image
               source={
                 item.prize != null
-                  ? item.prize.type === "DoublePrize"
+                  ? item.prize.type === "DoublePrize" ||
+                    item.prize.type == "TopUpBonus"
                     ? require("../../assets/images/iconos/icono_premio.png")
                     : item.prize.type === "Jackpot"
                     ? require("../../assets/images/home/premios_finales/Diamante_GRAN_PREMIO.png")
@@ -121,8 +123,9 @@ const PrePagoScreen = ({ navigation, route }) => {
             <TextMedium
               text={
                 item.prize != null
-                  ? item.prize.type === "TopUpBonus"
-                    ? " (" + item.prize.size + ")"
+                  ? item.prize.type === "TopUpBonus" ||
+                    item.prize.type === "DoublePrize"
+                    ? " (" + item.prize.type + ")"
                     : null
                   : //? " +" + item.prize?.amount + " CUP "
                     //: null
@@ -131,7 +134,7 @@ const PrePagoScreen = ({ navigation, route }) => {
               style={{
                 fontSize: normalize(12),
                 color: "#fffb00",
-                textTransform: "uppercase",
+                // textTransform: "uppercase",
               }}
             />
           </View>

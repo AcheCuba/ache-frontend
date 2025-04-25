@@ -46,6 +46,9 @@ const PremioDescription = ({ navigation, route }) => {
       case "doublePrize":
         setPrizeDescription(ResolveText("doublePrizeDesc"));
         break;
+      case "topUpBonus":
+        setPrizeDescription(ResolveText("topUpBonusPrizeDesc"));
+        break;
       case "joyitas":
         setPrizeDescription(ResolveText("joyitasDesc"));
         break;

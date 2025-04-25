@@ -57,6 +57,7 @@ import PremioFallidoModal from "./components/PremioFallidoModal";
 import PremioEnCaminoModal from "./components/PremioEnCaminoModal";
 import HasPrizeModal from "./components/HasPrizeModal";
 import HasSkullModal from "./components/HasSkullModal";
+import TopUpBonusWonContentModal from "./components/TopUpBonusWonContentModal";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -82,6 +83,8 @@ const GameScreen = ({ navigation }) => {
   const [NadaWon, setNadaWon] = React.useState(false);
   const [DoublePrizeWon, setDoublePrizeWon] = React.useState(false);
   const [JoyaWon, setJoyaWon] = React.useState(false);
+  const [TopUpBonusWon, setTopUpBonusWon] = React.useState(false);
+
   const [horasRestantes, setHorasRestantes] = React.useState("24");
   const [nadaDescriptionModalVisible, setNadaDescriptionModalVisible] =
     React.useState(false);
@@ -115,9 +118,7 @@ const GameScreen = ({ navigation }) => {
     nuevaRecargaState,
     interfaceState,
     interfaceDispatch,
-    socketState,
   } = React.useContext(GlobalContext);
-  //const { socketDispatch, socketState } = React.useContext(GlobalContext);
 
   const wheelValue = React.useRef(new Animated.Value(0));
   const enMovimiento = React.useRef(false);
@@ -359,6 +360,17 @@ const GameScreen = ({ navigation }) => {
       case "DoublePrize":
         return (
           <Image
+            source={require("../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
+            //resizeMode="center"
+            style={{
+              width: 73, //width: 60,
+              height: 70, //height: 92,
+            }}
+          />
+        );
+      case "TopUpBonus":
+        return (
+          <Image
             source={require("../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
             //resizeMode="center"
             style={{
@@ -373,14 +385,9 @@ const GameScreen = ({ navigation }) => {
           <View>
             <Image
               source={require("../../assets/images/home/premios_finales/calavera_roja.png")}
-              //source={require("../../assets/animaciones/calavera-roja.gif")}
-              //resizeMode="center"
               style={{
                 width: 65,
                 height: 75,
-
-                //width: 80,
-                //height: 90,
               }}
             />
           </View>
@@ -447,9 +454,27 @@ const GameScreen = ({ navigation }) => {
         }, ANIMATION_TIME + 6000);
 
         //setCasillaFinal("1823deg");
-        setCasillaFinal("7223deg");
+        setCasillaFinal("7223deg"); // slot 1: premio gordo
 
         break;
+
+      case "TopUpBonus":
+        setTimeout(() => {
+          setTopUpBonusWon(true);
+          playSoundGanasPremioDigital();
+        }, ANIMATION_TIME);
+
+        random_seed = Math.random();
+
+        if (random_seed < 0.5) {
+          setCasillaFinal("7268deg"); // slot 2: pemio simple
+        }
+
+        if (random_seed >= 0.5) {
+          setCasillaFinal("7358deg"); // slot 4: premio simple
+        }
+        break;
+
       case "DoublePrize":
         //console.log("sellama");
         setTimeout(() => {
@@ -460,22 +485,13 @@ const GameScreen = ({ navigation }) => {
 
         random_seed = Math.random();
 
-        if (random_seed < 0.25) {
-          //setCasillaFinal("1868deg"); // ref 1800
-          setCasillaFinal("7268deg");
+        if (random_seed < 0.5) {
+          setCasillaFinal("7178deg"); // slot 8: premio doble
         }
-        if (random_seed >= 0.25 && random_seed < 0.5) {
-          //setCasillaFinal("1958deg");
-          setCasillaFinal("7358deg");
+        if (random_seed >= 0.5) {
+          setCasillaFinal("7088deg"); // slot 6: premio doble
         }
-        if (random_seed >= 0.5 && random_seed < 0.75) {
-          //setCasillaFinal("1778deg");
-          setCasillaFinal("7178deg");
-        }
-        if (random_seed >= 0.75) {
-          //setCasillaFinal("1688deg");
-          setCasillaFinal("7088deg");
-        }
+
         break;
       default:
         setCasillaFinal("7200deg");
@@ -559,12 +575,21 @@ const GameScreen = ({ navigation }) => {
           },
         };
 
+        // test
+        // makePlayRequestFake();
+        // test
+
         if (current_prize === null) {
           makePlayRequest(config);
         }
       }
     }
   };
+
+  /*   const makePlayRequestFake = () => {
+    thereIsPrizeResult.current = true;
+    setCasilla({ type: "Nada" });
+  }; */
 
   const makePlayRequest = (config) => {
     axios(config)
@@ -573,12 +598,13 @@ const GameScreen = ({ navigation }) => {
         console.log("prize result", prize_result);
 
         // probar premio falso para ver textos o whathever
-        /* const prize_result = {
-          type: "Nada",
+        /*     const prize_result = {
+          //type: "Nada",
           //type: "Jackpot",
           //type: "DoublePrize",
-        };
- */
+          //type: "TopUpBonus",
+        }; */
+
         thereIsPrizeResult.current = true;
 
         if (prize_result === "" || prize_result === undefined) {
@@ -782,7 +808,7 @@ const GameScreen = ({ navigation }) => {
   React.useEffect(() => {
     //console.log("codigo generado game screen", codigoGenerado);
     //console.log(currentPrize?.type);
-    if (!NadaWon && !DoublePrizeWon && !JoyaWon) {
+    if (!NadaWon && !DoublePrizeWon && !JoyaWon && !TopUpBonusWon) {
       wheelValue.current.setValue(0);
     }
   }, [NadaWon, DoublePrizeWon, JoyaWon]);
@@ -833,6 +859,8 @@ const GameScreen = ({ navigation }) => {
             </View>
           </Modal>
         ) : null}
+
+        {/* al pinchar botón de premio (esquina superior derecha) */}
 
         {nadaDescriptionModalVisible ? (
           <Modal
@@ -920,6 +948,8 @@ const GameScreen = ({ navigation }) => {
           </Modal>
         ) : null}
 
+        {/* giras la ruleta y ganas cosas: aparecen modals */}
+
         {NadaWon ? (
           <Modal
             animationType="slide"
@@ -995,6 +1025,36 @@ const GameScreen = ({ navigation }) => {
             </LinearGradient>
           </Modal>
         ) : null}
+
+        {TopUpBonusWon ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={TopUpBonusWon}
+            onRequestClose={() => setTopUpBonusWon(false)}
+          >
+            <LinearGradient
+              colors={[generalBgColor, bgColorFinalGradient]}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: generalBgColorTrans5,
+                }}
+              >
+                <TopUpBonusWonContentModal
+                  navigation={navigation}
+                  setModalVisible={setTopUpBonusWon}
+                  userState={userState}
+                />
+              </View>
+            </LinearGradient>
+          </Modal>
+        ) : null}
+
         {DoublePrizeWon ? (
           <Modal
             animationType="slide"
@@ -1053,6 +1113,8 @@ const GameScreen = ({ navigation }) => {
           </Modal>
         ) : null}
 
+        {/* caso particular: detectamos que el premio ha expirado. aparece modal */}
+
         {showExpiredPrize ? (
           <Modal
             animationType="slide"
@@ -1080,6 +1142,8 @@ const GameScreen = ({ navigation }) => {
             </LinearGradient>
           </Modal>
         ) : null}
+
+        {/* casos particulares: premio cobrado, fallido, en camino. lo marco según el estado de la recarga */}
 
         {hayPremioCobrado ? (
           <Modal
@@ -1163,6 +1227,8 @@ const GameScreen = ({ navigation }) => {
           </Modal>
         ) : null}
 
+        {/* caso particular: premio acumulado/ el usuario ya tiene un premio (se marca aquí, al girar la ruleta)*/}
+
         {hasPrizeModal ? (
           <Modal
             animationType="slide"
@@ -1190,6 +1256,8 @@ const GameScreen = ({ navigation }) => {
             </LinearGradient>
           </Modal>
         ) : null}
+
+        {/* caso particular: el usuario tiene la "Nada" */}
 
         {hasSkullModal ? (
           <Modal
@@ -1331,6 +1399,10 @@ const GameScreen = ({ navigation }) => {
               >
                 <TouchableWithoutFeedback
                   onPress={() => {
+                    // test spin
+                    // onPressWheel("selector");
+                    // test spin
+
                     if (userState.prize == null) {
                       onPressWheel("selector");
                     } else {
@@ -1555,11 +1627,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
   },
-  /*   containerCobrar: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  }, */
+
   title: {
     fontSize: 20,
     fontWeight: "bold",
@@ -1568,7 +1636,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     zIndex: 2,
-    //width: width / 3.5, //"80%",
-    //height: width / 3.5,
   },
 });

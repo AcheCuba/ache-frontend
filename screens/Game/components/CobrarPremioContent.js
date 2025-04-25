@@ -333,6 +333,15 @@ const CobrarPremioContent = ({
           desc = `You have an extra top-up to add. Don’t want to recharge now? You can turn it into a code and share it with anyone so they can collect the prize`;
         }
         break;
+      case "TopUpBonus":
+        if (idioma === "spa") {
+          title = "Bono Extra";
+          desc = `Tienes un bono extra para agregar a tu recarga. Si no quieres recargar ahora, puedes compartir su código con cualquiera de tus contactos para que recargue y cobre el premio`;
+        } else if (idioma === "eng") {
+          title = "Recharge Treat";
+          desc = `You have a recharge treat to add. Don’t want to recharge now? You can turn it into a code and share it with anyone so they can collect the prize`;
+        }
+        break;
 
       default:
         break;
@@ -379,12 +388,23 @@ const CobrarPremioContent = ({
       case "DoublePrize":
         return (
           <Image
-            source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
+            source={require("../../../assets/images/home/premios_finales/Monedas_500_CUP.png")}
             style={{
               width: width / 3,
               height: width / 3.1,
               //width: width / 3.8,
               //height: width / 3.9,
+            }}
+          />
+        );
+
+      case "TopUpBonus":
+        return (
+          <Image
+            source={require("../../../assets/images/home/premios_finales/Monedas_250_CUP.png")}
+            style={{
+              width: width / 3,
+              height: width / 3.1,
             }}
           />
         );
